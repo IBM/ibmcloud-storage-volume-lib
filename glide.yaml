@@ -1,0 +1,18 @@
+package: github.com/IBM/ibmcloud-storage-volume-lib
+import:
+- package: github.com/BurntSushi/toml
+  version: v0.2.0
+- package: go.uber.org/zap
+  version: a2773be06b9ac7c318a3a105b5c310af5730c6b4
+- package: github.com/softlayer/softlayer-go
+  version: 7b4687c6b2502a895404bf40d555088ea500abc3
+  subpackages:
+  - config
+  - datatypes
+  - filter
+  - services
+  - session
+  - sl
+testImport:
+- package: github.com/onsi/ginkgo
+- package: github.com/onsi/gomega
