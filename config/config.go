@@ -38,7 +38,7 @@ type Config struct {
 	Gen2      *Gen2Config
 }
 
-func ReadConfig(confPath string, logger zap.Logger) *Config {
+func ReadConfig(confPath string, logger zap.Logger) (*Config, error) {
 	// load the default config, if confPath not provided
 	if confPath == "" {
 		confPath = GetDefaultConfPath()
@@ -47,9 +47,8 @@ func ReadConfig(confPath string, logger zap.Logger) *Config {
 	// Parse config file
 	var conf Config
 	logger.Info("parsing conf file", zap.String("confpath", confPath))
-	ParseConfig(confPath, &conf, logger)
-
-	return &conf
+	err := ParseConfig(confPath, &conf, logger)
+	return &conf, err
 }
 
 func GetConfPath() string {
@@ -65,10 +64,12 @@ func GetDefaultConfPath() string {
 }
 
 // ParseConfig ...
-func ParseConfig(filePath string, conf interface{}, logger zap.Logger) {
-	if _, err := toml.DecodeFile(filePath, conf); err != nil {
-		logger.Fatal("error parsing config file", zap.Error(err))
+func ParseConfig(filePath string, conf interface{}, logger zap.Logger) error {
+	_, err := toml.DecodeFile(filePath, conf)
+	if  err != nil {
+		logger.Error("Failed to parse config file", zap.Error(err))
 	}
+	return err
 }
 
 // BluemixConfig ...

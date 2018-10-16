@@ -16,10 +16,10 @@ Following steps has to followed by user to use this library
 Update the glide.yaml to get the source code of this library, also only export the following packages to their application
 
 ```
-"github.ibm.com/IBM/ibm-volume-lib/config"
-"github.ibm.com/IBM/ibm-volume-lib/lib/provider"
-"github.ibm.com/IBM/ibm-volume-lib/provider/local"
-provider_util "github.ibm.com/IBM/ibm-volume-lib/provider/utils"
+"github.com/IBM/ibm-volume-lib/config"
+"github.com/IBM/ibm-volume-lib/lib/provider"
+"github.com/IBM/ibm-volume-lib/provider/local"
+provider_util "github.com/IBM/ibm-volume-lib/provider/utils"
 ```
 
 User can see the refrence from `ibmcloud-storage-volume-lib/main.go` sample file
@@ -63,7 +63,7 @@ spec:
 ### Step 3:
 From the implementaion file which uses use this library, user need to initilaze the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
 
-`github.ibm.com/IBM/ibm-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
+`github.com/IBM/ibm-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
 
 ```
 providerRegistry, err := provider_util.InitProviders(conf, logger)
