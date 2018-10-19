@@ -60,13 +60,14 @@ spec:
           secretName: volume-lib-secret
 ```
 #### IAM secrets:
-If you want to use your IAM credentials , please make sure following properties are set in configuration file `ibmcloud-storage-volume-lib/etc/libconfig.toml`.  Replace value for `iam_api_key`
+If you want to use your IAM credentials , please make sure following properties are set in configuration file `ibmcloud-storage-volume-lib/etc/libconfig.toml`.  Replace value for `iam_api_key` and keep blank for `softlayer_username` and `softlayer_api_key`
 
+```
 [bluemix]
 iam_url = "https://iam.bluemix.net"
 iam_client_id = "bx"
 iam_client_secret = "bx"
-`iam_api_key = "testIAM_KEY" # replace with IAM key and keep blank for APIkey auth `
+iam_api_key = "testIAM_KEY" # replace with IAM key and keep blank for APIkey auth
 refresh_token = ""
 
 [softlayer]
@@ -81,6 +82,7 @@ softlayer_iam_endpoint_url = "https://api.softlayer.com/mobile/v3"
 softlayer_datacenter = "dal12"
 softlayer_api_timeout = "20s"
 
+```
 
 
 ### Step 3:
