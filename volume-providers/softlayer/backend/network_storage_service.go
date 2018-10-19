@@ -15,8 +15,8 @@ import (
 	"github.com/softlayer/softlayer-go/services"
 )
 
-// AccountService is a wrapping interface for the softlayer-go API's AccountService
-//go:generate counterfeiter -o fakes/account_service.go --fake-name AccountService . AccountService
+// NetworkStorageService is a wrapping interface for the softlayer-go API's NetworkStorageService
+//go:generate counterfeiter -o fakes/network_storage_service.go --fake-name NetworkStorageService . NetworkStorageService
 type NetworkStorageService interface {
 	Filter(string) NetworkStorageService
 	Mask(string) NetworkStorageService

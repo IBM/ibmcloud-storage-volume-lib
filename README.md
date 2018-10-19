@@ -59,9 +59,32 @@ spec:
         secret:
           secretName: volume-lib-secret
 ```
+#### IAM secrets:
+If you want to use your IAM credentials , please make sure following properties are set in configuration file `ibmcloud-storage-volume-lib/etc/libconfig.toml`.  Replace value for `iam_api_key`
+
+[bluemix]
+iam_url = "https://iam.bluemix.net"
+iam_client_id = "bx"
+iam_client_secret = "bx"
+`iam_api_key = "testIAM_KEY" # replace with IAM key and keep blank for APIkey auth `
+refresh_token = ""
+
+[softlayer]
+softlayer_block_enabled = true
+softlayer_block_provider_name = "SOFTLAYER-BLOCK"
+softlayer_file_enabled = false
+softlayer_file_provider_name = "SOFTLAYER-FILE"
+softlayer_username = ""# keep blank for IAM auth
+softlayer_api_key = "" # keep blank for IAM auth
+softlayer_endpoint_url = "https://api.softlayer.com/rest/v3"
+softlayer_iam_endpoint_url = "https://api.softlayer.com/mobile/v3"
+softlayer_datacenter = "dal12"
+softlayer_api_timeout = "20s"
+
+
 
 ### Step 3:
-From the implementaion file which uses use this library, user need to initilaze the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
+From the implementation file which uses use this library, user need to initilaze the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
 
 `github.ibm.com/IBM/ibm-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
 
