@@ -2,10 +2,10 @@
 package fakes
 
 import (
-	"sync"
+	sync "sync"
 
-	"github.com/softlayer/softlayer-go/datatypes"
-	"github.ibm.com/alchemy-containers/armada-cluster/iaas/softlayer/backend"
+	backend "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/backend"
+	datatypes "github.com/softlayer/softlayer-go/datatypes"
 )
 
 type ProductOrderService struct {
@@ -20,17 +20,6 @@ type ProductOrderService struct {
 	filterReturnsOnCall map[int]struct {
 		result1 backend.ProductOrderService
 	}
-	MaskStub        func(string) backend.ProductOrderService
-	maskMutex       sync.RWMutex
-	maskArgsForCall []struct {
-		arg1 string
-	}
-	maskReturns struct {
-		result1 backend.ProductOrderService
-	}
-	maskReturnsOnCall map[int]struct {
-		result1 backend.ProductOrderService
-	}
 	IDStub        func(int) backend.ProductOrderService
 	iDMutex       sync.RWMutex
 	iDArgsForCall []struct {
@@ -42,10 +31,21 @@ type ProductOrderService struct {
 	iDReturnsOnCall map[int]struct {
 		result1 backend.ProductOrderService
 	}
-	PlaceOrderStub        func(backend.ProductOrderContainer, *bool) (datatypes.Container_Product_Order_Receipt, error)
+	MaskStub        func(string) backend.ProductOrderService
+	maskMutex       sync.RWMutex
+	maskArgsForCall []struct {
+		arg1 string
+	}
+	maskReturns struct {
+		result1 backend.ProductOrderService
+	}
+	maskReturnsOnCall map[int]struct {
+		result1 backend.ProductOrderService
+	}
+	PlaceOrderStub        func(interface{}, *bool) (datatypes.Container_Product_Order_Receipt, error)
 	placeOrderMutex       sync.RWMutex
 	placeOrderArgsForCall []struct {
-		arg1 backend.ProductOrderContainer
+		arg1 interface{}
 		arg2 *bool
 	}
 	placeOrderReturns struct {
@@ -54,19 +54,6 @@ type ProductOrderService struct {
 	}
 	placeOrderReturnsOnCall map[int]struct {
 		result1 datatypes.Container_Product_Order_Receipt
-		result2 error
-	}
-	VerifyOrderStub        func(backend.ProductOrderContainer) (datatypes.Container_Product_Order, error)
-	verifyOrderMutex       sync.RWMutex
-	verifyOrderArgsForCall []struct {
-		arg1 backend.ProductOrderContainer
-	}
-	verifyOrderReturns struct {
-		result1 datatypes.Container_Product_Order
-		result2 error
-	}
-	verifyOrderReturnsOnCall map[int]struct {
-		result1 datatypes.Container_Product_Order
 		result2 error
 	}
 	invocations      map[string][][]interface{}
@@ -87,7 +74,8 @@ func (fake *ProductOrderService) Filter(arg1 string) backend.ProductOrderService
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.filterReturns.result1
+	fakeReturns := fake.filterReturns
+	return fakeReturns.result1
 }
 
 func (fake *ProductOrderService) FilterCallCount() int {
@@ -96,13 +84,22 @@ func (fake *ProductOrderService) FilterCallCount() int {
 	return len(fake.filterArgsForCall)
 }
 
+func (fake *ProductOrderService) FilterCalls(stub func(string) backend.ProductOrderService) {
+	fake.filterMutex.Lock()
+	defer fake.filterMutex.Unlock()
+	fake.FilterStub = stub
+}
+
 func (fake *ProductOrderService) FilterArgsForCall(i int) string {
 	fake.filterMutex.RLock()
 	defer fake.filterMutex.RUnlock()
-	return fake.filterArgsForCall[i].arg1
+	argsForCall := fake.filterArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *ProductOrderService) FilterReturns(result1 backend.ProductOrderService) {
+	fake.filterMutex.Lock()
+	defer fake.filterMutex.Unlock()
 	fake.FilterStub = nil
 	fake.filterReturns = struct {
 		result1 backend.ProductOrderService
@@ -110,6 +107,8 @@ func (fake *ProductOrderService) FilterReturns(result1 backend.ProductOrderServi
 }
 
 func (fake *ProductOrderService) FilterReturnsOnCall(i int, result1 backend.ProductOrderService) {
+	fake.filterMutex.Lock()
+	defer fake.filterMutex.Unlock()
 	fake.FilterStub = nil
 	if fake.filterReturnsOnCall == nil {
 		fake.filterReturnsOnCall = make(map[int]struct {
@@ -117,54 +116,6 @@ func (fake *ProductOrderService) FilterReturnsOnCall(i int, result1 backend.Prod
 		})
 	}
 	fake.filterReturnsOnCall[i] = struct {
-		result1 backend.ProductOrderService
-	}{result1}
-}
-
-func (fake *ProductOrderService) Mask(arg1 string) backend.ProductOrderService {
-	fake.maskMutex.Lock()
-	ret, specificReturn := fake.maskReturnsOnCall[len(fake.maskArgsForCall)]
-	fake.maskArgsForCall = append(fake.maskArgsForCall, struct {
-		arg1 string
-	}{arg1})
-	fake.recordInvocation("Mask", []interface{}{arg1})
-	fake.maskMutex.Unlock()
-	if fake.MaskStub != nil {
-		return fake.MaskStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.maskReturns.result1
-}
-
-func (fake *ProductOrderService) MaskCallCount() int {
-	fake.maskMutex.RLock()
-	defer fake.maskMutex.RUnlock()
-	return len(fake.maskArgsForCall)
-}
-
-func (fake *ProductOrderService) MaskArgsForCall(i int) string {
-	fake.maskMutex.RLock()
-	defer fake.maskMutex.RUnlock()
-	return fake.maskArgsForCall[i].arg1
-}
-
-func (fake *ProductOrderService) MaskReturns(result1 backend.ProductOrderService) {
-	fake.MaskStub = nil
-	fake.maskReturns = struct {
-		result1 backend.ProductOrderService
-	}{result1}
-}
-
-func (fake *ProductOrderService) MaskReturnsOnCall(i int, result1 backend.ProductOrderService) {
-	fake.MaskStub = nil
-	if fake.maskReturnsOnCall == nil {
-		fake.maskReturnsOnCall = make(map[int]struct {
-			result1 backend.ProductOrderService
-		})
-	}
-	fake.maskReturnsOnCall[i] = struct {
 		result1 backend.ProductOrderService
 	}{result1}
 }
@@ -183,7 +134,8 @@ func (fake *ProductOrderService) ID(arg1 int) backend.ProductOrderService {
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.iDReturns.result1
+	fakeReturns := fake.iDReturns
+	return fakeReturns.result1
 }
 
 func (fake *ProductOrderService) IDCallCount() int {
@@ -192,13 +144,22 @@ func (fake *ProductOrderService) IDCallCount() int {
 	return len(fake.iDArgsForCall)
 }
 
+func (fake *ProductOrderService) IDCalls(stub func(int) backend.ProductOrderService) {
+	fake.iDMutex.Lock()
+	defer fake.iDMutex.Unlock()
+	fake.IDStub = stub
+}
+
 func (fake *ProductOrderService) IDArgsForCall(i int) int {
 	fake.iDMutex.RLock()
 	defer fake.iDMutex.RUnlock()
-	return fake.iDArgsForCall[i].arg1
+	argsForCall := fake.iDArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *ProductOrderService) IDReturns(result1 backend.ProductOrderService) {
+	fake.iDMutex.Lock()
+	defer fake.iDMutex.Unlock()
 	fake.IDStub = nil
 	fake.iDReturns = struct {
 		result1 backend.ProductOrderService
@@ -206,6 +167,8 @@ func (fake *ProductOrderService) IDReturns(result1 backend.ProductOrderService) 
 }
 
 func (fake *ProductOrderService) IDReturnsOnCall(i int, result1 backend.ProductOrderService) {
+	fake.iDMutex.Lock()
+	defer fake.iDMutex.Unlock()
 	fake.IDStub = nil
 	if fake.iDReturnsOnCall == nil {
 		fake.iDReturnsOnCall = make(map[int]struct {
@@ -217,11 +180,71 @@ func (fake *ProductOrderService) IDReturnsOnCall(i int, result1 backend.ProductO
 	}{result1}
 }
 
-func (fake *ProductOrderService) PlaceOrder(arg1 backend.ProductOrderContainer, arg2 *bool) (datatypes.Container_Product_Order_Receipt, error) {
+func (fake *ProductOrderService) Mask(arg1 string) backend.ProductOrderService {
+	fake.maskMutex.Lock()
+	ret, specificReturn := fake.maskReturnsOnCall[len(fake.maskArgsForCall)]
+	fake.maskArgsForCall = append(fake.maskArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("Mask", []interface{}{arg1})
+	fake.maskMutex.Unlock()
+	if fake.MaskStub != nil {
+		return fake.MaskStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.maskReturns
+	return fakeReturns.result1
+}
+
+func (fake *ProductOrderService) MaskCallCount() int {
+	fake.maskMutex.RLock()
+	defer fake.maskMutex.RUnlock()
+	return len(fake.maskArgsForCall)
+}
+
+func (fake *ProductOrderService) MaskCalls(stub func(string) backend.ProductOrderService) {
+	fake.maskMutex.Lock()
+	defer fake.maskMutex.Unlock()
+	fake.MaskStub = stub
+}
+
+func (fake *ProductOrderService) MaskArgsForCall(i int) string {
+	fake.maskMutex.RLock()
+	defer fake.maskMutex.RUnlock()
+	argsForCall := fake.maskArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *ProductOrderService) MaskReturns(result1 backend.ProductOrderService) {
+	fake.maskMutex.Lock()
+	defer fake.maskMutex.Unlock()
+	fake.MaskStub = nil
+	fake.maskReturns = struct {
+		result1 backend.ProductOrderService
+	}{result1}
+}
+
+func (fake *ProductOrderService) MaskReturnsOnCall(i int, result1 backend.ProductOrderService) {
+	fake.maskMutex.Lock()
+	defer fake.maskMutex.Unlock()
+	fake.MaskStub = nil
+	if fake.maskReturnsOnCall == nil {
+		fake.maskReturnsOnCall = make(map[int]struct {
+			result1 backend.ProductOrderService
+		})
+	}
+	fake.maskReturnsOnCall[i] = struct {
+		result1 backend.ProductOrderService
+	}{result1}
+}
+
+func (fake *ProductOrderService) PlaceOrder(arg1 interface{}, arg2 *bool) (datatypes.Container_Product_Order_Receipt, error) {
 	fake.placeOrderMutex.Lock()
 	ret, specificReturn := fake.placeOrderReturnsOnCall[len(fake.placeOrderArgsForCall)]
 	fake.placeOrderArgsForCall = append(fake.placeOrderArgsForCall, struct {
-		arg1 backend.ProductOrderContainer
+		arg1 interface{}
 		arg2 *bool
 	}{arg1, arg2})
 	fake.recordInvocation("PlaceOrder", []interface{}{arg1, arg2})
@@ -232,7 +255,8 @@ func (fake *ProductOrderService) PlaceOrder(arg1 backend.ProductOrderContainer, 
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.placeOrderReturns.result1, fake.placeOrderReturns.result2
+	fakeReturns := fake.placeOrderReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *ProductOrderService) PlaceOrderCallCount() int {
@@ -241,13 +265,22 @@ func (fake *ProductOrderService) PlaceOrderCallCount() int {
 	return len(fake.placeOrderArgsForCall)
 }
 
-func (fake *ProductOrderService) PlaceOrderArgsForCall(i int) (backend.ProductOrderContainer, *bool) {
+func (fake *ProductOrderService) PlaceOrderCalls(stub func(interface{}, *bool) (datatypes.Container_Product_Order_Receipt, error)) {
+	fake.placeOrderMutex.Lock()
+	defer fake.placeOrderMutex.Unlock()
+	fake.PlaceOrderStub = stub
+}
+
+func (fake *ProductOrderService) PlaceOrderArgsForCall(i int) (interface{}, *bool) {
 	fake.placeOrderMutex.RLock()
 	defer fake.placeOrderMutex.RUnlock()
-	return fake.placeOrderArgsForCall[i].arg1, fake.placeOrderArgsForCall[i].arg2
+	argsForCall := fake.placeOrderArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *ProductOrderService) PlaceOrderReturns(result1 datatypes.Container_Product_Order_Receipt, result2 error) {
+	fake.placeOrderMutex.Lock()
+	defer fake.placeOrderMutex.Unlock()
 	fake.PlaceOrderStub = nil
 	fake.placeOrderReturns = struct {
 		result1 datatypes.Container_Product_Order_Receipt
@@ -256,6 +289,8 @@ func (fake *ProductOrderService) PlaceOrderReturns(result1 datatypes.Container_P
 }
 
 func (fake *ProductOrderService) PlaceOrderReturnsOnCall(i int, result1 datatypes.Container_Product_Order_Receipt, result2 error) {
+	fake.placeOrderMutex.Lock()
+	defer fake.placeOrderMutex.Unlock()
 	fake.PlaceOrderStub = nil
 	if fake.placeOrderReturnsOnCall == nil {
 		fake.placeOrderReturnsOnCall = make(map[int]struct {
@@ -269,70 +304,17 @@ func (fake *ProductOrderService) PlaceOrderReturnsOnCall(i int, result1 datatype
 	}{result1, result2}
 }
 
-func (fake *ProductOrderService) VerifyOrder(arg1 backend.ProductOrderContainer) (datatypes.Container_Product_Order, error) {
-	fake.verifyOrderMutex.Lock()
-	ret, specificReturn := fake.verifyOrderReturnsOnCall[len(fake.verifyOrderArgsForCall)]
-	fake.verifyOrderArgsForCall = append(fake.verifyOrderArgsForCall, struct {
-		arg1 backend.ProductOrderContainer
-	}{arg1})
-	fake.recordInvocation("VerifyOrder", []interface{}{arg1})
-	fake.verifyOrderMutex.Unlock()
-	if fake.VerifyOrderStub != nil {
-		return fake.VerifyOrderStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1, ret.result2
-	}
-	return fake.verifyOrderReturns.result1, fake.verifyOrderReturns.result2
-}
-
-func (fake *ProductOrderService) VerifyOrderCallCount() int {
-	fake.verifyOrderMutex.RLock()
-	defer fake.verifyOrderMutex.RUnlock()
-	return len(fake.verifyOrderArgsForCall)
-}
-
-func (fake *ProductOrderService) VerifyOrderArgsForCall(i int) backend.ProductOrderContainer {
-	fake.verifyOrderMutex.RLock()
-	defer fake.verifyOrderMutex.RUnlock()
-	return fake.verifyOrderArgsForCall[i].arg1
-}
-
-func (fake *ProductOrderService) VerifyOrderReturns(result1 datatypes.Container_Product_Order, result2 error) {
-	fake.VerifyOrderStub = nil
-	fake.verifyOrderReturns = struct {
-		result1 datatypes.Container_Product_Order
-		result2 error
-	}{result1, result2}
-}
-
-func (fake *ProductOrderService) VerifyOrderReturnsOnCall(i int, result1 datatypes.Container_Product_Order, result2 error) {
-	fake.VerifyOrderStub = nil
-	if fake.verifyOrderReturnsOnCall == nil {
-		fake.verifyOrderReturnsOnCall = make(map[int]struct {
-			result1 datatypes.Container_Product_Order
-			result2 error
-		})
-	}
-	fake.verifyOrderReturnsOnCall[i] = struct {
-		result1 datatypes.Container_Product_Order
-		result2 error
-	}{result1, result2}
-}
-
 func (fake *ProductOrderService) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.filterMutex.RLock()
 	defer fake.filterMutex.RUnlock()
-	fake.maskMutex.RLock()
-	defer fake.maskMutex.RUnlock()
 	fake.iDMutex.RLock()
 	defer fake.iDMutex.RUnlock()
+	fake.maskMutex.RLock()
+	defer fake.maskMutex.RUnlock()
 	fake.placeOrderMutex.RLock()
 	defer fake.placeOrderMutex.RUnlock()
-	fake.verifyOrderMutex.RLock()
-	defer fake.verifyOrderMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

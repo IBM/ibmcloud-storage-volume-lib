@@ -2,32 +2,49 @@
 package fakes
 
 import (
-	"sync"
+	sync "sync"
 
-	"github.ibm.com/alchemy-containers/armada-cluster/iaas/softlayer/backend"
+	backend "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/backend"
 )
 
 type BillingItemService struct {
-	FilterStub        func(filter string) backend.BillingItemService
+	CancelItemStub        func(*bool, *bool, *string, *string) (bool, error)
+	cancelItemMutex       sync.RWMutex
+	cancelItemArgsForCall []struct {
+		arg1 *bool
+		arg2 *bool
+		arg3 *string
+		arg4 *string
+	}
+	cancelItemReturns struct {
+		result1 bool
+		result2 error
+	}
+	cancelItemReturnsOnCall map[int]struct {
+		result1 bool
+		result2 error
+	}
+	CancelServiceStub        func() (bool, error)
+	cancelServiceMutex       sync.RWMutex
+	cancelServiceArgsForCall []struct {
+	}
+	cancelServiceReturns struct {
+		result1 bool
+		result2 error
+	}
+	cancelServiceReturnsOnCall map[int]struct {
+		result1 bool
+		result2 error
+	}
+	FilterStub        func(string) backend.BillingItemService
 	filterMutex       sync.RWMutex
 	filterArgsForCall []struct {
-		filter string
+		arg1 string
 	}
 	filterReturns struct {
 		result1 backend.BillingItemService
 	}
 	filterReturnsOnCall map[int]struct {
-		result1 backend.BillingItemService
-	}
-	MaskStub        func(string) backend.BillingItemService
-	maskMutex       sync.RWMutex
-	maskArgsForCall []struct {
-		arg1 string
-	}
-	maskReturns struct {
-		result1 backend.BillingItemService
-	}
-	maskReturnsOnCall map[int]struct {
 		result1 backend.BillingItemService
 	}
 	IDStub        func(int) backend.BillingItemService
@@ -41,41 +58,158 @@ type BillingItemService struct {
 	iDReturnsOnCall map[int]struct {
 		result1 backend.BillingItemService
 	}
-	CancelItemStub        func(cancelImmediately *bool, cancelAssociatedBillingItems *bool, reason *string, customerNote *string) (resp bool, err error)
-	cancelItemMutex       sync.RWMutex
-	cancelItemArgsForCall []struct {
-		cancelImmediately            *bool
-		cancelAssociatedBillingItems *bool
-		reason                       *string
-		customerNote                 *string
+	MaskStub        func(string) backend.BillingItemService
+	maskMutex       sync.RWMutex
+	maskArgsForCall []struct {
+		arg1 string
 	}
-	cancelItemReturns struct {
-		result1 bool
-		result2 error
+	maskReturns struct {
+		result1 backend.BillingItemService
 	}
-	cancelItemReturnsOnCall map[int]struct {
-		result1 bool
-		result2 error
+	maskReturnsOnCall map[int]struct {
+		result1 backend.BillingItemService
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *BillingItemService) Filter(filter string) backend.BillingItemService {
+func (fake *BillingItemService) CancelItem(arg1 *bool, arg2 *bool, arg3 *string, arg4 *string) (bool, error) {
+	fake.cancelItemMutex.Lock()
+	ret, specificReturn := fake.cancelItemReturnsOnCall[len(fake.cancelItemArgsForCall)]
+	fake.cancelItemArgsForCall = append(fake.cancelItemArgsForCall, struct {
+		arg1 *bool
+		arg2 *bool
+		arg3 *string
+		arg4 *string
+	}{arg1, arg2, arg3, arg4})
+	fake.recordInvocation("CancelItem", []interface{}{arg1, arg2, arg3, arg4})
+	fake.cancelItemMutex.Unlock()
+	if fake.CancelItemStub != nil {
+		return fake.CancelItemStub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.cancelItemReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *BillingItemService) CancelItemCallCount() int {
+	fake.cancelItemMutex.RLock()
+	defer fake.cancelItemMutex.RUnlock()
+	return len(fake.cancelItemArgsForCall)
+}
+
+func (fake *BillingItemService) CancelItemCalls(stub func(*bool, *bool, *string, *string) (bool, error)) {
+	fake.cancelItemMutex.Lock()
+	defer fake.cancelItemMutex.Unlock()
+	fake.CancelItemStub = stub
+}
+
+func (fake *BillingItemService) CancelItemArgsForCall(i int) (*bool, *bool, *string, *string) {
+	fake.cancelItemMutex.RLock()
+	defer fake.cancelItemMutex.RUnlock()
+	argsForCall := fake.cancelItemArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *BillingItemService) CancelItemReturns(result1 bool, result2 error) {
+	fake.cancelItemMutex.Lock()
+	defer fake.cancelItemMutex.Unlock()
+	fake.CancelItemStub = nil
+	fake.cancelItemReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *BillingItemService) CancelItemReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.cancelItemMutex.Lock()
+	defer fake.cancelItemMutex.Unlock()
+	fake.CancelItemStub = nil
+	if fake.cancelItemReturnsOnCall == nil {
+		fake.cancelItemReturnsOnCall = make(map[int]struct {
+			result1 bool
+			result2 error
+		})
+	}
+	fake.cancelItemReturnsOnCall[i] = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *BillingItemService) CancelService() (bool, error) {
+	fake.cancelServiceMutex.Lock()
+	ret, specificReturn := fake.cancelServiceReturnsOnCall[len(fake.cancelServiceArgsForCall)]
+	fake.cancelServiceArgsForCall = append(fake.cancelServiceArgsForCall, struct {
+	}{})
+	fake.recordInvocation("CancelService", []interface{}{})
+	fake.cancelServiceMutex.Unlock()
+	if fake.CancelServiceStub != nil {
+		return fake.CancelServiceStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.cancelServiceReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *BillingItemService) CancelServiceCallCount() int {
+	fake.cancelServiceMutex.RLock()
+	defer fake.cancelServiceMutex.RUnlock()
+	return len(fake.cancelServiceArgsForCall)
+}
+
+func (fake *BillingItemService) CancelServiceCalls(stub func() (bool, error)) {
+	fake.cancelServiceMutex.Lock()
+	defer fake.cancelServiceMutex.Unlock()
+	fake.CancelServiceStub = stub
+}
+
+func (fake *BillingItemService) CancelServiceReturns(result1 bool, result2 error) {
+	fake.cancelServiceMutex.Lock()
+	defer fake.cancelServiceMutex.Unlock()
+	fake.CancelServiceStub = nil
+	fake.cancelServiceReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *BillingItemService) CancelServiceReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.cancelServiceMutex.Lock()
+	defer fake.cancelServiceMutex.Unlock()
+	fake.CancelServiceStub = nil
+	if fake.cancelServiceReturnsOnCall == nil {
+		fake.cancelServiceReturnsOnCall = make(map[int]struct {
+			result1 bool
+			result2 error
+		})
+	}
+	fake.cancelServiceReturnsOnCall[i] = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *BillingItemService) Filter(arg1 string) backend.BillingItemService {
 	fake.filterMutex.Lock()
 	ret, specificReturn := fake.filterReturnsOnCall[len(fake.filterArgsForCall)]
 	fake.filterArgsForCall = append(fake.filterArgsForCall, struct {
-		filter string
-	}{filter})
-	fake.recordInvocation("Filter", []interface{}{filter})
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("Filter", []interface{}{arg1})
 	fake.filterMutex.Unlock()
 	if fake.FilterStub != nil {
-		return fake.FilterStub(filter)
+		return fake.FilterStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.filterReturns.result1
+	fakeReturns := fake.filterReturns
+	return fakeReturns.result1
 }
 
 func (fake *BillingItemService) FilterCallCount() int {
@@ -84,13 +218,22 @@ func (fake *BillingItemService) FilterCallCount() int {
 	return len(fake.filterArgsForCall)
 }
 
+func (fake *BillingItemService) FilterCalls(stub func(string) backend.BillingItemService) {
+	fake.filterMutex.Lock()
+	defer fake.filterMutex.Unlock()
+	fake.FilterStub = stub
+}
+
 func (fake *BillingItemService) FilterArgsForCall(i int) string {
 	fake.filterMutex.RLock()
 	defer fake.filterMutex.RUnlock()
-	return fake.filterArgsForCall[i].filter
+	argsForCall := fake.filterArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *BillingItemService) FilterReturns(result1 backend.BillingItemService) {
+	fake.filterMutex.Lock()
+	defer fake.filterMutex.Unlock()
 	fake.FilterStub = nil
 	fake.filterReturns = struct {
 		result1 backend.BillingItemService
@@ -98,6 +241,8 @@ func (fake *BillingItemService) FilterReturns(result1 backend.BillingItemService
 }
 
 func (fake *BillingItemService) FilterReturnsOnCall(i int, result1 backend.BillingItemService) {
+	fake.filterMutex.Lock()
+	defer fake.filterMutex.Unlock()
 	fake.FilterStub = nil
 	if fake.filterReturnsOnCall == nil {
 		fake.filterReturnsOnCall = make(map[int]struct {
@@ -105,54 +250,6 @@ func (fake *BillingItemService) FilterReturnsOnCall(i int, result1 backend.Billi
 		})
 	}
 	fake.filterReturnsOnCall[i] = struct {
-		result1 backend.BillingItemService
-	}{result1}
-}
-
-func (fake *BillingItemService) Mask(arg1 string) backend.BillingItemService {
-	fake.maskMutex.Lock()
-	ret, specificReturn := fake.maskReturnsOnCall[len(fake.maskArgsForCall)]
-	fake.maskArgsForCall = append(fake.maskArgsForCall, struct {
-		arg1 string
-	}{arg1})
-	fake.recordInvocation("Mask", []interface{}{arg1})
-	fake.maskMutex.Unlock()
-	if fake.MaskStub != nil {
-		return fake.MaskStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.maskReturns.result1
-}
-
-func (fake *BillingItemService) MaskCallCount() int {
-	fake.maskMutex.RLock()
-	defer fake.maskMutex.RUnlock()
-	return len(fake.maskArgsForCall)
-}
-
-func (fake *BillingItemService) MaskArgsForCall(i int) string {
-	fake.maskMutex.RLock()
-	defer fake.maskMutex.RUnlock()
-	return fake.maskArgsForCall[i].arg1
-}
-
-func (fake *BillingItemService) MaskReturns(result1 backend.BillingItemService) {
-	fake.MaskStub = nil
-	fake.maskReturns = struct {
-		result1 backend.BillingItemService
-	}{result1}
-}
-
-func (fake *BillingItemService) MaskReturnsOnCall(i int, result1 backend.BillingItemService) {
-	fake.MaskStub = nil
-	if fake.maskReturnsOnCall == nil {
-		fake.maskReturnsOnCall = make(map[int]struct {
-			result1 backend.BillingItemService
-		})
-	}
-	fake.maskReturnsOnCall[i] = struct {
 		result1 backend.BillingItemService
 	}{result1}
 }
@@ -171,7 +268,8 @@ func (fake *BillingItemService) ID(arg1 int) backend.BillingItemService {
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.iDReturns.result1
+	fakeReturns := fake.iDReturns
+	return fakeReturns.result1
 }
 
 func (fake *BillingItemService) IDCallCount() int {
@@ -180,13 +278,22 @@ func (fake *BillingItemService) IDCallCount() int {
 	return len(fake.iDArgsForCall)
 }
 
+func (fake *BillingItemService) IDCalls(stub func(int) backend.BillingItemService) {
+	fake.iDMutex.Lock()
+	defer fake.iDMutex.Unlock()
+	fake.IDStub = stub
+}
+
 func (fake *BillingItemService) IDArgsForCall(i int) int {
 	fake.iDMutex.RLock()
 	defer fake.iDMutex.RUnlock()
-	return fake.iDArgsForCall[i].arg1
+	argsForCall := fake.iDArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *BillingItemService) IDReturns(result1 backend.BillingItemService) {
+	fake.iDMutex.Lock()
+	defer fake.iDMutex.Unlock()
 	fake.IDStub = nil
 	fake.iDReturns = struct {
 		result1 backend.BillingItemService
@@ -194,6 +301,8 @@ func (fake *BillingItemService) IDReturns(result1 backend.BillingItemService) {
 }
 
 func (fake *BillingItemService) IDReturnsOnCall(i int, result1 backend.BillingItemService) {
+	fake.iDMutex.Lock()
+	defer fake.iDMutex.Unlock()
 	fake.IDStub = nil
 	if fake.iDReturnsOnCall == nil {
 		fake.iDReturnsOnCall = make(map[int]struct {
@@ -205,71 +314,79 @@ func (fake *BillingItemService) IDReturnsOnCall(i int, result1 backend.BillingIt
 	}{result1}
 }
 
-func (fake *BillingItemService) CancelItem(cancelImmediately *bool, cancelAssociatedBillingItems *bool, reason *string, customerNote *string) (resp bool, err error) {
-	fake.cancelItemMutex.Lock()
-	ret, specificReturn := fake.cancelItemReturnsOnCall[len(fake.cancelItemArgsForCall)]
-	fake.cancelItemArgsForCall = append(fake.cancelItemArgsForCall, struct {
-		cancelImmediately            *bool
-		cancelAssociatedBillingItems *bool
-		reason                       *string
-		customerNote                 *string
-	}{cancelImmediately, cancelAssociatedBillingItems, reason, customerNote})
-	fake.recordInvocation("CancelItem", []interface{}{cancelImmediately, cancelAssociatedBillingItems, reason, customerNote})
-	fake.cancelItemMutex.Unlock()
-	if fake.CancelItemStub != nil {
-		return fake.CancelItemStub(cancelImmediately, cancelAssociatedBillingItems, reason, customerNote)
+func (fake *BillingItemService) Mask(arg1 string) backend.BillingItemService {
+	fake.maskMutex.Lock()
+	ret, specificReturn := fake.maskReturnsOnCall[len(fake.maskArgsForCall)]
+	fake.maskArgsForCall = append(fake.maskArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("Mask", []interface{}{arg1})
+	fake.maskMutex.Unlock()
+	if fake.MaskStub != nil {
+		return fake.MaskStub(arg1)
 	}
 	if specificReturn {
-		return ret.result1, ret.result2
+		return ret.result1
 	}
-	return fake.cancelItemReturns.result1, fake.cancelItemReturns.result2
+	fakeReturns := fake.maskReturns
+	return fakeReturns.result1
 }
 
-func (fake *BillingItemService) CancelItemCallCount() int {
-	fake.cancelItemMutex.RLock()
-	defer fake.cancelItemMutex.RUnlock()
-	return len(fake.cancelItemArgsForCall)
+func (fake *BillingItemService) MaskCallCount() int {
+	fake.maskMutex.RLock()
+	defer fake.maskMutex.RUnlock()
+	return len(fake.maskArgsForCall)
 }
 
-func (fake *BillingItemService) CancelItemArgsForCall(i int) (*bool, *bool, *string, *string) {
-	fake.cancelItemMutex.RLock()
-	defer fake.cancelItemMutex.RUnlock()
-	return fake.cancelItemArgsForCall[i].cancelImmediately, fake.cancelItemArgsForCall[i].cancelAssociatedBillingItems, fake.cancelItemArgsForCall[i].reason, fake.cancelItemArgsForCall[i].customerNote
+func (fake *BillingItemService) MaskCalls(stub func(string) backend.BillingItemService) {
+	fake.maskMutex.Lock()
+	defer fake.maskMutex.Unlock()
+	fake.MaskStub = stub
 }
 
-func (fake *BillingItemService) CancelItemReturns(result1 bool, result2 error) {
-	fake.CancelItemStub = nil
-	fake.cancelItemReturns = struct {
-		result1 bool
-		result2 error
-	}{result1, result2}
+func (fake *BillingItemService) MaskArgsForCall(i int) string {
+	fake.maskMutex.RLock()
+	defer fake.maskMutex.RUnlock()
+	argsForCall := fake.maskArgsForCall[i]
+	return argsForCall.arg1
 }
 
-func (fake *BillingItemService) CancelItemReturnsOnCall(i int, result1 bool, result2 error) {
-	fake.CancelItemStub = nil
-	if fake.cancelItemReturnsOnCall == nil {
-		fake.cancelItemReturnsOnCall = make(map[int]struct {
-			result1 bool
-			result2 error
+func (fake *BillingItemService) MaskReturns(result1 backend.BillingItemService) {
+	fake.maskMutex.Lock()
+	defer fake.maskMutex.Unlock()
+	fake.MaskStub = nil
+	fake.maskReturns = struct {
+		result1 backend.BillingItemService
+	}{result1}
+}
+
+func (fake *BillingItemService) MaskReturnsOnCall(i int, result1 backend.BillingItemService) {
+	fake.maskMutex.Lock()
+	defer fake.maskMutex.Unlock()
+	fake.MaskStub = nil
+	if fake.maskReturnsOnCall == nil {
+		fake.maskReturnsOnCall = make(map[int]struct {
+			result1 backend.BillingItemService
 		})
 	}
-	fake.cancelItemReturnsOnCall[i] = struct {
-		result1 bool
-		result2 error
-	}{result1, result2}
+	fake.maskReturnsOnCall[i] = struct {
+		result1 backend.BillingItemService
+	}{result1}
 }
 
 func (fake *BillingItemService) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.filterMutex.RLock()
-	defer fake.filterMutex.RUnlock()
-	fake.maskMutex.RLock()
-	defer fake.maskMutex.RUnlock()
-	fake.iDMutex.RLock()
-	defer fake.iDMutex.RUnlock()
 	fake.cancelItemMutex.RLock()
 	defer fake.cancelItemMutex.RUnlock()
+	fake.cancelServiceMutex.RLock()
+	defer fake.cancelServiceMutex.RUnlock()
+	fake.filterMutex.RLock()
+	defer fake.filterMutex.RUnlock()
+	fake.iDMutex.RLock()
+	defer fake.iDMutex.RUnlock()
+	fake.maskMutex.RLock()
+	defer fake.maskMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
