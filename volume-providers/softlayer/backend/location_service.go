@@ -15,8 +15,8 @@ import (
 	"github.com/softlayer/softlayer-go/services"
 )
 
-// AccountService is a wrapping interface for the softlayer-go API's AccountService
-//go:generate counterfeiter -o fakes/account_service.go --fake-name AccountService . AccountService
+// LocationService is a wrapping interface for the softlayer-go API's LocationService
+//go:generate counterfeiter -o fakes/location_service.go --fake-name LocationService . LocationService
 type LocationService interface {
 	Filter(string) LocationService
 	Mask(string) LocationService

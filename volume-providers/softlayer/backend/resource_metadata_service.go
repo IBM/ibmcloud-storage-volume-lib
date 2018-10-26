@@ -15,8 +15,8 @@ import (
 	"github.com/softlayer/softlayer-go/services"
 )
 
-// AccountService is a wrapping interface for the softlayer-go API's AccountService
-//go:generate counterfeiter -o fakes/account_service.go --fake-name AccountService . AccountService
+// ResourceMetadataService is a wrapping interface for the softlayer-go API's AccountService
+//go:generate counterfeiter -o fakes/resource_metatdata_service.go --fake-name ResourceMetadataService . ResourceMetadataService
 type ResourceMetadataService interface {
 	Filter(string) ResourceMetadataService
 	Mask(string) ResourceMetadataService

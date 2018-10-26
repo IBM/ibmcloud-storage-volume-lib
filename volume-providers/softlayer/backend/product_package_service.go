@@ -15,8 +15,8 @@ import (
 	"github.com/softlayer/softlayer-go/services"
 )
 
-// AccountService is a wrapping interface for the softlayer-go API's AccountService
-//go:generate counterfeiter -o fakes/account_service.go --fake-name AccountService . AccountService
+// ProductPackageService is a wrapping interface for the softlayer-go API's AccountService
+//go:generate counterfeiter -o fakes/product_package_service.go --fake-name ProductPackageService . ProductPackageService
 type ProductPackageService interface {
 	Filter(string) ProductPackageService
 	Mask(string) ProductPackageService

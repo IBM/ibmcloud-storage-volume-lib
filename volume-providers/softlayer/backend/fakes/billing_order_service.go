@@ -8,69 +8,69 @@ import (
 	datatypes "github.com/softlayer/softlayer-go/datatypes"
 )
 
-type ProductPackageService struct {
-	FilterStub        func(string) backend.ProductPackageService
+type BillingOrderService struct {
+	FilterStub        func(string) backend.BillingOrderService
 	filterMutex       sync.RWMutex
 	filterArgsForCall []struct {
 		arg1 string
 	}
 	filterReturns struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}
 	filterReturnsOnCall map[int]struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}
-	GetAllObjectsStub        func() ([]datatypes.Product_Package, error)
+	GetAllObjectsStub        func() ([]datatypes.Billing_Order, error)
 	getAllObjectsMutex       sync.RWMutex
 	getAllObjectsArgsForCall []struct {
 	}
 	getAllObjectsReturns struct {
-		result1 []datatypes.Product_Package
+		result1 []datatypes.Billing_Order
 		result2 error
 	}
 	getAllObjectsReturnsOnCall map[int]struct {
-		result1 []datatypes.Product_Package
+		result1 []datatypes.Billing_Order
 		result2 error
 	}
-	GetItemPricesStub        func() ([]datatypes.Product_Item_Price, error)
-	getItemPricesMutex       sync.RWMutex
-	getItemPricesArgsForCall []struct {
+	GetObjectStub        func() (datatypes.Billing_Order, error)
+	getObjectMutex       sync.RWMutex
+	getObjectArgsForCall []struct {
 	}
-	getItemPricesReturns struct {
-		result1 []datatypes.Product_Item_Price
+	getObjectReturns struct {
+		result1 datatypes.Billing_Order
 		result2 error
 	}
-	getItemPricesReturnsOnCall map[int]struct {
-		result1 []datatypes.Product_Item_Price
+	getObjectReturnsOnCall map[int]struct {
+		result1 datatypes.Billing_Order
 		result2 error
 	}
-	IDStub        func(int) backend.ProductPackageService
+	IDStub        func(int) backend.BillingOrderService
 	iDMutex       sync.RWMutex
 	iDArgsForCall []struct {
 		arg1 int
 	}
 	iDReturns struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}
 	iDReturnsOnCall map[int]struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}
-	MaskStub        func(string) backend.ProductPackageService
+	MaskStub        func(string) backend.BillingOrderService
 	maskMutex       sync.RWMutex
 	maskArgsForCall []struct {
 		arg1 string
 	}
 	maskReturns struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}
 	maskReturnsOnCall map[int]struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *ProductPackageService) Filter(arg1 string) backend.ProductPackageService {
+func (fake *BillingOrderService) Filter(arg1 string) backend.BillingOrderService {
 	fake.filterMutex.Lock()
 	ret, specificReturn := fake.filterReturnsOnCall[len(fake.filterArgsForCall)]
 	fake.filterArgsForCall = append(fake.filterArgsForCall, struct {
@@ -88,49 +88,49 @@ func (fake *ProductPackageService) Filter(arg1 string) backend.ProductPackageSer
 	return fakeReturns.result1
 }
 
-func (fake *ProductPackageService) FilterCallCount() int {
+func (fake *BillingOrderService) FilterCallCount() int {
 	fake.filterMutex.RLock()
 	defer fake.filterMutex.RUnlock()
 	return len(fake.filterArgsForCall)
 }
 
-func (fake *ProductPackageService) FilterCalls(stub func(string) backend.ProductPackageService) {
+func (fake *BillingOrderService) FilterCalls(stub func(string) backend.BillingOrderService) {
 	fake.filterMutex.Lock()
 	defer fake.filterMutex.Unlock()
 	fake.FilterStub = stub
 }
 
-func (fake *ProductPackageService) FilterArgsForCall(i int) string {
+func (fake *BillingOrderService) FilterArgsForCall(i int) string {
 	fake.filterMutex.RLock()
 	defer fake.filterMutex.RUnlock()
 	argsForCall := fake.filterArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *ProductPackageService) FilterReturns(result1 backend.ProductPackageService) {
+func (fake *BillingOrderService) FilterReturns(result1 backend.BillingOrderService) {
 	fake.filterMutex.Lock()
 	defer fake.filterMutex.Unlock()
 	fake.FilterStub = nil
 	fake.filterReturns = struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}{result1}
 }
 
-func (fake *ProductPackageService) FilterReturnsOnCall(i int, result1 backend.ProductPackageService) {
+func (fake *BillingOrderService) FilterReturnsOnCall(i int, result1 backend.BillingOrderService) {
 	fake.filterMutex.Lock()
 	defer fake.filterMutex.Unlock()
 	fake.FilterStub = nil
 	if fake.filterReturnsOnCall == nil {
 		fake.filterReturnsOnCall = make(map[int]struct {
-			result1 backend.ProductPackageService
+			result1 backend.BillingOrderService
 		})
 	}
 	fake.filterReturnsOnCall[i] = struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}{result1}
 }
 
-func (fake *ProductPackageService) GetAllObjects() ([]datatypes.Product_Package, error) {
+func (fake *BillingOrderService) GetAllObjects() ([]datatypes.Billing_Order, error) {
 	fake.getAllObjectsMutex.Lock()
 	ret, specificReturn := fake.getAllObjectsReturnsOnCall[len(fake.getAllObjectsArgsForCall)]
 	fake.getAllObjectsArgsForCall = append(fake.getAllObjectsArgsForCall, struct {
@@ -147,100 +147,100 @@ func (fake *ProductPackageService) GetAllObjects() ([]datatypes.Product_Package,
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *ProductPackageService) GetAllObjectsCallCount() int {
+func (fake *BillingOrderService) GetAllObjectsCallCount() int {
 	fake.getAllObjectsMutex.RLock()
 	defer fake.getAllObjectsMutex.RUnlock()
 	return len(fake.getAllObjectsArgsForCall)
 }
 
-func (fake *ProductPackageService) GetAllObjectsCalls(stub func() ([]datatypes.Product_Package, error)) {
+func (fake *BillingOrderService) GetAllObjectsCalls(stub func() ([]datatypes.Billing_Order, error)) {
 	fake.getAllObjectsMutex.Lock()
 	defer fake.getAllObjectsMutex.Unlock()
 	fake.GetAllObjectsStub = stub
 }
 
-func (fake *ProductPackageService) GetAllObjectsReturns(result1 []datatypes.Product_Package, result2 error) {
+func (fake *BillingOrderService) GetAllObjectsReturns(result1 []datatypes.Billing_Order, result2 error) {
 	fake.getAllObjectsMutex.Lock()
 	defer fake.getAllObjectsMutex.Unlock()
 	fake.GetAllObjectsStub = nil
 	fake.getAllObjectsReturns = struct {
-		result1 []datatypes.Product_Package
+		result1 []datatypes.Billing_Order
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *ProductPackageService) GetAllObjectsReturnsOnCall(i int, result1 []datatypes.Product_Package, result2 error) {
+func (fake *BillingOrderService) GetAllObjectsReturnsOnCall(i int, result1 []datatypes.Billing_Order, result2 error) {
 	fake.getAllObjectsMutex.Lock()
 	defer fake.getAllObjectsMutex.Unlock()
 	fake.GetAllObjectsStub = nil
 	if fake.getAllObjectsReturnsOnCall == nil {
 		fake.getAllObjectsReturnsOnCall = make(map[int]struct {
-			result1 []datatypes.Product_Package
+			result1 []datatypes.Billing_Order
 			result2 error
 		})
 	}
 	fake.getAllObjectsReturnsOnCall[i] = struct {
-		result1 []datatypes.Product_Package
+		result1 []datatypes.Billing_Order
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *ProductPackageService) GetItemPrices() ([]datatypes.Product_Item_Price, error) {
-	fake.getItemPricesMutex.Lock()
-	ret, specificReturn := fake.getItemPricesReturnsOnCall[len(fake.getItemPricesArgsForCall)]
-	fake.getItemPricesArgsForCall = append(fake.getItemPricesArgsForCall, struct {
+func (fake *BillingOrderService) GetObject() (datatypes.Billing_Order, error) {
+	fake.getObjectMutex.Lock()
+	ret, specificReturn := fake.getObjectReturnsOnCall[len(fake.getObjectArgsForCall)]
+	fake.getObjectArgsForCall = append(fake.getObjectArgsForCall, struct {
 	}{})
-	fake.recordInvocation("GetItemPrices", []interface{}{})
-	fake.getItemPricesMutex.Unlock()
-	if fake.GetItemPricesStub != nil {
-		return fake.GetItemPricesStub()
+	fake.recordInvocation("GetObject", []interface{}{})
+	fake.getObjectMutex.Unlock()
+	if fake.GetObjectStub != nil {
+		return fake.GetObjectStub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getItemPricesReturns
+	fakeReturns := fake.getObjectReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *ProductPackageService) GetItemPricesCallCount() int {
-	fake.getItemPricesMutex.RLock()
-	defer fake.getItemPricesMutex.RUnlock()
-	return len(fake.getItemPricesArgsForCall)
+func (fake *BillingOrderService) GetObjectCallCount() int {
+	fake.getObjectMutex.RLock()
+	defer fake.getObjectMutex.RUnlock()
+	return len(fake.getObjectArgsForCall)
 }
 
-func (fake *ProductPackageService) GetItemPricesCalls(stub func() ([]datatypes.Product_Item_Price, error)) {
-	fake.getItemPricesMutex.Lock()
-	defer fake.getItemPricesMutex.Unlock()
-	fake.GetItemPricesStub = stub
+func (fake *BillingOrderService) GetObjectCalls(stub func() (datatypes.Billing_Order, error)) {
+	fake.getObjectMutex.Lock()
+	defer fake.getObjectMutex.Unlock()
+	fake.GetObjectStub = stub
 }
 
-func (fake *ProductPackageService) GetItemPricesReturns(result1 []datatypes.Product_Item_Price, result2 error) {
-	fake.getItemPricesMutex.Lock()
-	defer fake.getItemPricesMutex.Unlock()
-	fake.GetItemPricesStub = nil
-	fake.getItemPricesReturns = struct {
-		result1 []datatypes.Product_Item_Price
+func (fake *BillingOrderService) GetObjectReturns(result1 datatypes.Billing_Order, result2 error) {
+	fake.getObjectMutex.Lock()
+	defer fake.getObjectMutex.Unlock()
+	fake.GetObjectStub = nil
+	fake.getObjectReturns = struct {
+		result1 datatypes.Billing_Order
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *ProductPackageService) GetItemPricesReturnsOnCall(i int, result1 []datatypes.Product_Item_Price, result2 error) {
-	fake.getItemPricesMutex.Lock()
-	defer fake.getItemPricesMutex.Unlock()
-	fake.GetItemPricesStub = nil
-	if fake.getItemPricesReturnsOnCall == nil {
-		fake.getItemPricesReturnsOnCall = make(map[int]struct {
-			result1 []datatypes.Product_Item_Price
+func (fake *BillingOrderService) GetObjectReturnsOnCall(i int, result1 datatypes.Billing_Order, result2 error) {
+	fake.getObjectMutex.Lock()
+	defer fake.getObjectMutex.Unlock()
+	fake.GetObjectStub = nil
+	if fake.getObjectReturnsOnCall == nil {
+		fake.getObjectReturnsOnCall = make(map[int]struct {
+			result1 datatypes.Billing_Order
 			result2 error
 		})
 	}
-	fake.getItemPricesReturnsOnCall[i] = struct {
-		result1 []datatypes.Product_Item_Price
+	fake.getObjectReturnsOnCall[i] = struct {
+		result1 datatypes.Billing_Order
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *ProductPackageService) ID(arg1 int) backend.ProductPackageService {
+func (fake *BillingOrderService) ID(arg1 int) backend.BillingOrderService {
 	fake.iDMutex.Lock()
 	ret, specificReturn := fake.iDReturnsOnCall[len(fake.iDArgsForCall)]
 	fake.iDArgsForCall = append(fake.iDArgsForCall, struct {
@@ -258,49 +258,49 @@ func (fake *ProductPackageService) ID(arg1 int) backend.ProductPackageService {
 	return fakeReturns.result1
 }
 
-func (fake *ProductPackageService) IDCallCount() int {
+func (fake *BillingOrderService) IDCallCount() int {
 	fake.iDMutex.RLock()
 	defer fake.iDMutex.RUnlock()
 	return len(fake.iDArgsForCall)
 }
 
-func (fake *ProductPackageService) IDCalls(stub func(int) backend.ProductPackageService) {
+func (fake *BillingOrderService) IDCalls(stub func(int) backend.BillingOrderService) {
 	fake.iDMutex.Lock()
 	defer fake.iDMutex.Unlock()
 	fake.IDStub = stub
 }
 
-func (fake *ProductPackageService) IDArgsForCall(i int) int {
+func (fake *BillingOrderService) IDArgsForCall(i int) int {
 	fake.iDMutex.RLock()
 	defer fake.iDMutex.RUnlock()
 	argsForCall := fake.iDArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *ProductPackageService) IDReturns(result1 backend.ProductPackageService) {
+func (fake *BillingOrderService) IDReturns(result1 backend.BillingOrderService) {
 	fake.iDMutex.Lock()
 	defer fake.iDMutex.Unlock()
 	fake.IDStub = nil
 	fake.iDReturns = struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}{result1}
 }
 
-func (fake *ProductPackageService) IDReturnsOnCall(i int, result1 backend.ProductPackageService) {
+func (fake *BillingOrderService) IDReturnsOnCall(i int, result1 backend.BillingOrderService) {
 	fake.iDMutex.Lock()
 	defer fake.iDMutex.Unlock()
 	fake.IDStub = nil
 	if fake.iDReturnsOnCall == nil {
 		fake.iDReturnsOnCall = make(map[int]struct {
-			result1 backend.ProductPackageService
+			result1 backend.BillingOrderService
 		})
 	}
 	fake.iDReturnsOnCall[i] = struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}{result1}
 }
 
-func (fake *ProductPackageService) Mask(arg1 string) backend.ProductPackageService {
+func (fake *BillingOrderService) Mask(arg1 string) backend.BillingOrderService {
 	fake.maskMutex.Lock()
 	ret, specificReturn := fake.maskReturnsOnCall[len(fake.maskArgsForCall)]
 	fake.maskArgsForCall = append(fake.maskArgsForCall, struct {
@@ -318,57 +318,57 @@ func (fake *ProductPackageService) Mask(arg1 string) backend.ProductPackageServi
 	return fakeReturns.result1
 }
 
-func (fake *ProductPackageService) MaskCallCount() int {
+func (fake *BillingOrderService) MaskCallCount() int {
 	fake.maskMutex.RLock()
 	defer fake.maskMutex.RUnlock()
 	return len(fake.maskArgsForCall)
 }
 
-func (fake *ProductPackageService) MaskCalls(stub func(string) backend.ProductPackageService) {
+func (fake *BillingOrderService) MaskCalls(stub func(string) backend.BillingOrderService) {
 	fake.maskMutex.Lock()
 	defer fake.maskMutex.Unlock()
 	fake.MaskStub = stub
 }
 
-func (fake *ProductPackageService) MaskArgsForCall(i int) string {
+func (fake *BillingOrderService) MaskArgsForCall(i int) string {
 	fake.maskMutex.RLock()
 	defer fake.maskMutex.RUnlock()
 	argsForCall := fake.maskArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *ProductPackageService) MaskReturns(result1 backend.ProductPackageService) {
+func (fake *BillingOrderService) MaskReturns(result1 backend.BillingOrderService) {
 	fake.maskMutex.Lock()
 	defer fake.maskMutex.Unlock()
 	fake.MaskStub = nil
 	fake.maskReturns = struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}{result1}
 }
 
-func (fake *ProductPackageService) MaskReturnsOnCall(i int, result1 backend.ProductPackageService) {
+func (fake *BillingOrderService) MaskReturnsOnCall(i int, result1 backend.BillingOrderService) {
 	fake.maskMutex.Lock()
 	defer fake.maskMutex.Unlock()
 	fake.MaskStub = nil
 	if fake.maskReturnsOnCall == nil {
 		fake.maskReturnsOnCall = make(map[int]struct {
-			result1 backend.ProductPackageService
+			result1 backend.BillingOrderService
 		})
 	}
 	fake.maskReturnsOnCall[i] = struct {
-		result1 backend.ProductPackageService
+		result1 backend.BillingOrderService
 	}{result1}
 }
 
-func (fake *ProductPackageService) Invocations() map[string][][]interface{} {
+func (fake *BillingOrderService) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.filterMutex.RLock()
 	defer fake.filterMutex.RUnlock()
 	fake.getAllObjectsMutex.RLock()
 	defer fake.getAllObjectsMutex.RUnlock()
-	fake.getItemPricesMutex.RLock()
-	defer fake.getItemPricesMutex.RUnlock()
+	fake.getObjectMutex.RLock()
+	defer fake.getObjectMutex.RUnlock()
 	fake.iDMutex.RLock()
 	defer fake.iDMutex.RUnlock()
 	fake.maskMutex.RLock()
@@ -380,7 +380,7 @@ func (fake *ProductPackageService) Invocations() map[string][][]interface{} {
 	return copiedInvocations
 }
 
-func (fake *ProductPackageService) recordInvocation(key string, args []interface{}) {
+func (fake *BillingOrderService) recordInvocation(key string, args []interface{}) {
 	fake.invocationsMutex.Lock()
 	defer fake.invocationsMutex.Unlock()
 	if fake.invocations == nil {
@@ -392,4 +392,4 @@ func (fake *ProductPackageService) recordInvocation(key string, args []interface
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ backend.ProductPackageService = new(ProductPackageService)
+var _ backend.BillingOrderService = new(BillingOrderService)

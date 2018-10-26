@@ -11,7 +11,6 @@
 package backend
 
 //Session interface describes methods requiring implementation
-//go:generate counterfeiter -o fakes/session.go --fake-name Session . Session
 type Session interface {
 	GetAccountService() AccountService
 	GetBillingItemService() BillingItemService

@@ -16,6 +16,7 @@ import (
 )
 
 // BillingOrderService is a wrapping interface for the softlayer-go API's BillingOrderService
+//go:generate counterfeiter -o fakes/billing_order_service.go --fake-name BillingOrderService . BillingOrderService
 type BillingOrderService interface {
 	Filter(filter string) BillingOrderService
 	Mask(string) BillingOrderService
