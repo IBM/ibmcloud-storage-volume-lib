@@ -43,13 +43,13 @@ type SLFileProvider struct {
 	tokenGenerator *tokenGenerator
 	contextCF      local.ContextCredentialsFactory
 
-	NewBackendSession func(url string, credentials provider.ContextCredentials, httpClient *http.Client, debug bool, logger zap.Logger) backend.Session
+	NewBackendSession func(url string, credentials provider.ContextCredentials, httpClient *http.Client, debug bool, logger *zap.Logger) backend.Session
 }
 
 var _ local.Provider = &SLFileProvider{}
 
 // NewProvider initialises an instance of an IaaS provider.
-func NewProvider(conf *config.Config, logger zap.Logger) (local.Provider, error) {
+func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error) {
 	if conf.Bluemix == nil || conf.Softlayer == nil {
 		return nil, errors.New("Incomplete config for SLProvider")
 	}
@@ -89,7 +89,7 @@ func (slp *SLFileProvider) ContextCredentialsFactory(zone *string) (local.Contex
 }
 
 // OpenSession opens a session on the provider
-func (slp *SLFileProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, logger zap.Logger) (provider.Session, error) {
+func (slp *SLFileProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, logger *zap.Logger) (provider.Session, error) {
 
 	slSession := &SLFileSession{
 		common.SLSession{

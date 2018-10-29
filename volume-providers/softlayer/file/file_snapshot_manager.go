@@ -284,7 +284,7 @@ func (sls *SLFileSession) ListAllSnapshotsForVolume(volumeID string) ([]*provide
 	sls.Logger.Info("snapshot details are", zap.Reflect("snapshotvolumesss", snapshotvol), zap.Error(err))
 	*/
 	orderID := utils.ToInt(volumeID)
-	storageID, errID := utils.GetStorageID(sls.Backend, orderID, sls.Logger)
+	storageID, errID := utils.GetStorageID(sls.Backend, string(sls.SLSession.VolumeType), orderID, sls.Logger, sls.Config)
 	if errID != nil {
 		return nil, messages.GetUserError("E0011", errID, orderID)
 	}

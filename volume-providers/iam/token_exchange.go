@@ -21,8 +21,8 @@ import (
 	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/auth"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"github.com/IBM/ibmcloud-storage-volume-lib/provider/auth"
 )
 
 type tokenExchangeService struct {
@@ -49,7 +49,7 @@ type tokenExchangeRequest struct {
 	tes     *tokenExchangeService
 	request *rest.Request
 	client  *rest.Client
-	logger  zap.Logger
+	logger  *zap.Logger
 }
 
 type tokenExchangeResponse struct {
@@ -59,7 +59,7 @@ type tokenExchangeResponse struct {
 }
 
 // ExchangeRefreshTokenForAccessToken ...
-func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger zap.Logger) (*auth.AccessToken, error) {
+func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*auth.AccessToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "refresh_token")
@@ -69,7 +69,7 @@ func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken
 }
 
 // ExchangeAccessTokenForIMSToken ...
-func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken auth.AccessToken, logger zap.Logger) (*auth.IMSToken, error) {
+func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken auth.AccessToken, logger *zap.Logger) (*auth.IMSToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:derive")
@@ -80,7 +80,7 @@ func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken auth
 }
 
 // ExchangeIAMAPIKeyForIMSToken ...
-func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger zap.Logger) (*auth.IMSToken, error) {
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*auth.IMSToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
@@ -91,7 +91,7 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, 
 }
 
 // ExchangeIAMAPIKeyForAccessToken ...
-func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger zap.Logger) (*auth.AccessToken, error) {
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger *zap.Logger) (*auth.AccessToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
@@ -119,7 +119,7 @@ func (r *tokenExchangeRequest) exchangeForIMSToken() (*auth.IMSToken, error) {
 	}, nil
 }
 
-func (tes *tokenExchangeService) newTokenExchangeRequest(logger zap.Logger) *tokenExchangeRequest {
+func (tes *tokenExchangeService) newTokenExchangeRequest(logger *zap.Logger) *tokenExchangeRequest {
 	client := rest.NewClient()
 	client.HTTPClient = tes.httpClient
 

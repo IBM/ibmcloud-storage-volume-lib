@@ -48,7 +48,7 @@ func (sls *SLFileSession) VolumeCreate(volumeRequest provider.Volume) (*provider
 
 	//Hard coded required values for testing TODO: Remove them and pass the values as arguments for function
 	service_offering := "storage_as_a_service"
-	volume_type := "block"
+	volume_type := string(volumeRequest.VolumeType)
 	hourly_billing_flag := false
 
 	// Step 1- Validate inputs
@@ -261,7 +261,7 @@ func (sls *SLFileSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, t
 		if duplicateVolumeTier == "" {
 			duplicateVolumeTier = utils.GetEnduranceTierIopsPerGB(sls.Logger, originalVolume)
 		}
-		volumeCategory := fmt.Sprintf(`storage_%s`, "block")
+		volumeCategory := fmt.Sprintf(`storage_%s`, "file")
 		finalPrices = []datatypes.Product_Item_Price{
 			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
 			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
@@ -383,7 +383,7 @@ func (sls *SLFileSession) getBillingItemID(storageID int) (int, bool, error) {
 	//! Step 1: Get volume details
 	immediate := false
 	mask := "id,billingItem[id,hourlyFlag]"
-	storageObj := sls.Backend.GetNetworkStorageIscsiService()
+	storageObj := sls.Backend.GetNetworkStorageService()
 	storage, err := storageObj.ID(storageID).Mask(mask).GetObject()
 	if err != nil {
 		return 0, immediate, messages.GetUserError("E0011", err, storageID, "Volume ID not found")
@@ -424,14 +424,15 @@ func (sls *SLFileSession) deleteStorage(networkStorageID int) error {
 //handleProvisioning
 func (sls *SLFileSession) handleProvisioning(orderID int) (*provider.Volume, error) {
 	sls.Logger.Info("Handling provisioning for  ....", zap.Reflect("OrderID", orderID))
-	storageID, errID := utils.GetStorageID(sls.Backend, orderID, sls.Logger)
+	storageID, errID := utils.GetStorageID(sls.Backend, string(sls.SLSession.VolumeType), orderID, sls.Logger, sls.Config)
+	//storageID, errID := sls.GetVolumeByRequestID(orderID)
 	if errID != nil {
 		return nil, messages.GetUserError("E0011", errID, orderID)
 	}
 	sls.Logger.Info("Successfully got the volume ID ....", zap.Reflect("VolumeID", storageID))
 
 	// Step 2- Cancel order if storageID not yet approved
-	err := utils.WaitForTransactionsComplete(sls.Backend, storageID)
+	err := utils.WaitForTransactionsComplete(sls.Backend, storageID, sls.Logger, sls.Config)
 	if err != nil {
 		sls.Logger.Error("**Error while provisioning order", zap.Int("storageId", storageID), zap.Error(err))
 		// cancel order

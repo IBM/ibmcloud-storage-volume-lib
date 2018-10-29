@@ -28,7 +28,7 @@ type SLSession struct {
 	SLAccountID        int
 	Url                string
 	Backend            backend.Session
-	Logger             zap.Logger
+	Logger             *zap.Logger
 	Config             *config.SoftlayerConfig
 	ContextCredentials provider.ContextCredentials
 	VolumeType         provider.VolumeType

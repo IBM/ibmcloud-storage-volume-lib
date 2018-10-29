@@ -64,7 +64,7 @@ func (theSession *SessionSL) GetLocationService() LocationService {
 }
 
 // NewSoftLayerSession creates a Session backed using a real softlayer-go session
-func NewSoftLayerSession(url string, conf provider.ContextCredentials, httpClient *http.Client, debug bool, logger zap.Logger) Session {
+func NewSoftLayerSession(url string, conf provider.ContextCredentials, httpClient *http.Client, debug bool, logger *zap.Logger) Session {
 	sess := session.New(conf.UserID, conf.Credential, url)
 	sess.Debug = debug
 	sess.HTTPClient = httpClient

@@ -25,7 +25,7 @@ type Provider interface {
 	// The implementation can choose to verify the credentials and return an error if they are invalid.
 	// Alternatively, the implementation can choose to defer credential verification until individual
 	// methods of the context are called.
-	OpenSession(context.Context, provider.ContextCredentials, zap.Logger) (provider.Session, error)
+	OpenSession(context.Context, provider.ContextCredentials, *zap.Logger) (provider.Session, error)
 
 	// Returns a configured ContextCredentialsFactory for this provider
 	ContextCredentialsFactory(datacenter *string) (ContextCredentialsFactory, error)
@@ -35,8 +35,8 @@ type Provider interface {
 //go:generate counterfeiter -o fakes/context_credentials_factory.go --fake-name ContextCredentialsFactory . ContextCredentialsFactory
 type ContextCredentialsFactory interface {
 	// ForIaaSAPIKey returns a config using an explicit API key for an IaaS user account
-	ForIaaSAPIKey(iamAccountID, iaasUserID, iaasAPIKey string, logger zap.Logger) (provider.ContextCredentials, error)
+	ForIaaSAPIKey(iamAccountID, iaasUserID, iaasAPIKey string, logger *zap.Logger) (provider.ContextCredentials, error)
 
 	// ForIAMAPIKey returns a config derived from an IAM API key (if applicable)
-	ForIAMAPIKey(iamAccountID, iamAPIKey string, logger zap.Logger) (provider.ContextCredentials, error)
+	ForIAMAPIKey(iamAccountID, iamAPIKey string, logger *zap.Logger) (provider.ContextCredentials, error)
 }

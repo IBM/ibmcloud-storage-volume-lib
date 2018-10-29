@@ -38,7 +38,8 @@ type Config struct {
 	Gen2      *Gen2Config
 }
 
-func ReadConfig(confPath string, logger zap.Logger) (*Config, error) {
+//ReadConfig loads the config from file
+func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) {
 	// load the default config, if confPath not provided
 	if confPath == "" {
 		confPath = GetDefaultConfPath()
@@ -64,9 +65,9 @@ func GetDefaultConfPath() string {
 }
 
 // ParseConfig ...
-func ParseConfig(filePath string, conf interface{}, logger zap.Logger) error {
+func ParseConfig(filePath string, conf interface{}, logger *zap.Logger) error {
 	_, err := toml.DecodeFile(filePath, conf)
-	if  err != nil {
+	if err != nil {
 		logger.Error("Failed to parse config file", zap.Error(err))
 	}
 	return err
@@ -83,15 +84,17 @@ type BluemixConfig struct {
 
 // SoftlayerConfig ...
 type SoftlayerConfig struct {
-	SoftlayerBlockEnabled      bool   `toml:"softlayer_block_enabled" envconfig:"SOFTLAYER_BLOCK_ENABLED"`
-	SoftlayerBlockProviderName string `toml:"softlayer_block_provider_name" envconfig:"SOFTLAYER_BLOCK_PROVIDER_NAME"`
-	SoftlayerFileEnabled       bool   `toml:"softlayer_file_enabled" envconfig:"SOFTLAYER_FILE_ENABLED"`
-	SoftlayerFileProviderName  string `toml:"softlayer_file_provider_name" envconfig:"SOFTLAYER_FILE_PROVIDER_NAME"`
-	SoftlayerUsername          string `toml:"softlayer_username" json:"-"`
-	SoftlayerAPIKey            string `toml:"softlayer_api_key" json:"-"`
-	SoftlayerEndpointURL       string `toml:"softlayer_endpoint_url"`
-	SoftlayerDataCenter        string `toml:"softlayer_datacenter"`
-	SoftlayerTimeout           string `toml:"softlayer_api_timeout"`
+	SoftlayerBlockEnabled        bool   `toml:"softlayer_block_enabled" envconfig:"SOFTLAYER_BLOCK_ENABLED"`
+	SoftlayerBlockProviderName   string `toml:"softlayer_block_provider_name" envconfig:"SOFTLAYER_BLOCK_PROVIDER_NAME"`
+	SoftlayerFileEnabled         bool   `toml:"softlayer_file_enabled" envconfig:"SOFTLAYER_FILE_ENABLED"`
+	SoftlayerFileProviderName    string `toml:"softlayer_file_provider_name" envconfig:"SOFTLAYER_FILE_PROVIDER_NAME"`
+	SoftlayerUsername            string `toml:"softlayer_username" json:"-"`
+	SoftlayerAPIKey              string `toml:"softlayer_api_key" json:"-"`
+	SoftlayerEndpointURL         string `toml:"softlayer_endpoint_url"`
+	SoftlayerDataCenter          string `toml:"softlayer_datacenter"`
+	SoftlayerTimeout             string `toml:"softlayer_api_timeout" envconfig:"SOFTLAYER_API_TIMEOUT"`
+	SoftlayerVolProvisionTimeout string `toml:"softlayer_vol_provision_timeout" envconfig:"SOFTLAYER_VOL_PROVISION_TIMEOUT"`
+	SoftlayerRetryInterval       string `toml:"softlayer_api_retry_interval" envconfig:"SOFTLAYER_API_RETRY_INTERVAL"`
 	//Configuration values for JWT tokens
 	SoftlayerJWTKID       string `toml:"softlayer_jwt_kid"`
 	SoftlayerJWTTTL       int    `toml:"softlayer_jwt_ttl"`
