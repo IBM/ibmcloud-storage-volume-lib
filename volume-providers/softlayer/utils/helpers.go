@@ -12,53 +12,70 @@ package utils
 import (
 	"fmt"
 
+	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/backend"
+	"github.com/softlayer/softlayer-go/datatypes"
+	"github.com/softlayer/softlayer-go/filter"
 	"go.uber.org/zap"
 )
 
-func GetStorageID(sess backend.Session, orderID int, logger zap.Logger) (int, error) {
+func GetStorageID(sess backend.Session, volumeType string, orderID int, logger *zap.Logger, config *config.SoftlayerConfig) (int, error) {
 	// Step 1- Create an inline method for retry main method, which will return (bool, error)
 	// bool is for retry termination before exhausting max attempt and error is for final issue in retry
 	var storageID int
 	getStorageIDTempFun := func() (bool, error) {
-		id, err := GetNetworkStorageIDFromOrderID(sess, orderID, logger)
-		if err != nil || id <= 0 {
-			return false, err
+		storage, err := GetNetworkStorageFromOrderID(sess, volumeType, orderID, logger)
+		if err == nil && storage != nil {
+			storageID = *storage.Id
+			return true, nil
 		}
-		storageID = id
-		return true, nil
+		return false, err
+
 	}
 
 	// Step 2- Calling retry method
-	if err := ProvisioningRetry(getStorageIDTempFun); err != nil {
+	if err := ProvisioningRetry(getStorageIDTempFun, logger, config.SoftlayerVolProvisionTimeout, config.SoftlayerRetryInterval); err != nil {
 		return 0, err
 	}
 	return storageID, nil
 }
 
 //Retrieves storageID of given orderID.
-func GetNetworkStorageIDFromOrderID(bkSession backend.Session, orderID int, logger zap.Logger) (int, error) {
-	filter := fmt.Sprintf(`{"networkStorage":{"nasType":{"operation":"ISCSI"},
-                        "billingItem":{"orderItem":{"order":{"id":{"operation":%d}}}
-                        } } }`, orderID)
+func GetNetworkStorageFromOrderID(bkSession backend.Session, volumeType string, orderIDIn int, logger *zap.Logger) (*datatypes.Network_Storage, error) {
 
-	accService := bkSession.GetAccountService()
-	storage, err := accService.Filter(filter).GetNetworkStorage()
+	storageMask := "id,username,notes,billingItem.orderItem.order.id"
+
+	slFilters := filter.New()
+	slFilters = append(slFilters, filter.Path("networkStorage.nasType").Eq(volumeType))
+	slFilters = append(slFilters, filter.Path("networkStorage.billingItem.orderItem.order.id").Eq(orderIDIn)) // Do not fetch cancelled volumes
+
+	logger.Info("Filterused ", zap.Reflect("slFilters", slFilters))
+	accountService := bkSession.GetAccountService().Mask(storageMask)
+	accountService = accountService.Filter(slFilters.Build())
+	storages, err := accountService.GetNetworkStorage()
+	logger.Info("Volumes found", zap.Reflect("Volumes", storages))
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	switch len(storage) {
+	switch len(storages) {
 	case 0:
-		return 0, fmt.Errorf("unable to find network storage associated with order %d", orderID)
+		return nil, fmt.Errorf("unable to find network storage associated with order %d", orderIDIn)
 	case 1:
-		return *storage[0].Id, nil
+		// double check if correct storage is found by matching requestID and fouund orderID
+		orderID := *storages[0].BillingItem.OrderItem.Order.Id
+		if orderID == orderIDIn {
+			return &storages[0], nil
+		} else {
+			logger.Error("Incorrect storage found", zap.Int("requestID", orderIDIn), zap.Reflect("storage", storages[0]))
+			return nil, fmt.Errorf("Incorrect storage found %d associated with order %d", orderID, orderIDIn)
+		}
 	default:
-		return 0, fmt.Errorf("multiple storage volumes associated with order %d", orderID)
+		return nil, fmt.Errorf("multiple storage volumes associated with order %d", orderIDIn)
 	}
 }
 
 // Makes sure there are no active transactions for volume with given ID
-func WaitForTransactionsComplete(sess backend.Session, storageID int) error {
+func WaitForTransactionsComplete(sess backend.Session, storageID int, logger *zap.Logger, config *config.SoftlayerConfig) error {
 	var txnCount uint
 	//slbs.Logger.Info("Waiting for transactions to complete for storage..", zap.Int("StorageID", storageID))
 	WaitForTransactionsComplete := func() (bool, error) {
@@ -78,5 +95,5 @@ func WaitForTransactionsComplete(sess backend.Session, storageID int) error {
 		return true, nil
 	}
 
-	return ProvisioningRetry(WaitForTransactionsComplete)
+	return ProvisioningRetry(WaitForTransactionsComplete, logger, config.SoftlayerVolProvisionTimeout, config.SoftlayerRetryInterval)
 }

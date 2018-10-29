@@ -42,12 +42,12 @@ var _ = Describe("SLBlockSession", func() {
 	BeforeEach(func() {
 		fakeBakend = fakes.NewSession()
 		logger = zap.NewNop()
-		config := config.ReadConfig("", *logger)
+		config, _ := config.ReadConfig("", logger)
 		slSession = &SLBlockSession{
 			common.SLSession{
 				Config:     config.Softlayer,
 				Backend:    fakeBakend,
-				Logger:     *logger,
+				Logger:     logger,
 				VolumeType: "ISCSI",
 			},
 		}

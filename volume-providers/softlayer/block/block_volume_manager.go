@@ -424,14 +424,14 @@ func (sls *SLBlockSession) deleteStorage(networkStorageID int) error {
 //handleProvisioning
 func (sls *SLBlockSession) handleProvisioning(orderID int) (*provider.Volume, error) {
 	sls.Logger.Info("Handling provisioning for  ....", zap.Reflect("OrderID", orderID))
-	storageID, errID := utils.GetStorageID(sls.Backend, orderID, sls.Logger)
+	storageID, errID := utils.GetStorageID(sls.Backend, string(sls.SLSession.VolumeType), orderID, sls.Logger, sls.Config)
 	if errID != nil {
 		return nil, messages.GetUserError("E0011", errID, orderID)
 	}
 	sls.Logger.Info("Successfully got the volume ID ....", zap.Reflect("VolumeID", storageID))
 
 	// Step 2- Cancel order if storageID not yet approved
-	err := utils.WaitForTransactionsComplete(sls.Backend, storageID)
+	err := utils.WaitForTransactionsComplete(sls.Backend, storageID, sls.Logger, sls.Config)
 	if err != nil {
 		sls.Logger.Error("**Error while provisioning order", zap.Int("storageId", storageID), zap.Error(err))
 		// cancel order

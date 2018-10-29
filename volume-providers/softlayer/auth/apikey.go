@@ -17,7 +17,7 @@ import (
 )
 
 // ForAPIKey ...
-func (ccf *contextCredentialsFactory) ForIaaSAPIKey(iamAccountID, userid, apikey string, logger zap.Logger) (provider.ContextCredentials, error) {
+func (ccf *contextCredentialsFactory) ForIaaSAPIKey(iamAccountID, userid, apikey string, logger *zap.Logger) (provider.ContextCredentials, error) {
 	return provider.ContextCredentials{
 		AuthType:     provider.IaaSAPIKey,
 		IAMAccountID: iamAccountID,

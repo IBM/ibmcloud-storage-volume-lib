@@ -43,13 +43,13 @@ type SLBlockProvider struct {
 	tokenGenerator *tokenGenerator
 	contextCF      local.ContextCredentialsFactory
 
-	NewBackendSession func(url string, credentials provider.ContextCredentials, httpClient *http.Client, debug bool, logger zap.Logger) backend.Session
+	NewBackendSession func(url string, credentials provider.ContextCredentials, httpClient *http.Client, debug bool, logger *zap.Logger) backend.Session
 }
 
 var _ local.Provider = &SLBlockProvider{}
 
 // NewProvider initialises an instance of an IaaS provider.
-func NewProvider(conf *config.Config, logger zap.Logger) (local.Provider, error) {
+func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error) {
 	if conf.Bluemix == nil || conf.Softlayer == nil {
 		return nil, errors.New("Incomplete config for SLBlockProvider")
 	}
@@ -89,7 +89,7 @@ func (slp *SLBlockProvider) ContextCredentialsFactory(zone *string) (local.Conte
 }
 
 // OpenSession opens a session on the provider
-func (slp *SLBlockProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, logger zap.Logger) (provider.Session, error) {
+func (slp *SLBlockProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, logger *zap.Logger) (provider.Session, error) {
 
 	slSession := &SLBlockSession{
 		common.SLSession{

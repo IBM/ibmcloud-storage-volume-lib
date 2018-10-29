@@ -56,20 +56,24 @@ func main() {
 	*/
 
 	// Load config file
-	conf := config.ReadConfig("", *logger)
-	if conf == nil {
+	conf, err := config.ReadConfig("", logger)
+	if err != nil {
 		logger.Fatal("Error loading configuration")
 	}
 
 	// Prepare provider registry
-	providerRegistry, err := provider_util.InitProviders(conf, *logger)
+	providerRegistry, err := provider_util.InitProviders(conf, logger)
 	if err != nil {
 		logger.Fatal("Error configuring providers", local.ZapError(err))
 	}
 
 	//dc_name := "mex01"
+	providerName := conf.Softlayer.SoftlayerBlockProviderName
+	if conf.Softlayer.SoftlayerFileEnabled {
+		providerName = conf.Softlayer.SoftlayerFileProviderName
+	}
 	logger.Info("In main before openProviderSession call", zap.Reflect("providerRegistry", providerRegistry))
-	sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, conf.Softlayer.SoftlayerBlockProviderName, *logger)
+	sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
 	if err != nil {
 		logger.Error("Failed to get session", zap.Reflect("Error", err))
 		return
@@ -136,12 +140,15 @@ func main() {
 			fmt.Println("You selected choice to Create volume\n")
 			volume := &provider.Volume{}
 			volume.VolumeType = "block"
+			if conf.Softlayer.SoftlayerFileEnabled {
+				volume.VolumeType = "file"
+			}
 			dcName := ""
 			volSize := 0
 			Iops := "0"
 			tier := ""
 			providerType := ""
-			//volume.SnapshotSpace = 0
+
 			var choice int
 			fmt.Printf("\nPlease enter storage type choice 1- for endurance  2- for performance: ")
 			_, er11 = fmt.Scanf("%d", &choice)
@@ -171,6 +178,7 @@ func main() {
 				_, er11 = fmt.Scanf("%s", &tier)
 				volume.Tier = &tier
 			}
+			volume.SnapshotSpace = &volSize
 			_, errr := sess.VolumeCreate(*volume)
 			if errr == nil {
 				logger.Info("Successfully ordered volume ================>", zap.Reflect("StorageType", volume.ProviderType))

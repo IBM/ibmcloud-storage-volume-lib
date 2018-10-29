@@ -78,7 +78,7 @@ func Test_ExchangeRefreshTokenForAccessToken_Success(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeRefreshTokenForAccessToken("testrefreshtoken", *logger)
+	r, err := tes.ExchangeRefreshTokenForAccessToken("testrefreshtoken", logger)
 	assert.Nil(t, err)
 	if assert.NotNil(t, r) {
 		assert.Equal(t, (*r).Token, "at_success")
@@ -113,7 +113,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedDuringRequest(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeRefreshTokenForAccessToken("badrefreshtoken", *logger)
+	r, err := tes.ExchangeRefreshTokenForAccessToken("badrefreshtoken", logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed: did not work", err.Error())
@@ -145,7 +145,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedDuringRequest_no_message(t *t
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeRefreshTokenForAccessToken("badrefreshtoken", *logger)
+	r, err := tes.ExchangeRefreshTokenForAccessToken("badrefreshtoken", logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "Unexpected IAM token exchange response", err.Error())
@@ -177,7 +177,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedNoIamUrl(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeRefreshTokenForAccessToken("testrefreshtoken", *logger)
+	r, err := tes.ExchangeRefreshTokenForAccessToken("testrefreshtoken", logger)
 	assert.Nil(t, r)
 
 	if assert.NotNil(t, err) {
@@ -211,7 +211,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedRequesting_empty_body(t *test
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeRefreshTokenForAccessToken("badrefreshtoken", *logger)
+	r, err := tes.ExchangeRefreshTokenForAccessToken("badrefreshtoken", logger)
 	assert.Nil(t, r)
 
 	if assert.NotNil(t, err) {
@@ -246,7 +246,7 @@ func Test_ExchangeAccessTokenForIMSToken_Success(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "testaccesstoken"}, *logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "testaccesstoken"}, logger)
 	assert.Nil(t, err)
 	if assert.NotNil(t, r) {
 		assert.Equal(t, (*r).UserID, 123)
@@ -282,7 +282,7 @@ func Test_ExchangeAccessTokenForIMSToken_FailedDuringRequest(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badaccesstoken"}, *logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badaccesstoken"}, logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed: did not work", err.Error())
@@ -321,7 +321,7 @@ func Test_ExchangeAccessTokenForIMSToken_FailedAccountLocked(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badaccesstoken"}, *logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badaccesstoken"}, logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "Infrastructure account is temporarily locked", err.Error())
@@ -354,7 +354,7 @@ func Test_ExchangeAccessTokenForIMSToken_FailedDuringRequest_no_message(t *testi
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badrefreshtoken"}, *logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badrefreshtoken"}, logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "Unexpected IAM token exchange response", err.Error())
@@ -385,7 +385,7 @@ func Test_ExchangeAccessTokenForIMSToken_FailedRequesting_empty_body(t *testing.
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badrefreshtoken"}, *logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badrefreshtoken"}, logger)
 	assert.Nil(t, r)
 
 	if assert.NotNil(t, err) {
@@ -465,7 +465,7 @@ func Test_ExchangeIAMAPIKeyForAccessToken(t *testing.T) {
 			tes, err := NewTokenExchangeService(&bluemixConf)
 			assert.NoError(t, err)
 
-			r, actualError := tes.ExchangeIAMAPIKeyForAccessToken("apikey1", *logger)
+			r, actualError := tes.ExchangeIAMAPIKeyForAccessToken("apikey1", logger)
 			if testCase.expectedError == nil {
 				assert.NoError(t, actualError)
 				if assert.NotNil(t, r) {

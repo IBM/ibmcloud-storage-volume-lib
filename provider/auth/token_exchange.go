@@ -30,14 +30,14 @@ type TokenExchangeService interface {
 
 	// ExchangeRefreshTokenForAccessToken ...
 	// TODO Deprecate when no longer reliant on refresh token authentication
-	ExchangeRefreshTokenForAccessToken(refreshToken string, logger zap.Logger) (*AccessToken, error)
+	ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*AccessToken, error)
 
 	// ExchangeAccessTokenForIMSToken ...
-	ExchangeAccessTokenForIMSToken(accessToken AccessToken, logger zap.Logger) (*IMSToken, error)
+	ExchangeAccessTokenForIMSToken(accessToken AccessToken, logger *zap.Logger) (*IMSToken, error)
 
 	// ExchangeIAMAPIKeyForIMSToken ...
-	ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger zap.Logger) (*IMSToken, error)
+	ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*IMSToken, error)
 
 	// ExchangeIAMAPIKeyForAccessToken ...
-	ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger zap.Logger) (*AccessToken, error)
+	ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger *zap.Logger) (*AccessToken, error)
 }

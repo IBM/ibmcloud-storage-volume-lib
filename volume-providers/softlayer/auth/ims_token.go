@@ -27,7 +27,7 @@ const (
 )
 
 // ForRefreshToken ...
-func (ccf *contextCredentialsFactory) ForRefreshToken(refreshToken string, logger zap.Logger) (provider.ContextCredentials, error) {
+func (ccf *contextCredentialsFactory) ForRefreshToken(refreshToken string, logger *zap.Logger) (provider.ContextCredentials, error) {
 
 	accessToken, err := ccf.tokenExchangeService.ExchangeRefreshTokenForAccessToken(refreshToken, logger)
 	if err != nil {
@@ -47,7 +47,7 @@ func (ccf *contextCredentialsFactory) ForRefreshToken(refreshToken string, logge
 }
 
 // ForIAMAPIKey ...
-func (ccf *contextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, logger zap.Logger) (provider.ContextCredentials, error) {
+func (ccf *contextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
 
 	imsToken, err := ccf.tokenExchangeService.ExchangeIAMAPIKeyForIMSToken(apiKey, logger)
 	if err != nil {

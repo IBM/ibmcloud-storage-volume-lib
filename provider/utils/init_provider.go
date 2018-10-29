@@ -16,6 +16,7 @@ import (
 	"go.uber.org/zap"
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
+	softlayer_file "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/file"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
@@ -24,7 +25,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/registry"
 )
 
-func InitProviders(conf *config.Config, logger zap.Logger) (registry.Providers, error) {
+func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers, error) {
 	var haveProviders bool
 	providerRegistry := &registry.ProviderRegistry{}
 	// BLOCK volume registration
@@ -41,7 +42,7 @@ func InitProviders(conf *config.Config, logger zap.Logger) (registry.Providers, 
 
 	// FILE volume registration
 	if conf.Softlayer != nil && conf.Softlayer.SoftlayerFileEnabled {
-		prov, err := softlayer_block.NewProvider(conf, logger)
+		prov, err := softlayer_file.NewProvider(conf, logger)
 		if err != nil {
 			return nil, err
 		}
@@ -70,7 +71,7 @@ func isEmptyStringValue(value *string) bool {
 	return value == nil || *value == ""
 }
 
-func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, logger zap.Logger) (session provider.Session, fatal bool, err1 error) {
+func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, logger *zap.Logger) (session provider.Session, fatal bool, err1 error) {
 	logger.Info("In OpenProviderSession methods")
 	prov, err := providers.Get(providerID)
 	if err != nil {
@@ -97,7 +98,7 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 	return
 }
 
-func GenerateContextCredentials(conf *config.Config, providerID string, contextCredentialsFactory local.ContextCredentialsFactory, logger zap.Logger) (provider.ContextCredentials, error) {
+func GenerateContextCredentials(conf *config.Config, providerID string, contextCredentialsFactory local.ContextCredentialsFactory, logger *zap.Logger) (provider.ContextCredentials, error) {
 	logger.Info("Generating generateContextCredentials for ", zap.String("Provider ID", providerID))
 
 	AccountID := conf.Bluemix.IamClientID

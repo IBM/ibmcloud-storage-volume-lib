@@ -67,7 +67,7 @@ func Test_ForIaaSAPIKey(t *testing.T) {
 		},
 	}
 
-	contextCredentials, err := ccf.ForIaaSAPIKey(account, username, apiKey, *logger)
+	contextCredentials, err := ccf.ForIaaSAPIKey(account, username, apiKey, logger)
 
 	assert.NoError(t, err)
 

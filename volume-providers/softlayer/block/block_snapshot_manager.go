@@ -230,10 +230,10 @@ func (sls *SLBlockSession) SnapshotGet(snapshotId string) (*provider.Snapshot, e
 	if err != nil {
 		return nil, messages.GetUserError("E0032", err, snapshotID)
 	}
-	sls.Logger.Info("########======> Successfully get the snapshot details", zap.Reflect("snapshot", storageSnapshot[0]))
 	if len(storageSnapshot) <= 0 {
 		return nil, messages.GetUserError("E0032", err, snapshotID)
 	}
+	sls.Logger.Info("########======> Successfully get the snapshot details", zap.Reflect("snapshot", storageSnapshot[0]))
 	// Setep 3: Converting to local type
 	snapshot := utils.ConvertToLocalSnapshotObject(storageSnapshot[0], SoftLayer, VolumeTypeBlock)
 	return snapshot, nil
@@ -299,7 +299,7 @@ func (sls *SLBlockSession) ListAllSnapshotsForVolume(volumeID string) ([]*provid
 	sls.Logger.Info("snapshot details are", zap.Reflect("snapshotvolumesss", snapshotvol), zap.Error(err))
 	*/
 	orderID := utils.ToInt(volumeID)
-	storageID, errID := utils.GetStorageID(sls.Backend, orderID, sls.Logger)
+	storageID, errID := utils.GetStorageID(sls.Backend, string(sls.SLSession.VolumeType), orderID, sls.Logger, sls.Config)
 	if errID != nil {
 		return nil, messages.GetUserError("E0011", errID, orderID)
 	}

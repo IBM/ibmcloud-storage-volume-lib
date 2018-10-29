@@ -34,7 +34,7 @@ var ENDURANCE_TIERS = map[string]int{
 var IOPS = map[string]string{"READHEAVY_TIER": "2", "WRITEHEAVY_TIER": "4", "10_IOPS_PER_GB": "10"}
 
 // GetDataCenterID
-func GetDataCenterID(logger zap.Logger, sess backend.Session, dataCenterName string) (int, error) {
+func GetDataCenterID(logger *zap.Logger, sess backend.Session, dataCenterName string) (int, error) {
 	locationObj := sess.GetLocationService()
 	locations, err := locationObj.GetDatacenters()
 	if err != nil {
@@ -52,7 +52,7 @@ func GetDataCenterID(logger zap.Logger, sess backend.Session, dataCenterName str
 }
 
 // GetPackageDetails
-func GetPackageDetails(logger zap.Logger, sess backend.Session, category string) (datatypes.Product_Package, error) {
+func GetPackageDetails(logger *zap.Logger, sess backend.Session, category string) (datatypes.Product_Package, error) {
 	packageFilter := fmt.Sprintf(`{ "categories":{"categoryCode":{"operation":"%s"}}, "statusCode": {"operation": "ACTIVE"}}`, category)
 	packageMask := "id,name,items[prices[categories],attributes]"
 	packages, packageErr := sess.GetProductPackageService().Filter(packageFilter).Mask(packageMask).GetAllObjects()
@@ -68,7 +68,7 @@ func GetPackageDetails(logger zap.Logger, sess backend.Session, category string)
 }
 
 // isCategoryPresent
-func isCategoryPresent(logger zap.Logger, categories []datatypes.Product_Item_Category, categoryName string) bool {
+func isCategoryPresent(logger *zap.Logger, categories []datatypes.Product_Item_Category, categoryName string) bool {
 	for _, category := range categories {
 		if category.CategoryCode != nil && *category.CategoryCode == categoryName { //TODO: need to check Name is fine or CategoryCode, so far category code works fine
 			return true
@@ -78,7 +78,7 @@ func isCategoryPresent(logger zap.Logger, categories []datatypes.Product_Item_Ca
 }
 
 // GetPriceIDFromItemByPriceCategory
-func GetPriceIDFromItemByPriceCategory(logger zap.Logger, item datatypes.Product_Item, category string, restrictionType string, restrictionValue int) int {
+func GetPriceIDFromItemByPriceCategory(logger *zap.Logger, item datatypes.Product_Item, category string, restrictionType string, restrictionValue int) int {
 	for _, price := range item.Prices {
 		if price.LocationGroupId != nil { //! skip the location specific price
 			continue
@@ -108,7 +108,7 @@ func GetPriceIDFromItemByPriceCategory(logger zap.Logger, item datatypes.Product
 }
 
 // GetPriceIDByCategory
-func GetPriceIDByCategory(logger zap.Logger, packageDetails datatypes.Product_Package, category string) int {
+func GetPriceIDByCategory(logger *zap.Logger, packageDetails datatypes.Product_Package, category string) int {
 	for _, item := range packageDetails.Items {
 		priceId := GetPriceIDFromItemByPriceCategory(logger, item, category, "", 0)
 		if priceId != 0 {
@@ -119,7 +119,7 @@ func GetPriceIDByCategory(logger zap.Logger, packageDetails datatypes.Product_Pa
 }
 
 // GetSaaSEnduranceSpacePrice
-func GetSaaSEnduranceSpacePrice(logger zap.Logger, packageDetails datatypes.Product_Package, size int, tier string) int {
+func GetSaaSEnduranceSpacePrice(logger *zap.Logger, packageDetails datatypes.Product_Package, size int, tier string) int {
 	keyName := fmt.Sprintf(`STORAGE_SPACE_FOR_%s_IOPS_PER_GB`, tier)
 	keyName = strings.Replace(keyName, ".", "_", -1)
 	for _, item := range packageDetails.Items {
@@ -142,7 +142,7 @@ func GetSaaSEnduranceSpacePrice(logger zap.Logger, packageDetails datatypes.Prod
 }
 
 // GetSaaSPerformanceSpacePrice
-func GetSaaSPerformanceSpacePrice(logger zap.Logger, packageDetails datatypes.Product_Package, size int) int {
+func GetSaaSPerformanceSpacePrice(logger *zap.Logger, packageDetails datatypes.Product_Package, size int) int {
 	for _, item := range packageDetails.Items {
 		if item.ItemCategory == nil || item.ItemCategory.CategoryCode == nil || *item.ItemCategory.CategoryCode != "performance_storage_space" {
 			continue
@@ -172,7 +172,7 @@ func GetSaaSPerformanceSpacePrice(logger zap.Logger, packageDetails datatypes.Pr
 }
 
 // GetSaaSPerformanceIopsPrice
-func GetSaaSPerformanceIopsPrice(logger zap.Logger, packageDetails datatypes.Product_Package, size int, iops int) int {
+func GetSaaSPerformanceIopsPrice(logger *zap.Logger, packageDetails datatypes.Product_Package, size int, iops int) int {
 	for _, item := range packageDetails.Items {
 		if item.ItemCategory == nil || item.ItemCategory.CategoryCode == nil || *item.ItemCategory.CategoryCode != "performance_storage_iops" {
 			continue
@@ -197,7 +197,7 @@ func GetSaaSPerformanceIopsPrice(logger zap.Logger, packageDetails datatypes.Pro
 }
 
 //GetSaaSEnduranceTierPrice
-func GetSaaSEnduranceTierPrice(logger zap.Logger, packageDetails datatypes.Product_Package, tier string) int {
+func GetSaaSEnduranceTierPrice(logger *zap.Logger, packageDetails datatypes.Product_Package, tier string) int {
 	target_capacity := ENDURANCE_TIERS[tier]
 	for _, item := range packageDetails.Items {
 		if item.ItemCategory == nil || (item.ItemCategory != nil && *item.ItemCategory.CategoryCode != "storage_tier_level") {
@@ -217,7 +217,7 @@ func GetSaaSEnduranceTierPrice(logger zap.Logger, packageDetails datatypes.Produ
 }
 
 // GetSaaSSnapshotSpacePrice
-func GetSaaSSnapshotSpacePrice(logger zap.Logger, packageDetails datatypes.Product_Package, size int, tier string, iops int) int {
+func GetSaaSSnapshotSpacePrice(logger *zap.Logger, packageDetails datatypes.Product_Package, size int, tier string, iops int) int {
 	targetRestrictionType := ""
 	targetRestrictionValue := 0
 	if tier != "" {
@@ -242,7 +242,7 @@ func GetSaaSSnapshotSpacePrice(logger zap.Logger, packageDetails datatypes.Produ
 }
 
 // GetSaaSSnapshotOrderSpacePrice
-func GetSaaSSnapshotOrderSpacePrice(logger zap.Logger, packageDetails datatypes.Product_Package, size int, restrictionType string, restrictionValue int) int {
+func GetSaaSSnapshotOrderSpacePrice(logger *zap.Logger, packageDetails datatypes.Product_Package, size int, restrictionType string, restrictionValue int) int {
 	for _, item := range packageDetails.Items {
 		if item.Capacity == nil || *item.Capacity != datatypes.Float64(size) {
 			continue
@@ -258,7 +258,7 @@ func GetSaaSSnapshotOrderSpacePrice(logger zap.Logger, packageDetails datatypes.
 }
 
 //GetEnduranceTierIopsPerGB(originalVolume)
-func GetEnduranceTierIopsPerGB(logger zap.Logger, originalVolume datatypes.Network_Storage) string {
+func GetEnduranceTierIopsPerGB(logger *zap.Logger, originalVolume datatypes.Network_Storage) string {
 
 	if originalVolume.StorageTierLevel == nil {
 		return ""
@@ -318,7 +318,7 @@ func GetOrderTypeAndCategory(service_offering, storage_type, volume_type string)
 	return order_type_is_saas, order_category_code
 }
 
-func GetPerformanceSpacePrice(logger zap.Logger, packageDetails datatypes.Product_Package, size int) int {
+func GetPerformanceSpacePrice(logger *zap.Logger, packageDetails datatypes.Product_Package, size int) int {
 	for _, item := range packageDetails.Items {
 		if int(*item.Capacity) != size {
 			continue
@@ -331,7 +331,7 @@ func GetPerformanceSpacePrice(logger zap.Logger, packageDetails datatypes.Produc
 	return 0
 }
 
-func GetPerformanceIopsPrice(logger zap.Logger, packageDetails datatypes.Product_Package, size int, iops int) int {
+func GetPerformanceIopsPrice(logger *zap.Logger, packageDetails datatypes.Product_Package, size int, iops int) int {
 	for _, item := range packageDetails.Items {
 		if int(*item.Capacity) != iops {
 			continue
@@ -346,7 +346,7 @@ func GetPerformanceIopsPrice(logger zap.Logger, packageDetails datatypes.Product
 	//raise ValueError("Could not find price for iops for the given volume")
 }
 
-func GetEnterpriseSpacePrice(logger zap.Logger, packageDetails datatypes.Product_Package, category string, size int, tier_level string) int {
+func GetEnterpriseSpacePrice(logger *zap.Logger, packageDetails datatypes.Product_Package, category string, size int, tier_level string) int {
 	var category_code string
 	if category == "snapshot" {
 		category_code = "storage_snapshot_space"
@@ -369,7 +369,7 @@ func GetEnterpriseSpacePrice(logger zap.Logger, packageDetails datatypes.Product
 	return 0 //raise ValueError("Could not find price for %s storage space" % category)
 }
 
-func GetEnterpriseEnduranceTierPrice(logger zap.Logger, packageDetails datatypes.Product_Package, tier_level string) int {
+func GetEnterpriseEnduranceTierPrice(logger *zap.Logger, packageDetails datatypes.Product_Package, tier_level string) int {
 	for _, item := range packageDetails.Items {
 		/*     for attribute in item.get('attributes', []){
 		            if int(attribute['value']) == ENDURANCE_TIERS.get(tier_level){
@@ -401,16 +401,22 @@ func ToInt(valueInInt string) int {
 
 type retryFuncProv func() (bool, error)
 
-func ProvisioningRetry(fn retryFuncProv) error {
-	SL_CREATE_STORAGE_TIMEOUT := 30          //getFromEnv("SL_CREATE_STORAGE_TIMEOUT", SL_CREATE_STORAGE_TIMEOUT)
-	SL_CREATE_STORAGE_POLLING_INTERVAL := 15 //getFromEnv("SL_CREATE_STORAGE_POLLING_INTERVAL", SL_CREATE_STORAGE_POLLING_INTERVAL)
-	provisionTimeout := time.Duration(SL_CREATE_STORAGE_TIMEOUT) * time.Second
-
-	pollingInterval := time.Duration(SL_CREATE_STORAGE_POLLING_INTERVAL) * time.Second
+func ProvisioningRetry(fn retryFuncProv, logger *zap.Logger, timeoutSec string, retryIntervalSec string) error {
+	provisionTimeout, err := time.ParseDuration(timeoutSec)
+	if err != nil {
+		return err
+	}
+	logger.Info("provisionTimeout", zap.Reflect("provisionTimeout", provisionTimeout))
+	pollingInterval, err := time.ParseDuration(retryIntervalSec)
+	logger.Info("pollingInterval", zap.Reflect("pollingInterval", pollingInterval))
+	if err != nil {
+		return err
+	}
 	iterations := int(provisionTimeout / pollingInterval)
+	logger.Info("iterations", zap.Int("iterations", iterations))
 	var done bool
-	var err error
 	for i := 0; i <= iterations; i++ {
+		logger.Info("attempt", zap.Int("attempt", i))
 		if i != 0 {
 			time.Sleep(pollingInterval)
 		}
@@ -422,7 +428,7 @@ func ProvisioningRetry(fn retryFuncProv) error {
 	return messages.GetUserError("E0039", err)
 }
 
-func ConvertToVolumeType(storage datatypes.Network_Storage, logger zap.Logger, prName provider.VolumeProvider, volType provider.VolumeType) (volume *provider.Volume) {
+func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, prName provider.VolumeProvider, volType provider.VolumeType) (volume *provider.Volume) {
 	logger.Info("in CovertToVolumeType")
 	volume = &provider.Volume{}
 	volume.VolumeID = strconv.Itoa(*storage.Id)
