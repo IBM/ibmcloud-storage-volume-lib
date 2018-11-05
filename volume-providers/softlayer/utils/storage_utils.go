@@ -459,6 +459,15 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 	if storage.CreateDate != nil {
 		volume.CreationTime, _ = time.Parse(time.RFC3339, storage.CreateDate.String())
 	}
+
+	if storage.LunId != nil {
+		volume.LunID = *storage.LunId
+	}
+
+	if len(storage.IscsiTargetIpAddresses) > 0 {
+		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
+	}
+
 	volume.VolumeNotes = newnotes
 	return
 }
@@ -472,7 +481,9 @@ func ConvertToNetworkStorage(storage datatypes.Network_Storage_Iscsi) datatypes.
 	networkStorageIscsi.SnapshotCapacityGb = storage.SnapshotCapacityGb
 	networkStorageIscsi.StorageTierLevel = storage.StorageTierLevel
 	networkStorageIscsi.CreateDate = storage.CreateDate
+	networkStorageIscsi.LunId = storage.LunId
 	networkStorageIscsi.ServiceResourceName = storage.ServiceResourceName
+	networkStorageIscsi.IscsiTargetIpAddresses = storage.IscsiTargetIpAddresses
 	return networkStorageIscsi
 }
 
