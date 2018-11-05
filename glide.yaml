@@ -5,7 +5,7 @@ import:
 - package: go.uber.org/zap
   version: v1.8.0
 - package: github.com/softlayer/softlayer-go
-  version: 7b4687c6b2502a895404bf40d555088ea500abc3
+  version: 82a74c5bf7ff93d32be01ebd603a266b0119a4b7
   subpackages:
   - config
   - datatypes
