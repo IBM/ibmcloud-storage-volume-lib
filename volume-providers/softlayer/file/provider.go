@@ -98,8 +98,11 @@ func (slp *SLFileProvider) OpenSession(ctx context.Context, contextCredentials p
 			ContextCredentials: contextCredentials,
 			Logger:             logger,
 			VolumeType:         "NAS",
+			Provider:           SoftLayer,
 		},
 	}
+	// For method overriding
+	//slSession.SLSession.SLSessionCommonInterface = slSession
 
 	logr := logger.With(
 		zap.Reflect("authType", contextCredentials.AuthType),

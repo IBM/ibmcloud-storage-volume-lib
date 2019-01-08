@@ -124,10 +124,10 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 3 {
-			fmt.Println("You selected choice to list snapshot from volume\n")
+			fmt.Println("You selected choice to list snapshot from volume")
 			fmt.Printf("Please enter volume ID to get the snapshots: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
-			fmt.Printf("\n\n")
+			fmt.Printf("\n")
 			snapshots, errr := sess.ListAllSnapshots(volumeID)
 			if errr == nil {
 				logger.Info("Successfully get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
@@ -137,7 +137,7 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 4 {
-			fmt.Println("You selected choice to Create volume\n")
+			fmt.Println("You selected choice to Create volume")
 			volume := &provider.Volume{}
 			volume.VolumeType = "block"
 			if conf.Softlayer.SoftlayerFileEnabled {
@@ -179,15 +179,16 @@ func main() {
 				volume.Tier = &tier
 			}
 			volume.SnapshotSpace = &volSize
-			_, errr := sess.VolumeCreate(*volume)
+			volume.VolumeNotes = map[string]string{"note": "test"}
+			volumeObj, errr := sess.VolumeCreate(*volume)
 			if errr == nil {
-				logger.Info("Successfully ordered volume ================>", zap.Reflect("StorageType", volume.ProviderType))
+				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
 			} else {
 				logger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 5 {
-			fmt.Println("You selected choice to get snapshot details\n")
+			fmt.Println("You selected choice to get snapshot details")
 			fmt.Printf("Please enter Snapshot ID: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			snapdetails, errr := sess.SnapshotGet(volumeID)
@@ -200,7 +201,7 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 6 {
-			fmt.Println("You selected choice to order snapshot\n")
+			fmt.Println("You selected choice to order snapshot")
 			volume := &provider.Volume{}
 			fmt.Printf("Please enter volume ID to create the snapshot space: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
@@ -217,7 +218,7 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 7 {
-			fmt.Println("You selected choice to Create volume from snapshot\n")
+			fmt.Println("You selected choice to Create volume from snapshot")
 			var snapshotVol provider.Snapshot
 			var tags map[string]string
 			fmt.Printf("Please enter original volume ID to create the volume from snapshot: ")
@@ -235,7 +236,7 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 8 {
-			fmt.Println("You selected choice to delete volume\n")
+			fmt.Println("You selected choice to delete volume")
 			volume := &provider.Volume{}
 			fmt.Printf("Please enter volume ID for delete:")
 			_, er11 = fmt.Scanf("%s", &volumeID)
@@ -248,7 +249,7 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 9 {
-			fmt.Println("You selected choice to delete snapshot\n")
+			fmt.Println("You selected choice to delete snapshot")
 			snapshot := &provider.Snapshot{}
 			fmt.Printf("Please enter snapshot ID for delete:")
 			_, er11 = fmt.Scanf("%s", &snapshotID)
@@ -261,15 +262,15 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 10 {
-			fmt.Println("You selected choice to list all snapshot\n")
+			fmt.Println("You selected choice to list all snapshot")
 			list, _ := sess.SnapshotsList()
 			logger.Info("All snapshots ================>", zap.Reflect("Snapshots", list))
 			fmt.Printf("\n\n")
 		} else if choiceN == 11 {
-			fmt.Println("Get volume ID by using order ID\n")
+			fmt.Println("Get volume ID by using order ID")
 			fmt.Printf("Please enter volume order ID to get volume ID:")
 			_, er11 = fmt.Scanf("%s", &volumeID)
-			_, error1 := sess.ListAllSnapshotsForVolume(volumeID)
+			_, error1 := sess.ListAllSnapshots(volumeID)
 			if error1 != nil {
 				logger.Info("Failed to get volumeID", zap.Reflect("Error", error1))
 			}

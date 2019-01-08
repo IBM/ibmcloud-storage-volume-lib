@@ -98,9 +98,11 @@ func (slp *SLBlockProvider) OpenSession(ctx context.Context, contextCredentials 
 			ContextCredentials: contextCredentials,
 			Logger:             logger,
 			VolumeType:         "ISCSI",
+			Provider:           SoftLayer,
 		},
 	}
-
+	// For method overriding
+	//slSession.SLSession.SLSessionCommonInterface = slSession
 	logr := logger.With(
 		zap.Reflect("authType", contextCredentials.AuthType),
 		zap.Reflect("timeout", slp.timeout),

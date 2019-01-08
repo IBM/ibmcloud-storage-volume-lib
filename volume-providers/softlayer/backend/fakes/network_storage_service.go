@@ -34,6 +34,19 @@ type NetworkStorageService struct {
 		result1 bool
 		result2 error
 	}
+	EditObjectStub        func(*datatypes.Network_Storage) (bool, error)
+	editObjectMutex       sync.RWMutex
+	editObjectArgsForCall []struct {
+		arg1 *datatypes.Network_Storage
+	}
+	editObjectReturns struct {
+		result1 bool
+		result2 error
+	}
+	editObjectReturnsOnCall map[int]struct {
+		result1 bool
+		result2 error
+	}
 	FilterStub        func(string) backend.NetworkStorageService
 	filterMutex       sync.RWMutex
 	filterArgsForCall []struct {
@@ -208,6 +221,69 @@ func (fake *NetworkStorageService) DeleteObjectReturnsOnCall(i int, result1 bool
 		})
 	}
 	fake.deleteObjectReturnsOnCall[i] = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *NetworkStorageService) EditObject(arg1 *datatypes.Network_Storage) (bool, error) {
+	fake.editObjectMutex.Lock()
+	ret, specificReturn := fake.editObjectReturnsOnCall[len(fake.editObjectArgsForCall)]
+	fake.editObjectArgsForCall = append(fake.editObjectArgsForCall, struct {
+		arg1 *datatypes.Network_Storage
+	}{arg1})
+	fake.recordInvocation("EditObject", []interface{}{arg1})
+	fake.editObjectMutex.Unlock()
+	if fake.EditObjectStub != nil {
+		return fake.EditObjectStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.editObjectReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *NetworkStorageService) EditObjectCallCount() int {
+	fake.editObjectMutex.RLock()
+	defer fake.editObjectMutex.RUnlock()
+	return len(fake.editObjectArgsForCall)
+}
+
+func (fake *NetworkStorageService) EditObjectCalls(stub func(*datatypes.Network_Storage) (bool, error)) {
+	fake.editObjectMutex.Lock()
+	defer fake.editObjectMutex.Unlock()
+	fake.EditObjectStub = stub
+}
+
+func (fake *NetworkStorageService) EditObjectArgsForCall(i int) *datatypes.Network_Storage {
+	fake.editObjectMutex.RLock()
+	defer fake.editObjectMutex.RUnlock()
+	argsForCall := fake.editObjectArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *NetworkStorageService) EditObjectReturns(result1 bool, result2 error) {
+	fake.editObjectMutex.Lock()
+	defer fake.editObjectMutex.Unlock()
+	fake.EditObjectStub = nil
+	fake.editObjectReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *NetworkStorageService) EditObjectReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.editObjectMutex.Lock()
+	defer fake.editObjectMutex.Unlock()
+	fake.EditObjectStub = nil
+	if fake.editObjectReturnsOnCall == nil {
+		fake.editObjectReturnsOnCall = make(map[int]struct {
+			result1 bool
+			result2 error
+		})
+	}
+	fake.editObjectReturnsOnCall[i] = struct {
 		result1 bool
 		result2 error
 	}{result1, result2}
@@ -510,6 +586,8 @@ func (fake *NetworkStorageService) Invocations() map[string][][]interface{} {
 	defer fake.createSnapshotMutex.RUnlock()
 	fake.deleteObjectMutex.RLock()
 	defer fake.deleteObjectMutex.RUnlock()
+	fake.editObjectMutex.RLock()
+	defer fake.editObjectMutex.RUnlock()
 	fake.filterMutex.RLock()
 	defer fake.filterMutex.RUnlock()
 	fake.getObjectMutex.RLock()

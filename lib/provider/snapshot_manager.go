@@ -29,6 +29,4 @@ type SnapshotManager interface {
 
 	//List all the  snapshots for a given volume
 	ListAllSnapshots(volumeID string) ([]*Snapshot, error)
-
-	ListAllSnapshotsForVolume(volumeID string) ([]*Snapshot, error)
 }

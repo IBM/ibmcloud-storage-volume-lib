@@ -22,7 +22,7 @@ const (
 	SoftLayerEndurance   = provider.VolumeProviderType("SOFTLAYER_ENDURANCE")
 	SoftLayerPerformance = provider.VolumeProviderType("SOFTLAYER_PERFORMANCE")
 
-	VolumeTypeBlock = provider.VolumeType("VOLUME-Block")
+	VolumeTypeBlock = provider.VolumeType("block")
 )
 
 // SLBlockSession implements lib.Session

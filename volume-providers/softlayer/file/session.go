@@ -21,7 +21,7 @@ const (
 	SoftLayerEndurance   = provider.VolumeProviderType("SOFTLAYER_ENDURANCE")
 	SoftLayerPerformance = provider.VolumeProviderType("SOFTLAYER_PERFORMANCE")
 
-	VolumeTypeBlock = provider.VolumeType("VOLUME-File")
+	VolumeTypeFile = provider.VolumeType("file")
 )
 
 // SLFileSession implements lib.Session
