@@ -67,7 +67,7 @@ var _ = Describe("SLBlockSession", func() {
 		BeforeEach(func() {
 			capacityItemPrices = []datatypes.Product_Item_Price{
 				{
-					Id: sl.Int(55555),
+					Id:                         sl.Int(55555),
 					CapacityRestrictionType:    sl.String("STORAGE_TIER_LEVEL"),
 					CapacityRestrictionMinimum: sl.String("100"),
 					CapacityRestrictionMaximum: sl.String("100"),
@@ -79,7 +79,7 @@ var _ = Describe("SLBlockSession", func() {
 					},
 				},
 				{
-					Id: sl.Int(33333),
+					Id:                         sl.Int(33333),
 					CapacityRestrictionMinimum: sl.String("100"),
 					CapacityRestrictionMaximum: sl.String("100"),
 					Item: &datatypes.Product_Item{
@@ -90,7 +90,7 @@ var _ = Describe("SLBlockSession", func() {
 					},
 				},
 				{
-					Id: sl.Int(44444),
+					Id:                         sl.Int(44444),
 					CapacityRestrictionMinimum: sl.String("100"),
 					CapacityRestrictionMaximum: sl.String("100"),
 					Item: &datatypes.Product_Item{

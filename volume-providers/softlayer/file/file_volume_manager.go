@@ -26,7 +26,7 @@ import (
 
 // Type returns the underlying volume type
 func (sls *SLFileSession) Type() provider.VolumeType {
-	return VolumeTypeBlock
+	return VolumeTypeFile
 }
 
 var ENDURANCE_TIERS = map[string]int{
@@ -171,12 +171,18 @@ func (sls *SLFileSession) VolumeCreate(volumeRequest provider.Volume) (*provider
 	sls.Logger.Info("Order status details ....", zap.Reflect("volOrder", volOrder), zap.Error(err)) // TODO: Will remove this
 
 	//! Step 6- wait for provisioning completion
-	volumeObj, errProv := sls.handleProvisioning(*volOrder.OrderId)
+	volumeObj, errProv := sls.HandleProvisioning(*volOrder.OrderId)
 	if errProv != nil {
 		sls.Logger.Error("**Provisioning failed ....", zap.Reflect("volOrder", volOrder), zap.Error(errProv))
 		return nil, messages.GetUserError("E0040", errProv, *volOrder.OrderId)
 	}
 	sls.Logger.Info("Volume details ... ", zap.Reflect("Volume", volumeObj))
+
+	volumeObj.VolumeNotes = volumeRequest.VolumeNotes
+	updateErr := sls.UpdateStorage(volumeObj)
+	if updateErr != nil {
+		sls.Logger.Error("Failed to update the storage", zap.Error(updateErr))
+	}
 	return volumeObj, nil
 }
 
@@ -328,7 +334,7 @@ func (sls *SLFileSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, t
 	sls.Logger.Info("Successfully placed order from snapshot .... ", zap.Reflect("orderID", *newOrderID.OrderId), zap.Reflect("OriginalVolumeID", volid), zap.Reflect("OriginalSnapshotID", snapshotID))
 
 	// Step 12- handle provisioning
-	volumeObj, errProv := sls.handleProvisioning(*newOrderID.OrderId)
+	volumeObj, errProv := sls.HandleProvisioning(*newOrderID.OrderId)
 	if errProv != nil {
 		sls.Logger.Error("**Provisioning failed ....", zap.Int("volOrder", *newOrderID.OrderId), zap.Error(errProv))
 		return nil, messages.GetUserError("E0040", errProv, *newOrderID.OrderId)
@@ -337,18 +343,13 @@ func (sls *SLFileSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, t
 	return volumeObj, nil
 }
 
-// Delete the volume
-func (sls *SLFileSession) VolumeDelete(vol *provider.Volume) error {
-	//! Step 1- verify inputes
-	if vol == nil {
-		return messages.GetUserError("E0035", nil)
+func (sls *SLFileSession) HandleProvisioning(orderID int) (*provider.Volume, error) {
+	storageID, err := sls.SLSession.HandleProvisioning(orderID)
+	if err == nil {
+		volume, err := sls.VolumeGet(strconv.Itoa(*storageID))
+		return volume, err
 	}
-	volumeID := utils.ToInt(vol.VolumeID)
-	if volumeID == 0 {
-		return messages.GetUserError("E0035", nil)
-	}
-
-	return sls.deleteStorage(volumeID)
+	return nil, err
 }
 
 // VolumeGet Get the volume by using ID
@@ -360,7 +361,7 @@ func (sls *SLFileSession) VolumeGet(id string) (*provider.Volume, error) {
 	}
 
 	// Step 2: Get volume details from SL
-	mask := "id, nasType,capacityGb,iops,createDate, notes"
+	mask := "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,originalVolumeName,storageTierLevel,notes"
 	storageObj := sls.Backend.GetNetworkStorageService()
 	storage, err := storageObj.ID(volumeID).Mask(mask).GetObject()
 	if err != nil {
@@ -368,7 +369,7 @@ func (sls *SLFileSession) VolumeGet(id string) (*provider.Volume, error) {
 	}
 
 	// Step 3: Convert volume to framework based volume object
-	vol := utils.ConvertToVolumeType(storage, sls.Logger, SoftLayer, VolumeTypeBlock)
+	vol := utils.ConvertToVolumeType(storage, sls.Logger, SoftLayer, VolumeTypeFile)
 	return vol, err
 }
 
@@ -376,73 +377,4 @@ func (sls *SLFileSession) VolumeGet(id string) (*provider.Volume, error) {
 func (sls *SLFileSession) VolumesList(tags map[string]string) ([]*provider.Volume, error) {
 	//! TODO: we may implement
 	return nil, nil
-}
-
-//getBillingItemID
-func (sls *SLFileSession) getBillingItemID(storageID int) (int, bool, error) {
-	//! Step 1: Get volume details
-	immediate := false
-	mask := "id,billingItem[id,hourlyFlag]"
-	storageObj := sls.Backend.GetNetworkStorageService()
-	storage, err := storageObj.ID(storageID).Mask(mask).GetObject()
-	if err != nil {
-		return 0, immediate, messages.GetUserError("E0011", err, storageID, "Volume ID not found")
-	}
-
-	// Step 2- When to delete
-	if storage.BillingItem.HourlyFlag != nil {
-		immediate = true
-	}
-
-	//! Step 3: Get the billing ID
-	if storage.BillingItem == nil {
-		return 0, immediate, messages.GetUserError("E0014", nil, storageID)
-	}
-	return *storage.BillingItem.Id, immediate, nil
-}
-
-//deleteStorage
-func (sls *SLFileSession) deleteStorage(networkStorageID int) error {
-	//! Step 1: Get volume details
-	billingId, immediate, err := sls.getBillingItemID(networkStorageID)
-	if err != nil || billingId <= 0 {
-		return err
-	}
-
-	// Step 2: Cancel the volume from SL
-	billingObj := sls.Backend.GetBillingItemService()
-	cancelAssociatedBillingItems := true
-	_, err = billingObj.ID(billingId).CancelItem(&immediate, &cancelAssociatedBillingItems, &VOLUME_DELETE_REASON, &VOLUME_DELETE_REASON)
-	if err != nil {
-		return messages.GetUserError("E0006", err, networkStorageID)
-	}
-
-	sls.Logger.Info("Successfully deleted storage  ..", zap.Int("StorageID", networkStorageID), zap.Int("BillingID", billingId))
-	return nil
-}
-
-//handleProvisioning
-func (sls *SLFileSession) handleProvisioning(orderID int) (*provider.Volume, error) {
-	sls.Logger.Info("Handling provisioning for  ....", zap.Reflect("OrderID", orderID))
-	storageID, errID := utils.GetStorageID(sls.Backend, string(sls.SLSession.VolumeType), orderID, sls.Logger, sls.Config)
-	//storageID, errID := sls.GetVolumeByRequestID(orderID)
-	if errID != nil {
-		return nil, messages.GetUserError("E0011", errID, orderID)
-	}
-	sls.Logger.Info("Successfully got the volume ID ....", zap.Reflect("VolumeID", storageID))
-
-	// Step 2- Cancel order if storageID not yet approved
-	err := utils.WaitForTransactionsComplete(sls.Backend, storageID, sls.Logger, sls.Config)
-	if err != nil {
-		sls.Logger.Error("**Error while provisioning order", zap.Int("storageId", storageID), zap.Error(err))
-		// cancel order
-		sls.Logger.Error("**Cancelling/Cleaning up the Storage Order due to incomplete provision", zap.Int("storageId", storageID))
-		errDelete := sls.deleteStorage(storageID)
-		if errDelete != nil {
-			sls.Logger.Error("**Failed to delete un-provisioned storage, user need to delete it manually", zap.Int("storageId", storageID), zap.Reflect("Error", errDelete))
-		}
-		return nil, err
-	}
-	sls.Logger.Info("storage details ... ", zap.Reflect("storageID", sl.Int(storageID)))
-	return nil, nil // TODO: need convert in local type
 }

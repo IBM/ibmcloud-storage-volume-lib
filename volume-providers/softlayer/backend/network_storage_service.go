@@ -26,6 +26,7 @@ type NetworkStorageService interface {
 	CreateSnapshot(notes *string) (resp datatypes.Network_Storage, err error)
 	GetSnapshots() (resp []datatypes.Network_Storage, err error)
 	DeleteObject() (resp bool, err error)
+	EditObject(templateObject *datatypes.Network_Storage) (resp bool, err error)
 }
 
 // NetworkStorageServiceSL is a softlayer implementation of the NetworkStorageService interface.
@@ -88,4 +89,14 @@ func (ns *NetworkStorageServiceSL) DeleteObject() (resp bool, err error) {
 		return dtError
 	})
 	return bStatus, dtError
+}
+
+func (ns *NetworkStorageServiceSL) EditObject(templateObject *datatypes.Network_Storage) (resp bool, err error) {
+	var editStatus bool
+	var editError error
+	editError = retry(func() error {
+		editStatus, editError = ns.networkStorageService.EditObject(templateObject)
+		return editError
+	})
+	return editStatus, editError
 }

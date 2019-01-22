@@ -31,7 +31,7 @@ var ENDURANCE_TIERS = map[string]int{
 	"10":   1000,
 }
 
-var IOPS = map[string]string{"READHEAVY_TIER": "2", "WRITEHEAVY_TIER": "4", "10_IOPS_PER_GB": "10"}
+var IOPS = map[string]string{"LOW_INTENSITY_TIER": "0.25", "READHEAVY_TIER": "2", "WRITEHEAVY_TIER": "4", "10_IOPS_PER_GB": "10"}
 
 // GetDataCenterID
 func GetDataCenterID(logger *zap.Logger, sess backend.Session, dataCenterName string) (int, error) {
@@ -429,7 +429,7 @@ func ProvisioningRetry(fn retryFuncProv, logger *zap.Logger, timeoutSec string, 
 }
 
 func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, prName provider.VolumeProvider, volType provider.VolumeType) (volume *provider.Volume) {
-	logger.Info("in CovertToVolumeType")
+	logger.Info("in CovertToVolumeType", zap.Reflect("storage", storage))
 	volume = &provider.Volume{}
 	volume.VolumeID = strconv.Itoa(*storage.Id)
 	var newnotes map[string]string
@@ -464,9 +464,9 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 		volume.LunID = *storage.LunId
 	}
 
-	if len(storage.IscsiTargetIpAddresses) > 0 {
+	/*	if len(storage.IscsiTargetIpAddresses) > 0 {
 		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
-	}
+	} */
 
 	volume.VolumeNotes = newnotes
 	return
@@ -483,7 +483,7 @@ func ConvertToNetworkStorage(storage datatypes.Network_Storage_Iscsi) datatypes.
 	networkStorageIscsi.CreateDate = storage.CreateDate
 	networkStorageIscsi.LunId = storage.LunId
 	networkStorageIscsi.ServiceResourceName = storage.ServiceResourceName
-	networkStorageIscsi.IscsiTargetIpAddresses = storage.IscsiTargetIpAddresses
+	//networkStorageIscsi.IscsiTargetIpAddresses = storage.IscsiTargetIpAddresses
 	return networkStorageIscsi
 }
 
@@ -503,14 +503,20 @@ func ConverStringToMap(mapString string) map[string]string {
 	return m
 }
 
-func ConvertToLocalSnapshotObject(storageSnapshot datatypes.Network_Storage, pName provider.VolumeProvider, volType provider.VolumeType) *provider.Snapshot {
+func ConvertToLocalSnapshotObject(storageSnapshot datatypes.Network_Storage, logger *zap.Logger, pName provider.VolumeProvider, volType provider.VolumeType) *provider.Snapshot {
 	snapshot := &provider.Snapshot{}
-	volume := provider.Volume{}
+	volume := &provider.Volume{}
 	volume.Provider = pName
 	volume.VolumeType = volType
 
 	if storageSnapshot.ParentVolume != nil && storageSnapshot.ParentVolume.Id != nil {
-		volume.VolumeID = strconv.Itoa(*storageSnapshot.ParentVolume.Id)
+		logger.Info("Found Parent Volume", zap.Reflect("parentVolume", storageSnapshot.ParentVolume))
+		volume = ConvertToVolumeType(*storageSnapshot.ParentVolume, logger, pName, volType)
+		/*volume.VolumeID = strconv.Itoa(*storageSnapshot.ParentVolume.Id)
+		volume.Iops = storageSnapshot.ParentVolume.Iops
+		volume.Tier = storageSnapshot.ParentVolume.StorageTierLevel
+		volume.Capacity = storageSnapshot.ParentVolume.CapacityGb
+		volume.VolumeNotes = storageSnapshot.ParentVolume.Notes*/
 	}
 
 	if storageSnapshot.ParentVolume != nil && storageSnapshot.ParentVolume.SnapshotCapacityGb != nil {
@@ -522,7 +528,7 @@ func ConvertToLocalSnapshotObject(storageSnapshot datatypes.Network_Storage, pNa
 		snapSize := ToInt(*storageSnapshot.ParentVolume.SnapshotSizeBytes)
 		snapshot.SnapshotSize = &snapSize
 	}
-	snapshot.Volume = volume
+	snapshot.Volume = *volume
 
 	if storageSnapshot.CreateDate != nil {
 		snapshot.SnapshotCreationTime, _ = time.Parse(time.RFC3339, storageSnapshot.CreateDate.String())
