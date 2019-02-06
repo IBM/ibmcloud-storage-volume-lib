@@ -103,13 +103,13 @@ var _ = Describe("SLBlockSession", func() {
 			}
 
 			itemPrices = map[string]*datatypes.Product_Item_Price{
-				"storage_as_a_service/STORAGE_AS_A_SERVICE": &datatypes.Product_Item_Price{
+				"storage_as_a_service/STORAGE_AS_A_SERVICE": {
 					Id: sl.Int(1000),
 				},
-				"storage_block/BLOCK_STORAGE_2": &datatypes.Product_Item_Price{
+				"storage_block/BLOCK_STORAGE_2": {
 					Id: sl.Int(2000),
 				},
-				"storage_tier_level/LOW_INTENSITY_TIER": &datatypes.Product_Item_Price{
+				"storage_tier_level/LOW_INTENSITY_TIER": {
 					Id: sl.Int(3000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(3001),
@@ -118,7 +118,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_tier_level/READHEAVY_TIER": &datatypes.Product_Item_Price{
+				"storage_tier_level/READHEAVY_TIER": {
 					Id: sl.Int(4000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(4001),
@@ -127,7 +127,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_tier_level/WRITEHEAVY_TIER": &datatypes.Product_Item_Price{
+				"storage_tier_level/WRITEHEAVY_TIER": {
 					Id: sl.Int(5000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(5001),
@@ -136,7 +136,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_tier_level/10_IOPS_PER_GB": &datatypes.Product_Item_Price{
+				"storage_tier_level/10_IOPS_PER_GB": {
 					Id: sl.Int(6000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(6001),
@@ -145,7 +145,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_capacity": &datatypes.Product_Item_Price{
+				"storage_capacity": {
 					Id: sl.Int(7000),
 					Item: &datatypes.Product_Item{
 						CapacityMaximum: sl.String("12000"), CapacityMinimum: sl.String("1"),
