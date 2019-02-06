@@ -72,6 +72,9 @@ type Volume struct {
 
 	// TargetIPAddresses list of target IP addresses for iscsi
 	TargetIPAddresses []string `json:"IscsiTargetIpAddresses,omitempty"`
+
+	// Attributes map of specific storage provider volume attributes
+	Attributes map[string]string
 }
 
 // Snapshot

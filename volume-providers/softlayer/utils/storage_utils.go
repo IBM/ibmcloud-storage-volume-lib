@@ -31,6 +31,10 @@ var ENDURANCE_TIERS = map[string]int{
 	"10":   1000,
 }
 
+const (
+	SoftLayerFileTypeName = "file"
+)
+
 var IOPS = map[string]string{"LOW_INTENSITY_TIER": "0.25", "READHEAVY_TIER": "2", "WRITEHEAVY_TIER": "4", "10_IOPS_PER_GB": "10"}
 
 // GetDataCenterID
@@ -431,6 +435,7 @@ func ProvisioningRetry(fn retryFuncProv, logger *zap.Logger, timeoutSec string, 
 func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, prName provider.VolumeProvider, volType provider.VolumeType) (volume *provider.Volume) {
 	logger.Info("in CovertToVolumeType", zap.Reflect("storage", storage))
 	volume = &provider.Volume{}
+	volumeAttribs := map[string]string{}
 	volume.VolumeID = strconv.Itoa(*storage.Id)
 	var newnotes map[string]string
 	if storage.Notes != nil {
@@ -468,7 +473,14 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
 	} */
 
+	switch volume.VolumeType {
+	case provider.VolumeType(SoftLayerFileTypeName):
+		volumeAttribs["Username"] = *storage.Username
+		volumeAttribs["FileNetworkMountAddress"] = *storage.FileNetworkMountAddress
+	}
+
 	volume.VolumeNotes = newnotes
+	volume.Attributes = volumeAttribs
 	return
 }
 
