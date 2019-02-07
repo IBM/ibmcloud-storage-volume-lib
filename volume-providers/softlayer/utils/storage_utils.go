@@ -464,27 +464,12 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 		volume.LunID = *storage.LunId
 	}
 
-	/*	if len(storage.IscsiTargetIpAddresses) > 0 {
+	if len(storage.IscsiTargetIpAddresses) > 0 {
 		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
-	} */
+	}
 
 	volume.VolumeNotes = newnotes
 	return
-}
-
-func ConvertToNetworkStorage(storage datatypes.Network_Storage_Iscsi) datatypes.Network_Storage {
-	networkStorageIscsi := datatypes.Network_Storage{}
-	networkStorageIscsi.Id = storage.Id
-	networkStorageIscsi.Notes = storage.Notes
-	networkStorageIscsi.StorageType = storage.StorageType
-	networkStorageIscsi.CapacityGb = storage.CapacityGb
-	networkStorageIscsi.SnapshotCapacityGb = storage.SnapshotCapacityGb
-	networkStorageIscsi.StorageTierLevel = storage.StorageTierLevel
-	networkStorageIscsi.CreateDate = storage.CreateDate
-	networkStorageIscsi.LunId = storage.LunId
-	networkStorageIscsi.ServiceResourceName = storage.ServiceResourceName
-	//networkStorageIscsi.IscsiTargetIpAddresses = storage.IscsiTargetIpAddresses
-	return networkStorageIscsi
 }
 
 func ConverStringToMap(mapString string) map[string]string {

@@ -364,7 +364,7 @@ func (sls *SLBlockSession) VolumeGet(id string) (*provider.Volume, error) {
 	}
 
 	// Step 3: Convert volume to framework based volume object
-	vol := utils.ConvertToVolumeType(utils.ConvertToNetworkStorage(storage), sls.Logger, SoftLayer, VolumeTypeBlock)
+	vol := utils.ConvertToVolumeType(storage.Network_Storage, sls.Logger, SoftLayer, VolumeTypeBlock)
 	return vol, err
 }
 
