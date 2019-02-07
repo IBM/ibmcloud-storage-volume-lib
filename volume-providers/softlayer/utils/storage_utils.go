@@ -459,6 +459,9 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 	if storage.CreateDate != nil {
 		volume.CreationTime, _ = time.Parse(time.RFC3339, storage.CreateDate.String())
 	}
+	volume.BackendIPAddress = storage.ServiceResourceBackendIpAddress
+	volume.Name = storage.Username
+	volume.FileNetworkMountAddress = storage.FileNetworkMountAddress
 
 	if storage.LunId != nil {
 		volume.LunID = *storage.LunId
