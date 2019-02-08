@@ -468,7 +468,7 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 	}
 
 	if len(storage.IscsiTargetIpAddresses) > 0 {
-		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
+		volume.IscsiTargetIPAddresses = storage.IscsiTargetIpAddresses
 	}
 
 	volume.VolumeNotes = newnotes
