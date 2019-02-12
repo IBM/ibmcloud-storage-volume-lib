@@ -83,7 +83,7 @@ type Volume struct {
 	IscsiTargetIPAddresses []string `json:"iscsiTargetIpAddresses,omitempty"`
 }
 
-// Snapshotniou
+// Snapshot
 type Snapshot struct {
 	Volume
 
