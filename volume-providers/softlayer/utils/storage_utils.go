@@ -31,10 +31,6 @@ var ENDURANCE_TIERS = map[string]int{
 	"10":   1000,
 }
 
-const (
-	SoftLayerFileTypeName = "file"
-)
-
 var IOPS = map[string]string{"LOW_INTENSITY_TIER": "0.25", "READHEAVY_TIER": "2", "WRITEHEAVY_TIER": "4", "10_IOPS_PER_GB": "10"}
 
 // GetDataCenterID
@@ -473,9 +469,11 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
 	} */
 
-	switch volume.VolumeType {
-	case provider.VolumeType(SoftLayerFileTypeName):
+	if storage.Username != nil {
 		volumeAttribs["Username"] = *storage.Username
+	}
+
+	if storage.FileNetworkMountAddress != nil {
 		volumeAttribs["FileNetworkMountAddress"] = *storage.FileNetworkMountAddress
 	}
 
