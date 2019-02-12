@@ -79,11 +79,11 @@ type Volume struct {
 	// LunID the lun of volume
 	LunID string `json:"lunId,omitempty"`
 
-	// TargetIPAddresses list of target IP addresses for iscsi. Applicable for block storage only
+	// IscsiTargetIPAddresses list of target IP addresses for iscsi. Applicable for Iscsi block storage only
 	IscsiTargetIPAddresses []string `json:"iscsiTargetIpAddresses,omitempty"`
 }
 
-// Snapshot
+// Snapshotniou
 type Snapshot struct {
 	Volume
 
