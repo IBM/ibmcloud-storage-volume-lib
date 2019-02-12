@@ -258,11 +258,11 @@ func (sls *SLBlockSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, 
 	originalStorageType := *originalVolume.StorageType.KeyName
 	isPerformanceVolume := false
 	finalPrices := []datatypes.Product_Item_Price{}
+	volumeCategory := fmt.Sprintf(`storage_%s`, "block")
 	if strings.Contains(originalStorageType, "ENDURANCE") {
 		if duplicateVolumeTier == "" {
 			duplicateVolumeTier = utils.GetEnduranceTierIopsPerGB(sls.Logger, originalVolume)
 		}
-		volumeCategory := fmt.Sprintf(`storage_%s`, "block")
 		finalPrices = []datatypes.Product_Item_Price{
 			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
 			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
@@ -282,7 +282,6 @@ func (sls *SLBlockSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, 
 			}
 		}
 
-		volumeCategory := fmt.Sprintf(`storage_%s`, originalStorageType)
 		finalPrices = []datatypes.Product_Item_Price{
 			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
 			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
@@ -356,7 +355,7 @@ func (sls *SLBlockSession) VolumeGet(id string) (*provider.Volume, error) {
 	}
 
 	// Step 2: Get volume details from SL
-	mask := "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes,iscsiTargetIpAddresses"
+	mask := "id,username,serviceResourceBackendIpAddress,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes,iscsiTargetIpAddresses"
 	storageObj := sls.Backend.GetNetworkStorageIscsiService()
 	storage, err := storageObj.ID(volumeID).Mask(mask).GetObject()
 	if err != nil {
@@ -364,7 +363,7 @@ func (sls *SLBlockSession) VolumeGet(id string) (*provider.Volume, error) {
 	}
 
 	// Step 3: Convert volume to framework based volume object
-	vol := utils.ConvertToVolumeType(utils.ConvertToNetworkStorage(storage), sls.Logger, SoftLayer, VolumeTypeBlock)
+	vol := utils.ConvertToVolumeType(storage.Network_Storage, sls.Logger, SoftLayer, VolumeTypeBlock)
 	return vol, err
 }
 
