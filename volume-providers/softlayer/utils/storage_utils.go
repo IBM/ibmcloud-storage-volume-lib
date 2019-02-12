@@ -460,14 +460,17 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 	if storage.CreateDate != nil {
 		volume.CreationTime, _ = time.Parse(time.RFC3339, storage.CreateDate.String())
 	}
+	volume.BackendIPAddress = storage.ServiceResourceBackendIpAddress
+	volume.Name = storage.Username
+	volume.FileNetworkMountAddress = storage.FileNetworkMountAddress
 
 	if storage.LunId != nil {
 		volume.LunID = *storage.LunId
 	}
 
-	/*	if len(storage.IscsiTargetIpAddresses) > 0 {
-		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
-	} */
+	if len(storage.IscsiTargetIpAddresses) > 0 {
+		volume.IscsiTargetIPAddresses = storage.IscsiTargetIpAddresses
+	}
 
 	if storage.Username != nil {
 		volumeAttribs["Username"] = *storage.Username
@@ -480,21 +483,6 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 	volume.VolumeNotes = newnotes
 	volume.Attributes = volumeAttribs
 	return
-}
-
-func ConvertToNetworkStorage(storage datatypes.Network_Storage_Iscsi) datatypes.Network_Storage {
-	networkStorageIscsi := datatypes.Network_Storage{}
-	networkStorageIscsi.Id = storage.Id
-	networkStorageIscsi.Notes = storage.Notes
-	networkStorageIscsi.StorageType = storage.StorageType
-	networkStorageIscsi.CapacityGb = storage.CapacityGb
-	networkStorageIscsi.SnapshotCapacityGb = storage.SnapshotCapacityGb
-	networkStorageIscsi.StorageTierLevel = storage.StorageTierLevel
-	networkStorageIscsi.CreateDate = storage.CreateDate
-	networkStorageIscsi.LunId = storage.LunId
-	networkStorageIscsi.ServiceResourceName = storage.ServiceResourceName
-	//networkStorageIscsi.IscsiTargetIpAddresses = storage.IscsiTargetIpAddresses
-	return networkStorageIscsi
 }
 
 func ConverStringToMap(mapString string) map[string]string {

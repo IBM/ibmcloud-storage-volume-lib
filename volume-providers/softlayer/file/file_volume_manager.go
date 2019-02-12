@@ -263,11 +263,11 @@ func (sls *SLFileSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, t
 	originalStorageType := *originalVolume.StorageType.KeyName
 	isPerformanceVolume := false
 	finalPrices := []datatypes.Product_Item_Price{}
+	volumeCategory := fmt.Sprintf(`storage_%s`, "file")
 	if strings.Contains(originalStorageType, "ENDURANCE") {
 		if duplicateVolumeTier == "" {
 			duplicateVolumeTier = utils.GetEnduranceTierIopsPerGB(sls.Logger, originalVolume)
 		}
-		volumeCategory := fmt.Sprintf(`storage_%s`, "file")
 		finalPrices = []datatypes.Product_Item_Price{
 			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
 			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
@@ -287,7 +287,6 @@ func (sls *SLFileSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, t
 			}
 		}
 
-		volumeCategory := fmt.Sprintf(`storage_%s`, originalStorageType)
 		finalPrices = []datatypes.Product_Item_Price{
 			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
 			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
@@ -361,7 +360,7 @@ func (sls *SLFileSession) VolumeGet(id string) (*provider.Volume, error) {
 	}
 
 	// Step 2: Get volume details from SL
-	mask := "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,originalVolumeName,storageTierLevel,notes,fileNetworkMountAddress"
+	mask := "id,username,capacityGb,serviceResourceBackendIpAddress,fileNetworkMountAddress,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,originalVolumeName,storageTierLevel,notes,fileNetworkMountAddress"
 	storageObj := sls.Backend.GetNetworkStorageService()
 	storage, err := storageObj.ID(volumeID).Mask(mask).GetObject()
 	if err != nil {

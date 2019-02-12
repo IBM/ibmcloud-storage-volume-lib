@@ -58,10 +58,19 @@ type Volume struct {
 	BillingType string `json:"billingType,omitempty"`
 
 	// Time stamp when volume creation was initiated
-	CreationTime time.Time `json:"creationTime`
+	CreationTime time.Time `json:"creationTime"`
 
 	// storage_as_a_service|enterprise|performance     default from SL is storage_as_a_service
-	ServiceOffering *string `json:"serviceOffering`
+	ServiceOffering *string `json:"serviceOffering"`
+
+	// Name of a device
+	Name *string `json:"name,omitempty"`
+
+	// Backend Ipaddress  OR Hostname of a device. Applicable for file storage only
+	BackendIPAddress *string `json:"backendIpAddress,omitempty"`
+
+	// Service address for  mounting NFS volume  Applicable for file storage only
+	FileNetworkMountAddress *string `json:"fileNetworkMountAddress,omitempty"`
 
 	// notes field as a map for all note fileds
 	// will keep   {"plugin":"ibm-file-plugin-56f7bd4db6-wx4pd","region":"us-south","cluster":"3a3fd80459014aca84f8a7e58e7a3ded","type":"Endurance","pvc":"one30","pv":"pvc-c7b4d6bd-63c5-11e8-811c-3a16fc403383","storgeclass":"ibmc-file-billing","reclaim":"Delete"}
@@ -75,6 +84,9 @@ type Volume struct {
 
 	// Attributes map of specific storage provider volume attributes
 	Attributes map[string]string
+
+  // IscsiTargetIPAddresses list of target IP addresses for iscsi. Applicable for Iscsi block storage only
+	IscsiTargetIPAddresses []string `json:"iscsiTargetIpAddresses,omitempty"`
 }
 
 // Snapshot
