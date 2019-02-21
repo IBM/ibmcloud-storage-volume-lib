@@ -79,13 +79,10 @@ type Volume struct {
 	// LunID the lun of volume
 	LunID string `json:"lunId,omitempty"`
 
-	// TargetIPAddresses list of target IP addresses for iscsi
-	TargetIPAddresses []string `json:"IscsiTargetIpAddresses,omitempty"`
-
 	// Attributes map of specific storage provider volume attributes
 	Attributes map[string]string
 
-  // IscsiTargetIPAddresses list of target IP addresses for iscsi. Applicable for Iscsi block storage only
+	// IscsiTargetIPAddresses list of target IP addresses for iscsi. Applicable for Iscsi block storage only
 	IscsiTargetIPAddresses []string `json:"iscsiTargetIpAddresses,omitempty"`
 }
 

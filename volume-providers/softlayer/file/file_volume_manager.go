@@ -360,7 +360,7 @@ func (sls *SLFileSession) VolumeGet(id string) (*provider.Volume, error) {
 	}
 
 	// Step 2: Get volume details from SL
-	mask := "id,username,capacityGb,serviceResourceBackendIpAddress,fileNetworkMountAddress,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,originalVolumeName,storageTierLevel,notes,fileNetworkMountAddress"
+	mask := "id,username,capacityGb,serviceResourceBackendIpAddress,fileNetworkMountAddress,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,originalVolumeName,storageTierLevel,notes"
 	storageObj := sls.Backend.GetNetworkStorageService()
 	storage, err := storageObj.ID(volumeID).Mask(mask).GetObject()
 	if err != nil {
