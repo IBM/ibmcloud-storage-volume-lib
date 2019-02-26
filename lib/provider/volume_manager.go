@@ -19,20 +19,20 @@ type VolumeManager interface {
 
 	// Volume operations
 	// Create the volume with authorization by passing required information in the volume object
-	VolumeCreate(VolumeRequest Volume) (*Volume, error)
+	CreateVolume(VolumeRequest Volume) (*Volume, error)
 
 	// Create the volume from snapshot with snapshot tags
-	VolumeCreateFromSnapshot(snapshot Snapshot, tags map[string]string) (*Volume, error)
+	CreateVolumeFromSnapshot(snapshot Snapshot, tags map[string]string) (*Volume, error)
 
 	// Delete the volume
-	VolumeDelete(*Volume) error
+	DeleteVolume(*Volume) error
 
 	// Get the volume by using ID  //
-	VolumeGet(id string) (*Volume, error)
+	GetVolume(id string) (*Volume, error)
 
 	// Others
 	// Get volume lists by using snapshot tags
-	VolumesList(tags map[string]string) ([]*Volume, error)
+	ListVolumes(tags map[string]string) ([]*Volume, error)
 
 	// GetVolumeByRequestID fetch the volume by request ID.
 	// Request Id is the one that is returned when volume is provsioning request is
