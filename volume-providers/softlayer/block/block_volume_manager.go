@@ -39,7 +39,7 @@ var ENDURANCE_TIERS = map[string]int{
 //Creates Volume along with snapshot space allocation
 //TESTED: SAAS offering for endurance and Performance
 //TODO: test Enterprise volumeOrdering with endurance and performance
-func (sls *SLBlockSession) VolumeCreate(volumeRequest provider.Volume) (*provider.Volume, error) {
+func (sls *SLBlockSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
 	sls.Logger.Info("Creating volume as per order request .... ", zap.Reflect("Volume", volumeRequest))
 
 	//Hard coded required values for testing TODO: Remove them and pass the values as arguments for function
@@ -182,7 +182,7 @@ func (sls *SLBlockSession) VolumeCreate(volumeRequest provider.Volume) (*provide
 }
 
 // Create the volume from snapshot with snapshot tags
-func (sls *SLBlockSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) {
+func (sls *SLBlockSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) {
 	//Setep 1: validate inputes
 	volid := utils.ToInt(snapshot.VolumeID)
 	snapshotID := utils.ToInt(snapshot.SnapshotID)
@@ -347,7 +347,7 @@ func (sls *SLBlockSession) HandleProvisioning(orderID int) (*provider.Volume, er
 }
 
 // VolumeGet Get the volume by using ID
-func (sls *SLBlockSession) VolumeGet(id string) (*provider.Volume, error) {
+func (sls *SLBlockSession) GetVolume(id string) (*provider.Volume, error) {
 	// Step 1: validate input
 	volumeID := utils.ToInt(id)
 	if volumeID == 0 {
@@ -368,7 +368,7 @@ func (sls *SLBlockSession) VolumeGet(id string) (*provider.Volume, error) {
 }
 
 // Get volume lists by using snapshot tags
-func (sls *SLBlockSession) VolumesList(tags map[string]string) ([]*provider.Volume, error) {
+func (sls *SLBlockSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) {
 	//! TODO: we may implement
 	return nil, nil
 }

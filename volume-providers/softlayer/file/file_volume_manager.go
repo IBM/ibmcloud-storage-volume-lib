@@ -40,10 +40,10 @@ var (
 	VOLUME_DELETE_REASON = "deleted by ibm-volume-lib on behalf of user request"
 )
 
-//Creates Volume along with snapshot space allocation
+//Create Volume along with snapshot space allocation
 //TESTED: SAAS offering for endurance and Performance
 //TODO: test Enterprise volumeOrdering with endurance and performance
-func (sls *SLFileSession) VolumeCreate(volumeRequest provider.Volume) (*provider.Volume, error) {
+func (sls *SLFileSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
 	sls.Logger.Info("Creating volume as per order request .... ", zap.Reflect("Volume", volumeRequest))
 
 	//Hard coded required values for testing TODO: Remove them and pass the values as arguments for function
@@ -187,7 +187,7 @@ func (sls *SLFileSession) VolumeCreate(volumeRequest provider.Volume) (*provider
 }
 
 // Create the volume from snapshot with snapshot tags
-func (sls *SLFileSession) VolumeCreateFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) {
+func (sls *SLFileSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) {
 	//Setep 1: validate inputes
 	volid := utils.ToInt(snapshot.VolumeID)
 	snapshotID := utils.ToInt(snapshot.SnapshotID)
@@ -351,8 +351,8 @@ func (sls *SLFileSession) HandleProvisioning(orderID int) (*provider.Volume, err
 	return nil, err
 }
 
-// VolumeGet Get the volume by using ID
-func (sls *SLFileSession) VolumeGet(id string) (*provider.Volume, error) {
+// GetVolume Get the volume by using ID
+func (sls *SLFileSession) GetVolume(id string) (*provider.Volume, error) {
 	// Step 1: validate input
 	volumeID := utils.ToInt(id)
 	if volumeID == 0 {
@@ -373,7 +373,7 @@ func (sls *SLFileSession) VolumeGet(id string) (*provider.Volume, error) {
 }
 
 // Get volume lists by using snapshot tags
-func (sls *SLFileSession) VolumesList(tags map[string]string) ([]*provider.Volume, error) {
+func (sls *SLFileSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) {
 	//! TODO: we may implement
 	return nil, nil
 }
