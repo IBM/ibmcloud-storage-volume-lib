@@ -532,3 +532,35 @@ func ConvertToLocalSnapshotObject(storageSnapshot datatypes.Network_Storage, log
 
 	return snapshot
 }
+
+//GetSubnetListFromIDs returns list of Network_Subnet from subnetIDs
+func GetSubnetListFromIDs(logger *zap.Logger, session backend.Session, subnetIDs []string) ([]datatypes.Network_Subnet, error) {
+	subnetList := []datatypes.Network_Subnet{}
+	subnetService := session.GetNetworkSubnetService()
+	for _, subnetID := range subnetIDs {
+		subnetIDInt, _ := strconv.Atoi(subnetID)
+		subnet, err := subnetService.ID(subnetIDInt).GetObject()
+		if err == nil {
+			subnetList = append(subnetList, subnet)
+		} else {
+			logger.Error("Unable to get the subnet by id ", zap.Error(err), zap.String("subnetId", subnetID))
+			return nil, err
+		}
+	}
+	return subnetList, nil
+}
+
+//GetSubnetIpAddressListFromIPs returns list of Network_Subnet_IpAddress from IP address list
+func GetSubnetIpAddressListFromIPs(logger *zap.Logger, session backend.Session, ipAddressList []string) ([]datatypes.Network_Subnet_IpAddress, error) {
+	mask := `id,ipAddress,hardware,virtualGuest`
+	subnetIpaddressList := []datatypes.Network_Subnet_IpAddress{}
+	for _, ipAddress := range ipAddressList {
+		subnetIpaddress, err := session.GetNetworkSubnetIpAddressService().Mask(mask).GetByIPAddress(&ipAddress)
+		if err != nil {
+			logger.Error("Unable to get SubnetIpAddress form IP", zap.Error(err))
+			return nil, err
+		}
+		subnetIpaddressList = append(subnetIpaddressList, subnetIpaddress)
+	}
+	return subnetIpaddressList, nil
+}

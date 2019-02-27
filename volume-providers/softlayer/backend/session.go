@@ -19,6 +19,8 @@ type Session interface {
 	GetProductOrderService() ProductOrderService
 	GetProductPackageService() ProductPackageService
 	GetNetworkStorageService() NetworkStorageService
+	GetNetworkSubnetService() NetworkSubnetService
+	GetNetworkSubnetIpAddressService() NetworkSubnetIpAddressService
 	GetResourceMetadataService() ResourceMetadataService
 	GetLocationService() LocationService
 }

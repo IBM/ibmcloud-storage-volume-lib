@@ -13,6 +13,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -83,7 +84,7 @@ func main() {
 	logger.Info("Currently you are using provider ....", zap.Reflect("ProviderName", sess.ProviderName()))
 	valid := true
 	for valid {
-		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \nYour choice?:")
+		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \nYour choice?:")
 		var choiceN int
 		var volumeID string
 		var snapshotID string
@@ -273,6 +274,32 @@ func main() {
 			_, error1 := sess.ListAllSnapshots(volumeID)
 			if error1 != nil {
 				logger.Info("Failed to get volumeID", zap.Reflect("Error", error1))
+			}
+		} else if choiceN == 12 {
+			fmt.Println("Authorize volume")
+			fmt.Printf("Please enter volume ID:")
+			_, er11 = fmt.Scanf("%s", &volumeID)
+			var subnetIDs string
+			fmt.Printf("Please enter subnet IDs comma seperated, default[]")
+			_, er11 = fmt.Scanf("%s", &subnetIDs)
+			var hostIPs string
+			fmt.Printf("Please enter host IPs comma seperated, default[]")
+			_, er11 = fmt.Scanf("%s", &hostIPs)
+			splitFn := func(c rune) bool {
+				return c == ','
+			}
+			subnetIDList := strings.FieldsFunc(subnetIDs, splitFn)
+			hostIPList := strings.FieldsFunc(strings.TrimSpace(hostIPs), splitFn)
+			fmt.Printf("lengnt:%d", len(hostIPList))
+			volumeObj, _ := sess.VolumeGet(volumeID)
+			authRequest := provider.AuthorizationRequest{
+				Volume:  *volumeObj,
+				Subnets: subnetIDList,
+				HostIps: hostIPList,
+			}
+			error1 := sess.UpdateAuthorization(authRequest)
+			if error1 != nil {
+				logger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}
 		} else {
 			fmt.Println("No right choice")
