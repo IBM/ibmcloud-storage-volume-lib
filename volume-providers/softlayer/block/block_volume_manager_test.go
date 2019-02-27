@@ -53,19 +53,19 @@ var _ = Describe("SLBlockSession", func() {
 		}
 	})
 
-	Describe("VolumeCreate", func() {
+	Describe("CreateVolume", func() {
 		var (
-			capacityItemPrices   []datatypes.Product_Item_Price
-			itemPrices           map[string]*datatypes.Product_Item_Price
+			//capacityItemPrices   []datatypes.Product_Item_Price
+			//itemPrices           map[string]*datatypes.Product_Item_Price
 			storagespacePrice    []datatypes.Product_Item_Price
-			itemPriceErrors      map[string]error
+			//itemPriceErrors      map[string]error
 			productPackages      []datatypes.Product_Package
 			networkStorages      []datatypes.Network_Storage
 			networkIscsiStorages []datatypes.Network_Storage_Iscsi
 		)
 
 		BeforeEach(func() {
-			capacityItemPrices = []datatypes.Product_Item_Price{
+			/*capacityItemPrices = []datatypes.Product_Item_Price{
 				{
 					Id:                         sl.Int(55555),
 					CapacityRestrictionType:    sl.String("STORAGE_TIER_LEVEL"),
@@ -100,16 +100,16 @@ var _ = Describe("SLBlockSession", func() {
 						Units:    sl.String("GB"),
 					},
 				},
-			}
+			}*/
 
-			itemPrices = map[string]*datatypes.Product_Item_Price{
-				"storage_as_a_service/STORAGE_AS_A_SERVICE": &datatypes.Product_Item_Price{
+			/*itemPrices = map[string]*datatypes.Product_Item_Price{
+				"storage_as_a_service/STORAGE_AS_A_SERVICE": {
 					Id: sl.Int(1000),
 				},
-				"storage_block/BLOCK_STORAGE_2": &datatypes.Product_Item_Price{
+				"storage_block/BLOCK_STORAGE_2": {
 					Id: sl.Int(2000),
 				},
-				"storage_tier_level/LOW_INTENSITY_TIER": &datatypes.Product_Item_Price{
+				"storage_tier_level/LOW_INTENSITY_TIER": {
 					Id: sl.Int(3000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(3001),
@@ -118,7 +118,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_tier_level/READHEAVY_TIER": &datatypes.Product_Item_Price{
+				"storage_tier_level/READHEAVY_TIER": {
 					Id: sl.Int(4000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(4001),
@@ -127,7 +127,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_tier_level/WRITEHEAVY_TIER": &datatypes.Product_Item_Price{
+				"storage_tier_level/WRITEHEAVY_TIER": {
 					Id: sl.Int(5000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(5001),
@@ -136,7 +136,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_tier_level/10_IOPS_PER_GB": &datatypes.Product_Item_Price{
+				"storage_tier_level/10_IOPS_PER_GB": {
 					Id: sl.Int(6000),
 					Item: &datatypes.Product_Item{
 						Id: sl.Int(6001),
@@ -145,7 +145,7 @@ var _ = Describe("SLBlockSession", func() {
 						},
 					},
 				},
-				"storage_capacity": &datatypes.Product_Item_Price{
+				"storage_capacity": {
 					Id: sl.Int(7000),
 					Item: &datatypes.Product_Item{
 						CapacityMaximum: sl.String("12000"), CapacityMinimum: sl.String("1"),
@@ -153,7 +153,7 @@ var _ = Describe("SLBlockSession", func() {
 						Capacity: sl.Float(0),
 					},
 				},
-			}
+			}*/
 			storagespacePrice = []datatypes.Product_Item_Price{
 				{
 					Id: sl.Int(7000), Item: &datatypes.Product_Item{
@@ -169,7 +169,7 @@ var _ = Describe("SLBlockSession", func() {
 					},
 				},
 			}
-			itemPriceErrors = map[string]error{}
+			//itemPriceErrors = map[string]error{}
 
 			datacenters = []datatypes.Location{
 				{Id: sl.Int(1), Name: sl.String("TEST-DC01")},
@@ -293,7 +293,7 @@ var _ = Describe("SLBlockSession", func() {
 		})
 
 		It("orders endurance storage", func() {
-			volume, err := slSession.VolumeCreate(volumeRequest)
+			volume, err := slSession.CreateVolume(volumeRequest)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(volume.VolumeID).To(Equal("1111"))
@@ -307,7 +307,7 @@ var _ = Describe("SLBlockSession", func() {
 		It("orders performance storage", func() {
 			volumeRequest.ProviderType = performaceType
 			volumeRequest.Iops = sl.String("100")
-			volume, err := slSession.VolumeCreate(volumeRequest)
+			volume, err := slSession.CreateVolume(volumeRequest)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(volume.VolumeID).To(Equal("2222"))
@@ -321,14 +321,14 @@ var _ = Describe("SLBlockSession", func() {
 		Context("when ordering fails with wrong provider type ", func() {
 			It("returns an error", func() {
 				volumeRequest.ProviderType = "WRONG"
-				_, err := slSession.VolumeCreate(volumeRequest)
+				_, err := slSession.CreateVolume(volumeRequest)
 				Expect(err.Error()).To(ContainSubstring("Storage type is wrong or not provided"))
 			})
 		})
 
 		It("delete volume success", func() {
 			volume, err := slSession.VolumeGet("2222")
-			err = slSession.VolumeDelete(volume)
+			err = slSession.DeleteVolume(volume)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(networkStorageIscsiService.GetObjectCallCount()).To(Equal(2))
 			Expect(billingItemService.CancelItemCallCount()).To(Equal(1))

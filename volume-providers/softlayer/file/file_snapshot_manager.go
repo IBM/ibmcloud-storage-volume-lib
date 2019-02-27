@@ -23,7 +23,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (sls *SLFileSession) SnapshotOrder(volumeRequest provider.Volume) error {
+func (sls *SLFileSession) OrderSnapshot(volumeRequest provider.Volume) error {
 	// Step 1- validate input which are required
 	sls.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
 	if volumeRequest.SnapshotSpace == nil {
@@ -44,7 +44,7 @@ func (sls *SLFileSession) SnapshotOrder(volumeRequest provider.Volume) error {
 	if err != nil {
 		return messages.GetUserError("E0011", nil, volid, "Please check the volume id")
 	}
-	sls.Logger.Info("in SnapshotOrder Volum Object ---->", zap.Reflect("Volume", storage))
+	sls.Logger.Info("in OrderSnapshot Volum Object ---->", zap.Reflect("Volume", storage))
 
 	// Step 3: verify original volume exists or not
 	if storage.BillingItem == nil {

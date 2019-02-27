@@ -431,6 +431,7 @@ func ProvisioningRetry(fn retryFuncProv, logger *zap.Logger, timeoutSec string, 
 func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, prName provider.VolumeProvider, volType provider.VolumeType) (volume *provider.Volume) {
 	logger.Info("in CovertToVolumeType", zap.Reflect("storage", storage))
 	volume = &provider.Volume{}
+	volumeAttribs := map[string]string{}
 	volume.VolumeID = strconv.Itoa(*storage.Id)
 	var newnotes map[string]string
 	if storage.Notes != nil {
@@ -471,7 +472,16 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 		volume.IscsiTargetIPAddresses = storage.IscsiTargetIpAddresses
 	}
 
+	if storage.Username != nil {
+		volumeAttribs["Username"] = *storage.Username
+	}
+
+	if storage.FileNetworkMountAddress != nil {
+		volumeAttribs["FileNetworkMountAddress"] = *storage.FileNetworkMountAddress
+	}
+
 	volume.VolumeNotes = newnotes
+	volume.Attributes = volumeAttribs
 	return
 }
 

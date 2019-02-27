@@ -108,7 +108,7 @@ func (sls *SLSession) UpdateStorage(volume *provider.Volume) error {
 }
 
 // Delete the volume
-func (sls *SLSession) VolumeDelete(vol *provider.Volume) error {
+func (sls *SLSession) DeleteVolume(vol *provider.Volume) error {
 	//! Step 1- verify inputes
 	if vol == nil {
 		return messages.GetUserError("E0035", nil)
@@ -188,7 +188,7 @@ func (sls *SLSession) deleteStorage(networkStorageID int) error {
 }
 
 // Create the snapshot from the volume
-func (sls *SLSession) SnapshotCreate(volume *provider.Volume, tags map[string]string) (*provider.Snapshot, error) {
+func (sls *SLSession) CreateSnapshot(volume *provider.Volume, tags map[string]string) (*provider.Snapshot, error) {
 	// Step 1: Validate input
 	if volume == nil {
 		return nil, messages.GetUserError("E0011", nil, nil, "nil volume struct")
@@ -235,7 +235,7 @@ func (sls *SLSession) SnapshotCreate(volume *provider.Volume, tags map[string]st
 }
 
 // Delete the snapshot
-func (sls *SLSession) SnapshotDelete(del *provider.Snapshot) error {
+func (sls *SLSession) DeleteSnapshot(del *provider.Snapshot) error {
 	// Step 1- Validate inputes
 	if del == nil {
 		return messages.GetUserError("E0030", nil)
@@ -256,7 +256,7 @@ func (sls *SLSession) SnapshotDelete(del *provider.Snapshot) error {
 }
 
 // Get the snapshot
-func (sls *SLSession) SnapshotGet(snapshotId string) (*provider.Snapshot, error) {
+func (sls *SLSession) GetSnapshot(snapshotId string) (*provider.Snapshot, error) {
 	// Step 1- Validate inputes
 	snapshotID := utils.ToInt(snapshotId)
 	if snapshotID == 0 {
@@ -280,7 +280,7 @@ func (sls *SLSession) SnapshotGet(snapshotId string) (*provider.Snapshot, error)
 }
 
 // Snapshot list by using tags
-func (sls *SLSession) SnapshotsList() ([]*provider.Snapshot, error) {
+func (sls *SLSession) ListSnapshots() ([]*provider.Snapshot, error) {
 	// Step 1- Get all snapshots from the SL which belongs to a IBM Infrastructure a/c
 	filter := fmt.Sprintf(`{"networkStorage":{"nasType":{"operation":"SNAPSHOT"}}}`)
 	accService := sls.Backend.GetAccountService()

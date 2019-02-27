@@ -24,7 +24,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (sls *SLBlockSession) SnapshotOrder(volumeRequest provider.Volume) error {
+func (sls *SLBlockSession) OrderSnapshot(volumeRequest provider.Volume) error {
 	// Step 1- validate input which are required
 	sls.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
 	if volumeRequest.SnapshotSpace == nil {
@@ -45,7 +45,7 @@ func (sls *SLBlockSession) SnapshotOrder(volumeRequest provider.Volume) error {
 	if err != nil {
 		return messages.GetUserError("E0011", nil, volid, "Please check the volume id")
 	}
-	sls.Logger.Info("in SnapshotOrder Volum Object ---->", zap.Reflect("Volume", storage))
+	sls.Logger.Info("in OrderSnapshot Volum Object ---->", zap.Reflect("Volume", storage))
 
 	// Step 3: verify original volume exists or not
 	if storage.BillingItem == nil {
@@ -86,7 +86,7 @@ func (sls *SLBlockSession) SnapshotOrder(volumeRequest provider.Volume) error {
 		if strings.Contains(volume_storage_type, "ENDURANCE") {
 			volumeTier := utils.GetEnduranceTierIopsPerGB(sls.Logger, storage)
 			finalPrices = []datatypes.Product_Item_Price{
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, volumeTier, 0))},
+				{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, volumeTier, 0))},
 			}
 		} else if strings.Contains(volume_storage_type, "PERFORMANCE") {
 			if !utils.IsVolumeCreatedWithStaaS(storage) {
@@ -94,7 +94,7 @@ func (sls *SLBlockSession) SnapshotOrder(volumeRequest provider.Volume) error {
 			}
 			iops := utils.ToInt(*storage.ProvisionedIops)
 			finalPrices = []datatypes.Product_Item_Price{
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, "", iops))},
+				{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, "", iops))},
 			}
 		} else {
 			return messages.GetUserError("E0019", nil, volume_storage_type)
@@ -102,7 +102,7 @@ func (sls *SLBlockSession) SnapshotOrder(volumeRequest provider.Volume) error {
 	} else { // 'storage_service_enterprise' package
 		volumeTier := utils.GetEnduranceTierIopsPerGB(sls.Logger, storage)
 		finalPrices = []datatypes.Product_Item_Price{
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetEnterpriseSpacePrice(sls.Logger, packageDetails, "snapshot", snapshotSize, volumeTier))},
+			{Id: sl.Int(utils.GetEnterpriseSpacePrice(sls.Logger, packageDetails, "snapshot", snapshotSize, volumeTier))},
 		}
 	}
 	/*
