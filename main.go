@@ -98,7 +98,7 @@ func main() {
 			fmt.Println("You selected choice to get volume details")
 			fmt.Printf("Please enter volume ID: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
-			volume, errr := sess.VolumeGet(volumeID)
+			volume, errr := sess.GetVolume(volumeID)
 			if errr == nil {
 				logger.Info("Successfully get volume details ================>", zap.Reflect("Volume ID", volumeID))
 				logger.Info("Volume details are: ", zap.Reflect("Volume", volume))
@@ -115,7 +115,7 @@ func main() {
 			var tags map[string]string
 			tags = make(map[string]string)
 			tags["tag1"] = "snapshot-tag1"
-			snapshot, errr := sess.SnapshotCreate(volume, tags)
+			snapshot, errr := sess.CreateSnapshot(volume, tags)
 			if errr == nil {
 				logger.Info("Successfully created snapshot on ================>", zap.Reflect("VolumeID", volumeID))
 				logger.Info("Snapshot details: ", zap.Reflect("Snapshot", snapshot))
@@ -180,7 +180,7 @@ func main() {
 			}
 			volume.SnapshotSpace = &volSize
 			volume.VolumeNotes = map[string]string{"note": "test"}
-			volumeObj, errr := sess.VolumeCreate(*volume)
+			volumeObj, errr := sess.CreateVolume(*volume)
 			if errr == nil {
 				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
 			} else {
@@ -191,7 +191,7 @@ func main() {
 			fmt.Println("You selected choice to get snapshot details")
 			fmt.Printf("Please enter Snapshot ID: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
-			snapdetails, errr := sess.SnapshotGet(volumeID)
+			snapdetails, errr := sess.GetSnapshot(volumeID)
 			fmt.Printf("\n\n")
 			if errr == nil {
 				logger.Info("Successfully get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
@@ -210,7 +210,7 @@ func main() {
 			fmt.Printf("Please enter snapshot space size in GB: ")
 			_, er11 = fmt.Scanf("%d", &size)
 			volume.SnapshotSpace = &size
-			er11 := sess.SnapshotOrder(*volume)
+			er11 := sess.OrderSnapshot(*volume)
 			if er11 == nil {
 				logger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
@@ -227,7 +227,7 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &snapshotID)
 			snapshotVol.SnapshotID = snapshotID
 			snapshotVol.Volume.VolumeID = volumeID
-			vol, errr := sess.VolumeCreateFromSnapshot(snapshotVol, tags)
+			vol, errr := sess.CreateVolumeFromSnapshot(snapshotVol, tags)
 			if errr == nil {
 				logger.Info("Successfully Created volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID))
 				logger.Info("New volume from snapshot================>", zap.Reflect("New Volume->", vol))
@@ -241,7 +241,7 @@ func main() {
 			fmt.Printf("Please enter volume ID for delete:")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			volume.VolumeID = volumeID
-			er11 = sess.VolumeDelete(volume)
+			er11 = sess.DeleteVolume(volume)
 			if er11 == nil {
 				logger.Info("Successfully deleted volume ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
@@ -254,7 +254,7 @@ func main() {
 			fmt.Printf("Please enter snapshot ID for delete:")
 			_, er11 = fmt.Scanf("%s", &snapshotID)
 			snapshot.SnapshotID = snapshotID
-			er11 = sess.SnapshotDelete(snapshot)
+			er11 = sess.DeleteSnapshot(snapshot)
 			if er11 == nil {
 				logger.Info("Successfully deleted snapshot ================>", zap.Reflect("Snapshot ID", snapshotID))
 			} else {
@@ -263,7 +263,7 @@ func main() {
 			fmt.Printf("\n\n")
 		} else if choiceN == 10 {
 			fmt.Println("You selected choice to list all snapshot")
-			list, _ := sess.SnapshotsList()
+			list, _ := sess.ListSnapshots()
 			logger.Info("All snapshots ================>", zap.Reflect("Snapshots", list))
 			fmt.Printf("\n\n")
 		} else if choiceN == 11 {
