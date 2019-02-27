@@ -360,7 +360,7 @@ func (sls *SLSession) updateHostIPAuthorization(volumeID int, hostIPList []strin
 	sls.Logger.Info("Entry updateHostIPAuthorization", zap.Reflect("hostIPList", hostIPList))
 	subnetIPAddressList, _ := utils.GetSubnetIpAddressListFromIPs(sls.Logger, sls.Backend, hostIPList)
 	storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
-	result, err := storageService.AllowAccessFromIpAddressList(subnetIPAddressList)
+	result, err := storageService.AllowAccessFromIPAddressList(subnetIPAddressList)
 	sls.Logger.Info("Exit updateHostIPAuthorization ", zap.Reflect("result", result), zap.Error(err))
 	return err
 }

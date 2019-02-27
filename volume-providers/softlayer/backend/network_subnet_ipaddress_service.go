@@ -16,7 +16,7 @@ import (
 )
 
 // NetworkSubnetIpAddressService is a wrapping interface for the softlayer-go API's NetworkSubnetIpAddressService
-//go:generate counterfeiter -o fakes/network_subnet_service.go --fake-name NetworkSubnetIpAddressService . NetworkSubnetIpAddressService
+//go:generate counterfeiter -o fakes/network_subnet_ipaddress_service.go --fake-name NetworkSubnetIpAddressService . NetworkSubnetIpAddressService
 type NetworkSubnetIpAddressService interface {
 	Filter(string) NetworkSubnetIpAddressService
 	Mask(string) NetworkSubnetIpAddressService

@@ -29,7 +29,7 @@ type NetworkStorageService interface {
 	DeleteObject() (resp bool, err error)
 	EditObject(templateObject *datatypes.Network_Storage) (resp bool, err error)
 	AllowAccessFromSubnetList(subnetObjectTemplates []datatypes.Network_Subnet) (bool, error)
-	AllowAccessFromIpAddressList(ipAddressObjectTemplates []datatypes.Network_Subnet_IpAddress) (bool, error)
+	AllowAccessFromIPAddressList(ipAddressObjectTemplates []datatypes.Network_Subnet_IpAddress) (bool, error)
 }
 
 // NetworkStorageServiceSL is a softlayer implementation of the NetworkStorageService interface.
@@ -104,6 +104,7 @@ func (ns *NetworkStorageServiceSL) EditObject(templateObject *datatypes.Network_
 	return editStatus, editError
 }
 
+//AllowAccessFromSubnetList allows access from subnet List
 func (ns *NetworkStorageServiceSL) AllowAccessFromSubnetList(subnetObjectTemplates []datatypes.Network_Subnet) (bool, error) {
 	var bStatus bool
 	var dtError error
@@ -114,19 +115,11 @@ func (ns *NetworkStorageServiceSL) AllowAccessFromSubnetList(subnetObjectTemplat
 	return bStatus, dtError
 }
 
-func (ns *NetworkStorageServiceSL) AllowAccessFromIpAddressList(ipAddressObjectTemplates []datatypes.Network_Subnet_IpAddress) (bool, error) {
-	//Allow access to current host
-	/*var allowedHost []datatypes.Network_Storage_Allowed_Host
-	hostList := []datatypes.Container_Network_Storage_Host{}
-	for _, ipAddress := range ipAddressObjectTemplates {
-		host := datatypes.Container_Network_Storage_Host{Id: ipAddress.Id, ObjectType: sl.String("SoftLayer_Network_Subnet_IpAddress")}
-		hostList = append(hostList, host)
-	}*/
-
+//AllowAccessFromIpAddressList allows access from Host IP address
+func (ns *NetworkStorageServiceSL) AllowAccessFromIPAddressList(ipAddressObjectTemplates []datatypes.Network_Subnet_IpAddress) (bool, error) {
 	var dtError error
 	var dtStatus bool
 	dtError = retry(func() error {
-		//services.GetNetworkSubnetService(sess)
 		dtStatus, dtError = ns.networkStorageService.AllowAccessFromIpAddressList(ipAddressObjectTemplates)
 		return dtError
 	})

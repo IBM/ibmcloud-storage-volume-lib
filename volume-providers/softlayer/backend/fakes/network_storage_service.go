@@ -9,6 +9,32 @@ import (
 )
 
 type NetworkStorageService struct {
+	AllowAccessFromIPAddressListStub        func([]datatypes.Network_Subnet_IpAddress) (bool, error)
+	allowAccessFromIPAddressListMutex       sync.RWMutex
+	allowAccessFromIPAddressListArgsForCall []struct {
+		arg1 []datatypes.Network_Subnet_IpAddress
+	}
+	allowAccessFromIPAddressListReturns struct {
+		result1 bool
+		result2 error
+	}
+	allowAccessFromIPAddressListReturnsOnCall map[int]struct {
+		result1 bool
+		result2 error
+	}
+	AllowAccessFromSubnetListStub        func([]datatypes.Network_Subnet) (bool, error)
+	allowAccessFromSubnetListMutex       sync.RWMutex
+	allowAccessFromSubnetListArgsForCall []struct {
+		arg1 []datatypes.Network_Subnet
+	}
+	allowAccessFromSubnetListReturns struct {
+		result1 bool
+		result2 error
+	}
+	allowAccessFromSubnetListReturnsOnCall map[int]struct {
+		result1 bool
+		result2 error
+	}
 	CreateSnapshotStub        func(*string) (datatypes.Network_Storage, error)
 	createSnapshotMutex       sync.RWMutex
 	createSnapshotArgsForCall []struct {
@@ -106,6 +132,142 @@ type NetworkStorageService struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *NetworkStorageService) AllowAccessFromIPAddressList(arg1 []datatypes.Network_Subnet_IpAddress) (bool, error) {
+	var arg1Copy []datatypes.Network_Subnet_IpAddress
+	if arg1 != nil {
+		arg1Copy = make([]datatypes.Network_Subnet_IpAddress, len(arg1))
+		copy(arg1Copy, arg1)
+	}
+	fake.allowAccessFromIPAddressListMutex.Lock()
+	ret, specificReturn := fake.allowAccessFromIPAddressListReturnsOnCall[len(fake.allowAccessFromIPAddressListArgsForCall)]
+	fake.allowAccessFromIPAddressListArgsForCall = append(fake.allowAccessFromIPAddressListArgsForCall, struct {
+		arg1 []datatypes.Network_Subnet_IpAddress
+	}{arg1Copy})
+	fake.recordInvocation("AllowAccessFromIPAddressList", []interface{}{arg1Copy})
+	fake.allowAccessFromIPAddressListMutex.Unlock()
+	if fake.AllowAccessFromIPAddressListStub != nil {
+		return fake.AllowAccessFromIPAddressListStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.allowAccessFromIPAddressListReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *NetworkStorageService) AllowAccessFromIPAddressListCallCount() int {
+	fake.allowAccessFromIPAddressListMutex.RLock()
+	defer fake.allowAccessFromIPAddressListMutex.RUnlock()
+	return len(fake.allowAccessFromIPAddressListArgsForCall)
+}
+
+func (fake *NetworkStorageService) AllowAccessFromIPAddressListCalls(stub func([]datatypes.Network_Subnet_IpAddress) (bool, error)) {
+	fake.allowAccessFromIPAddressListMutex.Lock()
+	defer fake.allowAccessFromIPAddressListMutex.Unlock()
+	fake.AllowAccessFromIPAddressListStub = stub
+}
+
+func (fake *NetworkStorageService) AllowAccessFromIPAddressListArgsForCall(i int) []datatypes.Network_Subnet_IpAddress {
+	fake.allowAccessFromIPAddressListMutex.RLock()
+	defer fake.allowAccessFromIPAddressListMutex.RUnlock()
+	argsForCall := fake.allowAccessFromIPAddressListArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *NetworkStorageService) AllowAccessFromIPAddressListReturns(result1 bool, result2 error) {
+	fake.allowAccessFromIPAddressListMutex.Lock()
+	defer fake.allowAccessFromIPAddressListMutex.Unlock()
+	fake.AllowAccessFromIPAddressListStub = nil
+	fake.allowAccessFromIPAddressListReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *NetworkStorageService) AllowAccessFromIPAddressListReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.allowAccessFromIPAddressListMutex.Lock()
+	defer fake.allowAccessFromIPAddressListMutex.Unlock()
+	fake.AllowAccessFromIPAddressListStub = nil
+	if fake.allowAccessFromIPAddressListReturnsOnCall == nil {
+		fake.allowAccessFromIPAddressListReturnsOnCall = make(map[int]struct {
+			result1 bool
+			result2 error
+		})
+	}
+	fake.allowAccessFromIPAddressListReturnsOnCall[i] = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *NetworkStorageService) AllowAccessFromSubnetList(arg1 []datatypes.Network_Subnet) (bool, error) {
+	var arg1Copy []datatypes.Network_Subnet
+	if arg1 != nil {
+		arg1Copy = make([]datatypes.Network_Subnet, len(arg1))
+		copy(arg1Copy, arg1)
+	}
+	fake.allowAccessFromSubnetListMutex.Lock()
+	ret, specificReturn := fake.allowAccessFromSubnetListReturnsOnCall[len(fake.allowAccessFromSubnetListArgsForCall)]
+	fake.allowAccessFromSubnetListArgsForCall = append(fake.allowAccessFromSubnetListArgsForCall, struct {
+		arg1 []datatypes.Network_Subnet
+	}{arg1Copy})
+	fake.recordInvocation("AllowAccessFromSubnetList", []interface{}{arg1Copy})
+	fake.allowAccessFromSubnetListMutex.Unlock()
+	if fake.AllowAccessFromSubnetListStub != nil {
+		return fake.AllowAccessFromSubnetListStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.allowAccessFromSubnetListReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *NetworkStorageService) AllowAccessFromSubnetListCallCount() int {
+	fake.allowAccessFromSubnetListMutex.RLock()
+	defer fake.allowAccessFromSubnetListMutex.RUnlock()
+	return len(fake.allowAccessFromSubnetListArgsForCall)
+}
+
+func (fake *NetworkStorageService) AllowAccessFromSubnetListCalls(stub func([]datatypes.Network_Subnet) (bool, error)) {
+	fake.allowAccessFromSubnetListMutex.Lock()
+	defer fake.allowAccessFromSubnetListMutex.Unlock()
+	fake.AllowAccessFromSubnetListStub = stub
+}
+
+func (fake *NetworkStorageService) AllowAccessFromSubnetListArgsForCall(i int) []datatypes.Network_Subnet {
+	fake.allowAccessFromSubnetListMutex.RLock()
+	defer fake.allowAccessFromSubnetListMutex.RUnlock()
+	argsForCall := fake.allowAccessFromSubnetListArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *NetworkStorageService) AllowAccessFromSubnetListReturns(result1 bool, result2 error) {
+	fake.allowAccessFromSubnetListMutex.Lock()
+	defer fake.allowAccessFromSubnetListMutex.Unlock()
+	fake.AllowAccessFromSubnetListStub = nil
+	fake.allowAccessFromSubnetListReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *NetworkStorageService) AllowAccessFromSubnetListReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.allowAccessFromSubnetListMutex.Lock()
+	defer fake.allowAccessFromSubnetListMutex.Unlock()
+	fake.AllowAccessFromSubnetListStub = nil
+	if fake.allowAccessFromSubnetListReturnsOnCall == nil {
+		fake.allowAccessFromSubnetListReturnsOnCall = make(map[int]struct {
+			result1 bool
+			result2 error
+		})
+	}
+	fake.allowAccessFromSubnetListReturnsOnCall[i] = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *NetworkStorageService) CreateSnapshot(arg1 *string) (datatypes.Network_Storage, error) {
@@ -582,6 +744,10 @@ func (fake *NetworkStorageService) MaskReturnsOnCall(i int, result1 backend.Netw
 func (fake *NetworkStorageService) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
+	fake.allowAccessFromIPAddressListMutex.RLock()
+	defer fake.allowAccessFromIPAddressListMutex.RUnlock()
+	fake.allowAccessFromSubnetListMutex.RLock()
+	defer fake.allowAccessFromSubnetListMutex.RUnlock()
 	fake.createSnapshotMutex.RLock()
 	defer fake.createSnapshotMutex.RUnlock()
 	fake.deleteObjectMutex.RLock()

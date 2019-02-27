@@ -110,7 +110,7 @@ type Snapshot struct {
 type AuthorizationRequest struct {
 	// Volume to update the authorization
 	Volume Volume
-	// List od subnets to authorize. It might be SubnetIDs or CIDR based on the providers implementaions
+	// List of subnets to authorize. It might be SubnetIDs or CIDR based on the providers implementaions
 	// For example, IBM Softlyaer provider  expects SubnetIDs to be passed
 	Subnets []string
 	// List of HostIPs to authorize
