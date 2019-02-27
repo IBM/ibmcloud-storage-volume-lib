@@ -291,7 +291,7 @@ func main() {
 			subnetIDList := strings.FieldsFunc(subnetIDs, splitFn)
 			hostIPList := strings.FieldsFunc(strings.TrimSpace(hostIPs), splitFn)
 			fmt.Printf("lengnt:%d", len(hostIPList))
-			volumeObj, _ := sess.VolumeGet(volumeID)
+			volumeObj, _ := sess.GetVolume(volumeID)
 			authRequest := provider.AuthorizationRequest{
 				Volume:  *volumeObj,
 				Subnets: subnetIDList,
