@@ -39,7 +39,6 @@ type VolumeManager interface {
 	// placed with Iaas provider.
 	GetVolumeByRequestID(requestID string) (*Volume, error)
 
-	//UpdateAuthorization update the authorzation based on authorization RequestTimeout
-	// It removes existing authorization and apply authorization given in the RequestTimeout
-	UpdateAuthorization(authorizationRequest AuthorizationRequest) error
+	//AuthorizeVolume allows aceess to volume  based on given authorization
+	AuthorizeVolume(volumeAuthorization VolumeAuthorization) error
 }

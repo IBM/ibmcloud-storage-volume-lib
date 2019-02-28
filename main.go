@@ -292,12 +292,12 @@ func main() {
 			hostIPList := strings.FieldsFunc(strings.TrimSpace(hostIPs), splitFn)
 			fmt.Printf("lengnt:%d", len(hostIPList))
 			volumeObj, _ := sess.GetVolume(volumeID)
-			authRequest := provider.AuthorizationRequest{
+			authRequest := provider.VolumeAuthorization{
 				Volume:  *volumeObj,
 				Subnets: subnetIDList,
-				HostIps: hostIPList,
+				HostIPs: hostIPList,
 			}
-			error1 := sess.UpdateAuthorization(authRequest)
+			error1 := sess.AuthorizeVolume(authRequest)
 			if error1 != nil {
 				logger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}

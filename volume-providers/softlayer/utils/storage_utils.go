@@ -560,8 +560,8 @@ func GetSubnetListFromIDs(logger *zap.Logger, session backend.Session, subnetIDs
 	return subnetList, nil
 }
 
-//GetSubnetIpAddressListFromIPs returns list of Network_Subnet_IpAddress from IP address list
-func GetSubnetIpAddressListFromIPs(logger *zap.Logger, session backend.Session, ipAddressList []string) ([]datatypes.Network_Subnet_IpAddress, error) {
+//GetSubnetIPAddressListFromIPs returns list of Network_Subnet_IpAddress from IP address list
+func GetSubnetIPAddressListFromIPs(logger *zap.Logger, session backend.Session, ipAddressList []string) ([]datatypes.Network_Subnet_IpAddress, error) {
 	mask := `id,ipAddress,hardware,virtualGuest`
 	subnetIpaddressList := []datatypes.Network_Subnet_IpAddress{}
 	for _, ipAddress := range ipAddressList {

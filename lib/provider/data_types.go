@@ -106,13 +106,13 @@ type Snapshot struct {
 	SnapshotTags SnapshotTags `json:"tags"`
 }
 
-// AuthorizationRequest capture details of autorization to be made
-type AuthorizationRequest struct {
+// VolumeAuthorization capture details of autorization to be made
+type VolumeAuthorization struct {
 	// Volume to update the authorization
-	Volume Volume
+	Volume Volume `json:"volume,omitempty"`
 	// List of subnets to authorize. It might be SubnetIDs or CIDR based on the providers implementaions
 	// For example, IBM Softlyaer provider  expects SubnetIDs to be passed
-	Subnets []string
+	Subnets []string `json:"subnets,omitempty"`
 	// List of HostIPs to authorize
-	HostIps []string
+	HostIPs []string `json:"hostIPs,omitempty"`
 }

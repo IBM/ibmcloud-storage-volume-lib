@@ -331,36 +331,42 @@ func (sls *SLSession) ListAllSnapshots(volumeID string) ([]*provider.Snapshot, e
 	return snList, nil
 }
 
-// UpdateAuthorization for the volume
-func (sls *SLSession) UpdateAuthorization(authorizationRequest provider.AuthorizationRequest) error {
-	sls.Logger.Info("Entry UpdateAuthorization", zap.Reflect("authorizationRequest", authorizationRequest))
-	volumeID, _ := strconv.Atoi(authorizationRequest.Volume.VolumeID)
+// AuthorizeVolume based on given volumeAuthorization
+func (sls *SLSession) AuthorizeVolume(volumeAuthorization provider.VolumeAuthorization) error {
+	sls.Logger.Info("Entry AuthorizeVolume", zap.Reflect("volumeAuthorization", volumeAuthorization))
+	volumeID, _ := strconv.Atoi(volumeAuthorization.Volume.VolumeID)
 	var err error
-	if authorizationRequest.Subnets != nil && len(authorizationRequest.Subnets) > 0 {
-		err = sls.updateSubnetAuthorization(volumeID, authorizationRequest.Subnets)
+	if volumeAuthorization.Subnets != nil && len(volumeAuthorization.Subnets) > 0 {
+		err = sls.authorizeVolumeFromSubnets(volumeID, volumeAuthorization.Subnets)
 	}
-	if authorizationRequest.HostIps != nil && len(authorizationRequest.HostIps) > 0 {
-		err = sls.updateHostIPAuthorization(volumeID, authorizationRequest.HostIps)
+	if volumeAuthorization.HostIPs != nil && len(volumeAuthorization.HostIPs) > 0 {
+		err = sls.authorizeVolumeFromHostIPs(volumeID, volumeAuthorization.HostIPs)
 	}
-	sls.Logger.Info("Exit UpdateAuthorization ", zap.Error(err))
+	sls.Logger.Info("Exit AuthorizeVolume ", zap.Error(err))
 	return err
 
 }
 
-func (sls *SLSession) updateSubnetAuthorization(volumeID int, subnetIDs []string) error {
-	sls.Logger.Info("Entry updateSubnetAuthorization", zap.Reflect("subnetIDs", subnetIDs))
-	subnetList, _ := utils.GetSubnetListFromIDs(sls.Logger, sls.Backend, subnetIDs)
-	storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
-	result, err := storageService.AllowAccessFromSubnetList(subnetList)
-	sls.Logger.Info("Exit updateSubnetAuthorization ", zap.Bool("result", result), zap.Error(err))
+func (sls *SLSession) authorizeVolumeFromSubnets(volumeID int, subnetIDs []string) error {
+	sls.Logger.Info("Entry authorizeVolumeFromSubnets", zap.Reflect("subnetIDs", subnetIDs))
+	result := false
+	subnetList, err := utils.GetSubnetListFromIDs(sls.Logger, sls.Backend, subnetIDs)
+	if err == nil {
+		storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
+		result, err = storageService.AllowAccessFromSubnetList(subnetList)
+	}
+	sls.Logger.Info("Exit authorizeVolumeFromSubnets ", zap.Bool("result", result), zap.Error(err))
 	return err
 }
 
-func (sls *SLSession) updateHostIPAuthorization(volumeID int, hostIPList []string) error {
-	sls.Logger.Info("Entry updateHostIPAuthorization", zap.Reflect("hostIPList", hostIPList))
-	subnetIPAddressList, _ := utils.GetSubnetIpAddressListFromIPs(sls.Logger, sls.Backend, hostIPList)
-	storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
-	result, err := storageService.AllowAccessFromIPAddressList(subnetIPAddressList)
-	sls.Logger.Info("Exit updateHostIPAuthorization ", zap.Reflect("result", result), zap.Error(err))
+func (sls *SLSession) authorizeVolumeFromHostIPs(volumeID int, hostIPList []string) error {
+	sls.Logger.Info("Entry authorizeVolumeFromHostIPs", zap.Reflect("hostIPList", hostIPList))
+	result := false
+	subnetIPAddressList, err := utils.GetSubnetIPAddressListFromIPs(sls.Logger, sls.Backend, hostIPList)
+	if err == nil {
+		storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
+		result, err = storageService.AllowAccessFromIPAddressList(subnetIPAddressList)
+	}
+	sls.Logger.Info("Exit authorizeVolumeFromHostIPs ", zap.Reflect("result", result), zap.Error(err))
 	return err
 }
