@@ -3,7 +3,7 @@ iam_url = "https://iam.bluemix.net"
 iam_client_id = "bx"
 iam_client_secret = "bx"
 #iam_api_key = "ZgMJYulQsYJNeRg46sJEmpyWU2E5-_3AqXQa2Nydwbo4"
-iam_api_key = "0qhod0MDhTcGpzX-1nkwKDTzG0F-VDXq8Y76hKMrAlUg"
+iam_api_key = ""
 refresh_token = ""
 
 
