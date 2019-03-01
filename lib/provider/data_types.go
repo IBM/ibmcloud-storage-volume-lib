@@ -109,7 +109,7 @@ type Snapshot struct {
 // VolumeAuthorization capture details of autorization to be made
 type VolumeAuthorization struct {
 	// Volume to update the authorization
-	Volume Volume `json:"volume,omitempty"`
+	Volume Volume `json:"volume"`
 	// List of subnets to authorize. It might be SubnetIDs or CIDR based on the providers implementaions
 	// For example, IBM Softlyaer provider  expects SubnetIDs to be passed
 	Subnets []string `json:"subnets,omitempty"`
