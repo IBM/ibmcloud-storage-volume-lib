@@ -2,15 +2,14 @@
 iam_url = "https://iam.bluemix.net"
 iam_client_id = "bx"
 iam_client_secret = "bx"
-#iam_api_key = "ZgMJYulQsYJNeRg46sJEmpyWU2E5-_3AqXQa2Nydwbo4"
 iam_api_key = ""
 refresh_token = ""
 
 
 [softlayer]
-softlayer_block_enabled = false
+softlayer_block_enabled = true
 softlayer_block_provider_name = "SOFTLAYER-BLOCK"
-softlayer_file_enabled = true
+softlayer_file_enabled = false
 softlayer_file_provider_name = "SOFTLAYER-FILE"
 softlayer_username = ""
 softlayer_api_key = ""
