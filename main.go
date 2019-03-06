@@ -57,7 +57,8 @@ func main() {
 	*/
 
 	// Load config file
-	conf, err := config.ReadConfig("/root/gopath/src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml", logger)
+	goPath := os.Getenv("GOPATH")
+	conf, err := config.ReadConfig(goPath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml", logger)
 	if err != nil {
 		logger.Fatal("Error loading configuration")
 	}
