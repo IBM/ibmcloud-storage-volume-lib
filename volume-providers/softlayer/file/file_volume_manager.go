@@ -40,7 +40,7 @@ var (
 	VOLUME_DELETE_REASON = "deleted by ibm-volume-lib on behalf of user request"
 )
 
-//Creates Volume along with snapshot space allocation
+//Create Volume along with snapshot space allocation
 //TESTED: SAAS offering for endurance and Performance
 //TODO: test Enterprise volumeOrdering with endurance and performance
 func (sls *SLFileSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
@@ -90,10 +90,10 @@ func (sls *SLFileSession) CreateVolume(volumeRequest provider.Volume) (*provider
 			iops := utils.ToInt(*volumeRequest.Iops)
 			sls.Logger.Info("new............. In PERFORMANCE")
 			prices = []datatypes.Product_Item_Price{
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_"+volume_type))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSPerformanceSpacePrice(sls.Logger, packageDetails, *volumeRequest.Capacity))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSPerformanceIopsPrice(sls.Logger, packageDetails, *volumeRequest.Capacity, iops))},
+				{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
+				{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_"+volume_type))},
+				{Id: sl.Int(utils.GetSaaSPerformanceSpacePrice(sls.Logger, packageDetails, *volumeRequest.Capacity))},
+				{Id: sl.Int(utils.GetSaaSPerformanceIopsPrice(sls.Logger, packageDetails, *volumeRequest.Capacity, iops))},
 			}
 
 			if volumeRequest.SnapshotSpace != nil && *volumeRequest.SnapshotSpace > 0 {
@@ -102,10 +102,10 @@ func (sls *SLFileSession) CreateVolume(volumeRequest provider.Volume) (*provider
 		} else { // volumeRequest.ProviderType == 'endurance'
 			sls.Logger.Info("new............. In ENDURANCE")
 			prices = []datatypes.Product_Item_Price{
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_"+volume_type))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSEnduranceSpacePrice(sls.Logger, packageDetails, *volumeRequest.Capacity, *volumeRequest.Tier))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSEnduranceTierPrice(sls.Logger, packageDetails, *volumeRequest.Tier))},
+				{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
+				{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_"+volume_type))},
+				{Id: sl.Int(utils.GetSaaSEnduranceSpacePrice(sls.Logger, packageDetails, *volumeRequest.Capacity, *volumeRequest.Tier))},
+				{Id: sl.Int(utils.GetSaaSEnduranceTierPrice(sls.Logger, packageDetails, *volumeRequest.Tier))},
 			}
 			if volumeRequest.SnapshotSpace != nil && *volumeRequest.SnapshotSpace > 0 {
 				prices = append(prices, datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, *volumeRequest.SnapshotSpace, *volumeRequest.Tier, 0))})
@@ -121,18 +121,18 @@ func (sls *SLFileSession) CreateVolume(volumeRequest provider.Volume) (*provider
 				complex_type = base_type_name + "PerformanceStorage_Nfs"
 			}
 			prices = []datatypes.Product_Item_Price{
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPerformanceSpacePrice(sls.Logger, packageDetails, *volumeRequest.Capacity))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPerformanceIopsPrice(sls.Logger, packageDetails, *volumeRequest.Capacity, iops))},
+				{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
+				{Id: sl.Int(utils.GetPerformanceSpacePrice(sls.Logger, packageDetails, *volumeRequest.Capacity))},
+				{Id: sl.Int(utils.GetPerformanceIopsPrice(sls.Logger, packageDetails, *volumeRequest.Capacity, iops))},
 			}
 		} else { //volumeRequest.ProviderType == 'endurance'
 			sls.Logger.Info("new............. In PLAIN ENDURANCE")
 			complex_type = base_type_name + "Storage_Enterprise"
 			prices = []datatypes.Product_Item_Price{
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_"+volume_type))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetEnterpriseSpacePrice(sls.Logger, packageDetails, "endurance", *volumeRequest.Capacity, *volumeRequest.Tier))},
-				datatypes.Product_Item_Price{Id: sl.Int(utils.GetEnterpriseEnduranceTierPrice(sls.Logger, packageDetails, *volumeRequest.Tier))},
+				{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, order_category_code))},
+				{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_"+volume_type))},
+				{Id: sl.Int(utils.GetEnterpriseSpacePrice(sls.Logger, packageDetails, "endurance", *volumeRequest.Capacity, *volumeRequest.Tier))},
+				{Id: sl.Int(utils.GetEnterpriseEnduranceTierPrice(sls.Logger, packageDetails, *volumeRequest.Tier))},
 			}
 
 			if volumeRequest.SnapshotSpace != nil && *volumeRequest.SnapshotSpace > 0 {
@@ -263,16 +263,16 @@ func (sls *SLFileSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, t
 	originalStorageType := *originalVolume.StorageType.KeyName
 	isPerformanceVolume := false
 	finalPrices := []datatypes.Product_Item_Price{}
+	volumeCategory := fmt.Sprintf(`storage_%s`, "file")
 	if strings.Contains(originalStorageType, "ENDURANCE") {
 		if duplicateVolumeTier == "" {
 			duplicateVolumeTier = utils.GetEnduranceTierIopsPerGB(sls.Logger, originalVolume)
 		}
-		volumeCategory := fmt.Sprintf(`storage_%s`, "file")
 		finalPrices = []datatypes.Product_Item_Price{
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSEnduranceSpacePrice(sls.Logger, packageDetails, duplicateVolumeSize, duplicateVolumeTier))},
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSEnduranceTierPrice(sls.Logger, packageDetails, duplicateVolumeTier))},
+			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
+			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
+			{Id: sl.Int(utils.GetSaaSEnduranceSpacePrice(sls.Logger, packageDetails, duplicateVolumeSize, duplicateVolumeTier))},
+			{Id: sl.Int(utils.GetSaaSEnduranceTierPrice(sls.Logger, packageDetails, duplicateVolumeTier))},
 		}
 
 		if duplicateSnapshotSize > 0 {
@@ -287,12 +287,11 @@ func (sls *SLFileSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, t
 			}
 		}
 
-		volumeCategory := fmt.Sprintf(`storage_%s`, originalStorageType)
 		finalPrices = []datatypes.Product_Item_Price{
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSPerformanceSpacePrice(sls.Logger, packageDetails, duplicateVolumeSize))},
-			datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSPerformanceIopsPrice(sls.Logger, packageDetails, duplicateVolumeSize, duplicateIops))},
+			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, "storage_as_a_service"))},
+			{Id: sl.Int(utils.GetPriceIDByCategory(sls.Logger, packageDetails, volumeCategory))},
+			{Id: sl.Int(utils.GetSaaSPerformanceSpacePrice(sls.Logger, packageDetails, duplicateVolumeSize))},
+			{Id: sl.Int(utils.GetSaaSPerformanceIopsPrice(sls.Logger, packageDetails, duplicateVolumeSize, duplicateIops))},
 		}
 		if duplicateSnapshotSize > 0 {
 			finalPrices = append(finalPrices, datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, duplicateVolumeSize, "", duplicateIops))})
@@ -346,7 +345,7 @@ func (sls *SLFileSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, t
 func (sls *SLFileSession) HandleProvisioning(orderID int) (*provider.Volume, error) {
 	storageID, err := sls.SLSession.HandleProvisioning(orderID)
 	if err == nil {
-		volume, err := sls.GetVolume(strconv.Itoa(*storageID))
+		volume, err := sls.VolumeGet(strconv.Itoa(*storageID))
 		return volume, err
 	}
 	return nil, err
@@ -361,7 +360,7 @@ func (sls *SLFileSession) GetVolume(id string) (*provider.Volume, error) {
 	}
 
 	// Step 2: Get volume details from SL
-	mask := "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,originalVolumeName,storageTierLevel,notes"
+	mask := "id,username,capacityGb,serviceResourceBackendIpAddress,fileNetworkMountAddress,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,originalVolumeName,storageTierLevel,notes"
 	storageObj := sls.Backend.GetNetworkStorageService()
 	storage, err := storageObj.ID(volumeID).Mask(mask).GetObject()
 	if err != nil {
