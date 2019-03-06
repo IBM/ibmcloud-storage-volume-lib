@@ -25,7 +25,7 @@ import (
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/auth"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 )
 
 type tokenGenerator struct {

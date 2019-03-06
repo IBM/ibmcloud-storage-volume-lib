@@ -19,7 +19,7 @@ import (
 	"github.com/softlayer/softlayer-go/sl"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/common/messages"
 	utils "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/utils"
 	"go.uber.org/zap"
 )
@@ -86,7 +86,7 @@ func (sls *SLBlockSession) OrderSnapshot(volumeRequest provider.Volume) error {
 		if strings.Contains(volume_storage_type, "ENDURANCE") {
 			volumeTier := utils.GetEnduranceTierIopsPerGB(sls.Logger, storage)
 			finalPrices = []datatypes.Product_Item_Price{
-				{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, volumeTier, 0))},
+				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, volumeTier, 0))},
 			}
 		} else if strings.Contains(volume_storage_type, "PERFORMANCE") {
 			if !utils.IsVolumeCreatedWithStaaS(storage) {
@@ -94,7 +94,7 @@ func (sls *SLBlockSession) OrderSnapshot(volumeRequest provider.Volume) error {
 			}
 			iops := utils.ToInt(*storage.ProvisionedIops)
 			finalPrices = []datatypes.Product_Item_Price{
-				{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, "", iops))},
+				datatypes.Product_Item_Price{Id: sl.Int(utils.GetSaaSSnapshotSpacePrice(sls.Logger, packageDetails, snapshotSize, "", iops))},
 			}
 		} else {
 			return messages.GetUserError("E0019", nil, volume_storage_type)
@@ -102,7 +102,7 @@ func (sls *SLBlockSession) OrderSnapshot(volumeRequest provider.Volume) error {
 	} else { // 'storage_service_enterprise' package
 		volumeTier := utils.GetEnduranceTierIopsPerGB(sls.Logger, storage)
 		finalPrices = []datatypes.Product_Item_Price{
-			{Id: sl.Int(utils.GetEnterpriseSpacePrice(sls.Logger, packageDetails, "snapshot", snapshotSize, volumeTier))},
+			datatypes.Product_Item_Price{Id: sl.Int(utils.GetEnterpriseSpacePrice(sls.Logger, packageDetails, "snapshot", snapshotSize, volumeTier))},
 		}
 	}
 	/*

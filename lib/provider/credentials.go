@@ -19,6 +19,9 @@ const (
 
 	// IAMAPIKey is an IAM account ID and API key
 	IAMAPIKey = AuthType("IAM_API_KEY")
+
+	// IAMAccessToken indicates the credential is an IAM access token
+	IAMAccessToken = AuthType("IAM_ACCESS_TOKEN")
 )
 
 // ContextCredentials represents user credentials (e.g. API key) for volume operations from IaaS provider

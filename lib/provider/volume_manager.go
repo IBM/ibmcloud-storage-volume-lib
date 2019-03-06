@@ -38,7 +38,4 @@ type VolumeManager interface {
 	// Request Id is the one that is returned when volume is provsioning request is
 	// placed with Iaas provider.
 	GetVolumeByRequestID(requestID string) (*Volume, error)
-
-	//AuthorizeVolume allows aceess to volume  based on given authorization
-	AuthorizeVolume(volumeAuthorization VolumeAuthorization) error
 }

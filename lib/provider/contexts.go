@@ -15,7 +15,6 @@ package provider
 type Context interface {
 	VolumeManager
 	SnapshotManager
-	// other can be added here
 }
 
 // Session is an Context that is notified when it is no longer required
@@ -24,7 +23,6 @@ type Session interface {
 	Context
 
 	// GetProviderDisplayName returns the name of the provider that is being used
-	// TODO Remove this and just start using the short name?
 	GetProviderDisplayName() VolumeProvider
 
 	// Close is called when the Session is nolonger required

@@ -16,17 +16,15 @@ import (
 
 // Session implements the backend.Session interface using a real softlayer-go Session
 type Session struct {
-	billingItemService            *BillingItemService
-	billingOrderService           *BillingOrderService
-	accountService                *AccountService
-	networkStorageIscsiService    *NetworkStorageIscsiService
-	productOrderService           *ProductOrderService
-	productPackageService         *ProductPackageService
-	resourceMetadataService       *ResourceMetadataService
-	networkStorageService         *NetworkStorageService
-	networkSubnetService          *NetworkSubnetService
-	networkSubnetIpAddressService *NetworkSubnetIpAddressService
-	locationService               *LocationService
+	billingItemService         *BillingItemService
+	billingOrderService        *BillingOrderService
+	accountService             *AccountService
+	networkStorageIscsiService *NetworkStorageIscsiService
+	productOrderService        *ProductOrderService
+	productPackageService      *ProductPackageService
+	resourceMetadataService    *ResourceMetadataService
+	networkStorageService      *NetworkStorageService
+	locationService            *LocationService
 }
 
 func NewSession() *Session {
@@ -77,16 +75,6 @@ func (s *Session) GetNetworkStorageService() backend.NetworkStorageService {
 	return s.networkStorageService
 }
 
-//GetNetworkSubnetService ...
-func (s *Session) GetNetworkSubnetService() backend.NetworkSubnetService {
-	return s.networkSubnetService
-}
-
-//GetNetworkSubnetIpAddressService ...
-func (s *Session) GetNetworkSubnetIpAddressService() backend.NetworkSubnetIpAddressService {
-	return s.networkSubnetIpAddressService
-}
-
 func (s *Session) GetLocationService() backend.LocationService {
 	return s.locationService
 }
@@ -123,16 +111,6 @@ func (s *Session) GetResourceMetadataServiceFake() *ResourceMetadataService {
 }
 func (s *Session) GetNetworkStorageServiceFake() *NetworkStorageService {
 	return s.networkStorageService
-}
-
-//GetNetworkSubnetServiceFake ...
-func (s *Session) GetNetworkSubnetServiceFake() *NetworkSubnetService {
-	return s.networkSubnetService
-}
-
-//GetNetworkSubnetIpAddressServiceFake ...
-func (s *Session) GetNetworkSubnetIpAddressServiceFake() *NetworkSubnetIpAddressService {
-	return s.networkSubnetIpAddressService
 }
 
 func (s *Session) GetLocationServiceFake() *LocationService {

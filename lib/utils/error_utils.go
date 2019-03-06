@@ -11,13 +11,18 @@
 package util
 
 import (
+	"errors"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"reflect"
 )
 
 // NewError returns an error that is implemented by provider.Error.
 // If optional wrapped errors are a provider.Error, this preserves all child wrapped
 // errors in depth-first order.
-func NewError(code string, msg string, wrapped ...error) error {
+func NewError(code reasoncode.ReasonCode, msg string, wrapped ...error) error {
 	return NewErrorWithProperties(code, msg, nil, wrapped...)
 }
 
@@ -25,7 +30,7 @@ func NewError(code string, msg string, wrapped ...error) error {
 // which is decorated with diagnostic properties.
 // If optional wrapped errors are a provider.Error, this preserves all child wrapped
 // errors in depth-first order.
-func NewErrorWithProperties(code string, msg string, properties map[string]string, wrapped ...error) error {
+func NewErrorWithProperties(code reasoncode.ReasonCode, msg string, properties map[string]string, wrapped ...error) error {
 	if code == "" {
 		code = "" // TODO: ErrorUnclassified
 	}
@@ -60,13 +65,13 @@ func ErrorDeepUnwrapString(err error) []string {
 }
 
 // ErrorReasonCode returns reason code if a provider.Error, else ErrorUnclassified
-func ErrorReasonCode(err error) string {
+func ErrorReasonCode(err error) reasoncode.ReasonCode {
 	if pErr, isPerr := err.(provider.Error); isPerr {
 		if code := pErr.Code(); code != "" {
 			return code
 		}
 	}
-	return "" // TODO: ErrorUnclassified
+	return reasoncode.ErrorUnclassified
 }
 
 // ErrorToFault returns or builds a Fault pointer for an error (e.g. for a response object)
@@ -91,4 +96,31 @@ func FaultToError(fault *provider.Fault) error {
 		return nil
 	}
 	return provider.Error{Fault: *fault}
+}
+
+// SetResponseFault sets the Fault field of any response struct
+func SetResponseFault(fault error, response interface{}) error {
+	value := reflect.ValueOf(response)
+	if value.Kind() != reflect.Ptr || value.Elem().Kind() != reflect.Struct {
+		return errors.New("Value must be a pointer to a struct")
+	}
+	field := value.Elem().FieldByName("Fault")
+	if field.Kind() != reflect.Ptr {
+		return errors.New("Value struct must have Fault provider.Fault field")
+	}
+	field.Set(reflect.ValueOf(ErrorToFault(fault)))
+	return nil
+}
+
+// ZapError returns a zapcore.Field for an error that includes the metadata
+// associated with a provider.Error. If the error is not a provider.Error then
+// the standard zap.Error is used.
+func ZapError(err error) zapcore.Field {
+	if perr, isPerr := err.(provider.Error); isPerr {
+		// Use zap.Relfect() to format all fields of struct
+		// zap.Any() would select standard error formatting
+		return zap.Reflect("error", perr)
+	}
+
+	return zap.Error(err)
 }

@@ -11,12 +11,14 @@
 package config
 
 import (
+	"errors"
+	"github.com/BurntSushi/toml"
+	"github.com/kelseyhightower/envconfig"
+	"go.uber.org/zap"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
-
-	"github.com/BurntSushi/toml"
-	"go.uber.org/zap"
 )
 
 func getEnv(key string) string {
@@ -33,9 +35,11 @@ func GetGoPath() string {
 
 // Config is the parent struct for all the configuration information for -cluster
 type Config struct {
+	Server    *ServerConfig  `required:"true"`
 	Bluemix   *BluemixConfig //`required:"true"`
 	Softlayer *SoftlayerConfig
 	Gen2      *Gen2Config
+	VPC       *VPCProviderConfig
 }
 
 //ReadConfig loads the config from file
@@ -71,6 +75,12 @@ func ParseConfig(filePath string, conf interface{}, logger *zap.Logger) error {
 		logger.Error("Failed to parse config file", zap.Error(err))
 	}
 	return err
+}
+
+// ServerConfig configuration options for the provider server itself
+type ServerConfig struct {
+	// DebugTrace is a flag to enable the debug level trace within the provider code.
+	DebugTrace bool `toml:"debug_trace" envconfig:"DEBUG_TRACE"`
 }
 
 // BluemixConfig ...
@@ -111,10 +121,41 @@ type Gen2Config struct {
 	Gen2URL             string `toml:"genesis_url"`
 }
 
+// VPCProviderConfig configures a specific instance of a VPC provider (e.g. GT/GC/Z)
+type VPCProviderConfig struct {
+	Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
+	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
+	EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
+	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
+}
+
 // GetEtcPath returns the path to the etc directory
 func GetEtcPath() string {
 	goPath := GetGoPath()
 	srcPath := filepath.Join("src", "github.com", "IBM",
 		"ibmcloud-storage-volume-lib")
 	return filepath.Join(goPath, srcPath, "etc")
+}
+
+// LoadPrefixVarConfigs is for internal use by armada-cluster
+func LoadPrefixVarConfigs(mappings string, template interface{}, offer func(string, interface{})) (err error) {
+	for _, mapping := range strings.Split(mappings, " ") { //  e.g. "vmware:VMWARE gt:GT"
+		if mapping != "" {
+			p := strings.Split(mapping, ":")
+			if len(p) != 2 {
+				err = errors.New("Invalid prefix config spec: " + mapping)
+				return
+			}
+
+			c := reflect.New(reflect.ValueOf(template).Type()).Interface()
+
+			err = envconfig.Process(p[1], c)
+			if err != nil {
+				return
+			}
+
+			offer(p[0], c)
+		}
+	}
+	return
 }

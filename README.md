@@ -8,7 +8,7 @@ By using this library user can enable multiple volume providers as well by just 
 # How to use:
 To use this library user need to see what all capabilities are there in this library by just checking `ibmcloud-storage-volume-lib/lib/provider/*_manager.go` files and concreate implementation for each provider which can be seen under `ibmcloud-storage-volume-lib/volume-providers` directory.
 
-NOTE: as of now this library has only Softlayer block & file support
+NOTE: as of now this library has only Softlayer block support
 
 ## Steps to use:
 Following steps has to followed by user to use this library
@@ -16,10 +16,10 @@ Following steps has to followed by user to use this library
 Update the glide.yaml to get the source code of this library, also only export the following packages to their application
 
 ```
-"github.com/IBM/ibmcloud-storage-volume-lib/config"
-"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
-provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
+"github.com/IBM/ibm-volume-lib/config"
+"github.com/IBM/ibm-volume-lib/lib/provider"
+"github.com/IBM/ibm-volume-lib/provider/local"
+provider_util "github.com/IBM/ibm-volume-lib/provider/utils"
 ```
 
 User can see the refrence from `ibmcloud-storage-volume-lib/main.go` sample file
@@ -88,7 +88,7 @@ softlayer_api_timeout = "20s"
 ### Step 3:
 From the implementation file which uses use this library, user need to initilaze the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
 
-`github.com/IBM/ibmcloud-storage-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
+`github.com/IBM/ibm-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
 
 ```
 providerRegistry, err := provider_util.InitProviders(conf, logger)
