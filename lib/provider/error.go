@@ -10,6 +10,10 @@
 
 package provider
 
+import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+)
+
 // Error implements the error interface for a Fault.
 // Most easily constructed using util.NewError() or util.NewErrorWithProperties()
 type Error struct {
@@ -25,7 +29,7 @@ type Fault struct {
 	Message string `json:"msg"`
 
 	// ReasonCode is fault reason code (required)  //TODO: will have better reasoncode mechanism
-	ReasonCode string `json:"code"`
+	ReasonCode reasoncode.ReasonCode `json:"code"`
 
 	// WrappedErrors contains wrapped error messages (if applicable)
 	Wrapped []string `json:"wrapped,omitempty"`
@@ -47,9 +51,9 @@ func (err Error) Error() string {
 }
 
 // Code satisfies the legacy provider.Error interface
-func (err Error) Code() string {
+func (err Error) Code() reasoncode.ReasonCode {
 	if err.Fault.ReasonCode == "" {
-		return ""
+		return reasoncode.ErrorUnclassified
 	}
 	return err.Fault.ReasonCode
 }

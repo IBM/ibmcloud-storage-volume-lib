@@ -20,7 +20,7 @@ import (
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/auth"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/backend"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/common"
 
@@ -58,7 +58,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		logger.Warn("SoftlayerAPIDebug is enabled!")
 	}
 
-	contextCF, err := auth.NewContextCredentialsFactory(conf.Bluemix, conf.Softlayer)
+	contextCF, err := auth.NewContextCredentialsFactory(conf.Bluemix, conf.Softlayer, nil)
 	if err != nil {
 		return nil, err
 	}

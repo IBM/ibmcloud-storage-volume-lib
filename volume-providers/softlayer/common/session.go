@@ -20,7 +20,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/backend"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/common/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/utils"
 	"github.com/softlayer/softlayer-go/filter"
 	"go.uber.org/zap"
@@ -28,7 +28,7 @@ import (
 
 type SLSessionCommonInterface interface {
 	// Get the volume by using ID  //
-	VolumeGet(id string) (*provider.Volume, error)
+	GetVolume(id string) (*provider.Volume, error)
 }
 
 // SLSession implements lib.Session
@@ -47,7 +47,7 @@ type SLSession struct {
 const SnapshotMask = "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],parentVolume[snapshotCapacityGb],parentVolume[id],parentVolume[storageTierLevel],parentVolume[notes],storageType[keyName],serviceResource[datacenter[name]],billingItem[location,hourlyFlag],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes"
 
 var (
-	VolumeDeleteReason = "deleted by ibm-volume-lib on behalf of user request"
+	DeleteVolumeReason = "deleted by ibm-volume-lib on behalf of user request"
 )
 
 //GetVolumeByRequestID getvolume by  request ID. The request ID the identifier returned after placing the order
@@ -178,7 +178,7 @@ func (sls *SLSession) deleteStorage(networkStorageID int) error {
 	// Step 2: Cancel the volume from SL
 	billingObj := sls.Backend.GetBillingItemService()
 	cancelAssociatedBillingItems := true
-	_, err = billingObj.ID(billingId).CancelItem(&immediate, &cancelAssociatedBillingItems, &VolumeDeleteReason, &VolumeDeleteReason)
+	_, err = billingObj.ID(billingId).CancelItem(&immediate, &cancelAssociatedBillingItems, &DeleteVolumeReason, &DeleteVolumeReason)
 	if err != nil {
 		return messages.GetUserError("E0006", err, networkStorageID)
 	}
@@ -329,44 +329,4 @@ func (sls *SLSession) ListAllSnapshots(volumeID string) ([]*provider.Snapshot, e
 		snList = append(snList, snapshot)
 	}
 	return snList, nil
-}
-
-// AuthorizeVolume based on given volumeAuthorization
-func (sls *SLSession) AuthorizeVolume(volumeAuthorization provider.VolumeAuthorization) error {
-	sls.Logger.Info("Entry AuthorizeVolume", zap.Reflect("volumeAuthorization", volumeAuthorization))
-	volumeID, _ := strconv.Atoi(volumeAuthorization.Volume.VolumeID)
-	var err error
-	if volumeAuthorization.Subnets != nil && len(volumeAuthorization.Subnets) > 0 {
-		err = sls.authorizeVolumeFromSubnets(volumeID, volumeAuthorization.Subnets)
-	}
-	if volumeAuthorization.HostIPs != nil && len(volumeAuthorization.HostIPs) > 0 {
-		err = sls.authorizeVolumeFromHostIPs(volumeID, volumeAuthorization.HostIPs)
-	}
-	sls.Logger.Info("Exit AuthorizeVolume ", zap.Error(err))
-	return err
-
-}
-
-func (sls *SLSession) authorizeVolumeFromSubnets(volumeID int, subnetIDs []string) error {
-	sls.Logger.Info("Entry authorizeVolumeFromSubnets", zap.Reflect("subnetIDs", subnetIDs))
-	result := false
-	subnetList, err := utils.GetSubnetListFromIDs(sls.Logger, sls.Backend, subnetIDs)
-	if err == nil {
-		storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
-		result, err = storageService.AllowAccessFromSubnetList(subnetList)
-	}
-	sls.Logger.Info("Exit authorizeVolumeFromSubnets ", zap.Bool("result", result), zap.Error(err))
-	return err
-}
-
-func (sls *SLSession) authorizeVolumeFromHostIPs(volumeID int, hostIPList []string) error {
-	sls.Logger.Info("Entry authorizeVolumeFromHostIPs", zap.Reflect("hostIPList", hostIPList))
-	result := false
-	subnetIPAddressList, err := utils.GetSubnetIPAddressListFromIPs(sls.Logger, sls.Backend, hostIPList)
-	if err == nil {
-		storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
-		result, err = storageService.AllowAccessFromIPAddressList(subnetIPAddressList)
-	}
-	sls.Logger.Info("Exit authorizeVolumeFromHostIPs ", zap.Reflect("result", result), zap.Error(err))
-	return err
 }

@@ -55,14 +55,6 @@ func (theSession *SessionSL) GetNetworkStorageService() NetworkStorageService {
 	return &NetworkStorageServiceSL{networkStorageService: services.GetNetworkStorageService(theSession.session)}
 }
 
-func (theSession *SessionSL) GetNetworkSubnetService() NetworkSubnetService {
-	return &NetworkSubnetServiceSL{networkSubnetService: services.GetNetworkSubnetService(theSession.session)}
-}
-
-func (theSession *SessionSL) GetNetworkSubnetIpAddressService() NetworkSubnetIpAddressService {
-	return &NetworkSubnetIpAddressServiceSL{networkSubnetIpAddressService: services.GetNetworkSubnetIpAddressService(theSession.session)}
-}
-
 func (theSession *SessionSL) GetResourceMetadataService() ResourceMetadataService {
 	return &ResourceMetadataServiceSL{resourceMetadataService: services.GetResourceMetadataService(theSession.session)}
 }

@@ -19,10 +19,8 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/auth"
 )
 
 type tokenExchangeService struct {
@@ -30,15 +28,22 @@ type tokenExchangeService struct {
 	httpClient  *http.Client
 }
 
-var _ auth.TokenExchangeService = &tokenExchangeService{}
+var _ TokenExchangeService = &tokenExchangeService{}
 
 // NewTokenExchangeService ...
-func NewTokenExchangeService(bluemixConf *config.BluemixConfig) (auth.TokenExchangeService, error) {
+func NewTokenExchangeServiceWithClient(bluemixConf *config.BluemixConfig, httpClient *http.Client) (TokenExchangeService, error) {
+	return &tokenExchangeService{
+		bluemixConf: bluemixConf,
+		httpClient:  httpClient,
+	}, nil
+}
+
+// NewTokenExchangeService ...
+func NewTokenExchangeService(bluemixConf *config.BluemixConfig) (TokenExchangeService, error) {
 	httpClient, err := config.GeneralCAHttpClient()
 	if err != nil {
 		return nil, err
 	}
-
 	return &tokenExchangeService{
 		bluemixConf: bluemixConf,
 		httpClient:  httpClient,
@@ -59,7 +64,7 @@ type tokenExchangeResponse struct {
 }
 
 // ExchangeRefreshTokenForAccessToken ...
-func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*auth.AccessToken, error) {
+func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*AccessToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "refresh_token")
@@ -69,7 +74,7 @@ func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken
 }
 
 // ExchangeAccessTokenForIMSToken ...
-func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken auth.AccessToken, logger *zap.Logger) (*auth.IMSToken, error) {
+func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken AccessToken, logger *zap.Logger) (*IMSToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:derive")
@@ -80,7 +85,7 @@ func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken auth
 }
 
 // ExchangeIAMAPIKeyForIMSToken ...
-func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*auth.IMSToken, error) {
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*IMSToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
@@ -91,7 +96,7 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, 
 }
 
 // ExchangeIAMAPIKeyForAccessToken ...
-func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger *zap.Logger) (*auth.AccessToken, error) {
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger *zap.Logger) (*AccessToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
@@ -100,20 +105,20 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey strin
 	return r.exchangeForAccessToken()
 }
 
-func (r *tokenExchangeRequest) exchangeForAccessToken() (*auth.AccessToken, error) {
+func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) {
 	iamResp, err := r.sendTokenExchangeRequest()
 	if err != nil {
 		return nil, err
 	}
-	return &auth.AccessToken{Token: iamResp.AccessToken}, nil
+	return &AccessToken{Token: iamResp.AccessToken}, nil
 }
 
-func (r *tokenExchangeRequest) exchangeForIMSToken() (*auth.IMSToken, error) {
+func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) {
 	iamResp, err := r.sendTokenExchangeRequest()
 	if err != nil {
 		return nil, err
 	}
-	return &auth.IMSToken{
+	return &IMSToken{
 		UserID: iamResp.ImsUserID,
 		Token:  iamResp.ImsToken,
 	}, nil
@@ -149,7 +154,7 @@ func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeRespons
 		} `json:"requirements"`
 	}{}
 
-	r.logger.Debug("Sending IAM token exchange request")
+	r.logger.Info("Sending IAM token exchange request")
 	resp, err := r.client.Do(r.request, &successV, &errorV)
 
 	if err != nil {

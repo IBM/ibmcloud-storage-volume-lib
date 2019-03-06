@@ -1,13 +1,16 @@
+[server]
+debug_trace = false
+
 [bluemix]
 iam_url = "https://iam.bluemix.net"
 iam_client_id = "bx"
 iam_client_secret = "bx"
-iam_api_key = ""
+iam_api_key = "EwoS_BKX7GRXCmv1jHNFHTnIo_VZb_b_S75J2hRYmHLv"
 refresh_token = ""
 
 
 [softlayer]
-softlayer_block_enabled = true
+softlayer_block_enabled = false
 softlayer_block_provider_name = "SOFTLAYER-BLOCK"
 softlayer_file_enabled = false
 softlayer_file_provider_name = "SOFTLAYER-FILE"
@@ -25,3 +28,11 @@ genesis_provider_enabled = false
 genesis_user_name = ""
 genesis_api_key = ""
 genesis_url = ""
+
+[vpc]
+vpc_enabled = true
+vpc_block_provider_name = "gc"
+vpc_username = ""# keep blank for IAM auth
+vpc_api_key = "" # keep blank for IAM auth
+vpc_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443/v1"
+vpc_timeout = "120s"
