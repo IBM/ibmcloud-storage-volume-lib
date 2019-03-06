@@ -19,7 +19,7 @@ import (
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/backend"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/common/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/messages"
 	"github.com/softlayer/softlayer-go/datatypes"
 	"go.uber.org/zap"
 )
@@ -431,6 +431,7 @@ func ProvisioningRetry(fn retryFuncProv, logger *zap.Logger, timeoutSec string, 
 func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, prName provider.VolumeProvider, volType provider.VolumeType) (volume *provider.Volume) {
 	logger.Info("in CovertToVolumeType", zap.Reflect("storage", storage))
 	volume = &provider.Volume{}
+	volumeAttribs := map[string]string{}
 	volume.VolumeID = strconv.Itoa(*storage.Id)
 	var newnotes map[string]string
 	if storage.Notes != nil {
@@ -459,32 +460,29 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 	if storage.CreateDate != nil {
 		volume.CreationTime, _ = time.Parse(time.RFC3339, storage.CreateDate.String())
 	}
+	volume.BackendIPAddress = storage.ServiceResourceBackendIpAddress
+	volume.Name = storage.Username
+	volume.FileNetworkMountAddress = storage.FileNetworkMountAddress
 
 	if storage.LunId != nil {
 		volume.LunID = *storage.LunId
 	}
 
-	/*	if len(storage.IscsiTargetIpAddresses) > 0 {
-		volume.TargetIPAddresses = storage.IscsiTargetIpAddresses
-	} */
+	if len(storage.IscsiTargetIpAddresses) > 0 {
+		volume.IscsiTargetIPAddresses = storage.IscsiTargetIpAddresses
+	}
+
+	if storage.Username != nil {
+		volumeAttribs["Username"] = *storage.Username
+	}
+
+	if storage.FileNetworkMountAddress != nil {
+		volumeAttribs["FileNetworkMountAddress"] = *storage.FileNetworkMountAddress
+	}
 
 	volume.VolumeNotes = newnotes
+	volume.Attributes = volumeAttribs
 	return
-}
-
-func ConvertToNetworkStorage(storage datatypes.Network_Storage_Iscsi) datatypes.Network_Storage {
-	networkStorageIscsi := datatypes.Network_Storage{}
-	networkStorageIscsi.Id = storage.Id
-	networkStorageIscsi.Notes = storage.Notes
-	networkStorageIscsi.StorageType = storage.StorageType
-	networkStorageIscsi.CapacityGb = storage.CapacityGb
-	networkStorageIscsi.SnapshotCapacityGb = storage.SnapshotCapacityGb
-	networkStorageIscsi.StorageTierLevel = storage.StorageTierLevel
-	networkStorageIscsi.CreateDate = storage.CreateDate
-	networkStorageIscsi.LunId = storage.LunId
-	networkStorageIscsi.ServiceResourceName = storage.ServiceResourceName
-	//networkStorageIscsi.IscsiTargetIpAddresses = storage.IscsiTargetIpAddresses
-	return networkStorageIscsi
 }
 
 func ConverStringToMap(mapString string) map[string]string {
@@ -543,4 +541,36 @@ func ConvertToLocalSnapshotObject(storageSnapshot datatypes.Network_Storage, log
 	}
 
 	return snapshot
+}
+
+//GetSubnetListFromIDs returns list of Network_Subnet from subnetIDs
+func GetSubnetListFromIDs(logger *zap.Logger, session backend.Session, subnetIDs []string) ([]datatypes.Network_Subnet, error) {
+	subnetList := []datatypes.Network_Subnet{}
+	subnetService := session.GetNetworkSubnetService()
+	for _, subnetID := range subnetIDs {
+		subnetIDInt, _ := strconv.Atoi(subnetID)
+		subnet, err := subnetService.ID(subnetIDInt).GetObject()
+		if err == nil {
+			subnetList = append(subnetList, subnet)
+		} else {
+			logger.Error("Unable to get the subnet by id ", zap.Error(err), zap.String("subnetId", subnetID))
+			return nil, err
+		}
+	}
+	return subnetList, nil
+}
+
+//GetSubnetIPAddressListFromIPs returns list of Network_Subnet_IpAddress from IP address list
+func GetSubnetIPAddressListFromIPs(logger *zap.Logger, session backend.Session, ipAddressList []string) ([]datatypes.Network_Subnet_IpAddress, error) {
+	mask := `id,ipAddress,hardware,virtualGuest`
+	subnetIpaddressList := []datatypes.Network_Subnet_IpAddress{}
+	for _, ipAddress := range ipAddressList {
+		subnetIpaddress, err := session.GetNetworkSubnetIpAddressService().Mask(mask).GetByIPAddress(&ipAddress)
+		if err != nil {
+			logger.Error("Unable to get SubnetIpAddress form IP", zap.Error(err))
+			return nil, err
+		}
+		subnetIpaddressList = append(subnetIpaddressList, subnetIpaddress)
+	}
+	return subnetIpaddressList, nil
 }

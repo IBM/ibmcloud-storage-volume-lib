@@ -27,6 +27,8 @@ type NetworkStorageService interface {
 	GetSnapshots() (resp []datatypes.Network_Storage, err error)
 	DeleteObject() (resp bool, err error)
 	EditObject(templateObject *datatypes.Network_Storage) (resp bool, err error)
+	AllowAccessFromSubnetList(subnetObjectTemplates []datatypes.Network_Subnet) (bool, error)
+	AllowAccessFromIPAddressList(ipAddressObjectTemplates []datatypes.Network_Subnet_IpAddress) (bool, error)
 }
 
 // NetworkStorageServiceSL is a softlayer implementation of the NetworkStorageService interface.
@@ -99,4 +101,26 @@ func (ns *NetworkStorageServiceSL) EditObject(templateObject *datatypes.Network_
 		return editError
 	})
 	return editStatus, editError
+}
+
+//AllowAccessFromSubnetList allows access from subnet List
+func (ns *NetworkStorageServiceSL) AllowAccessFromSubnetList(subnetObjectTemplates []datatypes.Network_Subnet) (bool, error) {
+	var bStatus bool
+	var dtError error
+	dtError = retry(func() error {
+		bStatus, dtError = ns.networkStorageService.AllowAccessFromSubnetList(subnetObjectTemplates)
+		return dtError
+	})
+	return bStatus, dtError
+}
+
+//AllowAccessFromIpAddressList allows access from Host IP address
+func (ns *NetworkStorageServiceSL) AllowAccessFromIPAddressList(ipAddressObjectTemplates []datatypes.Network_Subnet_IpAddress) (bool, error) {
+	var dtError error
+	var dtStatus bool
+	dtError = retry(func() error {
+		dtStatus, dtError = ns.networkStorageService.AllowAccessFromIpAddressList(ipAddressObjectTemplates)
+		return dtError
+	})
+	return dtStatus, dtError
 }

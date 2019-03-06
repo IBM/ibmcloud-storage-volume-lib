@@ -18,7 +18,7 @@ import (
 	"github.com/softlayer/softlayer-go/sl"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/common/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/utils"
 	"go.uber.org/zap"
 )
