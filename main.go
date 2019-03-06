@@ -57,7 +57,7 @@ func main() {
 	*/
 
 	// Load config file
-	conf, err := config.ReadConfig("", logger)
+	conf, err := config.ReadConfig("/root/gopath/src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml", logger)
 	if err != nil {
 		logger.Fatal("Error loading configuration")
 	}
@@ -72,7 +72,10 @@ func main() {
 	providerName := conf.Softlayer.SoftlayerBlockProviderName
 	if conf.Softlayer.SoftlayerFileEnabled {
 		providerName = conf.Softlayer.SoftlayerFileProviderName
+	} else if conf.VPC.Enabled {
+		providerName = conf.VPC.VPCBlockProviderName
 	}
+
 	logger.Info("In main before openProviderSession call", zap.Reflect("providerRegistry", providerRegistry))
 	sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
 	if err != nil {
