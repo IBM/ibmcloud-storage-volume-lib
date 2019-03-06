@@ -13,10 +13,6 @@ package registry
 import (
 	//"github.com/prometheus/client_golang/prometheus"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"os"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
 
@@ -48,18 +44,5 @@ func (pr *ProviderRegistry) Register(providerID string, p local.Provider) {
 	if pr.providers == nil {
 		pr.providers = map[string]local.Provider{}
 	}
-	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "timestamp"
-	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-	atom := zap.NewAtomicLevel()
-	atom.SetLevel(zap.InfoLevel)
 	pr.providers[providerID] = p
-	logger := zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderCfg),
-		zapcore.Lock(os.Stdout),
-		atom,
-	), zap.AddCaller()).With(zap.String("name", "ibm-volume-lib/main")).With(zap.String("VolumeLib", "IKS-VOLUME-LIB"))
-
-	defer logger.Sync()
-	logger.Info("providerID", zap.Reflect("providers", pr.providers))
 }
