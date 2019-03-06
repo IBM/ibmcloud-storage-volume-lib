@@ -13,30 +13,16 @@ package provider
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"os"
 	"strconv"
 )
 
 // GetVolume Get the volume by using ID
 func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
-	atom := zap.NewAtomicLevel()
+	vpcs.Logger.Info("In provider GetVolume method")
 
-	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "timestamp"
-	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-
-	logger := zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderCfg),
-		zapcore.Lock(os.Stdout),
-		atom,
-	), zap.AddCaller()).With(zap.String("Provider", "VPC"))
-
-	defer logger.Sync()
-
-	atom.SetLevel(zap.InfoLevel)
 	volume, _ := vpcs.Apiclient.Volume().GetVolume(id)
-	logger.Info("Volume details", zap.Reflect("Volume", volume))
+	vpcs.Logger.Info("Volume details", zap.Reflect("Volume", volume))
+
 	volumeCap := int(volume.Capacity)
 	iops := strconv.Itoa(int(volume.Iops))
 	respVolume := &provider.Volume{
@@ -46,7 +32,7 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 		Iops:         &iops,
 		VolumeType:   VolumeType,
 		CreationTime: *volume.CreatedAt,
-		Region: volume.Zone.Name,
+		Region:       volume.Zone.Name,
 	}
 	return respVolume, nil
 }

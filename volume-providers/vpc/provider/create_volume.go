@@ -12,9 +12,11 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"go.uber.org/zap"
 )
 
 // CreateVolume Get the volume by using ID
 func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
+	vpcs.Logger.Info("Creating volume as per order request .... ", zap.Reflect("Volume", volumeRequest))
 	return nil, nil
 }
