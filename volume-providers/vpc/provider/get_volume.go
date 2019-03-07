@@ -23,13 +23,6 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 	vpcs.Logger.Info("In provider GetVolume method")
 
 	var err error
-
-	// validate input
-	volumeID := ToInt(id)
-	if volumeID == 0 {
-		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, id, "Not a valid volume ID")
-		//return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", nil, id, "0 is not the correct volume ID")
-	}
 	var volume *models.Volume
 
 	err = retry(func() error {

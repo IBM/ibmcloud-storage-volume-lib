@@ -22,7 +22,7 @@ import (
 	"time"
 
 	"github.com/fatih/structs"
-	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/client/payload"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/payload"
 )
 
 // Operation defines the API operation to be invoked
