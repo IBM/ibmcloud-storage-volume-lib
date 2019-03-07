@@ -38,7 +38,7 @@ func main() {
 		zapcore.NewJSONEncoder(encoderCfg),
 		zapcore.Lock(os.Stdout),
 		atom,
-	), zap.AddCaller()).With(zap.String("name", "ibm-volume-lib/main")).With(zap.String("VolumeLib", "VPC-Lib"))
+	), zap.AddCaller()).With(zap.String("name", "ibmcloud-storage-volume-lib/main")).With(zap.String("VolumeLib", "VPC-Lib"))
 
 	defer logger.Sync()
 
@@ -315,7 +315,7 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &volumeName)
 			volume.Name = &volumeName
 
-			fmt.Printf("\nPlease enter volume size \(Specify 10 GB - 2 TB of capacity in 1 GB increments\): ")
+			fmt.Printf("\nPlease enter volume size (Specify 10 GB - 2 TB of capacity in 1 GB increments): ")
 			_, er11 = fmt.Scanf("%d", &volSize)
 			volume.Capacity = &volSize
 

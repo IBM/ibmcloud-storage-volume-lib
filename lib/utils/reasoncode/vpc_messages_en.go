@@ -83,10 +83,10 @@ var messages_en = map[string]Message{
 		RC:          500,
 		Action:      "Volume IOPs is not valid. Check whether the volume IOPs has allowed values.",
 	},
-	"DuplicateVolumeVame": Message{
-		Code:        "DuplicateVolumeVame",
+	"DuplicateVolumeName": Message{
+		Code:        "DuplicateVolumeName",
 		Description: "The volume name specified in the request already exists.",
-		Type:        "DuplicateVolumeVame",
+		Type:        "DuplicateVolumeName",
 		RC:          500,
 		Action:      "Volume name already exists. Please give different volume name.",
 	},
