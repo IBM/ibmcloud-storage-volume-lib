@@ -7,7 +7,7 @@
  * its trade secrets,  * irrespective of what has been deposited with
  * the U.S. Copyright Office.
  ******************************************************************************/
-package messages
+package reasoncode
 
 import (
 	"fmt"

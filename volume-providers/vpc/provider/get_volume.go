@@ -13,6 +13,7 @@ package provider
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/models"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/reasoncode"
 	"go.uber.org/zap"
 	"strconv"
 )
@@ -22,12 +23,24 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 	vpcs.Logger.Info("In provider GetVolume method")
 
 	var err error
+
+	// validate input
+	volumeID := ToInt(id)
+	if volumeID == 0 {
+		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, id, "Not a valid volume ID")
+		//return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", nil, id, "0 is not the correct volume ID")
+	}
 	var volume *models.Volume
 
 	err = retry(func() error {
 		volume, err = vpcs.Apiclient.Volume().GetVolume(id)
 		return err
 	})
+
+	if err != nil {
+		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, id, "Not a valid volume ID")
+	}
+
 	vpcs.Logger.Info("Volume details", zap.Reflect("Volume", volume))
 
 	volumeCap := int(volume.Capacity)
@@ -41,5 +54,5 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 		CreationTime: *volume.CreatedAt,
 		Region:       volume.Zone.Name,
 	}
-	return respVolume, nil
+	return respVolume, err
 }
