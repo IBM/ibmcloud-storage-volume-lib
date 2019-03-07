@@ -12,6 +12,7 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/models"
 	"go.uber.org/zap"
 	"strconv"
 )
@@ -20,7 +21,13 @@ import (
 func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 	vpcs.Logger.Info("In provider GetVolume method")
 
-	volume, _ := vpcs.Apiclient.Volume().GetVolume(id)
+	var err error
+	var volume *models.Volume
+
+	err = retry(func() error {
+		volume, err = vpcs.Apiclient.Volume().GetVolume(id)
+		return err
+	})
 	vpcs.Logger.Info("Volume details", zap.Reflect("Volume", volume))
 
 	volumeCap := int(volume.Capacity)

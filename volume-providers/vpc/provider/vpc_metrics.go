@@ -14,7 +14,7 @@ import (
 	"strconv"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/metrics"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics"
 	"go.uber.org/zap"
 )
 

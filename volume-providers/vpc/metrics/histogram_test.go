@@ -17,7 +17,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/stretchr/testify/assert"
-	prometheusfakes "github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics/fakes/prometheus"
+	prometheusfakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics/fakes/prometheus"
 )
 
 func Test_GetHistogramMetric(t *testing.T) {

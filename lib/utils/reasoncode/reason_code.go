@@ -14,7 +14,6 @@ package reasoncode
 type ReasonCode string
 
 // -- General error codes --
-
 const (
 
 	// ErrorUnclassified indicates a generic unclassified error
@@ -32,8 +31,7 @@ const (
 	ErrorRateLimitExceeded = ReasonCode("ErrorRateLimitExceeded")
 )
 
-// -- General provider API (RPC) errors ---
-
+// -- General provider API
 const (
 
 	// ErrorBadRequest indicates a generic bad request to the Provider API
@@ -50,7 +48,6 @@ const (
 )
 
 // -- Authentication and authorization problems --
-
 const (
 
 	// ErrorUnknownProvider indicates the named provider is not known
@@ -136,49 +133,6 @@ const (
 	// ** CAUSES AN IMMEDIATE ALERT **
 	// (Caller can retry later, but not indefinitely)
 	ErrorInvalidOrderLocation = ReasonCode("ErrorInvalidOrderLocation")
-)
-
-// -- Legacy provider subnet operations problems --
-
-const (
-
-	// ErrorOrderNotPendingOrApproved indicates a provisioning order has been rejected, or is otherwise in an unexpected state
-	// (Caller can retry later, but not indefinitely)
-	ErrorOrderNotPendingOrApproved = ReasonCode("ErrorOrderNotPendingOrApproved")
-
-	// ErrorOrderPendingApproval indicates a provisioning order is pending approval
-	// (Caller can continue to retry indefinitely)
-	ErrorOrderPendingApproval = ReasonCode("ErrorOrderPendingApproval")
-
-	// ErrorOrderedResourceNotYetAvailable indicates the ordered resource has been approved but is not yet available
-	ErrorOrderedResourceNotYetAvailable = ReasonCode("ErrorOrderedResourceNotYetAvailable")
-
-	// ErrorSubnetLimitReached indicates a subnet cannot be provisioned because the VLAN is full
-	ErrorSubnetLimitReached = ReasonCode("ErrorSubnetLimitReached")
-
-	// ErrorInvalidSubnetID indicates the format of a supplied subnet ID is not understood by the provider
-	ErrorInvalidSubnetID = ReasonCode("ErrorInvalidSubnetID")
-
-	// ErrorInvalidSubnetConfig indicates the specified subnet configuration is invalid
-	ErrorInvalidSubnetConfig = ReasonCode("ErrorInvalidSubnetConfig")
-
-	// ErrorOrderIPCountInsufficient indicates that the specified number of IPs does not meet IaaS minimum requirement
-	ErrorOrderIPCountInsufficient = ReasonCode("ErrorOrderIPCountInsufficient")
-)
-
-// -- Resource metering problems --
-
-const (
-
-	// ErrorMeteringServiceFailure indicates an error response from the BSS metering service
-	ErrorMeteringServiceFailure = ReasonCode("ErrorMeteringServiceFailure")
-
-	// ErrorResourceControllerFailure indicates an error response from the BSS resource controller
-	ErrorResourceControllerFailure = ReasonCode("ErrorResourceControllerFailure")
-
-	// ErrorUnreconciledPlanID indicates that a BSS plan ID could not be resolved.
-	// ** CAUSES AN IMMEDIATE ALERT **
-	ErrorUnreconciledPlanID = ReasonCode("ErrorUnreconciledPlanID")
 )
 
 // -- Internal armada-cluster reason codes --

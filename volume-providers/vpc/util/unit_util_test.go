@@ -15,7 +15,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 )
 
 func TestGetMemorySizeInGB(t *testing.T) {

@@ -4,7 +4,7 @@ package fakes
 import (
 	"sync"
 
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics"
 )
 
 type Factory struct {

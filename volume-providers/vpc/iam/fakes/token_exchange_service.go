@@ -5,7 +5,7 @@ import (
 	"context"
 	"sync"
 
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/iam"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/iam"
 	"go.uber.org/zap"
 )
 

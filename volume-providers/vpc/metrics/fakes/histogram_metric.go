@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics"
 )
 
 type HistogramMetric struct {

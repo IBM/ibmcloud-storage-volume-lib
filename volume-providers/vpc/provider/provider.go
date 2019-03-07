@@ -44,8 +44,6 @@ type VPCBlockProvider struct {
 
 	ClientProvider riaas.RegionalAPIClientProvider
 	httpClient     *http.Client
-
-	//NewSession func(url string, credentials provider.ContextCredentials, httpClient *http.Client, debug bool, logger *zap.Logger) backend.Session
 }
 
 var _ local.Provider = &VPCBlockProvider{}

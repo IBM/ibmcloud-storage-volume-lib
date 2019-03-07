@@ -11,11 +11,10 @@
 package util
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/reasoncode"
 )
 
 // Constants

@@ -14,8 +14,8 @@ import (
 	"errors"
 	"reflect"
 
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/reasoncode"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

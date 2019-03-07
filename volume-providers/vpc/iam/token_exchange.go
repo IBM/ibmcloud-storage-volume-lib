@@ -18,9 +18,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/config"
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/reasoncode"
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/util"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/config"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/util"
 )
 
 type tokenExchangeService struct {

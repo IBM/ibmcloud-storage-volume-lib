@@ -15,10 +15,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/reasoncode"
-
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 	"github.com/prometheus/client_golang/prometheus"
-
 	"github.com/stretchr/testify/assert"
 )
 

@@ -16,7 +16,7 @@ import (
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
-	prometheusfakes "github.ibm.com/narkarum/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics/fakes/prometheus"
+	prometheusfakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/metrics/fakes/prometheus"
 
 	"github.com/stretchr/testify/assert"
 )
