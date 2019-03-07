@@ -22,9 +22,7 @@ import (
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	//util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
-	//"github.com/IBM/ibmcloud-storage-volume-lib/provider/registry"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
 )
 
@@ -40,25 +38,15 @@ func main() {
 		zapcore.NewJSONEncoder(encoderCfg),
 		zapcore.Lock(os.Stdout),
 		atom,
-	), zap.AddCaller()).With(zap.String("name", "ibm-volume-lib/main")).With(zap.String("VolumeLib", "IKS-VOLUME-LIB"))
+	), zap.AddCaller()).With(zap.String("name", "ibm-volume-lib/main")).With(zap.String("VolumeLib", "VPC-Lib"))
 
 	defer logger.Sync()
 
 	atom.SetLevel(zap.InfoLevel)
 
-	// Prepare main logger
-	/*loggerLevel := zap.AtomicLevel()
-	loggerLevel.SetLevel(zapcore.InfoLevel)
-	logger := zap.New(
-		zapcore.New.NewJSONEncoder(zap.RFC3339Formatter("ts")),
-		zap.AddCaller(),
-		loggerLevel,
-	).With(zap.String("name", "ibm-volume-lib/main")).With(zap.String("VolumeLib", "IKS-VOLUME-LIB"))
-	*/
-
 	// Load config file
 	goPath := os.Getenv("GOPATH")
-	conf, err := config.ReadConfig(goPath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml", logger)
+	conf, err := config.ReadConfig(goPath+"/src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml", logger)
 	if err != nil {
 		logger.Fatal("Error loading configuration")
 	}
@@ -88,7 +76,7 @@ func main() {
 	logger.Info("Currently you are using provider ....", zap.Reflect("ProviderName", sess.ProviderName()))
 	valid := true
 	for valid {
-		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \nYour choice?:")
+		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n Your choice?:")
 		var choiceN int
 		var volumeID string
 		var snapshotID string
@@ -305,6 +293,53 @@ func main() {
 			if error1 != nil {
 				logger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}
+		} else if choiceN == 13 {
+			fmt.Println("You selected choice to Create VPC volume")
+			volume := &provider.Volume{}
+			volumeName := ""
+			volume.VolumeType = "vpc-block"
+
+			resourceGroup := "default resource group"
+			zone := "us-south-1"
+			volSize := 0
+			Iops := "0"
+
+			volume.Az = zone
+			volume.VPCVolume.Generation = "gt"
+
+			volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{ID: resourceGroup}
+
+			volume.VPCVolume.Profile = &provider.Profile{Name: "general-purpose"}
+
+			fmt.Printf("\nPlease enter volume name: ")
+			_, er11 = fmt.Scanf("%s", &volumeName)
+			volume.Name = &volumeName
+
+			fmt.Printf("\nPlease enter volume size \(Specify 10 GB - 2 TB of capacity in 1 GB increments\): ")
+			_, er11 = fmt.Scanf("%d", &volSize)
+			volume.Capacity = &volSize
+
+			fmt.Printf("\nPlease enter iops (For general purpose profiles, leave it empty): ")
+			_, er11 = fmt.Scanf("%s", &Iops)
+			volume.Iops = &Iops
+
+			fmt.Printf("\nPlease enter resource group: ")
+			_, er11 = fmt.Scanf("%s", &resourceGroup)
+			volume.VPCVolume.ResourceGroup.ID = resourceGroup
+
+			fmt.Printf("\nPlease enter zone: ")
+			_, er11 = fmt.Scanf("%s", &zone)
+			volume.Az = zone
+
+			volume.SnapshotSpace = &volSize
+			volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
+			volumeObj, errr := sess.CreateVolume(*volume)
+			if errr == nil {
+				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
+			} else {
+				logger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
+			}
+			fmt.Printf("\n\n")
 		} else {
 			fmt.Println("No right choice")
 			return

@@ -16,7 +16,7 @@ var messages_en = map[string]Message{
 		Description: "Failed to place storage order with the storage provider",
 		Type:        "StorageOrderFailed",
 		RC:          500,
-		Action:      "Wait a few minutes, then try re-creating your PVC. If the problem persists, go to the IBM Cloud infrastructure (SoftLayer) portal and open a support ticket.",
+		Action:      "Wait a few minutes, then try re-creating your PVC. If the problem persists, go to the IBM Cloud infrastructure (VPC) portal and open a support ticket.",
 	},
 	"CreateOrderTimeoutDueToPermissions": Message{
 		Code: "CreateOrderTimeoutDueToPermissions",
@@ -32,7 +32,7 @@ var messages_en = map[string]Message{
 		Description: "Storage with the order ID %d could not be created after retrying for %d seconds. Description: %s ",
 		Type:        "StorageProvisionTimeout",
 		RC:          408,
-		Action:      "Delete your PVC, then re-create it. If the problem persists, go to the IBM Cloud infrastructure (SoftLayer) portal and open a support ticket.",
+		Action:      "Delete your PVC, then re-create it. If the problem persists, go to the IBM Cloud infrastructure (VPC) portal and open a support ticket.",
 	},
 	"FailedToDeleteVolume": Message{
 		Code:        "FailedToDeleteVolume",
@@ -62,4 +62,47 @@ var messages_en = map[string]Message{
 		RC:          500,
 		Action:      "Please raise a ticket to IBM Infrasructure team",
 	},
+	"InvalidVolumeName": Message{
+		Code:        "InvalidVolumeName",
+		Description: "Volume name is not valid.",
+		Type:        "InvalidVolumeName",
+		RC:          500,
+		Action:      "Volume name is not valid. Check whether the volume name is empty.",
+	},
+	"VolumeCapacityInvalid": Message{
+		Code:        "VolumeCapacityInvalid",
+		Description: "Volume capacity is not valid.",
+		Type:        "VolumeCapacityInvalid",
+		RC:          500,
+		Action:      "Volume capacity is not valid. Check whether the volume capacity has allowed values.",
+	},
+	"IopsInvalid": Message{
+		Code:        "IopsInvalid",
+		Description: "Volume IOPs is not valid.",
+		Type:        "IopsInvalid",
+		RC:          500,
+		Action:      "Volume IOPs is not valid. Check whether the volume IOPs has allowed values.",
+	},
+	"DuplicateVolumeVame": Message{
+		Code:        "DuplicateVolumeVame",
+		Description: "The volume name specified in the request already exists.",
+		Type:        "DuplicateVolumeVame",
+		RC:          500,
+		Action:      "Volume name already exists. Please give different volume name.",
+	},
+	"InvalidCapacityIopsProfile": Message{
+		Code:        "InvalidCapacityIopsProfile",
+		Description: "Capacity or IOPS value not allowed by profile.",
+		Type:        "InvalidCapacityIopsProfile",
+		RC:          500,
+		Action:      "Failed to place storage order with the storage provider [Backend Error:The volume profile specified in the request cannot accept custom IOPS].",
+	},
+	"VolumeProfileIopsInvalid": Message{
+		Code:        "VolumeProfileIopsInvalid",
+		Description: "Capacity or IOPS value not allowed by profile. The volume profile specified in the request cannot accept custom IOPS.",
+		Type:        "VolumeProfileIopsInvalid",
+		RC:          500,
+		Action:      "Capacity or IOPS value not allowed by profile. The volume profile specified in the request cannot accept custom IOPS.",
+	},
+
 }

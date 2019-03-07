@@ -84,6 +84,9 @@ type Volume struct {
 
 	// IscsiTargetIPAddresses list of target IP addresses for iscsi. Applicable for Iscsi block storage only
 	IscsiTargetIPAddresses []string `json:"iscsiTargetIpAddresses,omitempty"`
+
+	// VPC specific parameters
+	VPCVolume VPCVolume
 }
 
 // Snapshot
