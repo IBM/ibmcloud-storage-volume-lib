@@ -19,7 +19,13 @@ import (
 // DeleteVolume deletes the volume
 func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
 	vpcs.Logger.Info("Entry DeleteVolume()", zap.Reflect("vol", vol))
+
 	var err error
+	_, err = vpcs.GetVolume(vol.VolumeID)
+	if err != nil {
+		return reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, vol.VolumeID, "Not a valid volume ID")
+	}
+
 	err = retry(func() error {
 		err = vpcs.Apiclient.Volume().DeleteVolume(vol.VolumeID)
 		return err
