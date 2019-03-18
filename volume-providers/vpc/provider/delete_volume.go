@@ -12,9 +12,23 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	"go.uber.org/zap"
 )
 
-// CreateVolume Get the volume by using ID
+// DeleteVolume deletes the volume
 func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
-	return nil
+	vpcs.Logger.Info("Entry DeleteVolume()", zap.Reflect("vol", vol))
+	var err error
+	err = retry(func() error {
+		err = vpcs.Apiclient.Volume().DeleteVolume(vol.VolumeID)
+		return err
+	})
+
+	if err != nil {
+		vpcs.Logger.Error("Error occured while deleting the volume", zap.Error(err))
+		return reasoncode.GetUserError("FailedToDeleteVolume", err)
+	}
+	vpcs.Logger.Info("Exit DeleteVolume()")
+	return err
 }

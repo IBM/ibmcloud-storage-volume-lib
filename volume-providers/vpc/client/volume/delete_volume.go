@@ -20,7 +20,7 @@ func (vs *VolumeService) DeleteVolume(volumeID string) error {
 	operation := &client.Operation{
 		Name:        "DeleteVolume",
 		Method:      "DELETE",
-		PathPattern: volumesPath,
+		PathPattern: volumesIDPath,
 	}
 
 	var apiErr models.Error
