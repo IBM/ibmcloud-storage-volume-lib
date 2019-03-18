@@ -104,5 +104,11 @@ var messages_en = map[string]Message{
 		RC:          500,
 		Action:      "Capacity or IOPS value not allowed by profile. The volume profile specified in the request cannot accept custom IOPS.",
 	},
-
+	"SnapshotSpaceOrderFailed": Message{
+		Code:        "SnapshotSpaceOrderFailed",
+		Description: "Snapshot space order failed because volume ID or snapshot size not provided.",
+		Type:        "SnapshotSpaceOrderFailed",
+		RC:          500,
+		Action:      "Please check your input",
+	},
 }

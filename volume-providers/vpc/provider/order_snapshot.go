@@ -12,8 +12,22 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	"go.uber.org/zap"
 )
 
 func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
+	// Step 1- validate input which are required
+	vpcs.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
+	if volumeRequest.SnapshotSpace == nil {
+		vpcs.Logger.Error("No proper input, please provide volume ID and snapshot space size")
+		return reasoncode.GetUserError("SnapshotSpaceOrderFailed", nil)
+	}
+	volid := ToInt(volumeRequest.VolumeID)
+	snapshotSize := *volumeRequest.SnapshotSpace
+	if volid == 0 || snapshotSize == 0 {
+		vpcs.Logger.Error("No proper input, please provide volume ID and snapshot space size")
+		return reasoncode.GetUserError("SnapshotSpaceOrderFailed", nil)
+	}
 	return nil
 }
