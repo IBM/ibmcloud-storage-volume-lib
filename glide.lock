@@ -33,22 +33,6 @@ imports:
   subpackages:
   - prometheus
   - prometheus/promhttp
-- name: github.com/prometheus/client_model
-  version: 99fa1f4be8e564e8a6b613da7fa6f46c9edafc6c
-  subpackages:
-  - go
-- name: github.com/prometheus/common
-  version: 7600349dcfe1abd18d72d3a1770870d9800a7801
-  subpackages:
-  - expfmt
-  - internal/bitbucket.org/ww/goautoneg
-  - model
-- name: github.com/prometheus/procfs
-  version: ae68e2d4c00fed4943b5f6698d504a5fe083da8a
-  subpackages:
-  - internal/util
-  - nfs
-  - xfs
 - name: github.com/beorn7/perks
   version: 3a771d992973f24aa725d07868b467d1ddfceafb
   subpackages:
