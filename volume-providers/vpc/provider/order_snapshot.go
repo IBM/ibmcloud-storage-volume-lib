@@ -23,6 +23,7 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 		vpcs.Logger.Error("No proper input, please provide volume ID and snapshot space size")
 		return reasoncode.GetUserError("SnapshotSpaceOrderFailed", nil)
 	}
+
 	volid := ToInt(volumeRequest.VolumeID)
 	snapshotSize := *volumeRequest.SnapshotSpace
 	if volid == 0 || snapshotSize == 0 {

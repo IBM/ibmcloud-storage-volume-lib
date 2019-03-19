@@ -48,13 +48,13 @@ type VolumeManager interface {
 
 // VolumeService ...
 type VolumeService struct {
-	client client.Client
+	client client.ClientSession
 }
 
 var _ VolumeManager = &VolumeService{}
 
 // New ...
-func New(client client.Client) VolumeManager {
+func New(client client.ClientSession) VolumeManager {
 	return &VolumeService{
 		client: client,
 	}

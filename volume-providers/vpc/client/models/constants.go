@@ -2,7 +2,7 @@
  * IBM Confidential
  * OCO Source Materials
  * IBM Cloud Container Service, 5737-D43
- * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * (C) Copyright IBM Corp. 2019 All Rights Reserved.
  * The source code for this program is not  published or otherwise divested of
  * its trade secrets, irrespective of what has been deposited with
  * the U.S. Copyright Office.
@@ -10,9 +10,10 @@
 
 package models
 
-// OperatingSystem ...
-type OperatingSystem struct {
-	Name    string `json:"name,omitempty"`
-	Vendor  string `json:"vendor,omitempty"`
-	Version string `json:"version,omitempty"`
-}
+const (
+	// APIVersion is the target RIaaS API spec version
+	APIVersion = "2019-01-01"
+
+	// UserAgent identifies IKS to the RIaaS API
+	UserAgent = "IBM-Kubernetes-Service"
+)

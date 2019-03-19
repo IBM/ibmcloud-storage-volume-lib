@@ -20,6 +20,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/riaas"
+	"github.com/rs/xid"
 	"go.uber.org/zap"
 	"net/http"
 	"os"
@@ -108,8 +109,11 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	}
 
 	// Attempt to build an API client
+	uniqueID := xid.New()
+
 	apiConfig := riaas.Config{
 		BaseURL:    vpcp.config.EndpointURL,
+		ContextID:  uniqueID.String(),
 		HTTPClient: vpcp.httpClient,
 	}
 

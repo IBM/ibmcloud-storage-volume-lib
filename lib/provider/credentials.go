@@ -32,4 +32,7 @@ type ContextCredentials struct {
 	IAMAccountID   string
 	UserID         string `json:"-"` // Do not trace
 	Credential     string `json:"-"` // Do not trace
+
+	// ContextID is an optional request/context/correlation identifier for diagnostics (need not be unique)
+	ContextID string
 }

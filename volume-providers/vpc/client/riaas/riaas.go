@@ -28,13 +28,13 @@ var _ RegionalAPI = &Session{}
 
 // Session is a base implementation of the RegionalAPI interface
 type Session struct {
-	client client.Client
+	client client.ClientSession
 	config Config
 }
 
 // New creates a new Session volume, using the supplied config
 func New(config Config) (*Session, error) {
-	riaasClient := client.New(config.baseURL(), config.httpClient())
+	riaasClient := client.New(config.baseURL(), config.httpClient(), config.ContextID)
 
 	if config.DebugWriter != nil {
 		riaasClient.WithDebug(config.DebugWriter)

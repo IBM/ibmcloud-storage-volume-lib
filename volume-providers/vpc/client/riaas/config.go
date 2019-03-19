@@ -23,6 +23,7 @@ type Config struct {
 	APIKey        string
 	ResourceGroup string
 	Password      string
+	ContextID     string
 
 	DebugWriter io.Writer
 	HTTPClient  *http.Client

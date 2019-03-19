@@ -12,6 +12,7 @@ package client_test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -22,11 +23,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/models"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/riaas/test"
+	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/client"
+	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/models"
+	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/test"
 )
-
 var getOperation = &client.Operation{
 	Name:        "GetOperation",
 	Method:      "GET",
@@ -42,6 +42,7 @@ func TestClient(t *testing.T) {
 
 	var (
 		request   *client.Request
+		result    interface{}
 		errResult models.Error
 	)
 
@@ -68,13 +69,25 @@ func TestClient(t *testing.T) {
 			name:      "creates invokable requests from static operations (POST)",
 			operation: postOperation,
 		}, {
+			name:         "marshals bodies and responses",
+			operation:    postOperation,
+			responseBody: `{"id":"act1","status":"pending"}`,
+			verify: func(t *testing.T) {
+				assert.Equal(t, &models.InstanceAction{ID: "act1", Status: models.InstanceActionStatusPending}, result)
+			},
+			muxVerify: func(t *testing.T, r *http.Request) {
+				assert.Equal(t, "application/json", r.Header.Get("Accept"))
+				assert.Equal(t, "IBM-Kubernetes-Service", r.Header.Get("User-Agent"))
+				assert.Equal(t, "test-context", r.Header.Get("X-Request-ID"))
+			},
+		}, {
 			name:      "encodes query parameters",
 			operation: getOperation,
 			modifyRequest: func() {
 				request = request.AddQueryValue("name", "value1").AddQueryValue("name", "value2").AddQueryValue("another", "value3")
 			},
 			muxVerify: func(t *testing.T, r *http.Request) {
-				expectedValues := url.Values{"name": []string{"value1", "value2"}, "another": []string{"value3"}}
+				expectedValues := url.Values{"name": []string{"value1", "value2"}, "another": []string{"value3"}, "version": []string{models.APIVersion}}
 				actualValues := r.URL.Query()
 				assert.Equal(t, expectedValues, actualValues)
 			},
@@ -144,6 +157,11 @@ func TestClient(t *testing.T) {
 				testcase.modifyRequest()
 			}
 
+			if testcase.responseBody != "" {
+				result = &models.InstanceAction{}
+				request = request.JSONSuccess(&result)
+			}
+
 			request.JSONError(&errResult)
 
 			resp, err := request.Invoke()
@@ -167,7 +185,7 @@ func TestClient(t *testing.T) {
 func TestDebugMode(t *testing.T) {
 
 	var (
-		riaas   client.Client
+		riaas   client.SessionClient
 		request *client.Request
 		log     *bytes.Buffer
 	)
@@ -186,7 +204,7 @@ func TestDebugMode(t *testing.T) {
 			operation: getOperation,
 			verify: func(t *testing.T) {
 				assert.Contains(t, log.String(), "REQUEST:")
-				assert.Contains(t, log.String(), "GET /resource HTTP/1.1")
+				assert.Contains(t, log.String(), "GET /resource?version="+models.APIVersion+" HTTP/1.1")
 			},
 		}, {
 			name:      "records the request body",
@@ -229,7 +247,7 @@ func TestDebugMode(t *testing.T) {
 
 			log = &bytes.Buffer{}
 
-			riaas = client.New(s.URL, http.DefaultClient).WithDebug(log).WithAuthToken("auth-token")
+			riaas = client.New(s.URL, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
 
 			defer s.Close()
 
@@ -266,27 +284,27 @@ func TestOperationURLProcessing(t *testing.T) {
 			"absolute path",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "/absolute/path"},
-			"http://127.0.0.1/absolute/path",
+			"http://127.0.0.1/absolute/path?version=" + models.APIVersion,
 		}, {
 			"relative path base does not end with slash",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "relative/path"},
-			"http://127.0.0.1/v2/relative/path",
+			"http://127.0.0.1/v2/relative/path?version=" + models.APIVersion,
 		}, {
 			"relative path when base ends with slash",
 			"http://127.0.0.1/v2/",
 			&client.Operation{PathPattern: "relative/path"},
-			"http://127.0.0.1/v2/relative/path",
+			"http://127.0.0.1/v2/relative/path?version=" + models.APIVersion,
 		}, {
 			"relative path parent",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "../path"},
-			"http://127.0.0.1/path",
+			"http://127.0.0.1/path?version=" + models.APIVersion,
 		}, {
 			"relative path with .. beyond root",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "../../../../path"},
-			"http://127.0.0.1/path",
+			"http://127.0.0.1/path?version=" + models.APIVersion,
 		}, {
 			"broken base URL",
 			"://127.0.0.1/v2",
@@ -303,7 +321,7 @@ func TestOperationURLProcessing(t *testing.T) {
 	for _, testcase := range testcases {
 
 		t.Run(testcase.name, func(t *testing.T) {
-			c := client.New(testcase.baseURL, http.DefaultClient)
+			c := client.New(testcase.baseURL, http.DefaultClient, "test-context")
 			actualURL := c.NewRequest(testcase.operation).URL()
 			assert.Equal(t, testcase.expectedURL, actualURL)
 		})

@@ -22,14 +22,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func SetupServer(t *testing.T) (m *http.ServeMux, c client.Client, teardown func()) {
+func SetupServer(t *testing.T) (m *http.ServeMux, c client.ClientSession, teardown func()) {
 
 	m = http.NewServeMux()
 	s := httptest.NewServer(m)
 
 	log := new(bytes.Buffer)
 
-	c = client.New(s.URL, http.DefaultClient).WithDebug(log).WithAuthToken("auth-token")
+	c = client.New(s.URL, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
 
 	teardown = func() {
 		s.Close()
@@ -75,8 +75,4 @@ func CheckTestFail(t *testing.T, buf *bytes.Buffer) {
 	if t.Failed() {
 		t.Log(buf)
 	}
-}
-
-func Sptr(s string) *string {
-	return &s
 }
