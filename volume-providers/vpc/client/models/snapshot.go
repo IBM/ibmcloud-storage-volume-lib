@@ -10,6 +10,8 @@
 
 package models
 
+import "time"
+
 // Snapshot ...
 type Snapshot struct {
 	Href          string         `json:"href,omitempty"`
@@ -17,6 +19,7 @@ type Snapshot struct {
 	Name          string         `json:"name,omitempty"`
 	ResourceGroup *ResourceGroup `json:"resource_group,omitempty"`
 	CRN           string         `json:"crn,omitempty"`
+	CreatedAt     *time.Time     `json:"created_at,omitempty"`
 	Status        StatusType     `json:"status,omitempty"`
 	Tags          []string       `json:"tags,omitempty"`
 }

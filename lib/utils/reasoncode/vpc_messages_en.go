@@ -41,6 +41,13 @@ var messages_en = map[string]Message{
 		RC:          500,
 		Action:      "If you tried to delete storage on the last day of the billing cycle, delete failures are expected and no action is required. The delete operation is automatically retried after the billing cycle ends. If the problem persists after the billing cycle is over, go to the IBM Cloud infrastructure (SoftLayer) portal and open a support ticket.",
 	},
+	"FailedToDeleteSnapshot": Message{
+		Code:        "FailedToDeleteSnapshot",
+		Description: "Failed to delete the storage with snapshot id %d",
+		Type:        "StorageDeletionFailed",
+		RC:          500,
+		Action:      "Check whether the snapshot ID exists.",
+	},
 	"InsufficientAuth": Message{
 		Code:        "InsufficientAuth",
 		Description: "Failed to find any valid softlayer credentials in configuration file",
@@ -50,6 +57,13 @@ var messages_en = map[string]Message{
 	},
 	"StorageFindFailedWithVolumeId": Message{
 		Code:        "StorageFindFailedWithVolumeId",
+		Description: "Failed to find the storage with storage id %s. Description: %s",
+		Type:        "StorageFindFailed",
+		RC:          500,
+		Action:      "Go to the IBM Cloud infrastructure (VPC) portal and verify that the storage exists.",
+	},
+	"StorageFindFailedWithSnapshotId": Message{
+		Code:        "StorageFindFailedWithSnapshotId",
 		Description: "Failed to find the storage with storage id %s. Description: %s",
 		Type:        "StorageFindFailed",
 		RC:          500,

@@ -12,10 +12,42 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/models"
+	"go.uber.org/zap"
 )
 
 // GetVolume Get the volume by using ID
-func (vpcs *VPCSession) CreateSnapshot(volume *provider.Volume, tags map[string]string) (*provider.Snapshot, error) {
-	// Step 1: validate input
-	return nil, nil
+func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[string]string) (*provider.Snapshot, error) {
+	var snapshot *models.Snapshot
+	var err error
+
+	// Step 1- validate input which are required
+	vpcs.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
+	var volume *provider.Volume
+
+	err = retry(func() error {
+		volume, err = vpcs.GetVolume(volumeRequest.VolumeID)
+		return err
+	})
+	if err != nil {
+		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
+	}
+
+	err = retry(func() error {
+		snapshot, err = vpcs.Apiclient.Snapshot().CreateSnapshot(volumeRequest.VolumeID, snapshot)
+		return err
+	})
+	if err != nil {
+		return nil, reasoncode.GetUserError("SnapshotSpaceOrderFailed", err)
+	}
+
+	vpcs.Logger.Info("Backend created snapshot details", zap.Reflect("Snapshot", snapshot))
+
+	respSnapshot := &provider.Snapshot{
+		Volume:               *volume,
+		SnapshotID:           snapshot.ID,
+		SnapshotCreationTime: *snapshot.CreatedAt,
+	}
+	return respSnapshot, nil
 }

@@ -41,7 +41,7 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 		return reasoncode.GetUserError("SnapshotSpaceOrderFailed", err)
 	}
 
-	vpcs.Logger.Info("Created snapshot details", zap.Reflect("Snapshot", snapshot))
+	vpcs.Logger.Info("Backend created snapshot details", zap.Reflect("Snapshot", snapshot))
 
 	return nil
 }
