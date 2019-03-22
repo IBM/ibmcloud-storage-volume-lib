@@ -76,7 +76,7 @@ func main() {
 	logger.Info("Currently you are using provider ....", zap.Reflect("ProviderName", sess.ProviderName()))
 	valid := true
 	for valid {
-		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n Your choice?:")
+		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n 14- Create VPC Snapshot \n Your choice?:")
 		var choiceN int
 		var volumeID string
 		var snapshotID string
@@ -338,6 +338,20 @@ func main() {
 				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
 			} else {
 				logger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
+			}
+			fmt.Printf("\n\n")
+
+		} else if choiceN == 14 {
+			fmt.Println("You selected choice to order VPC snapshot")
+			volume := &provider.Volume{}
+			fmt.Printf("Please enter volume ID to create the snapshot space: ")
+			_, er11 = fmt.Scanf("%s", &volumeID)
+			volume.VolumeID = volumeID
+			er11 := sess.OrderSnapshot(*volume)
+			if er11 == nil {
+				logger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
+			} else {
+				logger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
 		} else {

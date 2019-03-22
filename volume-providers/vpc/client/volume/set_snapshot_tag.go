@@ -16,7 +16,7 @@ import (
 )
 
 // SetSnapshotTag sets tag for a snapshot
-func (vs *VolumeService) SetSnapshotTag(volumeID string, snapshotID string, tagName string) error {
+func (ss *SnapshotService) SetSnapshotTag(volumeID string, snapshotID string, tagName string) error {
 	operation := &client.Operation{
 		Name:        "SetSnapshotTag",
 		Method:      "PUT",
@@ -25,7 +25,7 @@ func (vs *VolumeService) SetSnapshotTag(volumeID string, snapshotID string, tagN
 
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return err

@@ -106,7 +106,7 @@ var messages_en = map[string]Message{
 	},
 	"SnapshotSpaceOrderFailed": Message{
 		Code:        "SnapshotSpaceOrderFailed",
-		Description: "Snapshot space order failed because volume ID or snapshot size not provided.",
+		Description: "Snapshot space order failed for the given volume ID",
 		Type:        "SnapshotSpaceOrderFailed",
 		RC:          500,
 		Action:      "Please check your input",

@@ -25,30 +25,3 @@ type Snapshot struct {
 type SnapshotList struct {
 	Snapshots []*Snapshot `json:"snapshot,omitempty"`
 }
-
-type SnapshotManager interface {
-	// Snapshot operations
-	// Create the snapshot on the volume
-	CreateSnapshot(volumeID string, snapshotTemplate *Snapshot) (*Snapshot, error)
-
-	// Delete the snapshot
-	DeleteSnapshot(volumeID string, snapshotID string) error
-
-	// Get the snapshot
-	GetSnapshot(snapshotID string) (*Snapshot, error)
-
-	// List all the  snapshots for a given volume
-	ListSnapshots(volumeID string) ([]*SnapshotList, error)
-
-        // Set tag for a snapshot
-        SetSnapshotTag(volumeID string, snapshotID string, tagName string) error
-
-        // Delete tag of a snapshot
-        DeleteSnapshotTag(volumeID string, snapshotID string, tagName string) error
-
-        // List all tags of a snapshot
-        ListSnapshotTags(volumeID string, snapshotID string) (*[]string, error)
-
-        // Check if the given tag exists on a snapshot
-        CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error
-}

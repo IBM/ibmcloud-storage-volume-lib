@@ -16,7 +16,7 @@ import (
 )
 
 // CreateSnapshot POSTs to /volumes
-func (vs *VolumeService) CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot) (*models.Snapshot, error) {
+func (ss *SnapshotService) CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot) (*models.Snapshot, error) {
 	operation := &client.Operation{
 		Name:        "CreateSnapshot",
 		Method:      "POST",
@@ -26,7 +26,7 @@ func (vs *VolumeService) CreateSnapshot(volumeID string, snapshotTemplate *model
 	var snapshot models.Snapshot
 	var apiErr models.Error
 
-	_, err := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONBody(snapshotTemplate).JSONSuccess(&snapshot).JSONError(&apiErr).Invoke()
+	_, err := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONBody(snapshotTemplate).JSONSuccess(&snapshot).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}

@@ -16,7 +16,7 @@ import (
 )
 
 // DeleteSnapshotTag deletes tag of a snapshot
-func (vs *VolumeService) DeleteSnapshotTag(volumeID string, snapshotID string, tagName string) error {
+func (ss *SnapshotService) DeleteSnapshotTag(volumeID string, snapshotID string, tagName string) error {
 	operation := &client.Operation{
 		Name:        "DeleteSnapshotTag",
 		Method:      "DELETE",
@@ -25,7 +25,7 @@ func (vs *VolumeService) DeleteSnapshotTag(volumeID string, snapshotID string, t
 
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return err

@@ -16,7 +16,7 @@ import (
 )
 
 // DeleteSnapshot DELETEs to /volumes
-func (vs *VolumeService) DeleteSnapshot(volumeID string, snapshotID string) error {
+func (ss *SnapshotService) DeleteSnapshot(volumeID string, snapshotID string) error {
 	operation := &client.Operation{
 		Name:        "DeleteSnapshot",
 		Method:      "DELETE",
@@ -25,7 +25,7 @@ func (vs *VolumeService) DeleteSnapshot(volumeID string, snapshotID string) erro
 
 	var apiErr models.Error
 
-	_, err := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONError(&apiErr).Invoke()
+	_, err := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return err
 	}

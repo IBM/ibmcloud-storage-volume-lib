@@ -16,14 +16,14 @@ import (
 )
 
 // GetSnapshot GETs from /volumes
-func (vs *VolumeService) GetSnapshot(volumeID string, snapshotID string) (*models.Snapshot, error) {
+func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string) (*models.Snapshot, error) {
 	operation := &client.Operation{
 		Name:        "GetSnapshot",
 		Method:      "GET",
 		PathPattern: snapshotIDPath,
 	}
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID)
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID)
 
 	var snapshot models.Snapshot
 	var apiErr models.Error

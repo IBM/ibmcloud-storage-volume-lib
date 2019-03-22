@@ -16,7 +16,7 @@ import (
 )
 
 // CheckSnapshotTag checks if the given tag exists on a snapshot
-func (vs *VolumeService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error {
+func (ss *SnapshotService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error {
 	operation := &client.Operation{
 		Name:        "CheckSnapshotTag",
 		Method:      "GET",
@@ -25,7 +25,7 @@ func (vs *VolumeService) CheckSnapshotTag(volumeID string, snapshotID string, ta
 
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return err

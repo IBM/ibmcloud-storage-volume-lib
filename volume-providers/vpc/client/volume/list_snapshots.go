@@ -16,7 +16,7 @@ import (
 )
 
 // ListSnapshots GETs /volumes/snapshots
-func (vs *VolumeService) ListSnapshots(volumeID string) (*models.SnapshotList, error) {
+func (ss *SnapshotService) ListSnapshots(volumeID string) (*models.SnapshotList, error) {
 	operation := &client.Operation{
 		Name:        "ListSnapshots",
 		Method:      "GET",
@@ -26,7 +26,7 @@ func (vs *VolumeService) ListSnapshots(volumeID string) (*models.SnapshotList, e
 	var snapshots models.SnapshotList
 	var apiErr models.Error
 
-	_, err := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONSuccess(&snapshots).JSONError(&apiErr).Invoke()
+	_, err := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONSuccess(&snapshots).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}

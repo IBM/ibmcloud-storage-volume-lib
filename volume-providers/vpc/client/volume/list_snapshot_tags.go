@@ -16,7 +16,7 @@ import (
 )
 
 // ListSnapshotTags GETs /volumes/snapshots/tags
-func (vs *VolumeService) ListSnapshotTags(volumeID string, snapshotID string) (*[]string, error) {
+func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string) (*[]string, error) {
 	operation := &client.Operation{
 		Name:        "ListSnapshotTags",
 		Method:      "GET",
@@ -26,7 +26,7 @@ func (vs *VolumeService) ListSnapshotTags(volumeID string, snapshotID string) (*
 	var tags []string
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONSuccess(&tags).JSONError(&apiErr)
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONSuccess(&tags).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return nil, err
