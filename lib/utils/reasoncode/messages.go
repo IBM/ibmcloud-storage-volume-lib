@@ -13,6 +13,7 @@ import (
 	"fmt"
 )
 
+
 // Wrapper Message/Error Class
 type Message struct {
 	Code        string
@@ -21,6 +22,8 @@ type Message struct {
 	RC          int
 	Action      string
 }
+
+var Messages_en map[string]Message
 
 //Implement the Error() interface method
 func (msg Message) Error() string {
@@ -44,7 +47,7 @@ func GetUserErr(code string, err error, args ...interface{}) error {
 }
 
 func GetUserMsg(code string, args ...interface{}) Message {
-	userMsg := messages_en[code]
+	userMsg := Messages_en[code]
 	if len(args) > 0 {
 		userMsg.Description = fmt.Sprintf(userMsg.Description, args...)
 	}
