@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	armadaDisplayName      = "IBM Cloud container service"
+	displayName            = "IBM Cloud container service"
 	vpcProviderDisplayName = "IBM Cloud infrastructure"
 	vpcExceptionPrefix     = "IBM Cloud infrastructure exception"
 

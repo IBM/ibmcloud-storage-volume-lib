@@ -21,8 +21,8 @@ import (
 type RegionalAPI interface {
 	Login(token string) error
 
-	Volume() volume.VolumeManager
-	Snapshot() volume.SnapshotManager
+	VolumeService() volume.VolumeManager
+	SnapshotService() volume.SnapshotManager
 }
 
 var _ RegionalAPI = &Session{}
@@ -54,13 +54,13 @@ func (s *Session) Login(token string) error {
 	return nil
 }
 
-// Volume returns the Volume service for managing volumes
-func (s *Session) Volume() volume.VolumeManager {
+// VolumeService returns the Volume service for managing volumes
+func (s *Session) VolumeService() volume.VolumeManager {
 	return volume.New(s.client)
 }
 
-// Snapshot returns the Snapshot service for managing snapshot
-func (s *Session) Snapshot() volume.SnapshotManager {
+// SnapshotService returns the Snapshot service for managing snapshot
+func (s *Session) SnapshotService() volume.SnapshotManager {
 	return volume.NewSnapshotManager(s.client)
 }
 

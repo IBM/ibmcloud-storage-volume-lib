@@ -72,7 +72,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 
 	vpcs.Logger.Info("Volume request details", zap.Reflect("Volume request template", volumeTemplate))
 	err = retry(func() error {
-		volume, err = vpcs.Apiclient.Volume().CreateVolume(volumeTemplate)
+		volume, err = vpcs.Apiclient.VolumeService().CreateVolume(volumeTemplate)
 		return err
 	})
 

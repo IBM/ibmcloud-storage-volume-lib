@@ -26,7 +26,7 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 	var volume *models.Volume
 
 	err = retry(func() error {
-		volume, err = vpcs.Apiclient.Volume().GetVolume(volumeRequest.VolumeID)
+		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeRequest.VolumeID)
 		return err
 	})
 	if err != nil {
@@ -34,7 +34,7 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 	}
 
 	err = retry(func() error {
-		snapshot, err = vpcs.Apiclient.Snapshot().CreateSnapshot(volumeRequest.VolumeID, snapshot)
+		snapshot, err = vpcs.Apiclient.SnapshotService().CreateSnapshot(volumeRequest.VolumeID, snapshot)
 		return err
 	})
 	if err != nil {

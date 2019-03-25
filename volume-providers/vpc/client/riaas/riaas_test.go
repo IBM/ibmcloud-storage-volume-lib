@@ -36,7 +36,7 @@ func TestLogin(t *testing.T) {
 
 func TestVolume(t *testing.T) {
 
-	volume := (&Session{}).Volume()
+	volume := (&Session{}).VolumeService()
 
 	assert.NotNil(t, volume)
 }

@@ -24,7 +24,7 @@ func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, erro
 	var snapshot *models.Snapshot
 
 	err = retry(func() error {
-		snapshot, err = vpcs.Apiclient.Snapshot().GetSnapshot("", snapshotID)
+		snapshot, err = vpcs.Apiclient.SnapshotService().GetSnapshot("", snapshotID)
 		return err
 	})
 

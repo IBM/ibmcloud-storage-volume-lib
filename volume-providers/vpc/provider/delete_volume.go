@@ -27,7 +27,7 @@ func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
 	}
 
 	err = retry(func() error {
-		err = vpcs.Apiclient.Volume().DeleteVolume(vol.VolumeID)
+		err = vpcs.Apiclient.VolumeService().DeleteVolume(vol.VolumeID)
 		return err
 	})
 

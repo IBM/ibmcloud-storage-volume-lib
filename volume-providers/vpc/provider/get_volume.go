@@ -26,7 +26,7 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 	var volume *models.Volume
 
 	err = retry(func() error {
-		volume, err = vpcs.Apiclient.Volume().GetVolume(id)
+		volume, err = vpcs.Apiclient.VolumeService().GetVolume(id)
 		return err
 	})
 

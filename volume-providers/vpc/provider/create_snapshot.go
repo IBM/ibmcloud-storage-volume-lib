@@ -35,7 +35,7 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 	}
 
 	err = retry(func() error {
-		snapshot, err = vpcs.Apiclient.Snapshot().CreateSnapshot(volumeRequest.VolumeID, snapshot)
+		snapshot, err = vpcs.Apiclient.SnapshotService().CreateSnapshot(volumeRequest.VolumeID, snapshot)
 		return err
 	})
 	if err != nil {
