@@ -23,9 +23,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/client"
-	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/models"
-	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/test"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/models"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client/riaas/test"
 )
 var getOperation = &client.Operation{
 	Name:        "GetOperation",

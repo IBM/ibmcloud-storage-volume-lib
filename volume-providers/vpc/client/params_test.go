@@ -14,7 +14,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.ibm.com/alchemy-containers/armada-provider-riaas/apiclient/riaas/client"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/client"
 )
 
 func TestParams(t *testing.T) {
