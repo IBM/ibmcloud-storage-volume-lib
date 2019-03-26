@@ -11,13 +11,10 @@
 package config
 
 import (
-	"errors"
 	"github.com/BurntSushi/toml"
-	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 )
 
@@ -135,27 +132,4 @@ func GetEtcPath() string {
 	srcPath := filepath.Join("src", "github.com", "IBM",
 		"ibmcloud-storage-volume-lib")
 	return filepath.Join(goPath, srcPath, "etc")
-}
-
-// LoadPrefixVarConfigs is for internal use by armada-cluster
-func LoadPrefixVarConfigs(mappings string, template interface{}, offer func(string, interface{})) (err error) {
-	for _, mapping := range strings.Split(mappings, " ") { //  e.g. "vmware:VMWARE gt:GT"
-		if mapping != "" {
-			p := strings.Split(mapping, ":")
-			if len(p) != 2 {
-				err = errors.New("Invalid prefix config spec: " + mapping)
-				return
-			}
-
-			c := reflect.New(reflect.ValueOf(template).Type()).Interface()
-
-			err = envconfig.Process(p[1], c)
-			if err != nil {
-				return
-			}
-
-			offer(p[0], c)
-		}
-	}
-	return
 }
