@@ -16,7 +16,6 @@ type VPCVolume struct {
 	ResourceGroup     *ResourceGroup      `json:"resource_group,omitempty"`
 	Generation        GenerationType      `json:"generation,omitempty"`
 	Profile           *Profile            `json:"profile,omitempty"`
-	Snapshot          *Snapshot           `json:"snapshot,omitempty"`
 	Tags              []string            `json:"tags,omitempty"`
 	VolumeAttachments *[]VolumeAttachment `json:"volume_attachments,omitempty"`
 	CRN               string              `json:"crn,omitempty"`
