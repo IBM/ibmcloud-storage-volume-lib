@@ -38,7 +38,7 @@ func main() {
 		zapcore.NewJSONEncoder(encoderCfg),
 		zapcore.Lock(os.Stdout),
 		atom,
-	), zap.AddCaller()).With(zap.String("name", "ibmcloud-storage-volume-lib/main")).With(zap.String("VolumeLib", "VPC-Lib"))
+	), zap.AddCaller()).With(zap.String("name", "ibmcloud-storage-volume-lib/main")).With(zap.String("VolumeLib", "IBMCloud-Storage-Lib"))
 
 	defer logger.Sync()
 
