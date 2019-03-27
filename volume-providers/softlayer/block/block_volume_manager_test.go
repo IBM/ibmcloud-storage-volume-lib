@@ -327,7 +327,7 @@ var _ = Describe("SLBlockSession", func() {
 		})
 
 		It("delete volume success", func() {
-			volume, err := slSession.VolumeGet("2222")
+			volume, err := slSession.GetVolume("2222")
 			err = slSession.DeleteVolume(volume)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(networkStorageIscsiService.GetObjectCallCount()).To(Equal(2))
