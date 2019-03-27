@@ -340,7 +340,7 @@ func (sls *SLBlockSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, 
 func (sls *SLBlockSession) HandleProvisioning(orderID int) (*provider.Volume, error) {
 	storageID, err := sls.SLSession.HandleProvisioning(orderID)
 	if err == nil {
-		volume, err := sls.VolumeGet(strconv.Itoa(*storageID))
+		volume, err := sls.GetVolume(strconv.Itoa(*storageID))
 		return volume, err
 	}
 	return nil, err

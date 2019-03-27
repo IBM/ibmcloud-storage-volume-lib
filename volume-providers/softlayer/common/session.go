@@ -28,7 +28,7 @@ import (
 
 type SLSessionCommonInterface interface {
 	// Get the volume by using ID  //
-	VolumeGet(id string) (*provider.Volume, error)
+	GetVolume(id string) (*provider.Volume, error)
 }
 
 // SLSession implements lib.Session
@@ -47,7 +47,7 @@ type SLSession struct {
 const SnapshotMask = "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],parentVolume[snapshotCapacityGb],parentVolume[id],parentVolume[storageTierLevel],parentVolume[notes],storageType[keyName],serviceResource[datacenter[name]],billingItem[location,hourlyFlag],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes"
 
 var (
-	VolumeDeleteReason = "deleted by ibm-volume-lib on behalf of user request"
+	VolumeDeleteReason = "deleted by ibmcloud-storage-volume-lib on behalf of user request"
 )
 
 //GetVolumeByRequestID getvolume by  request ID. The request ID the identifier returned after placing the order
