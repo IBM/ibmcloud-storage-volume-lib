@@ -346,7 +346,7 @@ func (sls *SLBlockSession) HandleProvisioning(orderID int) (*provider.Volume, er
 	return nil, err
 }
 
-// VolumeGet Get the volume by using ID
+// GetVolume Get the volume by using ID
 func (sls *SLBlockSession) GetVolume(id string) (*provider.Volume, error) {
 	// Step 1: validate input
 	volumeID := utils.ToInt(id)
