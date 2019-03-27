@@ -72,21 +72,21 @@ type Volume struct {
 	// Service address for  mounting NFS volume  Applicable for file storage only
 	FileNetworkMountAddress *string `json:"fileNetworkMountAddress,omitempty"`
 
-	// notes field as a map for all note fileds
+	// VolumeNotes notes field as a map for all note fileds
 	// will keep   {"plugin":"ibm-file-plugin-56f7bd4db6-wx4pd","region":"us-south","cluster":"3a3fd80459014aca84f8a7e58e7a3ded","type":"Endurance","pvc":"one30","pv":"pvc-c7b4d6bd-63c5-11e8-811c-3a16fc403383","storgeclass":"ibmc-file-billing","reclaim":"Delete"}
-	VolumeNotes map[string]string
+	VolumeNotes map[string]string `json:"volumeNotes,omitempty"`
 
-	// LunID the lun of volume
+	// LunID the lun of volume, Only for Softlayer block
 	LunID string `json:"lunId,omitempty"`
 
 	// Attributes map of specific storage provider volume attributes
-	Attributes map[string]string
+	Attributes map[string]string `json:"attributes,omitempty"`
 
 	// IscsiTargetIPAddresses list of target IP addresses for iscsi. Applicable for Iscsi block storage only
 	IscsiTargetIPAddresses []string `json:"iscsiTargetIpAddresses,omitempty"`
 
-	// VPC specific parameters
-	VPCVolume VPCVolume
+	// Only for VPC volume provider
+	VPCVolume
 }
 
 // Snapshot

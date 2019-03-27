@@ -36,9 +36,9 @@ type ResourceGroup struct {
 
 // Profile ...
 type Profile struct {
-	CRN  string `json:"crn,omitempty"`
 	Href string `json:"href,omitempty"`
 	Name string `json:"name,omitempty"`
+	CRN  string `json:"crn,omitempty"`
 }
 
 // VolumeAttachment ...

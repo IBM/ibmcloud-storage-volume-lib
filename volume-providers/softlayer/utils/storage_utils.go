@@ -473,11 +473,11 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 	}
 
 	if storage.Username != nil {
-		volumeAttribs["Username"] = *storage.Username
+		volumeAttribs["userName"] = *storage.Username
 	}
 
 	if storage.FileNetworkMountAddress != nil {
-		volumeAttribs["FileNetworkMountAddress"] = *storage.FileNetworkMountAddress
+		volumeAttribs["fileNetworkMountAddress"] = *storage.FileNetworkMountAddress
 	}
 
 	volume.VolumeNotes = newnotes
