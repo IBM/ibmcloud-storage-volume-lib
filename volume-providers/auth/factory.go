@@ -16,23 +16,23 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 )
 
-// contextCredentialsFactory ...
-type contextCredentialsFactory struct {
+// ContextCredentialsFactory ...
+type ContextCredentialsFactory struct {
 	softlayerConfig      *config.SoftlayerConfig
 	vpcConfig            *config.VPCProviderConfig
 	tokenExchangeService iam.TokenExchangeService
 }
 
-var _ local.ContextCredentialsFactory = &contextCredentialsFactory{}
+var _ local.ContextCredentialsFactory = &ContextCredentialsFactory{}
 
 // NewContextCredentialsFactory ...
-func NewContextCredentialsFactory(bluemixConfig *config.BluemixConfig, softlayerConfig *config.SoftlayerConfig, vpcConfig *config.VPCProviderConfig) (*contextCredentialsFactory, error) {
+func NewContextCredentialsFactory(bluemixConfig *config.BluemixConfig, softlayerConfig *config.SoftlayerConfig, vpcConfig *config.VPCProviderConfig) (*ContextCredentialsFactory, error) {
 	tokenExchangeService, err := iam.NewTokenExchangeService(bluemixConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	return &contextCredentialsFactory{
+	return &ContextCredentialsFactory{
 		softlayerConfig:      softlayerConfig,
 		vpcConfig:            vpcConfig,
 		tokenExchangeService: tokenExchangeService,

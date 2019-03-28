@@ -16,8 +16,8 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
 
-// ForAPIKey ...
-func (ccf *contextCredentialsFactory) ForIaaSAPIKey(iamAccountID, userid, apikey string, logger *zap.Logger) (provider.ContextCredentials, error) {
+// ForIaaSAPIKey ...
+func (ccf *ContextCredentialsFactory) ForIaaSAPIKey(iamAccountID, userid, apikey string, logger *zap.Logger) (provider.ContextCredentials, error) {
 	return provider.ContextCredentials{
 		AuthType:     provider.IaaSAPIKey,
 		IAMAccountID: iamAccountID,
