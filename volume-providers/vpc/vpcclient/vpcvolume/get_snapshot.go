@@ -8,25 +8,27 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// CreateSnapshot POSTs to /volumes
-func (ss *SnapshotService) CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot) (*models.Snapshot, error) {
+// GetSnapshot GETs from /volumes
+func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string) (*models.Snapshot, error) {
 	operation := &client.Operation{
-		Name:        "CreateSnapshot",
-		Method:      "POST",
-		PathPattern: snapshotsPath,
+		Name:        "GetSnapshot",
+		Method:      "GET",
+		PathPattern: snapshotIDPath,
 	}
+
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID)
 
 	var snapshot models.Snapshot
 	var apiErr models.Error
 
-	_, err := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONBody(snapshotTemplate).JSONSuccess(&snapshot).JSONError(&apiErr).Invoke()
+	_, err := req.JSONSuccess(&snapshot).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}

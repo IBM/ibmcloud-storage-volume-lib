@@ -11,6 +11,7 @@
 package riaas
 
 import (
+	"context"
 	"io"
 	"net/http"
 )
@@ -27,6 +28,7 @@ type Config struct {
 
 	DebugWriter io.Writer
 	HTTPClient  *http.Client
+	Context     context.Context
 }
 
 func (c Config) httpClient() *http.Client {

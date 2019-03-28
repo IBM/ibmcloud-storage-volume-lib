@@ -11,8 +11,9 @@
 package riaas
 
 import (
+	"context"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/volume"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 )
 
 // RegionalAPI is the main interface for the RIAAS API client. From here, service
@@ -21,21 +22,26 @@ import (
 type RegionalAPI interface {
 	Login(token string) error
 
-	VolumeService() volume.VolumeManager
-	SnapshotService() volume.SnapshotManager
+	VolumeService() vpcvolume.VolumeManager
+	SnapshotService() vpcvolume.SnapshotManager
 }
 
 var _ RegionalAPI = &Session{}
 
 // Session is a base implementation of the RegionalAPI interface
 type Session struct {
-	client client.ClientSession
+	client client.SessionClient
 	config Config
 }
 
 // New creates a new Session volume, using the supplied config
 func New(config Config) (*Session, error) {
-	riaasClient := client.New(config.baseURL(), config.httpClient(), config.ContextID)
+	ctx := config.Context
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	riaasClient := client.New(ctx, config.baseURL(), config.httpClient(), config.ContextID)
 
 	if config.DebugWriter != nil {
 		riaasClient.WithDebug(config.DebugWriter)
@@ -55,13 +61,13 @@ func (s *Session) Login(token string) error {
 }
 
 // VolumeService returns the Volume service for managing volumes
-func (s *Session) VolumeService() volume.VolumeManager {
-	return volume.New(s.client)
+func (s *Session) VolumeService() vpcvolume.VolumeManager {
+	return vpcvolume.New(s.client)
 }
 
 // SnapshotService returns the Snapshot service for managing snapshot
-func (s *Session) SnapshotService() volume.SnapshotManager {
-	return volume.NewSnapshotManager(s.client)
+func (s *Session) SnapshotService() vpcvolume.SnapshotManager {
+	return vpcvolume.NewSnapshotManager(s.client)
 }
 
 // RegionalAPIClientProvider declares an interface for a provider that can supply a new

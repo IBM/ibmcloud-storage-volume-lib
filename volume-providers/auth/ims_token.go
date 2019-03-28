@@ -24,12 +24,12 @@ import (
 const (
 	// IMSToken is an IMS user ID and token
 	IMSToken = provider.AuthType("IMS_TOKEN")
-
+	// IAMAccessToken ...
 	IAMAccessToken = provider.AuthType("IAM_ACCESS_TOKEN")
 )
 
 // ForRefreshToken ...
-func (ccf *contextCredentialsFactory) ForRefreshToken(refreshToken string, logger *zap.Logger) (provider.ContextCredentials, error) {
+func (ccf *ContextCredentialsFactory) ForRefreshToken(refreshToken string, logger *zap.Logger) (provider.ContextCredentials, error) {
 
 	accessToken, err := ccf.tokenExchangeService.ExchangeRefreshTokenForAccessToken(refreshToken, logger)
 	if err != nil {
@@ -49,7 +49,7 @@ func (ccf *contextCredentialsFactory) ForRefreshToken(refreshToken string, logge
 }
 
 // ForIAMAPIKey ...
-func (ccf *contextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
+func (ccf *ContextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
 
 	imsToken, err := ccf.tokenExchangeService.ExchangeIAMAPIKeyForIMSToken(apiKey, logger)
 	if err != nil {
@@ -61,7 +61,8 @@ func (ccf *contextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, 
 	return forIMSToken(iamAccountID, imsToken), nil
 }
 
-func (ccf *contextCredentialsFactory) ForIAMAccessToken(apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
+// ForIAMAccessToken ...
+func (ccf *ContextCredentialsFactory) ForIAMAccessToken(apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
 
 	iamAccessToken, err := ccf.tokenExchangeService.ExchangeIAMAPIKeyForAccessToken(apiKey, logger)
 	if err != nil {
@@ -77,6 +78,7 @@ func (ccf *contextCredentialsFactory) ForIAMAccessToken(apiKey string, logger *z
 	return forIAMAccessToken(iamAccountID, iamAccessToken), nil
 }
 
+// forIMSToken ...
 func forIMSToken(iamAccountID string, imsToken *iam.IMSToken) provider.ContextCredentials {
 	return provider.ContextCredentials{
 		AuthType:     IMSToken,
@@ -86,6 +88,7 @@ func forIMSToken(iamAccountID string, imsToken *iam.IMSToken) provider.ContextCr
 	}
 }
 
+// forIAMAccessToken ...
 func forIAMAccessToken(iamAccountID string, iamAccessToken *iam.AccessToken) provider.ContextCredentials {
 	return provider.ContextCredentials{
 		AuthType:     IAMAccessToken,

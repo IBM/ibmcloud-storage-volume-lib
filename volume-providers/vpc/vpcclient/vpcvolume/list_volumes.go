@@ -8,28 +8,48 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"strconv"
 )
 
-// CreateVolume POSTs to /volumes
-func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume) (*models.Volume, error) {
+// ListVolumes GETs /volumes
+func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters) (*models.VolumeList, error) {
 	operation := &client.Operation{
-		Name:        "CreateVolume",
-		Method:      "POST",
+		Name:        "ListVolumes",
+		Method:      "GET",
 		PathPattern: volumesPath,
 	}
 
-	var volume models.Volume
+	var volumes models.VolumeList
 	var apiErr models.Error
 
-	_, err := vs.client.NewRequest(operation).JSONBody(volumeTemplate).JSONSuccess(&volume).JSONError(&apiErr).Invoke()
+	req := vs.client.NewRequest(operation).JSONSuccess(&volumes).JSONError(&apiErr)
+
+	if limit > 0 {
+		req.AddQueryValue("limit", strconv.Itoa(limit))
+	}
+
+	if filters != nil {
+		if filters.ResourceGroupID != "" {
+			req.AddQueryValue("resource_group.id", filters.ResourceGroupID)
+		}
+		if filters.Tag != "" {
+			req.AddQueryValue("tag", filters.Tag)
+		}
+		if filters.ZoneName != "" {
+			req.AddQueryValue("zone.name", filters.ZoneName)
+		}
+
+	}
+
+	_, err := req.Invoke()
 	if err != nil {
 		return nil, err
 	}
 
-	return &volume, nil
+	return &volumes, nil
 }

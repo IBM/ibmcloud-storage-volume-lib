@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
@@ -44,13 +44,13 @@ type SnapshotManager interface {
 
 // SnapshotService ...
 type SnapshotService struct {
-	client client.ClientSession
+	client client.SessionClient
 }
 
 var _ SnapshotManager = &SnapshotService{}
 
 // NewSnapshotManager ...
-func NewSnapshotManager(client client.ClientSession) SnapshotManager {
+func NewSnapshotManager(client client.SessionClient) SnapshotManager {
 	return &SnapshotService{
 		client: client,
 	}

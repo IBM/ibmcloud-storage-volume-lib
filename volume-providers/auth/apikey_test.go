@@ -61,7 +61,7 @@ func Test_ForIaaSAPIKey(t *testing.T) {
 	apiKey := "abcdefg"
 	endpointURL := "http://myEndpointUrl"
 
-	ccf := &contextCredentialsFactory{
+	ccf := &ContextCredentialsFactory{
 		softlayerConfig: &config.SoftlayerConfig{
 			SoftlayerEndpointURL: endpointURL,
 		},

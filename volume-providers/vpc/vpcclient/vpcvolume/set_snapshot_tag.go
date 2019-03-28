@@ -8,30 +8,28 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// GetSnapshot GETs from /volumes
-func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string) (*models.Snapshot, error) {
+// SetSnapshotTag sets tag for a snapshot
+func (ss *SnapshotService) SetSnapshotTag(volumeID string, snapshotID string, tagName string) error {
 	operation := &client.Operation{
-		Name:        "GetSnapshot",
-		Method:      "GET",
-		PathPattern: snapshotIDPath,
+		Name:        "SetSnapshotTag",
+		Method:      "PUT",
+		PathPattern: snapshotTagNamePath,
 	}
 
-	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID)
-
-	var snapshot models.Snapshot
 	var apiErr models.Error
 
-	_, err := req.JSONSuccess(&snapshot).JSONError(&apiErr).Invoke()
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
+	_, err := req.Invoke()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &snapshot, nil
+	return nil
 }

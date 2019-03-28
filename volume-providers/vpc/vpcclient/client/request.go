@@ -11,6 +11,7 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -38,6 +39,8 @@ type Request struct {
 	httpClient    *http.Client
 	baseURL       string
 	authenHandler handler
+
+	context context.Context
 
 	operation  *Operation
 	pathParams Params
@@ -175,7 +178,7 @@ func (r *Request) Invoke() (*http.Response, error) {
 
 	r.debugRequest(httpRequest)
 
-	resp, err := r.httpClient.Do(httpRequest)
+	resp, err := r.httpClient.Do(httpRequest.WithContext(r.context))
 	if err != nil {
 		return nil, err
 	}

@@ -8,28 +8,28 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// ListSnapshots GETs /volumes/snapshots
-func (ss *SnapshotService) ListSnapshots(volumeID string) (*models.SnapshotList, error) {
+// CheckSnapshotTag checks if the given tag exists on a snapshot
+func (ss *SnapshotService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error {
 	operation := &client.Operation{
-		Name:        "ListSnapshots",
+		Name:        "CheckSnapshotTag",
 		Method:      "GET",
-		PathPattern: snapshotsPath,
+		PathPattern: snapshotTagNamePath,
 	}
 
-	var snapshots models.SnapshotList
 	var apiErr models.Error
 
-	_, err := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONSuccess(&snapshots).JSONError(&apiErr).Invoke()
+	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
+	_, err := req.Invoke()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &snapshots, nil
+	return nil
 }

@@ -19,7 +19,7 @@ import (
 
 func TestLogin(t *testing.T) {
 
-	client := &fakes.ClientSession{}
+	client := &fakes.SessionClient{}
 
 	riaas := Session{
 		client: client,

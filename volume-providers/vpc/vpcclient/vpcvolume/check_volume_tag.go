@@ -8,24 +8,24 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// DeleteSnapshotTag deletes tag of a snapshot
-func (ss *SnapshotService) DeleteSnapshotTag(volumeID string, snapshotID string, tagName string) error {
+// CheckVolumeTag checks if the given tag exists on a volume
+func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string) error {
 	operation := &client.Operation{
-		Name:        "DeleteSnapshotTag",
-		Method:      "DELETE",
-		PathPattern: snapshotTagNamePath,
+		Name:        "CheckVolumeTag",
+		Method:      "GET",
+		PathPattern: volumeTagNamePath,
 	}
 
 	var apiErr models.Error
 
-	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
+	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return err

@@ -8,48 +8,29 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
-	"strconv"
 )
 
-// ListVolumes GETs /volumes
-func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters) (*models.VolumeList, error) {
+// ListVolumeTags GETs /volumes/tags
+func (vs *VolumeService) ListVolumeTags(volumeID string) (*[]string, error) {
 	operation := &client.Operation{
-		Name:        "ListVolumes",
+		Name:        "ListVolumeTags",
 		Method:      "GET",
-		PathPattern: volumesPath,
+		PathPattern: volumeTagsPath,
 	}
 
-	var volumes models.VolumeList
+	var tags []string
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).JSONSuccess(&volumes).JSONError(&apiErr)
-
-	if limit > 0 {
-		req.AddQueryValue("limit", strconv.Itoa(limit))
-	}
-
-	if filters != nil {
-		if filters.ResourceGroupID != "" {
-			req.AddQueryValue("resource_group.id", filters.ResourceGroupID)
-		}
-		if filters.Tag != "" {
-			req.AddQueryValue("tag", filters.Tag)
-		}
-		if filters.ZoneName != "" {
-			req.AddQueryValue("zone.name", filters.ZoneName)
-		}
-
-	}
-
+	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONSuccess(&tags).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return nil, err
 	}
 
-	return &volumes, nil
+	return &tags, nil
 }
