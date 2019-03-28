@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 const (
 	volumesPath   = "volumes"

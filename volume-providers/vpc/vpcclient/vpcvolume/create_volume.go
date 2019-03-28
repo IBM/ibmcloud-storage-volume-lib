@@ -8,28 +8,28 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// CheckVolumeTag checks if the given tag exists on a volume
-func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string) error {
+// CreateVolume POSTs to /volumes
+func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume) (*models.Volume, error) {
 	operation := &client.Operation{
-		Name:        "CheckVolumeTag",
-		Method:      "GET",
-		PathPattern: volumeTagNamePath,
+		Name:        "CreateVolume",
+		Method:      "POST",
+		PathPattern: volumesPath,
 	}
 
+	var volume models.Volume
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&apiErr)
-	_, err := req.Invoke()
+	_, err := vs.client.NewRequest(operation).JSONBody(volumeTemplate).JSONSuccess(&volume).JSONError(&apiErr).Invoke()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &volume, nil
 }

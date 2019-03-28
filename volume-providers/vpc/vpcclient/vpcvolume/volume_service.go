@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
@@ -48,13 +48,13 @@ type VolumeManager interface {
 
 // VolumeService ...
 type VolumeService struct {
-	client client.ClientSession
+	client client.SessionClient
 }
 
 var _ VolumeManager = &VolumeService{}
 
 // New ...
-func New(client client.ClientSession) VolumeManager {
+func New(client client.SessionClient) VolumeManager {
 	return &VolumeService{
 		client: client,
 	}

@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"

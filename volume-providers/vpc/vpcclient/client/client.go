@@ -11,6 +11,7 @@
 package client
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/url"
@@ -23,14 +24,14 @@ type handler interface {
 	Before(request *Request) error
 }
 
-// ClientSession provides an interface for a REST API client
-//go:generate counterfeiter -o fakes/client.go --fake-name ClientSession . ClientSession
-type ClientSession interface {
+// SessionClient provides an interface for a REST API client
+//go:generate counterfeiter -o fakes/client.go --fake-name SessionClient . SessionClient
+type SessionClient interface {
 	NewRequest(operation *Operation) *Request
-	WithDebug(writer io.Writer) ClientSession
-	WithAuthToken(authToken string) ClientSession
-	WithPathParameter(name, value string) ClientSession
-	WithQueryValue(name, value string) ClientSession
+	WithDebug(writer io.Writer) SessionClient
+	WithAuthToken(authToken string) SessionClient
+	WithPathParameter(name, value string) SessionClient
+	WithQueryValue(name, value string) SessionClient
 }
 
 type client struct {
@@ -42,10 +43,11 @@ type client struct {
 	debugWriter   io.Writer
 	resourceGroup string
 	contextID     string
+	context       context.Context
 }
 
-// New creates a new instance of a ClientSession
-func New(baseURL string, httpClient *http.Client, contextID string) ClientSession {
+// New creates a new instance of a SessionClient
+func New(ctx context.Context, baseURL string, httpClient *http.Client, contextID string) SessionClient {
 	return &client{
 		baseURL:       baseURL,
 		httpClient:    httpClient,
@@ -53,6 +55,7 @@ func New(baseURL string, httpClient *http.Client, contextID string) ClientSessio
 		queryValues:   url.Values{"version": []string{models.APIVersion}},
 		authenHandler: &authenticationHandler{},
 		contextID:     contextID,
+		context:       ctx,
 	}
 }
 
@@ -73,6 +76,7 @@ func (c *client) NewRequest(operation *Operation) *Request {
 
 	return &Request{
 		httpClient:    c.httpClient,
+		context:       c.context,
 		baseURL:       c.baseURL,
 		operation:     operation,
 		pathParams:    c.pathParams.Copy(),
@@ -84,15 +88,15 @@ func (c *client) NewRequest(operation *Operation) *Request {
 	}
 }
 
-// WithDebug enables debug for this ClientSession, outputting to the supplied writer
-func (c *client) WithDebug(writer io.Writer) ClientSession {
+// WithDebug enables debug for this SessionClient, outputting to the supplied writer
+func (c *client) WithDebug(writer io.Writer) SessionClient {
 	c.debugWriter = writer
 	return c
 }
 
 // WithAuthToken supplies the authentication token to use for all requests made
 // by this session
-func (c *client) WithAuthToken(authToken string) ClientSession {
+func (c *client) WithAuthToken(authToken string) SessionClient {
 	c.authenHandler = &authenticationHandler{
 		authToken: authToken,
 	}
@@ -100,13 +104,13 @@ func (c *client) WithAuthToken(authToken string) ClientSession {
 }
 
 // WithPathParameter adds a path parameter to the request
-func (c *client) WithPathParameter(name, value string) ClientSession {
+func (c *client) WithPathParameter(name, value string) SessionClient {
 	c.pathParams[name] = value
 	return c
 }
 
 // WithQueryValue adds a query parameter to the request
-func (c *client) WithQueryValue(name, value string) ClientSession {
+func (c *client) WithQueryValue(name, value string) SessionClient {
 	c.queryValues.Add(name, value)
 	return c
 }

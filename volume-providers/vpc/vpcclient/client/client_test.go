@@ -248,7 +248,7 @@ func TestDebugMode(t *testing.T) {
 
 			log = &bytes.Buffer{}
 
-			riaas = client.New(s.URL, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
+			riaas = client.New(context.Background(), s.URL, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
 
 			defer s.Close()
 
@@ -322,7 +322,7 @@ func TestOperationURLProcessing(t *testing.T) {
 	for _, testcase := range testcases {
 
 		t.Run(testcase.name, func(t *testing.T) {
-			c := client.New(testcase.baseURL, http.DefaultClient, "test-context")
+			c := client.New(context.Background(), testcase.baseURL, http.DefaultClient, "test-context")
 			actualURL := c.NewRequest(testcase.operation).URL()
 			assert.Equal(t, testcase.expectedURL, actualURL)
 		})

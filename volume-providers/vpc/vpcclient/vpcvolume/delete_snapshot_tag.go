@@ -8,18 +8,18 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package volume
+package vpcvolume
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// CheckSnapshotTag checks if the given tag exists on a snapshot
-func (ss *SnapshotService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error {
+// DeleteSnapshotTag deletes tag of a snapshot
+func (ss *SnapshotService) DeleteSnapshotTag(volumeID string, snapshotID string, tagName string) error {
 	operation := &client.Operation{
-		Name:        "CheckSnapshotTag",
-		Method:      "GET",
+		Name:        "DeleteSnapshotTag",
+		Method:      "DELETE",
 		PathPattern: snapshotTagNamePath,
 	}
 
