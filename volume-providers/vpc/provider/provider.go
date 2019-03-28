@@ -89,7 +89,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	}
 	logger.Info("", zap.Reflect("Provider config", provider.config))
 
-	reasoncode.Messages_en = messages.InitMessages()
+	reasoncode.MessagesEn = messages.InitMessages()
 	return provider, nil
 }
 

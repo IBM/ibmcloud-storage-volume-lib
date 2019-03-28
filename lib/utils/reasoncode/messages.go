@@ -2,18 +2,19 @@
  * IBM Confidential
  * OCO Source Materials
  * IBM Bluemix Container Registry, 5737-D42
- * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
  * The source code for this program is not  published or otherwise divested of
  * its trade secrets,  * irrespective of what has been deposited with
  * the U.S. Copyright Office.
  ******************************************************************************/
+
 package reasoncode
 
 import (
 	"fmt"
 )
 
-// Wrapper Message/Error Class
+// Message Wrapper Message/Error Class
 type Message struct {
 	Code        string
 	Description string
@@ -22,19 +23,21 @@ type Message struct {
 	Action      string
 }
 
-var Messages_en map[string]Message
+// MessagesEn ...
+var MessagesEn map[string]Message
 
-//Implement the Error() interface method
+// Error Implement the Error() interface method
 func (msg Message) Error() string {
-
 	return msg.Info()
 }
 
+// Info ...
 func (msg Message) Info() string {
 
 	return fmt.Sprintf("{Code:%s, Description:%s, Type:%s, RC:%d}", msg.Code, msg.Description, msg.Type, msg.RC)
 }
 
+// GetUserErr ...
 func GetUserErr(code string, err error, args ...interface{}) error {
 	//Incase of no error message, dont construct the Error Object
 	if err == nil {
@@ -45,14 +48,16 @@ func GetUserErr(code string, err error, args ...interface{}) error {
 	return userMsg
 }
 
+// GetUserMsg ...
 func GetUserMsg(code string, args ...interface{}) Message {
-	userMsg := Messages_en[code]
+	userMsg := MessagesEn[code]
 	if len(args) > 0 {
 		userMsg.Description = fmt.Sprintf(userMsg.Description, args...)
 	}
 	return userMsg
 }
 
+// GetUserError ...
 func GetUserError(code string, err error, args ...interface{}) error {
 	userMsg := GetUserMsg(code, args...)
 

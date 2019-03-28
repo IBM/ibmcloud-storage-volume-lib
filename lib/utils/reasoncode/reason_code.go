@@ -13,8 +13,6 @@ package reasoncode
 // ReasonCode ...
 type ReasonCode string
 
-// -- General error codes --
-
 const (
 
 	// ErrorUnclassified indicates a generic unclassified error
