@@ -57,7 +57,7 @@ var _ = Describe("SLBlockSession", func() {
 		var (
 			//capacityItemPrices   []datatypes.Product_Item_Price
 			//itemPrices           map[string]*datatypes.Product_Item_Price
-			storagespacePrice    []datatypes.Product_Item_Price
+			storagespacePrice []datatypes.Product_Item_Price
 			//itemPriceErrors      map[string]error
 			productPackages      []datatypes.Product_Package
 			networkStorages      []datatypes.Network_Storage

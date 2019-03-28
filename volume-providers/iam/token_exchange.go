@@ -2,7 +2,7 @@
  * IBM Confidential
  * OCO Source Materials
  * IBM Cloud Container Service, 5737-D43
- * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
  * The source code for this program is not  published or otherwise divested of
  * its trade secrets, irrespective of what has been deposited with
  * the U.S. Copyright Office.
@@ -19,32 +19,40 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/auth"
 )
 
+// tokenExchangeService ...
 type tokenExchangeService struct {
 	bluemixConf *config.BluemixConfig
 	httpClient  *http.Client
 }
 
-var _ auth.TokenExchangeService = &tokenExchangeService{}
+// TokenExchangeService ...
+var _ TokenExchangeService = &tokenExchangeService{}
 
-// NewTokenExchangeService ...
-func NewTokenExchangeService(bluemixConf *config.BluemixConfig) (auth.TokenExchangeService, error) {
-	httpClient, err := config.GeneralCAHttpClient()
-	if err != nil {
-		return nil, err
-	}
-
+// NewTokenExchangeServiceWithClient ...
+func NewTokenExchangeServiceWithClient(bluemixConf *config.BluemixConfig, httpClient *http.Client) (TokenExchangeService, error) {
 	return &tokenExchangeService{
 		bluemixConf: bluemixConf,
 		httpClient:  httpClient,
 	}, nil
 }
 
+// NewTokenExchangeService ...
+func NewTokenExchangeService(bluemixConf *config.BluemixConfig) (TokenExchangeService, error) {
+	httpClient, err := config.GeneralCAHttpClient()
+	if err != nil {
+		return nil, err
+	}
+	return &tokenExchangeService{
+		bluemixConf: bluemixConf,
+		httpClient:  httpClient,
+	}, nil
+}
+
+// tokenExchangeRequest ...
 type tokenExchangeRequest struct {
 	tes     *tokenExchangeService
 	request *rest.Request
@@ -52,6 +60,7 @@ type tokenExchangeRequest struct {
 	logger  *zap.Logger
 }
 
+// tokenExchangeResponse ...
 type tokenExchangeResponse struct {
 	AccessToken string `json:"access_token"`
 	ImsToken    string `json:"ims_token"`
@@ -59,7 +68,7 @@ type tokenExchangeResponse struct {
 }
 
 // ExchangeRefreshTokenForAccessToken ...
-func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*auth.AccessToken, error) {
+func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*AccessToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "refresh_token")
@@ -69,7 +78,7 @@ func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken
 }
 
 // ExchangeAccessTokenForIMSToken ...
-func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken auth.AccessToken, logger *zap.Logger) (*auth.IMSToken, error) {
+func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken AccessToken, logger *zap.Logger) (*IMSToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:derive")
@@ -80,7 +89,7 @@ func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken auth
 }
 
 // ExchangeIAMAPIKeyForIMSToken ...
-func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*auth.IMSToken, error) {
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*IMSToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
@@ -91,7 +100,7 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, 
 }
 
 // ExchangeIAMAPIKeyForAccessToken ...
-func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger *zap.Logger) (*auth.AccessToken, error) {
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger *zap.Logger) (*AccessToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
@@ -100,25 +109,28 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey strin
 	return r.exchangeForAccessToken()
 }
 
-func (r *tokenExchangeRequest) exchangeForAccessToken() (*auth.AccessToken, error) {
+// exchangeForAccessToken ...
+func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) {
 	iamResp, err := r.sendTokenExchangeRequest()
 	if err != nil {
 		return nil, err
 	}
-	return &auth.AccessToken{Token: iamResp.AccessToken}, nil
+	return &AccessToken{Token: iamResp.AccessToken}, nil
 }
 
-func (r *tokenExchangeRequest) exchangeForIMSToken() (*auth.IMSToken, error) {
+// exchangeForIMSToken ...
+func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) {
 	iamResp, err := r.sendTokenExchangeRequest()
 	if err != nil {
 		return nil, err
 	}
-	return &auth.IMSToken{
+	return &IMSToken{
 		UserID: iamResp.ImsUserID,
 		Token:  iamResp.ImsToken,
 	}, nil
 }
 
+// newTokenExchangeRequest ...
 func (tes *tokenExchangeService) newTokenExchangeRequest(logger *zap.Logger) *tokenExchangeRequest {
 	client := rest.NewClient()
 	client.HTTPClient = tes.httpClient
@@ -131,6 +143,7 @@ func (tes *tokenExchangeService) newTokenExchangeRequest(logger *zap.Logger) *to
 	}
 }
 
+// sendTokenExchangeRequest ...
 func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeResponse, error) {
 	// Set headers
 	basicAuth := fmt.Sprintf("%s:%s", r.tes.bluemixConf.IamClientID, r.tes.bluemixConf.IamClientSecret)
@@ -149,7 +162,7 @@ func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeRespons
 		} `json:"requirements"`
 	}{}
 
-	r.logger.Debug("Sending IAM token exchange request")
+	r.logger.Info("Sending IAM token exchange request")
 	resp, err := r.client.Do(r.request, &successV, &errorV)
 
 	if err != nil {

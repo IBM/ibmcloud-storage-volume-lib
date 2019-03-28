@@ -2,7 +2,7 @@
  * IBM Confidential
  * OCO Source Materials
  * IBM Cloud Container Service, 5737-D43
- * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
  * The source code for this program is not  published or otherwise divested of
  * its trade secrets, irrespective of what has been deposited with
  * the U.S. Copyright Office.
@@ -15,8 +15,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/auth"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
@@ -24,10 +24,12 @@ import (
 const (
 	// IMSToken is an IMS user ID and token
 	IMSToken = provider.AuthType("IMS_TOKEN")
+	// IAMAccessToken ...
+	IAMAccessToken = provider.AuthType("IAM_ACCESS_TOKEN")
 )
 
 // ForRefreshToken ...
-func (ccf *contextCredentialsFactory) ForRefreshToken(refreshToken string, logger *zap.Logger) (provider.ContextCredentials, error) {
+func (ccf *ContextCredentialsFactory) ForRefreshToken(refreshToken string, logger *zap.Logger) (provider.ContextCredentials, error) {
 
 	accessToken, err := ccf.tokenExchangeService.ExchangeRefreshTokenForAccessToken(refreshToken, logger)
 	if err != nil {
@@ -47,7 +49,7 @@ func (ccf *contextCredentialsFactory) ForRefreshToken(refreshToken string, logge
 }
 
 // ForIAMAPIKey ...
-func (ccf *contextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
+func (ccf *ContextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
 
 	imsToken, err := ccf.tokenExchangeService.ExchangeIAMAPIKeyForIMSToken(apiKey, logger)
 	if err != nil {
@@ -59,11 +61,38 @@ func (ccf *contextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, 
 	return forIMSToken(iamAccountID, imsToken), nil
 }
 
-func forIMSToken(iamAccountID string, imsToken *auth.IMSToken) provider.ContextCredentials {
+// ForIAMAccessToken ...
+func (ccf *ContextCredentialsFactory) ForIAMAccessToken(apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) {
+
+	iamAccessToken, err := ccf.tokenExchangeService.ExchangeIAMAPIKeyForAccessToken(apiKey, logger)
+	if err != nil {
+		logger.Error("Unable to retrieve IAM access toekn from IAM API key", local.ZapError(err))
+		return provider.ContextCredentials{}, err
+	}
+	iamAccountID, err := ccf.tokenExchangeService.GetIAMAccountIDFromAccessToken(iam.AccessToken{Token: iamAccessToken.Token}, logger)
+	if err != nil {
+		logger.Error("Unable to retrieve IAM access toekn from IAM API key", local.ZapError(err))
+		return provider.ContextCredentials{}, err
+	}
+
+	return forIAMAccessToken(iamAccountID, iamAccessToken), nil
+}
+
+// forIMSToken ...
+func forIMSToken(iamAccountID string, imsToken *iam.IMSToken) provider.ContextCredentials {
 	return provider.ContextCredentials{
 		AuthType:     IMSToken,
 		IAMAccountID: iamAccountID,
 		UserID:       strconv.Itoa(imsToken.UserID),
 		Credential:   imsToken.Token,
+	}
+}
+
+// forIAMAccessToken ...
+func forIAMAccessToken(iamAccountID string, iamAccessToken *iam.AccessToken) provider.ContextCredentials {
+	return provider.ContextCredentials{
+		AuthType:     IAMAccessToken,
+		IAMAccountID: iamAccountID,
+		Credential:   iamAccessToken.Token,
 	}
 }

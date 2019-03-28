@@ -11,12 +11,11 @@
 package config
 
 import (
+	"github.com/BurntSushi/toml"
+	"go.uber.org/zap"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/BurntSushi/toml"
-	"go.uber.org/zap"
 )
 
 func getEnv(key string) string {
@@ -33,9 +32,11 @@ func GetGoPath() string {
 
 // Config is the parent struct for all the configuration information for -cluster
 type Config struct {
+	Server    *ServerConfig  `required:"true"`
 	Bluemix   *BluemixConfig //`required:"true"`
 	Softlayer *SoftlayerConfig
 	Gen2      *Gen2Config
+	VPC       *VPCProviderConfig
 }
 
 //ReadConfig loads the config from file
@@ -52,6 +53,7 @@ func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) {
 	return &conf, err
 }
 
+// GetConfPath get configuration file path
 func GetConfPath() string {
 	if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" {
 		return filepath.Join(confPath, "libconfig.toml")
@@ -60,6 +62,7 @@ func GetConfPath() string {
 	return GetDefaultConfPath()
 }
 
+// GetDefaultConfPath get default config file path
 func GetDefaultConfPath() string {
 	return filepath.Join(GetEtcPath(), "libconfig.toml")
 }
@@ -71,6 +74,12 @@ func ParseConfig(filePath string, conf interface{}, logger *zap.Logger) error {
 		logger.Error("Failed to parse config file", zap.Error(err))
 	}
 	return err
+}
+
+// ServerConfig configuration options for the provider server itself
+type ServerConfig struct {
+	// DebugTrace is a flag to enable the debug level trace within the provider code.
+	DebugTrace bool `toml:"debug_trace" envconfig:"DEBUG_TRACE"`
 }
 
 // BluemixConfig ...
@@ -104,11 +113,20 @@ type SoftlayerConfig struct {
 	SoftlayerAPIDebug       bool
 }
 
+// Gen2Config ...
 type Gen2Config struct {
 	Gen2ProviderEnabled bool   `toml:"genesis_provider_enabled"`
 	Gen2Username        string `toml:"genesis_user_name"`
 	Gen2APIKey          string `toml:"genesis_api_key"`
 	Gen2URL             string `toml:"genesis_url"`
+}
+
+// VPCProviderConfig configures a specific instance of a VPC provider (e.g. GT/GC/Z)
+type VPCProviderConfig struct {
+	Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
+	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
+	EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
+	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
 }
 
 // GetEtcPath returns the path to the etc directory

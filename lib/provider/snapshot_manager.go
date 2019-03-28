@@ -10,6 +10,7 @@
 
 package provider
 
+// SnapshotManager ...
 type SnapshotManager interface {
 	// Create snapshot space
 	OrderSnapshot(VolumeRequest Volume) error

@@ -8,6 +8,7 @@
 
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/) # With glide: GOPACKAGES=$(shell glide novendor)
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
+GOLINTPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers/softlayer )
 
 .PHONY: all
 all: deps fmt vet test
@@ -16,11 +17,16 @@ all: deps fmt vet test
 deps:
 	glide install
 	go get github.com/pierrre/gotestcover
+	go get github.com/golang/lint/golint
 
 .PHONY: fmt
-fmt:
+fmt: lint
 	gofmt -l ${GOFILES}
 	@if [ -n "$$(gofmt -l ${GOFILES})" ]; then echo 'Above Files needs gofmt fixes. Please run gofmt -l -w on your code.' && exit 1; fi
+
+.PHONY: lint
+lint:
+	$(GOPATH)/bin/golint --set_exit_status ${GOLINTPACKAGES}
 
 .PHONY: test
 test:

@@ -12,11 +12,11 @@ package utils
 
 import (
 	"errors"
-	//"fmt"
 	"go.uber.org/zap"
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
 	softlayer_file "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/file"
+	vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
@@ -25,6 +25,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/registry"
 )
 
+// InitProviders initialization for all providers as per configurations
 func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers, error) {
 	var haveProviders bool
 	providerRegistry := &registry.ProviderRegistry{}
@@ -52,10 +53,22 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 		haveProviders = true
 	}
 
-	// Genises provider registration
+	// Genesis provider registration
 	if conf.Gen2 != nil && conf.Gen2.Gen2ProviderEnabled {
 		logger.Info("Configuring provider for Gen2")
 		//TODO:~ Need to implement methods
+		haveProviders = true
+	}
+
+	// VPC provider registration
+	if conf.VPC != nil && conf.VPC.Enabled {
+		logger.Info("Configuring provider for vpc")
+		prov, err := vpc_provider.NewProvider(conf, logger)
+		if err != nil {
+			logger.Info("VPC block provider error!")
+			return nil, err
+		}
+		providerRegistry.Register(conf.VPC.VPCBlockProviderName, prov)
 		haveProviders = true
 	}
 
@@ -67,12 +80,13 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 	return nil, errors.New("No providers registered")
 }
 
+// isEmptyStringValue ...
 func isEmptyStringValue(value *string) bool {
 	return value == nil || *value == ""
 }
 
+// OpenProviderSession ...
 func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, logger *zap.Logger) (session provider.Session, fatal bool, err1 error) {
-	logger.Info("In OpenProviderSession methods")
 	prov, err := providers.Get(providerID)
 	if err != nil {
 		logger.Error("Not able to get the said provider", local.ZapError(err))
@@ -98,6 +112,7 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 	return
 }
 
+// GenerateContextCredentials ...
 func GenerateContextCredentials(conf *config.Config, providerID string, contextCredentialsFactory local.ContextCredentialsFactory, logger *zap.Logger) (provider.ContextCredentials, error) {
 	logger.Info("Generating generateContextCredentials for ", zap.String("Provider ID", providerID))
 
@@ -105,13 +120,17 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 	slUser := conf.Softlayer.SoftlayerUsername
 	slAPIKey := conf.Softlayer.SoftlayerAPIKey
 	iamAPIKey := conf.Bluemix.IamAPIKey
+
 	// Select appropriate authentication strategy
 	switch {
 	case (providerID == conf.Softlayer.SoftlayerBlockProviderName || providerID == conf.Softlayer.SoftlayerFileProviderName) &&
 		!isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
 		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, logger)
 
-	case !isEmptyStringValue(&iamAPIKey):
+	case (providerID == conf.VPC.VPCBlockProviderName):
+		return contextCredentialsFactory.ForIAMAccessToken(iamAPIKey, logger)
+
+	case (!isEmptyStringValue(&iamAPIKey) && (providerID != conf.VPC.VPCBlockProviderName)):
 		return contextCredentialsFactory.ForIAMAPIKey(AccountID, iamAPIKey, logger)
 
 	default:

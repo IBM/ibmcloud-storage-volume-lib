@@ -1,16 +1,30 @@
 hash: 58347e1394d15bb08371c1c717e30a7b5e7e7009501255cf797f5973eb40afbc
-updated: 2019-02-07T12:49:21.670431+05:30
+updated: 2019-03-25T15:33:05.753828+05:30
 imports:
 - name: github.com/BurntSushi/toml
   version: bbd5bb678321a0d6e58f1099321dfa73391c1b6f
+- name: github.com/davecgh/go-spew
+  version: d8f796af33cc11cb798c1aaeb27a4ebc5099927d
+  subpackages:
+  - spew
 - name: github.com/dgrijalva/jwt-go
   version: 3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8
+- name: github.com/fatih/structs
+  version: 878a968ab22548362a09bdb3322f98b00f470d46
 - name: github.com/IBM-Bluemix/bluemix-cli-sdk
   version: 67e7aca80eb41888a684388658ffa0a7f3764682
   subpackages:
   - common/rest
+- name: github.com/kelseyhightower/envconfig
+  version: f611eb38b3875cc3bd991ca91c51d06446afa14c
+- name: github.com/pmezard/go-difflib
+  version: 5d4384ee4fb2527b0a1256a821ebfc92f91efefc
+  subpackages:
+  - difflib
 - name: github.com/renier/xmlrpc
   version: ce4a1a486c03a3c6e1816df25b8c559d1879d380
+- name: github.com/rs/xid
+  version: cc5ec5782ac92773c5cc967b35ac567c2ac73e53
 - name: github.com/softlayer/softlayer-go
   version: 82a74c5bf7ff93d32be01ebd603a266b0119a4b7
   subpackages:
@@ -20,6 +34,10 @@ imports:
   - services
   - session
   - sl
+- name: github.com/stretchr/testify
+  version: 363ebb24d041ccea8068222281c2e963e997b9dc
+  subpackages:
+  - assert
 - name: go.uber.org/atomic
   version: 1ea20fb1cbb1cc08cbd0d913a96dead89aa18289
 - name: go.uber.org/multierr
@@ -53,10 +71,6 @@ imports:
   - runes
   - transform
 testImports:
-- name: github.com/davecgh/go-spew
-  version: d8f796af33cc11cb798c1aaeb27a4ebc5099927d
-  subpackages:
-  - spew
 - name: github.com/hpcloud/tail
   version: a1dbeea552b7c8df4b542c66073e393de198a800
   subpackages:
@@ -98,14 +112,6 @@ testImports:
   - matchers/support/goraph/node
   - matchers/support/goraph/util
   - types
-- name: github.com/pmezard/go-difflib
-  version: 5d4384ee4fb2527b0a1256a821ebfc92f91efefc
-  subpackages:
-  - difflib
-- name: github.com/stretchr/testify
-  version: 363ebb24d041ccea8068222281c2e963e997b9dc
-  subpackages:
-  - assert
 - name: golang.org/x/net
   version: 65e2d4e15006aab9813ff8769e768bbf4bb667a0
   subpackages:
