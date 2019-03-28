@@ -7,16 +7,21 @@
  * its trade secrets, irrespective of what has been deposited with
  * the U.S. Copyright Office.
  ******************************************************************************/
+
 package provider
 
 import ()
 
 const (
-	SUCCESS      = "Success"
-	FAILURE      = "Failure"
+	// SUCCESS ...
+	SUCCESS = "Success"
+	// FAILURE ...
+	FAILURE = "Failure"
+	// NOTSUPPORTED ...
 	NOTSUPPORTED = "Not supported"
 )
 
+// Plugin ...
 type Plugin interface {
 
 	//Init method is to initialize the volume, it is a no op right now
@@ -53,6 +58,7 @@ type Plugin interface {
 	UnmountDevice(deviceMountPath string) VolumeResponse
 }
 
+// VolumeResponse ...
 type VolumeResponse struct {
 	// Status should be either "Success", "Failure" or "Not supported".
 	Status string `json:"status"`
@@ -72,21 +78,25 @@ type VolumeResponse struct {
 	Capabilities map[string]bool `json:"capabilities,omitempty"`
 }
 
+// VolumeMountRequest ...
 type VolumeMountRequest struct {
 	MountDir   string            `json:"mountDir"`
 	DevicePath string            `json:"devicePath"`
 	Opts       map[string]string `json:"opts"`
 }
 
+// VolumeUnmountRequest ...
 type VolumeUnmountRequest struct {
 	MountDir string `json:"mountDir"`
 }
 
+// VolumeDetachRequest ...
 type VolumeDetachRequest struct {
 	PvOrVolumeName string `json:"pvOrVolumeName"`
 	HostName       string `json:"hostName"`
 }
 
+// VolumeAttachRequest ...
 type VolumeAttachRequest struct {
 	Opts     map[string]string `json:"opts"`
 	HostName string            `json:"hostName"`

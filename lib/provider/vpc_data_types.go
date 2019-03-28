@@ -10,7 +10,7 @@
 
 package provider
 
-// VPC specific	parameters
+// VPCVolume specific	parameters
 type VPCVolume struct {
 	Href              string              `json:"href,omitempty"`
 	ResourceGroup     *ResourceGroup      `json:"resource_group,omitempty"`

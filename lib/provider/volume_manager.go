@@ -10,6 +10,7 @@
 
 package provider
 
+// VolumeManager ...
 type VolumeManager interface {
 	// Provider name
 	ProviderName() VolumeProvider

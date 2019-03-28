@@ -15,7 +15,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// Snapshot operations
+// SnapshotManager operations
 type SnapshotManager interface {
 	// Create the snapshot on the volume
 	CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot) (*models.Snapshot, error)
@@ -49,7 +49,7 @@ type SnapshotService struct {
 
 var _ SnapshotManager = &SnapshotService{}
 
-// New ...
+// NewSnapshotManager ...
 func NewSnapshotManager(client client.ClientSession) SnapshotManager {
 	return &SnapshotService{
 		client: client,

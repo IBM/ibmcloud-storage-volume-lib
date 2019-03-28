@@ -14,15 +14,19 @@ import (
 	"time"
 )
 
+// VolumeProvider ...
 type VolumeProvider string
 
+// VolumeProviderType ...
 type VolumeProviderType string
 
+// VolumeType ...
 type VolumeType string
 
+// SnapshotTags ...
 type SnapshotTags map[string]string
 
-// Volume
+// Volume ...
 type Volume struct {
 	// ID of the storage volume, for which we can track the volume
 	VolumeID string `json:"volumeID,omitempty"` // order id should be there in the pv object as k10 looks for that in pv object
@@ -89,7 +93,7 @@ type Volume struct {
 	VPCVolume
 }
 
-// Snapshot
+// Snapshot ...
 type Snapshot struct {
 	Volume
 

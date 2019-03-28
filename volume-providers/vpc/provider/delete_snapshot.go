@@ -16,6 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// DeleteSnapshot delete snapshot
 func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 	vpcs.Logger.Info("Entry DeleteSnapshot()", zap.Reflect("snapshot", snapshot))
 	var err error

@@ -14,6 +14,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
 
+// GetVolumeByRequestID get volume by volume ID
 func (vpcs *VPCSession) GetVolumeByRequestID(requestID string) (*provider.Volume, error) {
 	return nil, nil
 }

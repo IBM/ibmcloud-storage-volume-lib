@@ -30,12 +30,15 @@ type VPCSession struct {
 
 const (
 	// VPC storage provider
-	VPC            = provider.VolumeProvider("VPC")
-	VolumeType   = provider.VolumeType("vpc-block")
+	VPC = provider.VolumeProvider("VPC")
+	// VolumeType ...
+	VolumeType = provider.VolumeType("vpc-block")
+	// SnapshotMask ...
 	SnapshotMask = "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],parentVolume[snapshotCapacityGb],parentVolume[id],parentVolume[storageTierLevel],parentVolume[notes],storageType[keyName],serviceResource[datacenter[name]],billingItem[location,hourlyFlag],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes"
 )
 
 var (
+	// DeleteVolumeReason ...
 	DeleteVolumeReason = "deleted by ibm-volume-lib on behalf of user request"
 )
 
@@ -49,10 +52,12 @@ func (vpcs *VPCSession) GetProviderDisplayName() provider.VolumeProvider {
 	return VPC
 }
 
+// ProviderName ...
 func (vpcs *VPCSession) ProviderName() provider.VolumeProvider {
 	return VPC
 }
 
+// Type ...
 func (vpcs *VPCSession) Type() provider.VolumeType {
 	return VolumeType
 }

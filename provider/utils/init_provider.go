@@ -12,7 +12,6 @@ package utils
 
 import (
 	"errors"
-	//"fmt"
 	"go.uber.org/zap"
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
@@ -26,6 +25,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/registry"
 )
 
+// InitProviders initialization for all providers as per configurations
 func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers, error) {
 	var haveProviders bool
 	providerRegistry := &registry.ProviderRegistry{}
@@ -80,10 +80,12 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 	return nil, errors.New("No providers registered")
 }
 
+// isEmptyStringValue ...
 func isEmptyStringValue(value *string) bool {
 	return value == nil || *value == ""
 }
 
+// OpenProviderSession ...
 func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, logger *zap.Logger) (session provider.Session, fatal bool, err1 error) {
 	prov, err := providers.Get(providerID)
 	if err != nil {
@@ -110,6 +112,7 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 	return
 }
 
+// GenerateContextCredentials ...
 func GenerateContextCredentials(conf *config.Config, providerID string, contextCredentialsFactory local.ContextCredentialsFactory, logger *zap.Logger) (provider.ContextCredentials, error) {
 	logger.Info("Generating generateContextCredentials for ", zap.String("Provider ID", providerID))
 

@@ -12,8 +12,8 @@ package registry
 
 import (
 	//"github.com/prometheus/client_golang/prometheus"
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 )
 
 // Providers is a registry interface for IaaS providers

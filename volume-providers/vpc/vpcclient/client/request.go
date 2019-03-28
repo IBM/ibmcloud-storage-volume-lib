@@ -21,8 +21,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fatih/structs"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/payload"
+	"github.com/fatih/structs"
 )
 
 // Operation defines the API operation to be invoked

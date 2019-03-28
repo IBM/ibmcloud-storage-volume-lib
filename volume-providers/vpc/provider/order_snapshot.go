@@ -17,6 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// OrderSnapshot order snapshot
 func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 	var snapshot *models.Snapshot
 	var err error

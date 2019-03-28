@@ -14,6 +14,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
 
+// ListVolumes list all volumes
 func (vpcs *VPCSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) {
 	//! TODO: we may implement
 	return nil, nil

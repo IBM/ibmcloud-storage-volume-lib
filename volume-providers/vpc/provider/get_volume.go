@@ -12,8 +12,8 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 	"strconv"
 )

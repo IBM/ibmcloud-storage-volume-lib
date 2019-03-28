@@ -53,6 +53,7 @@ func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) {
 	return &conf, err
 }
 
+// GetConfPath get configuration file path
 func GetConfPath() string {
 	if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" {
 		return filepath.Join(confPath, "libconfig.toml")
@@ -61,6 +62,7 @@ func GetConfPath() string {
 	return GetDefaultConfPath()
 }
 
+// GetDefaultConfPath get default config file path
 func GetDefaultConfPath() string {
 	return filepath.Join(GetEtcPath(), "libconfig.toml")
 }
@@ -111,6 +113,7 @@ type SoftlayerConfig struct {
 	SoftlayerAPIDebug       bool
 }
 
+// Gen2Config ...
 type Gen2Config struct {
 	Gen2ProviderEnabled bool   `toml:"genesis_provider_enabled"`
 	Gen2Username        string `toml:"genesis_user_name"`

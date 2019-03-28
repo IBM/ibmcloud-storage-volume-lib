@@ -7,13 +7,15 @@
  * its trade secrets,  * irrespective of what has been deposited with
  * the U.S. Copyright Office.
  ******************************************************************************/
+
 package messages
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 )
 
-var messages_en = map[string]reasoncode.Message{
+// messagesEn ...
+var messagesEn = map[string]reasoncode.Message{
 
 	"FailedToPlaceOrder": reasoncode.Message{
 		Code:        "FailedToPlaceOrder",
@@ -131,6 +133,7 @@ var messages_en = map[string]reasoncode.Message{
 	},
 }
 
-func InitMessages() map[string]reasoncode.Message{
-	return messages_en
+// InitMessages ...
+func InitMessages() map[string]reasoncode.Message {
+	return messagesEn
 }

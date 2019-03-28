@@ -20,8 +20,8 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
 	"net/http"
@@ -30,10 +30,13 @@ import (
 )
 
 const (
-	displayName            = "IBM Cloud container service"
+	// displayName ...
+	displayName = "IBM Cloud container service"
+	// vpcProviderDisplayName ...
 	vpcProviderDisplayName = "IBM Cloud infrastructure"
-	vpcExceptionPrefix     = "IBM Cloud infrastructure exception"
-
+	// vpcExceptionPrefix ...
+	vpcExceptionPrefix = "IBM Cloud infrastructure exception"
+	// timeoutDefault ...
 	timeoutDefault = "120s"
 )
 
@@ -89,7 +92,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	}
 	logger.Info("", zap.Reflect("Provider config", provider.config))
 
-	reasoncode.Messages_en = messages.InitMessages()
+	reasoncode.MessagesEn = messages.InitMessages()
 	return provider, nil
 }
 
@@ -160,6 +163,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	return vpcSession, nil
 }
 
+// getAccessToken ...
 func getAccessToken(creds provider.ContextCredentials, logger *zap.Logger) (token *iam.AccessToken, err error) {
 	switch creds.AuthType {
 	case provider.IAMAccessToken:

@@ -17,6 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// GetSnapshot get snapshot
 func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, error) {
 	vpcs.Logger.Info("Entry GetSnapshot()", zap.Reflect("SnapshotID", snapshotID))
 

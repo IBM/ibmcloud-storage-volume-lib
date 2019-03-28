@@ -15,7 +15,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// Volume operations
+// VolumeManager operations
 type VolumeManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
 	CreateVolume(*models.Volume) (*models.Volume, error)
