@@ -28,6 +28,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 )
 
+// tokenGenerator ...
 type tokenGenerator struct {
 	config *config.VPCProviderConfig
 
@@ -38,6 +39,7 @@ type tokenGenerator struct {
 	privateKey *rsa.PrivateKey // Secret. Do not export
 }
 
+// readConfig ...
 func (tg *tokenGenerator) readConfig(logger zap.Logger) (err error) {
 
 	logger.Info("Entering readConfig")
@@ -68,6 +70,7 @@ func (tg *tokenGenerator) readConfig(logger zap.Logger) (err error) {
 	return
 }
 
+// buildToken ...
 func (tg *tokenGenerator) buildToken(contextCredentials provider.ContextCredentials, ts time.Time, logger zap.Logger) (token *jwt.Token, err error) {
 	logger.Info("Entering getJWTToken", zap.Reflect("contextCredentials", contextCredentials))
 	defer func() {
@@ -107,6 +110,7 @@ func (tg *tokenGenerator) buildToken(contextCredentials provider.ContextCredenti
 	return
 }
 
+// getServiceToken ...
 func (tg *tokenGenerator) getServiceToken(contextCredentials provider.ContextCredentials, logger zap.Logger) (signedToken *string, err error) {
 	token, err := tg.buildToken(contextCredentials, time.Now(), logger)
 	if err != nil {

@@ -30,10 +30,13 @@ import (
 )
 
 const (
-	displayName            = "IBM Cloud container service"
+	// displayName ...
+	displayName = "IBM Cloud container service"
+	// vpcProviderDisplayName ...
 	vpcProviderDisplayName = "IBM Cloud infrastructure"
-	vpcExceptionPrefix     = "IBM Cloud infrastructure exception"
-
+	// vpcExceptionPrefix ...
+	vpcExceptionPrefix = "IBM Cloud infrastructure exception"
+	// timeoutDefault ...
 	timeoutDefault = "120s"
 )
 
@@ -160,6 +163,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	return vpcSession, nil
 }
 
+// getAccessToken ...
 func getAccessToken(creds provider.ContextCredentials, logger *zap.Logger) (token *iam.AccessToken, err error) {
 	switch creds.AuthType {
 	case provider.IAMAccessToken:

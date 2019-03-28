@@ -8,7 +8,7 @@
 
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/) # With glide: GOPACKAGES=$(shell glide novendor)
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
-GOLINTPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers )
+GOLINTPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers/softlayer )
 
 .PHONY: all
 all: deps fmt vet test

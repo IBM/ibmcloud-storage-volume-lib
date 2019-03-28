@@ -17,7 +17,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// GetVolume Get the volume by using ID
+// CreateSnapshot Create snapshot from given volume
 func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[string]string) (*provider.Snapshot, error) {
 	var snapshot *models.Snapshot
 	var err error

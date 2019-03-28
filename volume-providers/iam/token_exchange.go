@@ -23,14 +23,16 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
 
+// tokenExchangeService ...
 type tokenExchangeService struct {
 	bluemixConf *config.BluemixConfig
 	httpClient  *http.Client
 }
 
+// TokenExchangeService ...
 var _ TokenExchangeService = &tokenExchangeService{}
 
-// NewTokenExchangeService ...
+// NewTokenExchangeServiceWithClient ...
 func NewTokenExchangeServiceWithClient(bluemixConf *config.BluemixConfig, httpClient *http.Client) (TokenExchangeService, error) {
 	return &tokenExchangeService{
 		bluemixConf: bluemixConf,
@@ -50,6 +52,7 @@ func NewTokenExchangeService(bluemixConf *config.BluemixConfig) (TokenExchangeSe
 	}, nil
 }
 
+// tokenExchangeRequest ...
 type tokenExchangeRequest struct {
 	tes     *tokenExchangeService
 	request *rest.Request
@@ -57,6 +60,7 @@ type tokenExchangeRequest struct {
 	logger  *zap.Logger
 }
 
+// tokenExchangeResponse ...
 type tokenExchangeResponse struct {
 	AccessToken string `json:"access_token"`
 	ImsToken    string `json:"ims_token"`
@@ -105,6 +109,7 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey strin
 	return r.exchangeForAccessToken()
 }
 
+// exchangeForAccessToken ...
 func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) {
 	iamResp, err := r.sendTokenExchangeRequest()
 	if err != nil {
@@ -113,6 +118,7 @@ func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) {
 	return &AccessToken{Token: iamResp.AccessToken}, nil
 }
 
+// exchangeForIMSToken ...
 func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) {
 	iamResp, err := r.sendTokenExchangeRequest()
 	if err != nil {
@@ -124,6 +130,7 @@ func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) {
 	}, nil
 }
 
+// newTokenExchangeRequest ...
 func (tes *tokenExchangeService) newTokenExchangeRequest(logger *zap.Logger) *tokenExchangeRequest {
 	client := rest.NewClient()
 	client.HTTPClient = tes.httpClient
@@ -136,6 +143,7 @@ func (tes *tokenExchangeService) newTokenExchangeRequest(logger *zap.Logger) *to
 	}
 }
 
+// sendTokenExchangeRequest ...
 func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeResponse, error) {
 	// Set headers
 	basicAuth := fmt.Sprintf("%s:%s", r.tes.bluemixConf.IamClientID, r.tes.bluemixConf.IamClientSecret)

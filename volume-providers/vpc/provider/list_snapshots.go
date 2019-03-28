@@ -14,6 +14,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
 
+// ListSnapshots list all snapshots
 func (vpcs *VPCSession) ListSnapshots() ([]*provider.Snapshot, error) {
 	return nil, nil
 }

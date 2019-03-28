@@ -15,7 +15,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
-// CreateVolume POSTs to /volumes
+// GetVolume POSTs to /volumes
 func (vs *VolumeService) GetVolume(volumeID string) (*models.Volume, error) {
 	operation := &client.Operation{
 		Name:        "GetVolume",
