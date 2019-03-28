@@ -30,7 +30,7 @@ type VPCSession struct {
 
 const (
 	// VPC storage provider
-	VPC            = provider.VolumeProvider("VPC")
+	VPC          = provider.VolumeProvider("VPC")
 	VolumeType   = provider.VolumeType("vpc-block")
 	SnapshotMask = "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],parentVolume[snapshotCapacityGb],parentVolume[id],parentVolume[storageTierLevel],parentVolume[notes],storageType[keyName],serviceResource[datacenter[name]],billingItem[location,hourlyFlag],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes"
 )

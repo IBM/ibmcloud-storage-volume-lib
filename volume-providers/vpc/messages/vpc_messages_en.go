@@ -131,6 +131,6 @@ var messages_en = map[string]reasoncode.Message{
 	},
 }
 
-func InitMessages() map[string]reasoncode.Message{
+func InitMessages() map[string]reasoncode.Message {
 	return messages_en
 }

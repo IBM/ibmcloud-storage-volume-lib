@@ -13,8 +13,8 @@ package riaas
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/fakes"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLogin(t *testing.T) {

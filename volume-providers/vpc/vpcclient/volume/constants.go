@@ -19,11 +19,11 @@ const (
 	snapshotIDParam = "snapshot-id"
 	snapshotIDPath  = snapshotsPath + "/{" + snapshotIDParam + "}"
 
-	volumeTagsPath = volumesPath + "/{" + volumeIDParam + "}" + "tags"
-	volumeTagParam = "tag-name"
-	volumeTagNamePath = volumeTagsPath  + "/{" + volumeTagParam + "}"
+	volumeTagsPath    = volumesPath + "/{" + volumeIDParam + "}" + "tags"
+	volumeTagParam    = "tag-name"
+	volumeTagNamePath = volumeTagsPath + "/{" + volumeTagParam + "}"
 
-	snapshotTagsPath = snapshotIDPath + "/" + "tags"
-        snapshotTagParam = "tag-name"
-        snapshotTagNamePath = snapshotTagsPath  + "/{" + snapshotTagParam + "}"
+	snapshotTagsPath    = snapshotIDPath + "/" + "tags"
+	snapshotTagParam    = "tag-name"
+	snapshotTagNamePath = snapshotTagsPath + "/{" + snapshotTagParam + "}"
 )

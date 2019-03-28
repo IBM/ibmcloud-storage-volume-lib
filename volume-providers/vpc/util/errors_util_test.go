@@ -15,8 +15,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 
 	"github.com/stretchr/testify/assert"
 )

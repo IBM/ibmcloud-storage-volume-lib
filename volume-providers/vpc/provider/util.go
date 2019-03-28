@@ -12,9 +12,9 @@ package provider
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 )
 
 func retry(retryfunc func() error) error {

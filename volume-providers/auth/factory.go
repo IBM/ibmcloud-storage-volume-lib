@@ -12,8 +12,8 @@ package auth
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 )
 
 // contextCredentialsFactory ...

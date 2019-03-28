@@ -13,7 +13,6 @@ import (
 	"fmt"
 )
 
-
 // Wrapper Message/Error Class
 type Message struct {
 	Code        string
