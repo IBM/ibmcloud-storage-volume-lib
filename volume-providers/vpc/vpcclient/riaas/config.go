@@ -29,6 +29,7 @@ type Config struct {
 	DebugWriter io.Writer
 	HTTPClient  *http.Client
 	Context     context.Context
+	ApiVersion  string
 }
 
 func (c Config) httpClient() *http.Client {

@@ -10,7 +10,7 @@ refresh_token = ""
 
 
 [softlayer]
-softlayer_block_enabled = true
+softlayer_block_enabled = false
 softlayer_block_provider_name = "SOFTLAYER-BLOCK"
 softlayer_file_enabled = false
 softlayer_file_provider_name = "SOFTLAYER-FILE"
@@ -30,9 +30,12 @@ genesis_api_key = ""
 genesis_url = ""
 
 [vpc]
-vpc_enabled = false
+vpc_enabled = true
 vpc_block_provider_name = "gc"
 vpc_username = ""# keep blank for IAM auth
 vpc_api_key = "" # keep blank for IAM auth
 vpc_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443/v1"
 vpc_timeout = "120s"
+max_retry_attempt  = 5
+max_retry_gap =  30
+api_version = "2019-01-01"

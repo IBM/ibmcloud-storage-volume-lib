@@ -17,13 +17,11 @@ import (
 	"time"
 )
 
-const (
-	// TODO: Need to replace these with the configuration
-	// maxRetryAttempt ...
-	maxRetryAttempt = 5
-	// maxRetryGap ...
-	maxRetryGap = 30
-)
+// maxRetryAttempt ...
+var maxRetryAttempt = 5
+
+// maxRetryGap ...
+var maxRetryGap = 30
 
 // retryGap ...
 var retryGap = 5

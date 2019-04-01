@@ -41,7 +41,7 @@ func New(config Config) (*Session, error) {
 		ctx = context.Background()
 	}
 
-	riaasClient := client.New(ctx, config.baseURL(), config.httpClient(), config.ContextID)
+	riaasClient := client.New(ctx, config.baseURL(), config.httpClient(), config.ContextID, config.ApiVersion)
 
 	if config.DebugWriter != nil {
 		riaasClient.WithDebug(config.DebugWriter)
@@ -55,7 +55,6 @@ func New(config Config) (*Session, error) {
 // Login configures the session with the supplied Authentication token
 // which is used for all requests to the API
 func (s *Session) Login(token string) error {
-
 	s.client.WithAuthToken(token)
 	return nil
 }

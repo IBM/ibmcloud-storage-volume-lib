@@ -104,6 +104,7 @@ type SoftlayerConfig struct {
 	SoftlayerTimeout             string `toml:"softlayer_api_timeout" envconfig:"SOFTLAYER_API_TIMEOUT"`
 	SoftlayerVolProvisionTimeout string `toml:"softlayer_vol_provision_timeout" envconfig:"SOFTLAYER_VOL_PROVISION_TIMEOUT"`
 	SoftlayerRetryInterval       string `toml:"softlayer_api_retry_interval" envconfig:"SOFTLAYER_API_RETRY_INTERVAL"`
+
 	//Configuration values for JWT tokens
 	SoftlayerJWTKID       string `toml:"softlayer_jwt_kid"`
 	SoftlayerJWTTTL       int    `toml:"softlayer_jwt_ttl"`
@@ -127,6 +128,9 @@ type VPCProviderConfig struct {
 	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
 	EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
 	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
+	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
+	MaxRetryGap          int    `toml:"max_retry_gap"`
+	APIVersion           string `toml:"api_version"`
 }
 
 // GetEtcPath returns the path to the etc directory

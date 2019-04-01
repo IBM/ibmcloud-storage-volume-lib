@@ -122,6 +122,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		BaseURL:    vpcp.config.EndpointURL,
 		ContextID:  uniqueID.String(),
 		HTTPClient: vpcp.httpClient,
+		ApiVersion: vpcp.config.APIVersion,
 	}
 
 	if vpcp.serverConfig.DebugTrace {
@@ -148,6 +149,16 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	err = client.Login(token.Token)
 	if err != nil {
 		return nil, err
+	}
+
+	// Update retry logic default values
+	if vpcp.config.MaxRetryAttempt > 0 {
+		logger.Debug("", zap.Reflect("MaxRetryAttempt", vpcp.config.MaxRetryAttempt))
+		maxRetryAttempt = vpcp.config.MaxRetryAttempt
+	}
+	if vpcp.config.MaxRetryGap > 0 {
+		logger.Debug("", zap.Reflect("MaxRetryGap", vpcp.config.MaxRetryGap))
+		maxRetryGap = vpcp.config.MaxRetryGap
 	}
 
 	vpcSession := &VPCSession{
