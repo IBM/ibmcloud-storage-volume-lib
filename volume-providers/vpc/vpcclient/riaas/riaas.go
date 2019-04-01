@@ -41,7 +41,7 @@ func New(config Config) (*Session, error) {
 		ctx = context.Background()
 	}
 
-	riaasClient := client.New(ctx, config.baseURL(), config.httpClient(), config.ContextID, config.ApiVersion)
+	riaasClient := client.New(ctx, config.baseURL(), config.httpClient(), config.ContextID, config.APIVersion)
 
 	if config.DebugWriter != nil {
 		riaasClient.WithDebug(config.DebugWriter)

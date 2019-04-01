@@ -25,7 +25,7 @@ type VPCSession struct {
 	VolumeType         provider.VolumeType
 	Provider           provider.VolumeProvider
 	Apiclient          riaas.RegionalAPI
-	ApiVersion         string
+	APIVersion         string
 	Logger             *zap.Logger
 }
 

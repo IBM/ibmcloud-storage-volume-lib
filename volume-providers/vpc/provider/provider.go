@@ -122,7 +122,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		BaseURL:    vpcp.config.EndpointURL,
 		ContextID:  uniqueID.String(),
 		HTTPClient: vpcp.httpClient,
-		ApiVersion: vpcp.config.APIVersion,
+		APIVersion: vpcp.config.APIVersion,
 	}
 
 	if vpcp.serverConfig.DebugTrace {
