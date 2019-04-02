@@ -18,7 +18,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/IBM-Bluemix/bluemix-cli-sdk/common/rest"
+	"github.com/IBM-Cloud/ibm-cloud-cli-sdk/common/rest"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
