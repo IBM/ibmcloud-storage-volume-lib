@@ -12,11 +12,10 @@ package client
 
 import (
 	"context"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"io"
 	"net/http"
 	"net/url"
-
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 )
 
 // handler ...
@@ -25,7 +24,7 @@ type handler interface {
 }
 
 // SessionClient provides an interface for a REST API client
-//go:generate counterfeiter -o fakes/client.go --fake-name SessionClient . SessionClient
+// go:generate counterfeiter -o fakes/client.go --fake-name SessionClient . SessionClient
 type SessionClient interface {
 	NewRequest(operation *Operation) *Request
 	WithDebug(writer io.Writer) SessionClient
@@ -47,12 +46,19 @@ type client struct {
 }
 
 // New creates a new instance of a SessionClient
-func New(ctx context.Context, baseURL string, httpClient *http.Client, contextID string) SessionClient {
+func New(ctx context.Context, baseURL string, httpClient *http.Client, contextID string, APIVersion string) SessionClient {
+	// Default API version
+	backendAPIVersion := models.APIVersion
+
+	// Overwrite if the version is passed
+	if len(APIVersion) > 0 {
+		backendAPIVersion = APIVersion
+	}
 	return &client{
 		baseURL:       baseURL,
 		httpClient:    httpClient,
 		pathParams:    Params{},
-		queryValues:   url.Values{"version": []string{models.APIVersion}},
+		queryValues:   url.Values{"version": []string{backendAPIVersion}},
 		authenHandler: &authenticationHandler{},
 		contextID:     contextID,
 		context:       ctx,
@@ -94,8 +100,7 @@ func (c *client) WithDebug(writer io.Writer) SessionClient {
 	return c
 }
 
-// WithAuthToken supplies the authentication token to use for all requests made
-// by this session
+// WithAuthToken supplies the authentication token to use for all requests made by this session
 func (c *client) WithAuthToken(authToken string) SessionClient {
 	c.authenHandler = &authenticationHandler{
 		authToken: authToken,
