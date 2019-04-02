@@ -48,17 +48,17 @@ type client struct {
 // New creates a new instance of a SessionClient
 func New(ctx context.Context, baseURL string, httpClient *http.Client, contextID string, APIVersion string) SessionClient {
 	// Default API version
-	BackendAPIVersion := models.APIVersion
+	backendAPIVersion := models.APIVersion
 
 	// Overwrite if the version is passed
 	if len(APIVersion) > 0 {
-		BackendAPIVersion = APIVersion
+		backendAPIVersion = APIVersion
 	}
 	return &client{
 		baseURL:       baseURL,
 		httpClient:    httpClient,
 		pathParams:    Params{},
-		queryValues:   url.Values{"version": []string{BackendAPIVersion}},
+		queryValues:   url.Values{"version": []string{backendAPIVersion}},
 		authenHandler: &authenticationHandler{},
 		contextID:     contextID,
 		context:       ctx,
