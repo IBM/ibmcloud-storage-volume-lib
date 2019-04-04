@@ -18,7 +18,7 @@ import (
 
 // DeleteVolume POSTs to /volumes
 func (vs *VolumeService) DeleteVolume(volumeID string) error {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("DeleteVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:        "DeleteVolume",

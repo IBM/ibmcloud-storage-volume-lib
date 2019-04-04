@@ -19,7 +19,7 @@ import (
 
 // ListVolumes GETs /volumes
 func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters) (*models.VolumeList, error) {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("ListVolumes", time.Now())
 
 	operation := &client.Operation{
 		Name:        "ListVolumes",

@@ -18,7 +18,7 @@ import (
 
 // SetSnapshotTag sets tag for a snapshot
 func (ss *SnapshotService) SetSnapshotTag(volumeID string, snapshotID string, tagName string) error {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("SetSnapshotTag", time.Now())
 
 	operation := &client.Operation{
 		Name:        "SetSnapshotTag",

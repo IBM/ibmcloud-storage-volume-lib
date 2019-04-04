@@ -18,7 +18,7 @@ import (
 
 // DeleteSnapshot DELETEs to /volumes
 func (ss *SnapshotService) DeleteSnapshot(volumeID string, snapshotID string) error {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("DeleteSnapshot", time.Now())
 
 	operation := &client.Operation{
 		Name:        "DeleteSnapshot",

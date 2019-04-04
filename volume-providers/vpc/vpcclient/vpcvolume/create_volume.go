@@ -18,7 +18,7 @@ import (
 
 // CreateVolume POSTs to /volumes
 func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume) (*models.Volume, error) {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("CreateVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:        "CreateVolume",

@@ -18,7 +18,7 @@ import (
 
 // ListSnapshotTags GETs /volumes/snapshots/tags
 func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string) (*[]string, error) {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("ListSnapshotTags", time.Now())
 
 	operation := &client.Operation{
 		Name:        "ListSnapshotTags",

@@ -18,7 +18,7 @@ import (
 
 // GetVolume POSTs to /volumes
 func (vs *VolumeService) GetVolume(volumeID string) (*models.Volume, error) {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("GetVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:        "GetVolume",

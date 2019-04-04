@@ -18,7 +18,7 @@ import (
 
 // DeleteVolumeTag deletes tag of a volume
 func (vs *VolumeService) DeleteVolumeTag(volumeID string, tagName string) error {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("DeleteVolumeTag", time.Now())
 
 	operation := &client.Operation{
 		Name:        "DeleteVolumeTag",

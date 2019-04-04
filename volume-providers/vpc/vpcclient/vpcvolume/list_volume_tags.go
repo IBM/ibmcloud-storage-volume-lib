@@ -18,7 +18,7 @@ import (
 
 // ListVolumeTags GETs /volumes/tags
 func (vs *VolumeService) ListVolumeTags(volumeID string) (*[]string, error) {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("ListVolumeTags", time.Now())
 
 	operation := &client.Operation{
 		Name:        "ListVolumeTags",

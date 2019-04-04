@@ -18,7 +18,7 @@ import (
 
 // CheckSnapshotTag checks if the given tag exists on a snapshot
 func (ss *SnapshotService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("CheckSnapshotTag", time.Now())
 
 	operation := &client.Operation{
 		Name:        "CheckSnapshotTag",

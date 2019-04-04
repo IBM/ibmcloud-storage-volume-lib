@@ -18,7 +18,7 @@ import (
 
 // CheckVolumeTag checks if the given tag exists on a volume
 func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string) error {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("CheckVolumeTag", time.Now())
 
 	operation := &client.Operation{
 		Name:        "CheckVolumeTag",

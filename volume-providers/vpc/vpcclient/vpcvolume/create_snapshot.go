@@ -18,7 +18,7 @@ import (
 
 // CreateSnapshot POSTs to /volumes
 func (ss *SnapshotService) CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot) (*models.Snapshot, error) {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("CreateSnapshot", time.Now())
 
 	operation := &client.Operation{
 		Name:        "CreateSnapshot",

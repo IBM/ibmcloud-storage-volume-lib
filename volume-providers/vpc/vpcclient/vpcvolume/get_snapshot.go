@@ -18,7 +18,7 @@ import (
 
 // GetSnapshot GETs from /volumes
 func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string) (*models.Snapshot, error) {
-	defer TimeTrack(time.Now())
+	defer TimeTrack("GetShanpshot", time.Now())
 
 	operation := &client.Operation{
 		Name:        "GetSnapshot",
