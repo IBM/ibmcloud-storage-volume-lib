@@ -13,10 +13,13 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // CheckVolumeTag checks if the given tag exists on a volume
 func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string) error {
+	defer TimeTrack(time.Now())
+
 	operation := &client.Operation{
 		Name:        "CheckVolumeTag",
 		Method:      "GET",

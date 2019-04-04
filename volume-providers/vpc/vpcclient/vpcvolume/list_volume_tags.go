@@ -13,10 +13,13 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // ListVolumeTags GETs /volumes/tags
 func (vs *VolumeService) ListVolumeTags(volumeID string) (*[]string, error) {
+	defer TimeTrack(time.Now())
+
 	operation := &client.Operation{
 		Name:        "ListVolumeTags",
 		Method:      "GET",

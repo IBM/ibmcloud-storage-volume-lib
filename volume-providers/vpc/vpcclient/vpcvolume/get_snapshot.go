@@ -13,10 +13,13 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // GetSnapshot GETs from /volumes
 func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string) (*models.Snapshot, error) {
+	defer TimeTrack(time.Now())
+
 	operation := &client.Operation{
 		Name:        "GetSnapshot",
 		Method:      "GET",

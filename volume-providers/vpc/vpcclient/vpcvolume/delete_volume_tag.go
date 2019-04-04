@@ -13,10 +13,13 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // DeleteVolumeTag deletes tag of a volume
 func (vs *VolumeService) DeleteVolumeTag(volumeID string, tagName string) error {
+	defer TimeTrack(time.Now())
+
 	operation := &client.Operation{
 		Name:        "DeleteVolumeTag",
 		Method:      "DELETE",

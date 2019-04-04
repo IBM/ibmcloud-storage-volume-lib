@@ -13,10 +13,13 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // CheckSnapshotTag checks if the given tag exists on a snapshot
 func (ss *SnapshotService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error {
+	defer TimeTrack(time.Now())
+
 	operation := &client.Operation{
 		Name:        "CheckSnapshotTag",
 		Method:      "GET",
