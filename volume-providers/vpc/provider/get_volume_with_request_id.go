@@ -12,12 +12,13 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"go.uber.org/zap"
 )
 
 // GetVolumeByRequestID get volume by volume ID
 func (vpcs *VPCSession) GetVolumeByRequestID(requestID string) (*provider.Volume, error) {
-	vpcs.Logger.Info("Entry GetVolumeByRequestID")
-	defer vpcs.Logger.Info("Exit GetVolumeByRequestID")
+	vpcs.Logger.Info("Entry GetVolumeByRequestID", zap.Reflect("requestID", requestID))
+	defer vpcs.Logger.Info("Exit GetVolumeByRequestID", zap.Reflect("requestID", requestID))
 
 	return nil, nil
 }

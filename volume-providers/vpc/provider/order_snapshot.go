@@ -19,8 +19,8 @@ import (
 
 // OrderSnapshot order snapshot
 func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
-	vpcs.Logger.Info("Entry OrderSnapshot")
-	defer vpcs.Logger.Info("Exit OrderSnapshot")
+	vpcs.Logger.Info("Entry OrderSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+	defer vpcs.Logger.Info("Exit OrderSnapshot", zap.Reflect("volumeRequest", volumeRequest))
 
 	var snapshot *models.Snapshot
 	var err error

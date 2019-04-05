@@ -12,12 +12,13 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"go.uber.org/zap"
 )
 
 // CreateVolumeFromSnapshot creates the volume by using ID
 func (vpcs *VPCSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) {
-	vpcs.Logger.Info("Entry CreateVolumeFromSnapshot")
-	defer vpcs.Logger.Info("Exit CreateVolumeFromSnapshot")
+	vpcs.Logger.Info("Entry CreateVolumeFromSnapshot", zap.Reflect("Snapshot", snapshot))
+	defer vpcs.Logger.Info("Exit CreateVolumeFromSnapshot", zap.Reflect("Snapshot", snapshot))
 
 	return nil, nil
 }

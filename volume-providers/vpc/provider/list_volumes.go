@@ -12,12 +12,13 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"go.uber.org/zap"
 )
 
 // ListVolumes list all volumes
 func (vpcs *VPCSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) {
-	vpcs.Logger.Info("Entry ListVolumes")
-	defer vpcs.Logger.Info("Exit ListVolumes")
+	vpcs.Logger.Info("Entry ListVolumes", zap.Reflect("Tags", tags))
+	defer vpcs.Logger.Info("Exit ListVolumes", zap.Reflect("Tags", tags))
 
 	//! TODO: we may implement
 	return nil, nil

@@ -20,8 +20,8 @@ import (
 
 // CreateVolume Get the volume by using ID
 func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
-	vpcs.Logger.Info("Entry CreateVolume")
-	defer vpcs.Logger.Info("Exit CreateVolume")
+	vpcs.Logger.Info("Entry CreateVolume", zap.Reflect("volumeRequest", volumeRequest))
+	defer vpcs.Logger.Info("Exit CreateVolume", zap.Reflect("volumeRequest", volumeRequest))
 
 	vpcs.Logger.Info("Creating volume as per order request .... ", zap.Reflect("volumeRequest", volumeRequest))
 

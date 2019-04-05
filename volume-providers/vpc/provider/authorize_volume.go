@@ -12,12 +12,13 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"go.uber.org/zap"
 )
 
 //AuthorizeVolume allows aceess to volume  based on given authorization
 func (vpcs *VPCSession) AuthorizeVolume(volumeAuthorization provider.VolumeAuthorization) error {
-	vpcs.Logger.Info("Entry AuthorizeVolume")
-	defer vpcs.Logger.Info("Exit AuthorizeVolume")
+	vpcs.Logger.Info("Entry AuthorizeVolume", zap.Reflect("volumeAuthorization", volumeAuthorization))
+	defer vpcs.Logger.Info("Exit AuthorizeVolume", zap.Reflect("volumeAuthorization", volumeAuthorization))
 
 	return nil
 }

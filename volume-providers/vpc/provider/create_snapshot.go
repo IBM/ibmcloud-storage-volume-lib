@@ -19,8 +19,8 @@ import (
 
 // CreateSnapshot Create snapshot from given volume
 func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[string]string) (*provider.Snapshot, error) {
-	vpcs.Logger.Info("Entry CreateSnapshot")
-	defer vpcs.Logger.Info("Exit CreateSnapshot")
+	vpcs.Logger.Info("Entry CreateSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+	defer vpcs.Logger.Info("Exit CreateSnapshot", zap.Reflect("volumeRequest", volumeRequest))
 
 	var snapshot *models.Snapshot
 	var err error
