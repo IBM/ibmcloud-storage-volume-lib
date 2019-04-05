@@ -20,7 +20,8 @@ import (
 
 // GetVolume Get the volume by using ID
 func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
-	vpcs.Logger.Info("In provider GetVolume method")
+	vpcs.Logger.Info("Entry GetVolume")
+	defer vpcs.Logger.Info("Exit GetVolume")
 
 	var err error
 	var volume *models.Volume

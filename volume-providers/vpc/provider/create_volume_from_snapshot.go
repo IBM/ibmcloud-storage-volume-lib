@@ -16,5 +16,8 @@ import (
 
 // CreateVolumeFromSnapshot creates the volume by using ID
 func (vpcs *VPCSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) {
+	vpcs.Logger.Info("Entry CreateVolumeFromSnapshot")
+	defer vpcs.Logger.Info("Exit CreateVolumeFromSnapshot")
+
 	return nil, nil
 }

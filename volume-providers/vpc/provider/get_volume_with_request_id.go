@@ -16,5 +16,8 @@ import (
 
 // GetVolumeByRequestID get volume by volume ID
 func (vpcs *VPCSession) GetVolumeByRequestID(requestID string) (*provider.Volume, error) {
+	vpcs.Logger.Info("Entry GetVolumeByRequestID")
+	defer vpcs.Logger.Info("Exit GetVolumeByRequestID")
+
 	return nil, nil
 }

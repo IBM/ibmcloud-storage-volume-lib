@@ -16,5 +16,8 @@ import (
 
 // ListSnapshots list all snapshots
 func (vpcs *VPCSession) ListSnapshots() ([]*provider.Snapshot, error) {
+	vpcs.Logger.Info("Entry ListeSnapshots")
+	defer vpcs.Logger.Info("Exit ListSnapshots")
+
 	return nil, nil
 }

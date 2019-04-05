@@ -16,6 +16,9 @@ import (
 
 // ListVolumes list all volumes
 func (vpcs *VPCSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) {
+	vpcs.Logger.Info("Entry ListVolumes")
+	defer vpcs.Logger.Info("Exit ListVolumes")
+
 	//! TODO: we may implement
 	return nil, nil
 }
