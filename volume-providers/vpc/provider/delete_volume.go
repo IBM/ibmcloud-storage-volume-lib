@@ -18,7 +18,8 @@ import (
 
 // DeleteVolume deletes the volume
 func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
-	vpcs.Logger.Info("Entry DeleteVolume()", zap.Reflect("vol", vol))
+	vpcs.Logger.Info("Entry DeleteVolume", zap.Reflect("vol", vol))
+	defer vpcs.Logger.Info("Exit DeleteVolume")
 
 	var err error
 	_, err = vpcs.GetVolume(vol.VolumeID)
@@ -35,6 +36,5 @@ func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
 		vpcs.Logger.Error("Error occured while deleting the volume", zap.Error(err))
 		return reasoncode.GetUserError("FailedToDeleteVolume", err)
 	}
-	vpcs.Logger.Info("Exit DeleteVolume()")
 	return err
 }

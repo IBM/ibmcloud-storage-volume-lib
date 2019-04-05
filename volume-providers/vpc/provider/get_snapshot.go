@@ -19,7 +19,8 @@ import (
 
 // GetSnapshot get snapshot
 func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, error) {
-	vpcs.Logger.Info("Entry GetSnapshot()", zap.Reflect("SnapshotID", snapshotID))
+	vpcs.Logger.Info("Entry GetSnapshot", zap.Reflect("SnapshotID", snapshotID))
+	defer vpcs.Logger.Info("Exit GetSnapshot", zap.Reflect("SnapshotID", snapshotID))
 
 	var err error
 	var snapshot *models.Snapshot
@@ -46,6 +47,5 @@ func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, erro
 		Volume:     *volume,
 	}
 
-	vpcs.Logger.Info("Exit GetSnapshot()", zap.Reflect("SnapshotID", snapshotID))
 	return respSnapshot, nil
 }
