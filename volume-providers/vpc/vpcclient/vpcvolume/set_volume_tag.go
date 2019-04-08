@@ -11,12 +11,16 @@
 package vpcvolume
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // SetVolumeTag sets tag for a volume
 func (vs *VolumeService) SetVolumeTag(volumeID string, tagName string) error {
+	defer util.TimeTracker("SetVolumeTag", time.Now())
+
 	operation := &client.Operation{
 		Name:        "SetVolumeTag",
 		Method:      "PUT",

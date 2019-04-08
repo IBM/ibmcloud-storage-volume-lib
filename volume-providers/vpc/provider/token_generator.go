@@ -41,7 +41,6 @@ type tokenGenerator struct {
 
 // readConfig ...
 func (tg *tokenGenerator) readConfig(logger zap.Logger) (err error) {
-
 	logger.Info("Entering readConfig")
 	defer func() {
 		logger.Info("Exiting readConfig", zap.Duration("tokenTTL", tg.tokenTTL), zap.Duration("tokenBeforeTime", tg.tokenBeforeTime), zap.String("tokenKID", tg.tokenKID), local.ZapError(err))

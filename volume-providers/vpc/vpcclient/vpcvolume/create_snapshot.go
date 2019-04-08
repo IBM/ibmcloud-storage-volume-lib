@@ -11,12 +11,16 @@
 package vpcvolume
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // CreateSnapshot POSTs to /volumes
 func (ss *SnapshotService) CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot) (*models.Snapshot, error) {
+	defer util.TimeTracker("CreateSnapshot", time.Now())
+
 	operation := &client.Operation{
 		Name:        "CreateSnapshot",
 		Method:      "POST",

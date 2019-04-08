@@ -11,12 +11,16 @@
 package vpcvolume
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // CreateVolume POSTs to /volumes
 func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume) (*models.Volume, error) {
+	defer util.TimeTracker("CreateVolume", time.Now())
+
 	operation := &client.Operation{
 		Name:        "CreateVolume",
 		Method:      "POST",

@@ -18,9 +18,10 @@ import (
 	"strconv"
 )
 
-// GetVolume Get the volume by using ID
+// GetVolume gets the volume by using ID
 func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
-	vpcs.Logger.Info("In provider GetVolume method")
+	vpcs.Logger.Info("Entry GetVolume", zap.Reflect("VolumeID", id))
+	defer vpcs.Logger.Info("Exit GetVolume", zap.Reflect("VolumeID", id))
 
 	var err error
 	var volume *models.Volume
@@ -34,7 +35,7 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, id, "Not a valid volume ID")
 	}
 
-	vpcs.Logger.Info("Volume details", zap.Reflect("Volume", volume))
+	vpcs.Logger.Info("Successfully retrieved the volume details", zap.Reflect("Volume", volume))
 
 	volumeCap := int(volume.Capacity)
 	iops := strconv.Itoa(int(volume.Iops))
@@ -47,5 +48,7 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 		CreationTime: *volume.CreatedAt,
 		Region:       volume.Zone.Name,
 	}
+
+	vpcs.Logger.Info("Successfully retrieved the provider volume details", zap.Reflect("Provider volume", respVolume))
 	return respVolume, err
 }

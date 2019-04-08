@@ -11,12 +11,16 @@
 package vpcvolume
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // DeleteSnapshotTag deletes tag of a snapshot
 func (ss *SnapshotService) DeleteSnapshotTag(volumeID string, snapshotID string, tagName string) error {
+	defer util.TimeTracker("DeleteSnapshotTag", time.Now())
+
 	operation := &client.Operation{
 		Name:        "DeleteSnapshotTag",
 		Method:      "DELETE",

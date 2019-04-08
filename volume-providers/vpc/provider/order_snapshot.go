@@ -19,6 +19,9 @@ import (
 
 // OrderSnapshot order snapshot
 func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
+	vpcs.Logger.Info("Entry OrderSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+	defer vpcs.Logger.Info("Exit OrderSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+
 	var snapshot *models.Snapshot
 	var err error
 
@@ -42,7 +45,6 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 		return reasoncode.GetUserError("SnapshotSpaceOrderFailed", err)
 	}
 
-	vpcs.Logger.Info("Backend created snapshot details", zap.Reflect("Snapshot", snapshot))
-
+	vpcs.Logger.Info("Successfully created the snapshot with backend (vpcclient) call.", zap.Reflect("Snapshot", snapshot))
 	return nil
 }

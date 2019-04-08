@@ -20,6 +20,9 @@ import (
 
 // CreateVolume Get the volume by using ID
 func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
+	vpcs.Logger.Info("Entry CreateVolume", zap.Reflect("volumeRequest", volumeRequest))
+	defer vpcs.Logger.Info("Exit CreateVolume", zap.Reflect("volumeRequest", volumeRequest))
+
 	vpcs.Logger.Info("Creating volume as per order request .... ", zap.Reflect("volumeRequest", volumeRequest))
 
 	var err error
@@ -70,6 +73,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 		},
 	}
 
+	vpcs.Logger.Info("Calling backend method to provision volume")
 	vpcs.Logger.Info("Volume request details", zap.Reflect("Volume request template", volumeTemplate))
 	err = retry(func() error {
 		volume, err = vpcs.Apiclient.VolumeService().CreateVolume(volumeTemplate)
@@ -80,6 +84,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 		return nil, reasoncode.GetUserError("FailedToPlaceOrder", err)
 	}
 
+	vpcs.Logger.Info("Successfully created volume with backend(vpcclient) call")
 	vpcs.Logger.Info("Created volume details", zap.Reflect("Volume", volume))
 
 	var volumeResponse *provider.Volume

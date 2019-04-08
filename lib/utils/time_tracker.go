@@ -8,17 +8,17 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package provider
+package util
 
 import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"go.uber.org/zap"
+	"fmt"
+	"log"
+	"time"
 )
 
-// CreateVolumeFromSnapshot creates the volume by using ID
-func (vpcs *VPCSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) {
-	vpcs.Logger.Info("Entry CreateVolumeFromSnapshot", zap.Reflect("Snapshot", snapshot))
-	defer vpcs.Logger.Info("Exit CreateVolumeFromSnapshot", zap.Reflect("Snapshot", snapshot))
+// Get execution time of a function
+func TimeTracker(functionName string, start time.Time) {
+	elapsed := time.Since(start)
 
-	return nil, nil
+	log.Println(fmt.Sprintf("TIME TAKEN BY FUNCTION %s IS %s", functionName, elapsed))
 }
