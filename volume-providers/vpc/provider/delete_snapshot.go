@@ -18,7 +18,9 @@ import (
 
 // DeleteSnapshot delete snapshot
 func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
-	vpcs.Logger.Info("Entry DeleteSnapshot()", zap.Reflect("snapshot", snapshot))
+	vpcs.Logger.Info("Entry DeleteSnapshot", zap.Reflect("snapshot", snapshot))
+	defer vpcs.Logger.Info("Exit DeleteSnapshot", zap.Reflect("snapshot", snapshot))
+
 	var err error
 	_, err = vpcs.GetSnapshot(snapshot.SnapshotID)
 	if err != nil {
@@ -31,9 +33,9 @@ func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 	})
 
 	if err != nil {
-		vpcs.Logger.Error("Error occured while deleting the snapshot", zap.Error(err))
 		return reasoncode.GetUserError("FailedToDeleteSnapshot", err)
 	}
-	vpcs.Logger.Info("Exit DeleteSnapshot()", zap.Reflect("snapshot", snapshot))
+
+	vpcs.Logger.Info("Successfully deleted the snapshot with backend (vpcclient) call)")
 	return nil
 }

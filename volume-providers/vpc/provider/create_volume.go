@@ -19,26 +19,23 @@ import (
 )
 
 // CreateVolume Get the volume by using ID
-func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
-	vpcs.Logger.Debug("Entering CreateVolume methid ...")
+func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeResponse *provider.Volume, err error) {
+	vpcs.Logger.Debug("Entering CreateVolume method...")
 
-	var err error
-	var volume *models.Volume
-
-	vpcs.Logger.Info("Validating volume order request .... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
+	vpcs.Logger.Info("Validating volume order request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
 	// Volume name should not be empty
 	if len(*volumeRequest.Name) == 0 {
-		return nil, reasoncode.GetUserError("InvalidVolumeName", nil, "Input: " + "'" + *volumeRequest.Name + "'")
+		return nil, reasoncode.GetUserError("InvalidVolumeName", nil, string("Input: " + "'" + *volumeRequest.Name + "'"))
 	}
 
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil || *volumeRequest.Capacity <= 0 {
-		return nil, reasoncode.GetUserError("VolumeCapacityInvalid", nil, "Input:" + "'" + strconv.Itoa(*volumeRequest.Capacity))
+		return nil, reasoncode.GetUserError("VolumeCapacityInvalid", nil, string("Input:" + "'" + strconv.Itoa(*volumeRequest.Capacity)))
 	}
 
 	// General purpose profiles does not allow IOPs setting
 	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
-		return nil, reasoncode.GetUserError("IopsInvalid", nil, "Input: " + "'" + *volumeRequest.Iops + "'")
+		return nil, reasoncode.GetUserError("IopsInvalid", nil, string("Input: " + "'" + *volumeRequest.Iops + "'"))
 	}
 
 	// General purpose profiles does not allow IOPs setting
@@ -46,7 +43,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 		return nil, reasoncode.GetUserError("VolumeProfileIopsInvalid", nil)
 	}
 
-	vpcs.Logger.Info("Validation completed for volume order request .... ")
+	vpcs.Logger.Info("Validation completed for volume order request... ")
 	// Pending error handling
 	// TODO: Check if the volume already exists with same name.
 	// We can do this by scanning all volumes. But requesting the VPC team to get
@@ -72,7 +69,8 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 		},
 	}
 
-	vpcs.Logger.Info("Calling VPC provider for volume creation ....")
+	vpcs.Logger.Info("Calling VPC provider for volume creation...")
+	var volume *models.Volume
 	err = retry(func() error {
 		volume, err = vpcs.Apiclient.VolumeService().CreateVolume(volumeTemplate)
 		return err
@@ -84,7 +82,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 
 	vpcs.Logger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
 
-	var volumeResponse *provider.Volume
+	//var volumeResponse *provider.Volume
 	volumeResponse, err = vpcs.GetVolume(volume.ID)
 
 	return volumeResponse, err

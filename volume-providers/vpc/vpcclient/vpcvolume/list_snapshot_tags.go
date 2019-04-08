@@ -11,12 +11,16 @@
 package vpcvolume
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // ListSnapshotTags GETs /volumes/snapshots/tags
 func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string) (*[]string, error) {
+	defer util.TimeTracker("ListSnapshotTags", time.Now())
+
 	operation := &client.Operation{
 		Name:        "ListSnapshotTags",
 		Method:      "GET",

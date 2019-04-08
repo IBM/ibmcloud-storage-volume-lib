@@ -11,12 +11,16 @@
 package vpcvolume
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // GetVolume POSTs to /volumes
 func (vs *VolumeService) GetVolume(volumeID string) (*models.Volume, error) {
+	defer util.TimeTracker("GetVolume", time.Now())
+
 	operation := &client.Operation{
 		Name:        "GetVolume",
 		Method:      "GET",

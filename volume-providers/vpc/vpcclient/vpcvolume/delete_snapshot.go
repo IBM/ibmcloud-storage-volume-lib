@@ -11,12 +11,16 @@
 package vpcvolume
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 )
 
 // DeleteSnapshot DELETEs to /volumes
 func (ss *SnapshotService) DeleteSnapshot(volumeID string, snapshotID string) error {
+	defer util.TimeTracker("DeleteSnapshot", time.Now())
+
 	operation := &client.Operation{
 		Name:        "DeleteSnapshot",
 		Method:      "DELETE",
