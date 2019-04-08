@@ -30,25 +30,21 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 
 	// Volume name should not be empty
 	if len(*volumeRequest.Name) == 0 {
-		vpcs.Logger.Info("FAILED: Volume name is not valid")
 		return nil, reasoncode.GetUserError("InvalidVolumeName", nil)
 	}
 
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil || *volumeRequest.Capacity == 0 {
-		vpcs.Logger.Info("FAILED: Invalid volume capacity")
 		return nil, reasoncode.GetUserError("VolumeCapacityInvalid", nil)
 	}
 
 	// General purpose profiles does not allow IOPs setting
 	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
-		vpcs.Logger.Info("FAILED: Invalid Iops")
 		return nil, reasoncode.GetUserError("IopsInvalid", nil)
 	}
 
 	// General purpose profiles does not allow IOPs setting
 	if *volumeRequest.Iops > strconv.Itoa(0) && volumeRequest.VPCVolume.Profile.Name == "general-purpose" {
-		vpcs.Logger.Info("FAILED: Invalid Iops")
 		return nil, reasoncode.GetUserError("VolumeProfileIopsInvalid", nil)
 	}
 
@@ -85,11 +81,10 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (*provider.V
 	})
 
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Failed to create volume with backend(vpcclient) call")
 		return nil, reasoncode.GetUserError("FailedToPlaceOrder", err)
 	}
 
-	vpcs.Logger.Info("SUCCESS: Successfully created volume with backend(vpcclient) call")
+	vpcs.Logger.Info("Successfully created volume with backend(vpcclient) call")
 	vpcs.Logger.Info("Created volume details", zap.Reflect("Volume", volume))
 
 	var volumeResponse *provider.Volume

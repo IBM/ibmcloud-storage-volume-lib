@@ -34,7 +34,6 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 		return err
 	})
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Not a valid volume ID")
 		return reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
 	}
 
@@ -46,6 +45,6 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 		return reasoncode.GetUserError("SnapshotSpaceOrderFailed", err)
 	}
 
-	vpcs.Logger.Info("SUCCESS: Successfully created the snapshot with backend (vpcclient) call.", zap.Reflect("Snapshot", snapshot))
+	vpcs.Logger.Info("Successfully created the snapshot with backend (vpcclient) call.", zap.Reflect("Snapshot", snapshot))
 	return nil
 }

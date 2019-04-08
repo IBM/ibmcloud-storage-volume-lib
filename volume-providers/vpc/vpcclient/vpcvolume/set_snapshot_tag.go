@@ -11,7 +11,7 @@
 package vpcvolume
 
 import (
-	providerutils "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/util"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"time"
@@ -19,7 +19,7 @@ import (
 
 // SetSnapshotTag sets tag for a snapshot
 func (ss *SnapshotService) SetSnapshotTag(volumeID string, snapshotID string, tagName string) error {
-	defer providerutils.TimeTracker("SetSnapshotTag", time.Now())
+	defer util.TimeTracker("SetSnapshotTag", time.Now())
 
 	operation := &client.Operation{
 		Name:        "SetSnapshotTag",

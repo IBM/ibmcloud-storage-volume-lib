@@ -24,7 +24,6 @@ func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
 	var err error
 	_, err = vpcs.GetVolume(vol.VolumeID)
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Not a valid volume ID")
 		return reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, vol.VolumeID, "Not a valid volume ID")
 	}
 
@@ -34,10 +33,9 @@ func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
 	})
 
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Error occured while deleting the volume")
 		return reasoncode.GetUserError("FailedToDeleteVolume", err)
 	}
 
-	vpcs.Logger.Info("SUCCESS: Successfully deleted the volume with backend(vpcclient) call)")
+	vpcs.Logger.Info("Successfully deleted the volume with backend(vpcclient) call)")
 	return err
 }

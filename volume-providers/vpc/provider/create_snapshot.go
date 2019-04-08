@@ -34,7 +34,6 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 		return err
 	})
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Not a valid volume ID")
 		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
 	}
 
@@ -43,11 +42,10 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 		return err
 	})
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Failed to create snapshot with backend (vpcclient) call")
 		return nil, reasoncode.GetUserError("SnapshotSpaceOrderFailed", err)
 	}
 
-	vpcs.Logger.Info("SUCCESS: Successfully created snapshot with backend (vpcclient) call")
+	vpcs.Logger.Info("Successfully created snapshot with backend (vpcclient) call")
 	vpcs.Logger.Info("Backend created snapshot details", zap.Reflect("Snapshot", snapshot))
 
 	respSnapshot := &provider.Snapshot{

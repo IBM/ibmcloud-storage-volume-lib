@@ -11,7 +11,7 @@
 package vpcvolume
 
 import (
-	providerutils "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/util"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"time"
@@ -19,7 +19,7 @@ import (
 
 // SetVolumeTag sets tag for a volume
 func (vs *VolumeService) SetVolumeTag(volumeID string, tagName string) error {
-	defer providerutils.TimeTracker("SetVolumeTag", time.Now())
+	defer util.TimeTracker("SetVolumeTag", time.Now())
 
 	operation := &client.Operation{
 		Name:        "SetVolumeTag",

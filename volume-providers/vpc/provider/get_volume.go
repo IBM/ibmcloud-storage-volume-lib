@@ -32,11 +32,10 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 	})
 
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Not a valid volume ID")
 		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, id, "Not a valid volume ID")
 	}
 
-	vpcs.Logger.Info("SUCCESS: Successfully retrieved the volume details", zap.Reflect("Volume", volume))
+	vpcs.Logger.Info("Successfully retrieved the volume details", zap.Reflect("Volume", volume))
 
 	volumeCap := int(volume.Capacity)
 	iops := strconv.Itoa(int(volume.Iops))
@@ -50,6 +49,6 @@ func (vpcs *VPCSession) GetVolume(id string) (*provider.Volume, error) {
 		Region:       volume.Zone.Name,
 	}
 
-	vpcs.Logger.Info("SUCCESS: Successfully retrieved the provider volume details", zap.Reflect("Provider volume", respVolume))
+	vpcs.Logger.Info("Successfully retrieved the provider volume details", zap.Reflect("Provider volume", respVolume))
 	return respVolume, err
 }

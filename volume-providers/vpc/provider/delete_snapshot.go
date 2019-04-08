@@ -24,7 +24,6 @@ func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 	var err error
 	_, err = vpcs.GetSnapshot(snapshot.SnapshotID)
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Not a valid snapshot ID")
 		return reasoncode.GetUserError("StorageFindFailedWithSnapshotId", err, snapshot.SnapshotID, "Not a valid snapshot ID")
 	}
 
@@ -34,10 +33,9 @@ func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 	})
 
 	if err != nil {
-		vpcs.Logger.Info("FAILED: Error occured while deleting the snapshot", zap.Error(err))
 		return reasoncode.GetUserError("FailedToDeleteSnapshot", err)
 	}
 
-	vpcs.Logger.Info("SUCCESS: Successfully deleted the snapshot with backend (vpcclient) call)")
+	vpcs.Logger.Info("Successfully deleted the snapshot with backend (vpcclient) call)")
 	return nil
 }
