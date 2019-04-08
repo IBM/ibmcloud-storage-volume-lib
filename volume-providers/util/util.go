@@ -20,5 +20,5 @@ import (
 func TimeTracker(functionName string, start time.Time) {
 	elapsed := time.Since(start)
 
-	log.Println(fmt.Sprintf("Time taken by function %s is %s", functionName, elapsed))
+	log.Println(fmt.Sprintf("TIME TAKEN BY FUNCTION %s IS %s", functionName, elapsed))
 }
