@@ -24,31 +24,39 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
+	//libutils "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
 
 func main() {
-
-	atom := zap.NewAtomicLevel()
-
-	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "timestamp"
-	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-
-	logger := zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderCfg),
-		zapcore.Lock(os.Stdout),
-		atom,
-	), zap.AddCaller()).With(zap.String("name", "ibmcloud-storage-volume-lib/main")).With(zap.String("VolumeLib", "IBMCloud-Storage-Lib"))
-
+	// Setup new style zap logger
+	consoleDebugging := zapcore.Lock(os.Stdout)
+	consoleErrors := zapcore.Lock(os.Stderr)
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.TimeKey = "ts"
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	traceLevel := zap.NewAtomicLevel()
+	traceLevel.SetLevel(zap.InfoLevel)
+	core := zapcore.NewTee(
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleDebugging, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return (lvl >= traceLevel.Level()) && (lvl < zapcore.ErrorLevel)
+		})),
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleErrors, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl >= zapcore.ErrorLevel
+		})),
+	)
+	logger := zap.New(core, zap.AddCaller())
 	defer logger.Sync()
-
-	atom.SetLevel(zap.InfoLevel)
 
 	// Load config file
 	goPath := os.Getenv("GOPATH")
 	conf, err := config.ReadConfig(goPath+"/src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml", logger)
 	if err != nil {
 		logger.Fatal("Error loading configuration")
+	}
+
+	// Check if debug log level enabled or not
+	if conf.Server != nil && conf.Server.DebugTrace {
+		traceLevel.SetLevel(zap.DebugLevel)
 	}
 
 	// Prepare provider registry
@@ -294,6 +302,8 @@ func main() {
 				logger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 13 {
+			//logger.Prefix()// = libutils.LoggerWithContextDecoration(logger, "1000013")
+			logger.Info("Creating volume")
 			fmt.Println("You selected choice to Create VPC volume")
 			volume := &provider.Volume{}
 			volumeName := ""
