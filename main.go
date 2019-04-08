@@ -187,7 +187,7 @@ func main() {
 			snapdetails, errr := sess.GetSnapshot(volumeID)
 			fmt.Printf("\n\n")
 			if errr == nil {
-				logger.Info("Successfully get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
+				logger.Info("Successfully retrieved the snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
 				logger.Info("Snapshot details ================>", zap.Reflect("SnapshotDetails", snapdetails))
 			} else {
 				logger.Info("Failed to get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID), zap.Reflect("Error", errr))

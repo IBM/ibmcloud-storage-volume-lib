@@ -31,14 +31,15 @@ func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, erro
 	})
 
 	if err != nil {
-		vpcs.Logger.Error("Error occured while retrieving the snapshot", zap.Error(err))
+		vpcs.Logger.Error("FAILED: Error occured while retrieving the snapshot", zap.Error(err))
 		return nil, reasoncode.GetUserError("FailedToDeleteSnapshot", err)
 	}
 
-	vpcs.Logger.Info("Snapshot details", zap.Reflect("Snapshot", snapshot))
+	vpcs.Logger.Info("SUCCESS: Successfully retrieved the snapshot details", zap.Reflect("Snapshot", snapshot))
 
 	volume, err := vpcs.GetVolume("")
 	if err != nil {
+		vpcs.Logger.Info("FAILED: Not a valid volume ID")
 		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, volume.VolumeID, "Not a valid volume ID")
 	}
 
@@ -47,5 +48,6 @@ func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, erro
 		Volume:     *volume,
 	}
 
+	vpcs.Logger.Info("SUCCESS: Successfully retrieved the snapshot details", zap.Reflect("Provider snapshot", respSnapshot))
 	return respSnapshot, nil
 }
