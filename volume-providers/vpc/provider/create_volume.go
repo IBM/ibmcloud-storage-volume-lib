@@ -20,30 +20,14 @@ import (
 
 // CreateVolume Get the volume by using ID
 func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeResponse *provider.Volume, err error) {
-	vpcs.Logger.Debug("Entering CreateVolume method...")
+	vpcs.Logger.Debug("In CreateVolume method...")
 
-	vpcs.Logger.Info("Validating volume order request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
-	// Volume name should not be empty
-	if len(*volumeRequest.Name) == 0 {
-		return nil, reasoncode.GetUserError("InvalidVolumeName", nil, string("Input: " + "'" + *volumeRequest.Name + "'"))
+	vpcs.Logger.Info("Validating CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
+	err = validateVolumeRequest(volumeRequest)
+	if err != nil {
+		return nil, err
 	}
-
-	// Capacity should not be empty
-	if volumeRequest.Capacity == nil || *volumeRequest.Capacity <= 0 {
-		return nil, reasoncode.GetUserError("VolumeCapacityInvalid", nil, string("Input:" + "'" + strconv.Itoa(*volumeRequest.Capacity)))
-	}
-
-	// General purpose profiles does not allow IOPs setting
-	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
-		return nil, reasoncode.GetUserError("IopsInvalid", nil, string("Input: " + "'" + *volumeRequest.Iops + "'"))
-	}
-
-	// General purpose profiles does not allow IOPs setting
-	if *volumeRequest.Iops > strconv.Itoa(0) && volumeRequest.VPCVolume.Profile.Name == "general-purpose" {
-		return nil, reasoncode.GetUserError("VolumeProfileIopsInvalid", nil)
-	}
-
-	vpcs.Logger.Info("Validation completed for volume order request... ")
+	vpcs.Logger.Info("Successfully validated inputs for CreateVolume request... ")
 	// Pending error handling
 	// TODO: Check if the volume already exists with same name.
 	// We can do this by scanning all volumes. But requesting the VPC team to get
@@ -86,4 +70,32 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	volumeResponse, err = vpcs.GetVolume(volume.ID)
 
 	return volumeResponse, err
+}
+
+// validateVolumeRequest validating volume request
+func validateVolumeRequest(volumeRequest provider.Volume) (err error) {
+	// Volume name should not be empty
+	if volumeRequest.Name == nil {
+		return reasoncode.GetUserError("InvalidVolumeName", nil, nil)
+	} else if len(*volumeRequest.Name) == 0 {
+		return reasoncode.GetUserError("InvalidVolumeName", nil, *volumeRequest.Name)
+	}
+
+	// Capacity should not be empty
+	if volumeRequest.Capacity == nil {
+		return reasoncode.GetUserError("VolumeCapacityInvalid", nil, nil)
+	} else if *volumeRequest.Capacity <= 0 {
+		return reasoncode.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
+	}
+
+	// General purpose profiles does not allow IOPs setting
+	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
+		return reasoncode.GetUserError("IopsInvalid", nil, *volumeRequest.Iops)
+	}
+
+	// General purpose profiles does not allow IOPs setting
+	if *volumeRequest.Iops > strconv.Itoa(0) && volumeRequest.VPCVolume.Profile.Name == "general-purpose" {
+		return reasoncode.GetUserError("VolumeProfileIopsInvalid", nil)
+	}
+	return nil
 }
