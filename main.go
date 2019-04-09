@@ -18,13 +18,10 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	//softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
-	//libutils "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
 
 func main() {
