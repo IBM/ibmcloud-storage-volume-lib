@@ -31,7 +31,7 @@ genesis_url = ""
 
 [vpc]
 vpc_enabled = false
-vpc_block_provider_name = "gc"
+vpc_block_provider_name = "gt"
 vpc_username = ""# keep blank for IAM auth
 vpc_api_key = "" # keep blank for IAM auth
 vpc_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443/v1"

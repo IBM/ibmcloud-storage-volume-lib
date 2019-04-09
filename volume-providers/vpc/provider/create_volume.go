@@ -44,7 +44,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 		ResourceGroup: &models.ResourceGroup{
 			ID: volumeRequest.VPCVolume.ResourceGroup.ID,
 		},
-		Generation: "gt",
+		Generation: models.GenerationType(vpcs.Config.VPCBlockProviderName),
 		Profile: &models.Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},
@@ -65,8 +65,6 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	}
 
 	vpcs.Logger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
-
-	//var volumeResponse *provider.Volume
 	volumeResponse, err = vpcs.GetVolume(volume.ID)
 
 	return volumeResponse, err

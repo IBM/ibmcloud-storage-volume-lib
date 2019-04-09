@@ -302,8 +302,6 @@ func main() {
 				logger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 13 {
-			//logger.Prefix()// = libutils.LoggerWithContextDecoration(logger, "1000013")
-			logger.Info("Creating volume")
 			fmt.Println("You selected choice to Create VPC volume")
 			volume := &provider.Volume{}
 			volumeName := ""

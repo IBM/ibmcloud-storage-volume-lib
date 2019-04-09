@@ -28,6 +28,10 @@ fmt: lint
 lint:
 	$(GOPATH)/bin/golint --set_exit_status ${GOLINTPACKAGES}
 
+.PHONY: makefmt
+makefmt:
+	gofmt -l -w ${GOFILES}
+
 .PHONY: test
 test:
 	$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES}
