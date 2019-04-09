@@ -76,7 +76,7 @@ func main() {
 		logger.Error("Failed to get session", zap.Reflect("Error", err))
 		return
 	}
-
+	logger = logger.With(zap.String("LogSection", "VolumePlugin"))
 	logger.Info("In main after openProviderSession call", zap.Reflect("sess", sess))
 	defer sess.Close()
 	logger.Info("Currently you are using provider ....", zap.Reflect("ProviderName", sess.ProviderName()))
