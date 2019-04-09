@@ -15,6 +15,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 )
 
 // maxRetryAttempt ...
@@ -72,4 +75,28 @@ func ToInt64(valueInInt string) int64 {
 		return 0
 	}
 	return value
+}
+
+// FromProviderToLibVolume converting vpc provider volume type to generic lib volume type
+func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libVolume *provider.Volume){
+	logger.Debug("Entry of FromProviderToLibVolume method...")
+	defer logger.Debug("Exit from FromProviderToLibVolume method...")
+
+	volumeCap := int(vpcVolume.Capacity)
+	iops := strconv.Itoa(int(vpcVolume.Iops))
+	var createdDate time.Time
+	if vpcVolume.CreatedAt != nil {
+		createdDate = *vpcVolume.CreatedAt
+	}
+
+	libVolume = &provider.Volume{
+		VolumeID:     vpcVolume.ID,
+		Provider:     VPC,
+		Capacity:     &volumeCap,
+		Iops:         &iops,
+		VolumeType:   VolumeType,
+		CreationTime: createdDate,
+		Region:       vpcVolume.Zone.Name,
+	}
+	return
 }

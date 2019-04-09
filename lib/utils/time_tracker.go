@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-// Get execution time of a function
+// TimeTracker Get execution time of a function
 func TimeTracker(functionName string, start time.Time) {
 	elapsed := time.Since(start)
 

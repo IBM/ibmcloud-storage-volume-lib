@@ -18,8 +18,6 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	//softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
@@ -27,28 +25,35 @@ import (
 )
 
 func main() {
-
-	atom := zap.NewAtomicLevel()
-
-	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "timestamp"
-	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-
-	logger := zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderCfg),
-		zapcore.Lock(os.Stdout),
-		atom,
-	), zap.AddCaller()).With(zap.String("name", "ibmcloud-storage-volume-lib/main")).With(zap.String("VolumeLib", "IBMCloud-Storage-Lib"))
-
+	// Setup new style zap logger
+	consoleDebugging := zapcore.Lock(os.Stdout)
+	consoleErrors := zapcore.Lock(os.Stderr)
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.TimeKey = "ts"
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	traceLevel := zap.NewAtomicLevel()
+	traceLevel.SetLevel(zap.InfoLevel)
+	core := zapcore.NewTee(
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleDebugging, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return (lvl >= traceLevel.Level()) && (lvl < zapcore.ErrorLevel)
+		})),
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleErrors, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl >= zapcore.ErrorLevel
+		})),
+	)
+	logger := zap.New(core, zap.AddCaller())
 	defer logger.Sync()
-
-	atom.SetLevel(zap.InfoLevel)
 
 	// Load config file
 	goPath := os.Getenv("GOPATH")
 	conf, err := config.ReadConfig(goPath+"/src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml", logger)
 	if err != nil {
 		logger.Fatal("Error loading configuration")
+	}
+
+	// Check if debug log level enabled or not
+	if conf.Server != nil && conf.Server.DebugTrace {
+		traceLevel.SetLevel(zap.DebugLevel)
 	}
 
 	// Prepare provider registry
@@ -335,9 +340,9 @@ func main() {
 			volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
 			volumeObj, errr := sess.CreateVolume(*volume)
 			if errr == nil {
-				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
+				logger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 			} else {
-				logger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
+				logger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 

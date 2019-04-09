@@ -65,7 +65,7 @@ type Volume struct {
 	CreationTime time.Time `json:"creationTime"`
 
 	// storage_as_a_service|enterprise|performance     default from SL is storage_as_a_service
-	ServiceOffering *string `json:"serviceOffering"`
+	ServiceOffering *string `json:"serviceOffering,omitempty"`
 
 	// Name of a device
 	Name *string `json:"name,omitempty"`
