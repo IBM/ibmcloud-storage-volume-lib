@@ -340,9 +340,9 @@ func main() {
 			volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
 			volumeObj, errr := sess.CreateVolume(*volume)
 			if errr == nil {
-				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
+				logger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 			} else {
-				logger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
+				logger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 

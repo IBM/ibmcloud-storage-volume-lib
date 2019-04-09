@@ -20,7 +20,8 @@ import (
 
 // CreateVolume Get the volume by using ID
 func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeResponse *provider.Volume, err error) {
-	vpcs.Logger.Debug("In CreateVolume method...")
+	vpcs.Logger.Debug("Entry of CreateVolume method...")
+	defer vpcs.Logger.Debug("Exit from CreateVolume method...")
 
 	vpcs.Logger.Info("Validating CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
 	err = validateVolumeRequest(volumeRequest)
@@ -65,8 +66,9 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	}
 
 	vpcs.Logger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
-	volumeResponse, err = vpcs.GetVolume(volume.ID)
 
+	// Converting volume to lib volume type
+	volumeResponse = FromProviderToLibVolume(volume, vpcs.Logger)
 	return volumeResponse, err
 }
 
