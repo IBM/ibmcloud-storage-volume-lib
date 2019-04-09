@@ -76,6 +76,7 @@ func main() {
 		logger.Error("Failed to get session", zap.Reflect("Error", err))
 		return
 	}
+
 	logger.Info("In main after openProviderSession call", zap.Reflect("sess", sess))
 	defer sess.Close()
 	logger.Info("Currently you are using provider ....", zap.Reflect("ProviderName", sess.ProviderName()))
@@ -98,10 +99,9 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			volume, errr := sess.GetVolume(volumeID)
 			if errr == nil {
-				logger.Info("Successfully get volume details ================>", zap.Reflect("Volume ID", volumeID))
-				logger.Info("Volume details are: ", zap.Reflect("Volume", volume))
+				logger.Info("SUCCESSFULLY get volume details ================>", zap.Reflect("VolumeDetails", volume))
 			} else {
-				logger.Info("Failed to get volume details ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
+				logger.Info("FAILED to get volume details ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 2 {
@@ -241,9 +241,9 @@ func main() {
 			volume.VolumeID = volumeID
 			er11 = sess.DeleteVolume(volume)
 			if er11 == nil {
-				logger.Info("Successfully deleted volume ================>", zap.Reflect("Volume ID", volumeID))
+				logger.Info("SUCCESSFULLY deleted volume ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
-				logger.Info("failed volume deletion================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
+				logger.Info("FAILED volume deletion================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 9 {
