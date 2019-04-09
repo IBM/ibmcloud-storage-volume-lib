@@ -41,14 +41,14 @@ var messagesEn = map[string]reasoncode.Message{
 	},
 	"FailedToDeleteVolume": reasoncode.Message{
 		Code:        "FailedToDeleteVolume",
-		Description: "Failed to delete the storage with storage id %d",
+		Description: "Failed to delete '%d' volume from VPC",
 		Type:        "DeletionFailed",
 		RC:          500,
-		Action:      "If you tried to delete storage on the last day of the billing cycle, delete failures are expected and no action is required. The delete operation is automatically retried after the billing cycle ends. If the problem persists after the billing cycle is over, go to the IBM Cloud infrastructure portal and open a support ticket.",
+		Action:      "Please check the provided volume ID and provide correct volume ID, you may need to check VPC portal for volume list",
 	},
 	"FailedToDeleteSnapshot": reasoncode.Message{
 		Code:        "FailedToDeleteSnapshot",
-		Description: "Failed to delete the storage with snapshot id %d",
+		Description: "Failed to delete '%d' snapshot ID",
 		Type:        "DeletionFailed",
 		RC:          500,
 		Action:      "Check whether the snapshot ID exists.",
@@ -80,6 +80,13 @@ var messagesEn = map[string]reasoncode.Message{
 		Type:        "ProvisioningFailed",
 		RC:          500,
 		Action:      "Please raise a ticket to IBM Infrasructure team",
+	},
+	"InvalidVolumeID": reasoncode.Message{
+		Code:        "InvalidVolumeID",
+		Description: "Volume ID '%s' is not valid.",
+		Type:        "InvalidRequest",
+		RC:          400,
+		Action:      "Volume ID is not valid. Check whether the volume name is empty.",
 	},
 	"InvalidVolumeName": reasoncode.Message{
 		Code:        "InvalidVolumeName",

@@ -29,6 +29,8 @@ var maxRetryGap = 30
 // retryGap ...
 var retryGap = 5
 
+var volumeTokenNumber = 5
+
 // retry ...
 func retry(retryfunc func() error) error {
 	var err error
@@ -99,4 +101,13 @@ func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libV
 		Region:       vpcVolume.Zone.Name,
 	}
 	return
+}
+
+// IsValidVolumeIDFormat validating
+func IsValidVolumeIDFormat(volID string) bool {
+	parts := strings.Split(volID, "-")
+	if len(parts) != volumeTokenNumber {
+		return false
+	}
+	return true
 }
