@@ -17,25 +17,40 @@ import (
 )
 
 // DeleteVolume deletes the volume
-func (vpcs *VPCSession) DeleteVolume(vol *provider.Volume) error {
-	vpcs.Logger.Info("Entry DeleteVolume", zap.Reflect("vol", vol))
-	defer vpcs.Logger.Info("Exit DeleteVolume", zap.Reflect("vol", vol))
+func (vpcs *VPCSession) DeleteVolume(volume *provider.Volume) (err error) {
+	vpcs.Logger.Debug("Entry of DeleteVolume method...")
+	defer vpcs.Logger.Debug("Exit from DeleteVolume method...")
 
-	var err error
-	_, err = vpcs.GetVolume(vol.VolumeID)
+	vpcs.Logger.Info("Validating basic inputs for DeleteVolume method...", zap.Reflect("VolumeDetails", volume))
+	err = validateVolume(volume)
 	if err != nil {
-		return reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, vol.VolumeID, "Not a valid volume ID")
+		return err
 	}
 
+	vpcs.Logger.Info("Deleting volume from VPC provider...")
 	err = retry(func() error {
-		err = vpcs.Apiclient.VolumeService().DeleteVolume(vol.VolumeID)
+		err = vpcs.Apiclient.VolumeService().DeleteVolume(volume.VolumeID)
 		return err
 	})
 
 	if err != nil {
-		return reasoncode.GetUserError("FailedToDeleteVolume", err)
+		return reasoncode.GetUserError("FailedToDeleteVolume", err, volume.VolumeID)
 	}
 
-	vpcs.Logger.Info("Successfully deleted the volume with backend(vpcclient) call)")
+	vpcs.Logger.Info("Successfully deleted volume from VPC provider")
 	return err
+}
+
+// validateVolume validating volume ID
+func validateVolume(volume *provider.Volume) (err error) {
+	if volume == nil {
+		err = reasoncode.GetUserError("InvalidVolumeID", nil, nil)
+		return
+	}
+
+	if IsValidVolumeIDFormat(volume.VolumeID) {
+		return nil
+	}
+	err = reasoncode.GetUserError("InvalidVolumeID", nil, volume.VolumeID)
+	return
 }

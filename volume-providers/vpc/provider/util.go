@@ -12,12 +12,12 @@ package provider
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
-	"time"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"strconv"
+	"strings"
+	"time"
 )
 
 // maxRetryAttempt ...
@@ -28,6 +28,8 @@ var maxRetryGap = 30
 
 // retryGap ...
 var retryGap = 5
+
+var volumeIDPartsCount = 5
 
 // retry ...
 func retry(retryfunc func() error) error {
@@ -78,7 +80,7 @@ func ToInt64(valueInInt string) int64 {
 }
 
 // FromProviderToLibVolume converting vpc provider volume type to generic lib volume type
-func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libVolume *provider.Volume){
+func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libVolume *provider.Volume) {
 	logger.Debug("Entry of FromProviderToLibVolume method...")
 	defer logger.Debug("Exit from FromProviderToLibVolume method...")
 
@@ -99,4 +101,13 @@ func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libV
 		Region:       vpcVolume.Zone.Name,
 	}
 	return
+}
+
+// IsValidVolumeIDFormat validating
+func IsValidVolumeIDFormat(volID string) bool {
+	parts := strings.Split(volID, "-")
+	if len(parts) != volumeIDPartsCount {
+		return false
+	}
+	return true
 }
