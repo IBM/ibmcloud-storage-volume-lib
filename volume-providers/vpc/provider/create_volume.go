@@ -85,9 +85,9 @@ func validateVolumeRequest(volumeRequest provider.Volume) (err error) {
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil {
 		return reasoncode.GetUserError("VolumeCapacityInvalid", nil, nil)
-	} /*else if *volumeRequest.Capacity <= 0 {
+	} else if *volumeRequest.Capacity <= 0 {
 		return reasoncode.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
-	}*/
+	}
 
 	// General purpose profiles does not allow IOPs setting
 	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
