@@ -31,6 +31,15 @@ var retryGap = 5
 
 var volumeIDPartsCount = 5
 
+var skipErrorCodes = map[string]bool{
+	"validation_invalid_name":          true,
+	"volume_capacity_max":              true,
+	"volume_id_invalid":                true,
+	"volume_profile_iops_invalid":      true,
+	"volume_capacity_zero_or_negative": true,
+	"internal_error":                   false,
+}
+
 // retry ...
 func retry(retryfunc func() error) error {
 	var err error
@@ -41,7 +50,7 @@ func retry(retryfunc func() error) error {
 		err = retryfunc()
 		if err != nil {
 			//Skip retry for the below type of Errors
-			if (strings.Contains(err.Error(), "unable to find network storage associated")) || (strings.Contains(err.Error(), "is Already Authorized for host")) {
+			if skipRetry(err.(*models.Error)) {
 				break
 			}
 			if i >= 1 {
@@ -51,14 +60,24 @@ func retry(retryfunc func() error) error {
 				}
 			}
 			if (i + 1) < maxRetryAttempt {
-				fmt.Printf("\nReattenmpting execution func: %#v, attempt =%d,  max attepmt = %d ,error %#v", retryfunc, i+2, maxRetryAttempt, err) // TODO: need to use logger
-				//c.logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryAttempt), zap.Error(err))
+				fmt.Printf("\nReattenmpting execution func: %#v, attempt =%d,  max attepmt = %d ,error=%#v", retryfunc, i+2, maxRetryAttempt, err) // TODO: need to use logger
 			}
 			continue
 		}
 		return err
 	}
 	return err
+}
+
+// skipRetry skip retry as per listed error codes
+func skipRetry(err *models.Error) bool {
+	for _, errorItem := range err.Errors {
+		skipStatus, ok := skipErrorCodes[string(errorItem.Code)]
+		if ok {
+			return skipStatus
+		}
+	}
+	return false
 }
 
 // ToInt ...
