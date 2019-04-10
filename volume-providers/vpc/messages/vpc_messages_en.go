@@ -18,10 +18,10 @@ import (
 var messagesEn = map[string]reasoncode.Message{
 	"FailedToPlaceOrder": reasoncode.Message{
 		Code:        "FailedToPlaceOrder",
-		Description: "Failed to place storage order with the storage provider",
+		Description: "Failed to create volume with the storage provider",
 		Type:        "ProvisioningFailed",
 		RC:          500,
-		Action:      "Wait a few minutes, then try re-creating your PVC. If the problem persists, go to the IBM Cloud infrastructure (VPC) portal and open a support ticket.",
+		Action:      "Please check the [Backend] error which is returned, you may need to review your inputes for create volume.",
 	},
 	"CreateOrderTimeoutDueToPermissions": reasoncode.Message{
 		Code: "CreateOrderTimeoutDueToPermissions",
@@ -62,7 +62,7 @@ var messagesEn = map[string]reasoncode.Message{
 	},
 	"StorageFindFailedWithVolumeId": reasoncode.Message{
 		Code:        "StorageFindFailedWithVolumeId",
-		Description: "Failed to find the storage with storage id %s. Description: %s",
+		Description: "Failed to find the volume ID '%s'.",
 		Type:        "RetrivalFailed",
 		RC:          500,
 		Action:      "Go to the IBM Cloud infrastructure (VPC) portal and verify that the storage exists.",
@@ -121,7 +121,7 @@ var messagesEn = map[string]reasoncode.Message{
 		Description: "Capacity or IOPS value not allowed by profile.",
 		Type:        "InvalidRequest",
 		RC:          400,
-		Action:      "Failed to place storage order with the storage provider [Backend Error:The volume profile specified in the request cannot accept custom IOPS].",
+		Action:      "Failed to create volume with the volume VPC provider.",
 	},
 	"VolumeProfileIopsInvalid": reasoncode.Message{
 		Code:        "VolumeProfileIopsInvalid",

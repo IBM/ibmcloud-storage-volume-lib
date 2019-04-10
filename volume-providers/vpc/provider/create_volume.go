@@ -23,7 +23,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	vpcs.Logger.Debug("Entry of CreateVolume method...")
 	defer vpcs.Logger.Debug("Exit from CreateVolume method...")
 
-	vpcs.Logger.Info("Validating CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
+	vpcs.Logger.Info("Basic validation for CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
 	err = validateVolumeRequest(volumeRequest)
 	if err != nil {
 		return nil, err
@@ -62,6 +62,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	})
 
 	if err != nil {
+		vpcs.Logger.Debug("Failed to create volume from VPC provider", zap.Reflect("BackendError", err))
 		return nil, reasoncode.GetUserError("FailedToPlaceOrder", err)
 	}
 
