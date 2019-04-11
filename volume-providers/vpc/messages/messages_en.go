@@ -17,7 +17,7 @@ var messagesEn = map[string]Message{
 		Description: "Failed to create volume with the storage provider",
 		Type:        "ProvisioningFailed",
 		RC:          500,
-		Action:      "Please check the [Backend] error which is returned, You may need to try by using 'ibmcloud is volume-create' cli.",
+		Action:      "Please check the [BackendError] error which is returned, You may need to try by using 'ibmcloud is volume-create' cli.",
 	},
 	"FailedToDeleteVolume": Message{
 		Code:        "FailedToDeleteVolume",
