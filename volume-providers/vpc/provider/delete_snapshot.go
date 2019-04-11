@@ -12,7 +12,7 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +24,7 @@ func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 	var err error
 	_, err = vpcs.GetSnapshot(snapshot.SnapshotID)
 	if err != nil {
-		return reasoncode.GetUserError("StorageFindFailedWithSnapshotId", err, snapshot.SnapshotID, "Not a valid snapshot ID")
+		return userError.GetUserError("StorageFindFailedWithSnapshotId", err, snapshot.SnapshotID, "Not a valid snapshot ID")
 	}
 
 	err = retry(func() error {
@@ -33,7 +33,7 @@ func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 	})
 
 	if err != nil {
-		return reasoncode.GetUserError("FailedToDeleteSnapshot", err)
+		return userError.GetUserError("FailedToDeleteSnapshot", err)
 	}
 
 	vpcs.Logger.Info("Successfully deleted the snapshot with backend (vpcclient) call)")

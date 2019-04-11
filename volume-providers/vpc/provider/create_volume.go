@@ -12,7 +12,7 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 	"strconv"
@@ -63,7 +63,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 
 	if err != nil {
 		vpcs.Logger.Debug("Failed to create volume from VPC provider", zap.Reflect("BackendError", err))
-		return nil, reasoncode.GetUserError("FailedToPlaceOrder", err)
+		return nil, userError.GetUserError("FailedToPlaceOrder", err)
 	}
 
 	vpcs.Logger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
@@ -77,26 +77,26 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 func validateVolumeRequest(volumeRequest provider.Volume) (err error) {
 	// Volume name should not be empty
 	if volumeRequest.Name == nil {
-		return reasoncode.GetUserError("InvalidVolumeName", nil, nil)
+		return userError.GetUserError("InvalidVolumeName", nil, nil)
 	} else if len(*volumeRequest.Name) == 0 {
-		return reasoncode.GetUserError("InvalidVolumeName", nil, *volumeRequest.Name)
+		return userError.GetUserError("InvalidVolumeName", nil, *volumeRequest.Name)
 	}
 
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil {
-		return reasoncode.GetUserError("VolumeCapacityInvalid", nil, nil)
+		return userError.GetUserError("VolumeCapacityInvalid", nil, nil)
 	} else if *volumeRequest.Capacity <= 0 {
-		return reasoncode.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
+		return userError.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
 	}
 
 	// General purpose profiles does not allow IOPs setting
 	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
-		return reasoncode.GetUserError("IopsInvalid", nil, *volumeRequest.Iops)
+		return userError.GetUserError("IopsInvalid", nil, *volumeRequest.Iops)
 	}
 
 	// General purpose profiles does not allow IOPs setting
 	if *volumeRequest.Iops > strconv.Itoa(0) && volumeRequest.VPCVolume.Profile.Name == "general-purpose" {
-		return reasoncode.GetUserError("VolumeProfileIopsInvalid", nil)
+		return userError.GetUserError("VolumeProfileIopsInvalid", nil)
 	}
 	return nil
 }

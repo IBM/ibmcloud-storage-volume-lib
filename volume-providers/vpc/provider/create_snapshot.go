@@ -12,7 +12,7 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
@@ -34,7 +34,7 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 		return err
 	})
 	if err != nil {
-		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
+		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
 	}
 
 	err = retry(func() error {
@@ -42,7 +42,7 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 		return err
 	})
 	if err != nil {
-		return nil, reasoncode.GetUserError("SnapshotSpaceOrderFailed", err)
+		return nil, userError.GetUserError("SnapshotSpaceOrderFailed", err)
 	}
 
 	vpcs.Logger.Info("Successfully created snapshot with backend (vpcclient) call")

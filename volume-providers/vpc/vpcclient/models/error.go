@@ -50,13 +50,13 @@ type ErrorItem struct {
 
 // Error ...
 func (ei ErrorItem) Error() string {
-	return ei.Message
+	return ei.Message + " Please check " + ei.MoreInfo
 }
 
 // Error ...
 func (e Error) Error() string {
 	if len(e.Errors) > 0 {
-		return e.Errors[0].Message
+		return e.Errors[0].Error()
 	}
 
 	return "Unknown error"

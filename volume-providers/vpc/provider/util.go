@@ -38,6 +38,7 @@ var skipErrorCodes = map[string]bool{
 	"volume_profile_iops_invalid":      true,
 	"volume_capacity_zero_or_negative": true,
 	"internal_error":                   false,
+	"invalid_route":                    false,
 }
 
 // retry ...

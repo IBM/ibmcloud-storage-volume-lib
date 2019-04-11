@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package reasoncode
+package messages
 
 import (
 	"fmt"
@@ -16,11 +16,12 @@ import (
 
 // Message Wrapper Message/Error Class
 type Message struct {
-	Code        string
-	Description string
-	Type        string
-	RC          int
-	Action      string
+	Code        		string
+	Type        		string
+	Description 		string
+	BackendError		string
+	RC          		int
+	Action      		string
 }
 
 // MessagesEn ...
@@ -34,7 +35,7 @@ func (msg Message) Error() string {
 // Info ...
 func (msg Message) Info() string {
 
-	return fmt.Sprintf("{Code:%s, Description:%s, Type:%s, RC:%d}", msg.Code, msg.Description, msg.Type, msg.RC)
+	return fmt.Sprintf("{Code:%s, Type:%s, Description:%s, BackendError:%s, RC:%d}", msg.Code, msg.Type, msg.Description, msg.BackendError, msg.RC)
 }
 
 // GetUserErr ...
@@ -44,7 +45,8 @@ func GetUserErr(code string, err error, args ...interface{}) error {
 		return nil
 	}
 	userMsg := GetUserMsg(code, args...)
-	userMsg.Description = userMsg.Description + " [Backend Error:" + err.Error() + "]"
+	userMsg.Description = userMsg.Description //+ " [Backend Error:" + err.Error() + "]"
+	userMsg.BackendError = err.Error()
 	return userMsg
 }
 
@@ -62,7 +64,8 @@ func GetUserError(code string, err error, args ...interface{}) error {
 	userMsg := GetUserMsg(code, args...)
 
 	if err != nil {
-		userMsg.Description = userMsg.Description + " [Backend Error:" + err.Error() + "]"
+		userMsg.Description = userMsg.Description// + " [Backend Error:" + err.Error() + "]"
+		userMsg.BackendError = err.Error()
 	}
 	return userMsg
 }
