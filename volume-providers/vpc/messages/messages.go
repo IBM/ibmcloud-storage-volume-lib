@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package reasoncode
+package messages
 
 import (
 	"fmt"

@@ -12,7 +12,7 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
@@ -38,7 +38,7 @@ func (vpcs *VPCSession) GetVolume(id string) (respVolume *provider.Volume, err e
 	})
 
 	if err != nil {
-		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, id)
+		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, id)
 	}
 
 	vpcs.Logger.Info("Successfully retrieved volume details from VPC provider", zap.Reflect("VolumeDetails", volume))
@@ -53,6 +53,6 @@ func validateVolumeID(volumeID string) (err error) {
 	if IsValidVolumeIDFormat(volumeID) {
 		return nil
 	}
-	err = reasoncode.GetUserError("InvalidVolumeID", nil, volumeID)
+	err = userError.GetUserError("InvalidVolumeID", nil, volumeID)
 	return
 }

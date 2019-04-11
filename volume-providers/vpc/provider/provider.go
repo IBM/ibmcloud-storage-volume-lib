@@ -16,11 +16,11 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
 	"github.com/rs/xid"
 	"go.uber.org/zap"
@@ -92,7 +92,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	}
 	logger.Info("", zap.Reflect("Provider config", provider.config))
 
-	reasoncode.MessagesEn = messages.InitMessages()
+	userError.MessagesEn = messages.InitMessages()
 	return provider, nil
 }
 

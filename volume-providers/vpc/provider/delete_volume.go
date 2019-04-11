@@ -12,7 +12,7 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"go.uber.org/zap"
 )
 
@@ -34,7 +34,7 @@ func (vpcs *VPCSession) DeleteVolume(volume *provider.Volume) (err error) {
 	})
 
 	if err != nil {
-		return reasoncode.GetUserError("FailedToDeleteVolume", err, volume.VolumeID)
+		return userError.GetUserError("FailedToDeleteVolume", err, volume.VolumeID)
 	}
 
 	vpcs.Logger.Info("Successfully deleted volume from VPC provider")
@@ -44,13 +44,13 @@ func (vpcs *VPCSession) DeleteVolume(volume *provider.Volume) (err error) {
 // validateVolume validating volume ID
 func validateVolume(volume *provider.Volume) (err error) {
 	if volume == nil {
-		err = reasoncode.GetUserError("InvalidVolumeID", nil, nil)
+		err = userError.GetUserError("InvalidVolumeID", nil, nil)
 		return
 	}
 
 	if IsValidVolumeIDFormat(volume.VolumeID) {
 		return nil
 	}
-	err = reasoncode.GetUserError("InvalidVolumeID", nil, volume.VolumeID)
+	err = userError.GetUserError("InvalidVolumeID", nil, volume.VolumeID)
 	return
 }

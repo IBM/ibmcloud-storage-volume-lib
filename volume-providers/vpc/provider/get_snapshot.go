@@ -12,7 +12,7 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
@@ -31,14 +31,14 @@ func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, erro
 	})
 
 	if err != nil {
-		return nil, reasoncode.GetUserError("FailedToDeleteSnapshot", err)
+		return nil, userError.GetUserError("FailedToDeleteSnapshot", err)
 	}
 
 	vpcs.Logger.Info("Successfully retrieved the snapshot details", zap.Reflect("Snapshot", snapshot))
 
 	volume, err := vpcs.GetVolume("")
 	if err != nil {
-		return nil, reasoncode.GetUserError("StorageFindFailedWithVolumeId", err, volume.VolumeID, "Not a valid volume ID")
+		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volume.VolumeID, "Not a valid volume ID")
 	}
 
 	respSnapshot := &provider.Snapshot{
