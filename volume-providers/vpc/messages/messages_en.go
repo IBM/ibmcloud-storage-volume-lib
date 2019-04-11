@@ -24,7 +24,7 @@ var messagesEn = map[string]Message{
 		Description: "Failed to delete '%d' volume from VPC",
 		Type:        "DeletionFailed",
 		RC:          500,
-		Action:      "Please check volume ID, You may need to try by using 'ibmcloud is volume-delete' or check if volume exists 'ibmcloud is volume <VolumeID>' cli",
+		Action:      "Please check volume ID, You may need to try by using 'ibmcloud is volume-delete' or check if volume exists 'ibmcloud is volume VOLUME_ID' cli",
 	},
 	"FailedToDeleteSnapshot": Message{
 		Code:        "FailedToDeleteSnapshot",
@@ -38,7 +38,7 @@ var messagesEn = map[string]Message{
 		Description: "Failed to find '%s' volume ID.",
 		Type:        "RetrivalFailed",
 		RC:          404,
-		Action:      "Please check volume ID if this is correct, You may need to verify by using 'ibmcloud is volume <VolumeID>' cli.",
+		Action:      "Please check volume ID if this is correct, You may need to verify by using 'ibmcloud is volume VOLUME_ID' cli.",
 	},
 	"StorageFindFailedWithSnapshotId": Message{
 		Code:        "StorageFindFailedWithSnapshotId",
