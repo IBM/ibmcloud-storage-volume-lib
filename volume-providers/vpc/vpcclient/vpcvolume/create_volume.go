@@ -34,7 +34,9 @@ func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume, ctxLogger *
 	var volume models.Volume
 	var apiErr models.Error
 
-	_, err := vs.client.NewRequest(operation).JSONBody(volumeTemplate).JSONSuccess(&volume).JSONError(&apiErr).Invoke()
+	request := vs.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	_, err := request.JSONBody(volumeTemplate).JSONSuccess(&volume).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}
