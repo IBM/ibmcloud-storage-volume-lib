@@ -10,6 +10,10 @@
 
 package provider
 
+import (
+	"go.uber.org/zap"
+)
+
 // VolumeManager ...
 type VolumeManager interface {
 	// Provider name
@@ -20,7 +24,7 @@ type VolumeManager interface {
 
 	// Volume operations
 	// Create the volume with authorization by passing required information in the volume object
-	CreateVolume(VolumeRequest Volume) (*Volume, error)
+	CreateVolume(VolumeRequest Volume, ctxLogger *zap.Logger) (*Volume, error)
 
 	// Create the volume from snapshot with snapshot tags
 	CreateVolumeFromSnapshot(snapshot Snapshot, tags map[string]string) (*Volume, error)

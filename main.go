@@ -20,6 +20,7 @@ import (
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	logger_utils "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/logger"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
 )
@@ -178,7 +179,11 @@ func main() {
 			}
 			volume.SnapshotSpace = &volSize
 			volume.VolumeNotes = map[string]string{"note": "test"}
-			volumeObj, errr := sess.CreateVolume(*volume)
+
+			// Context logger
+			ctxLogger, _ := logger_utils.GetZapDefaultContextLogger()
+
+			volumeObj, errr := sess.CreateVolume(*volume, ctxLogger)
 			if errr == nil {
 				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
 			} else {
@@ -336,9 +341,12 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &zone)
 			volume.Az = zone
 
+			// Context logger
+			ctxLogger, _ := logger_utils.GetZapDefaultContextLogger()
+
 			volume.SnapshotSpace = &volSize
 			volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
-			volumeObj, errr := sess.CreateVolume(*volume)
+			volumeObj, errr := sess.CreateVolume(*volume, ctxLogger)
 			if errr == nil {
 				logger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 			} else {

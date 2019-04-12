@@ -12,7 +12,6 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/logger"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
@@ -20,17 +19,16 @@ import (
 )
 
 // CreateVolume Get the volume by using ID
-func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeResponse *provider.Volume, err error) {
-	contextLogger, _ := logger.GetZapDefaultContextLogger()
-	contextLogger.Debug("Entry of CreateVolume method...")
-	defer contextLogger.Debug("Exit from CreateVolume method...")
+func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume, ctxLogger *zap.Logger) (volumeResponse *provider.Volume, err error) {
+	ctxLogger.Debug("Entry of CreateVolume method...")
+	defer ctxLogger.Debug("Exit from CreateVolume method...")
 
-	contextLogger.Info("Basic validation for CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
+	ctxLogger.Info("Basic validation for CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
 	err = validateVolumeRequest(volumeRequest)
 	if err != nil {
 		return nil, err
 	}
-	contextLogger.Info("Successfully validated inputs for CreateVolume request... ")
+	ctxLogger.Info("Successfully validated inputs for CreateVolume request... ")
 	// Pending error handling
 	// TODO: Check if the volume already exists with same name.
 	// We can do this by scanning all volumes. But requesting the VPC team to get
@@ -56,19 +54,19 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 		},
 	}
 
-	contextLogger.Info("Calling VPC provider for volume creation...")
+	ctxLogger.Info("Calling VPC provider for volume creation...")
 	var volume *models.Volume
 	err = retry(func() error {
-		volume, err = vpcs.Apiclient.VolumeService().CreateVolume(volumeTemplate, contextLogger)
+		volume, err = vpcs.Apiclient.VolumeService().CreateVolume(volumeTemplate, ctxLogger)
 		return err
 	})
 
 	if err != nil {
-		contextLogger.Debug("Failed to create volume from VPC provider", zap.Reflect("BackendError", err))
+		ctxLogger.Debug("Failed to create volume from VPC provider", zap.Reflect("BackendError", err))
 		return nil, userError.GetUserError("FailedToPlaceOrder", err)
 	}
 
-	contextLogger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
+	ctxLogger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
 
 	// Converting volume to lib volume type
 	volumeResponse = FromProviderToLibVolume(volume, vpcs.Logger)

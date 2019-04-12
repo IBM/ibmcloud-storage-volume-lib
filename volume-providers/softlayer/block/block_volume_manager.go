@@ -39,7 +39,7 @@ var ENDURANCE_TIERS = map[string]int{
 //Creates Volume along with snapshot space allocation
 //TESTED: SAAS offering for endurance and Performance
 //TODO: test Enterprise volumeOrdering with endurance and performance
-func (sls *SLBlockSession) CreateVolume(volumeRequest provider.Volume) (*provider.Volume, error) {
+func (sls *SLBlockSession) CreateVolume(volumeRequest provider.Volume, ctxLogger *zap.Logger) (*provider.Volume, error) {
 	sls.Logger.Info("Creating volume as per order request .... ", zap.Reflect("Volume", volumeRequest))
 
 	//Hard coded required values for testing TODO: Remove them and pass the values as arguments for function
