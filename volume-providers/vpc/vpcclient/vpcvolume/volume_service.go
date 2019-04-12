@@ -13,12 +13,13 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 )
 
 // VolumeManager operations
 type VolumeManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
-	CreateVolume(*models.Volume) (*models.Volume, error)
+	CreateVolume(*models.Volume, *zap.Logger) (*models.Volume, error)
 
 	// Delete the volume
 	DeleteVolume(volumeID string) error

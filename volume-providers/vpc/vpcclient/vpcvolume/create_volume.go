@@ -14,11 +14,15 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 	"time"
 )
 
 // CreateVolume POSTs to /volumes
-func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume) (*models.Volume, error) {
+func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error) {
+	ctxLogger.Info("Entry Backend CreateVolume")
+	ctxLogger.Info("Exit Backend CreateVolume")
+
 	defer util.TimeTracker("CreateVolume", time.Now())
 
 	operation := &client.Operation{

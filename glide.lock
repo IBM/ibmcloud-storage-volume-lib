@@ -21,8 +21,6 @@ imports:
   - difflib
 - name: github.com/renier/xmlrpc
   version: ce4a1a486c03a3c6e1816df25b8c559d1879d380
-- name: github.com/rs/xid
-  version: 15d26544def341f036c5f8dca987a4cbe575032c
 - name: github.com/softlayer/softlayer-go
   version: 82a74c5bf7ff93d32be01ebd603a266b0119a4b7
   subpackages:
@@ -108,6 +106,8 @@ testImports:
   - matchers/support/goraph/node
   - matchers/support/goraph/util
   - types
+- name: github.com/satori/go.uuid
+  version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: golang.org/x/net
   version: 0ed95abb35c445290478a5348a7b38bb154135fd
   subpackages:

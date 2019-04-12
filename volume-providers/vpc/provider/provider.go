@@ -22,7 +22,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
-	"github.com/rs/xid"
+	"github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"net/http"
 	"os"
@@ -115,12 +115,12 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		return nil, util.NewError("Error Insufficient Authentication", "No authentication credential provided")
 	}
 
-	// Attempt to build an API client
-	uniqueID := xid.New()
+	// Attempt to build an API client with unique ID
+	requestID := uuid.NewV4().String()
 
 	apiConfig := riaas.Config{
 		BaseURL:    vpcp.config.EndpointURL,
-		ContextID:  uniqueID.String(),
+		ContextID:  requestID,
 		HTTPClient: vpcp.httpClient,
 		APIVersion: vpcp.config.APIVersion,
 	}
