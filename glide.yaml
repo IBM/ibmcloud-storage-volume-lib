@@ -12,6 +12,8 @@ import:
   version: v1.1.0
 - package: github.com/rs/xid
   version: v1.2.1
+- package: github.com/satori/go.uuid
+  version: ~v1.1.0
 - package: github.com/stretchr/testify/assert
   version: v1.3.0
 - package: github.com/softlayer/softlayer-go
