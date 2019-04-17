@@ -62,7 +62,7 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 
 	// VPC provider registration
 	if conf.VPC != nil && conf.VPC.Enabled {
-		logger.Info("Configuring provider for vpc")
+		logger.Info("Configuring VPC Block Provider")
 		prov, err := vpc_provider.NewProvider(conf, logger)
 		if err != nil {
 			logger.Info("VPC block provider error!")

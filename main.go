@@ -25,8 +25,7 @@ import (
 	uid "github.com/satori/go.uuid"
 )
 
-func main() {
-	// Setup new style zap logger
+func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	consoleDebugging := zapcore.Lock(os.Stdout)
 	consoleErrors := zapcore.Lock(os.Stderr)
 	encoderConfig := zap.NewProductionEncoderConfig()
@@ -43,6 +42,32 @@ func main() {
 		})),
 	)
 	logger := zap.New(core, zap.AddCaller())
+	return logger, traceLevel
+}
+
+func init() {
+
+}
+
+func main() {
+	// Setup new style zap logger
+	/*consoleDebugging := zapcore.Lock(os.Stdout)
+	consoleErrors := zapcore.Lock(os.Stderr)
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.TimeKey = "ts"
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	traceLevel := zap.NewAtomicLevel()
+	traceLevel.SetLevel(zap.InfoLevel)
+	core := zapcore.NewTee(
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleDebugging, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return (lvl >= traceLevel.Level()) && (lvl < zapcore.ErrorLevel)
+		})),
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleErrors, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl >= zapcore.ErrorLevel
+		})),
+	)
+	logger := zap.New(core, zap.AddCaller())*/
+	logger, traceLevel := getContextLogger()
 	defer logger.Sync()
 
 	// Load config file
@@ -83,36 +108,29 @@ func main() {
 			fmt.Printf("\n\n")
 			continue
 		}
-
+		ctxLogger, _ := getContextLogger()
+		requestID := uid.NewV4().String()
+		ctxLogger = ctxLogger.With(zap.String("RequestID", requestID))
+		sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
+		if err != nil {
+			ctxLogger.Error("Failed to get session", zap.Reflect("Error", err))
+			continue
+		}
+		defer sess.Close()
+		defer ctxLogger.Sync()
 		if choiceN == 1 {
 			fmt.Println("You selected choice to get volume details")
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				continue
-			}
-			defer sess.Close()
-
 			fmt.Printf("Please enter volume ID: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			volume, errr := sess.GetVolume(volumeID)
 			if errr == nil {
-				logger.Info("SUCCESSFULLY get volume details ================>", zap.Reflect("VolumeDetails", volume))
+				ctxLogger.Info("SUCCESSFULLY get volume details ================>", zap.Reflect("VolumeDetails", volume))
 			} else {
-				logger.Info("FAILED to get volume details ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
+				ctxLogger.Info("FAILED to get volume details ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 2 {
 			fmt.Println("You selected choice to create snapshot")
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			fmt.Printf("Please enter volume ID: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			volume := &provider.Volume{}
@@ -122,45 +140,27 @@ func main() {
 			tags["tag1"] = "snapshot-tag1"
 			snapshot, errr := sess.CreateSnapshot(volume, tags)
 			if errr == nil {
-				logger.Info("Successfully created snapshot on ================>", zap.Reflect("VolumeID", volumeID))
-				logger.Info("Snapshot details: ", zap.Reflect("Snapshot", snapshot))
+				ctxLogger.Info("Successfully created snapshot on ================>", zap.Reflect("VolumeID", volumeID))
+				ctxLogger.Info("Snapshot details: ", zap.Reflect("Snapshot", snapshot))
 			} else {
-				logger.Info("Failed to create snapshot on ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
+				ctxLogger.Info("Failed to create snapshot on ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 3 {
 			fmt.Println("You selected choice to list snapshot from volume")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			fmt.Printf("Please enter volume ID to get the snapshots: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			fmt.Printf("\n")
 			snapshots, errr := sess.ListAllSnapshots(volumeID)
 			if errr == nil {
-				logger.Info("Successfully get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
-				logger.Info("List of snapshots ", zap.Reflect("Snapshots are->", snapshots))
+				ctxLogger.Info("Successfully get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
+				ctxLogger.Info("List of snapshots ", zap.Reflect("Snapshots are->", snapshots))
 			} else {
-				logger.Info("Failed to get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID), zap.Reflect("Error", errr))
+				ctxLogger.Info("Failed to get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 4 {
 			fmt.Println("You selected choice to Create volume")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			volume := &provider.Volume{}
 			volume.VolumeType = "block"
 			if conf.Softlayer.SoftlayerFileEnabled {
@@ -205,44 +205,26 @@ func main() {
 			volume.VolumeNotes = map[string]string{"note": "test"}
 			volumeObj, errr := sess.CreateVolume(*volume)
 			if errr == nil {
-				logger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
+				ctxLogger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
 			} else {
-				logger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
+				ctxLogger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 5 {
 			fmt.Println("You selected choice to get snapshot details")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			fmt.Printf("Please enter Snapshot ID: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			snapdetails, errr := sess.GetSnapshot(volumeID)
 			fmt.Printf("\n\n")
 			if errr == nil {
-				logger.Info("Successfully retrieved the snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
-				logger.Info("Snapshot details ================>", zap.Reflect("SnapshotDetails", snapdetails))
+				ctxLogger.Info("Successfully retrieved the snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
+				ctxLogger.Info("Snapshot details ================>", zap.Reflect("SnapshotDetails", snapdetails))
 			} else {
-				logger.Info("Failed to get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID), zap.Reflect("Error", errr))
+				ctxLogger.Info("Failed to get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 6 {
 			fmt.Println("You selected choice to order snapshot")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			volume := &provider.Volume{}
 			fmt.Printf("Please enter volume ID to create the snapshot space: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
@@ -253,22 +235,13 @@ func main() {
 			volume.SnapshotSpace = &size
 			er11 := sess.OrderSnapshot(*volume)
 			if er11 == nil {
-				logger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
+				ctxLogger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
-				logger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
+				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 7 {
 			fmt.Println("You selected choice to Create volume from snapshot")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			var snapshotVol provider.Snapshot
 			var tags map[string]string
 			fmt.Printf("Please enter original volume ID to create the volume from snapshot: ")
@@ -279,98 +252,53 @@ func main() {
 			snapshotVol.Volume.VolumeID = volumeID
 			vol, errr := sess.CreateVolumeFromSnapshot(snapshotVol, tags)
 			if errr == nil {
-				logger.Info("Successfully Created volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID))
-				logger.Info("New volume from snapshot================>", zap.Reflect("New Volume->", vol))
+				ctxLogger.Info("Successfully Created volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID))
+				ctxLogger.Info("New volume from snapshot================>", zap.Reflect("New Volume->", vol))
 			} else {
-				logger.Info("Failed to create volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID), zap.Reflect("Error", errr))
+				ctxLogger.Info("Failed to create volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 8 {
 			fmt.Println("You selected choice to delete volume")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			volume := &provider.Volume{}
 			fmt.Printf("Please enter volume ID for delete:")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			volume.VolumeID = volumeID
 			er11 = sess.DeleteVolume(volume)
 			if er11 == nil {
-				logger.Info("SUCCESSFULLY deleted volume ================>", zap.Reflect("Volume ID", volumeID))
+				ctxLogger.Info("SUCCESSFULLY deleted volume ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
-				logger.Info("FAILED volume deletion================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
+				ctxLogger.Info("FAILED volume deletion================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 9 {
 			fmt.Println("You selected choice to delete snapshot")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			snapshot := &provider.Snapshot{}
 			fmt.Printf("Please enter snapshot ID for delete:")
 			_, er11 = fmt.Scanf("%s", &snapshotID)
 			snapshot.SnapshotID = snapshotID
 			er11 = sess.DeleteSnapshot(snapshot)
 			if er11 == nil {
-				logger.Info("Successfully deleted snapshot ================>", zap.Reflect("Snapshot ID", snapshotID))
+				ctxLogger.Info("Successfully deleted snapshot ================>", zap.Reflect("Snapshot ID", snapshotID))
 			} else {
-				logger.Info("failed snapshot deletion================>", zap.Reflect("Snapshot ID", snapshotID), zap.Reflect("Error", er11))
+				ctxLogger.Info("failed snapshot deletion================>", zap.Reflect("Snapshot ID", snapshotID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 10 {
 			fmt.Println("You selected choice to list all snapshot")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			list, _ := sess.ListSnapshots()
-			logger.Info("All snapshots ================>", zap.Reflect("Snapshots", list))
+			ctxLogger.Info("All snapshots ================>", zap.Reflect("Snapshots", list))
 			fmt.Printf("\n\n")
 		} else if choiceN == 11 {
 			fmt.Println("Get volume ID by using order ID")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			fmt.Printf("Please enter volume order ID to get volume ID:")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			_, error1 := sess.ListAllSnapshots(volumeID)
 			if error1 != nil {
-				logger.Info("Failed to get volumeID", zap.Reflect("Error", error1))
+				ctxLogger.Info("Failed to get volumeID", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 12 {
 			fmt.Println("Authorize volume")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			fmt.Printf("Please enter volume ID:")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			var subnetIDs string
@@ -393,19 +321,10 @@ func main() {
 			}
 			error1 := sess.AuthorizeVolume(authRequest)
 			if error1 != nil {
-				logger.Info("Failed to authorize", zap.Reflect("Error", error1))
+				ctxLogger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 13 {
 			fmt.Println("You selected choice to Create VPC volume")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			volume := &provider.Volume{}
 			volumeName := ""
 			volume.VolumeType = "vpc-block"
@@ -446,32 +365,23 @@ func main() {
 			volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
 			volumeObj, errr := sess.CreateVolume(*volume)
 			if errr == nil {
-				logger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
+				ctxLogger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 			} else {
-				logger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
+				ctxLogger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
 
 		} else if choiceN == 14 {
 			fmt.Println("You selected choice to order VPC snapshot")
-
-			logger = logger.With(zap.String("RequestID", uid.NewV4().String()))
-			sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, logger)
-			if err != nil {
-				logger.Error("Failed to get session", zap.Reflect("Error", err))
-				return
-			}
-			defer sess.Close()
-
 			volume := &provider.Volume{}
 			fmt.Printf("Please enter volume ID to create the snapshot space: ")
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			volume.VolumeID = volumeID
 			er11 := sess.OrderSnapshot(*volume)
 			if er11 == nil {
-				logger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
+				ctxLogger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
-				logger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
+				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
 		} else {
