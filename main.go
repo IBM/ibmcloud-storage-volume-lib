@@ -20,6 +20,7 @@ import (
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
 	uid "github.com/satori/go.uuid"
@@ -45,28 +46,20 @@ func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	return logger, traceLevel
 }
 
-func init() {
-
+func updateRequestID(err error, requestID string) error {
+	if err == nil {
+		return err
+	}
+	usrError, ok := err.(userError.Message)
+	if !ok {
+		return err
+	}
+	usrError.RequestID = requestID
+	return usrError
 }
 
 func main() {
 	// Setup new style zap logger
-	/*consoleDebugging := zapcore.Lock(os.Stdout)
-	consoleErrors := zapcore.Lock(os.Stderr)
-	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.TimeKey = "ts"
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	traceLevel := zap.NewAtomicLevel()
-	traceLevel.SetLevel(zap.InfoLevel)
-	core := zapcore.NewTee(
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleDebugging, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return (lvl >= traceLevel.Level()) && (lvl < zapcore.ErrorLevel)
-		})),
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleErrors, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return lvl >= zapcore.ErrorLevel
-		})),
-	)
-	logger := zap.New(core, zap.AddCaller())*/
 	logger, traceLevel := getContextLogger()
 	defer logger.Sync()
 
@@ -126,6 +119,7 @@ func main() {
 			if errr == nil {
 				ctxLogger.Info("SUCCESSFULLY get volume details ================>", zap.Reflect("VolumeDetails", volume))
 			} else {
+				errr = updateRequestID(errr, requestID)
 				ctxLogger.Info("FAILED to get volume details ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -143,6 +137,7 @@ func main() {
 				ctxLogger.Info("Successfully created snapshot on ================>", zap.Reflect("VolumeID", volumeID))
 				ctxLogger.Info("Snapshot details: ", zap.Reflect("Snapshot", snapshot))
 			} else {
+				errr = updateRequestID(errr, requestID)
 				ctxLogger.Info("Failed to create snapshot on ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -156,6 +151,7 @@ func main() {
 				ctxLogger.Info("Successfully get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
 				ctxLogger.Info("List of snapshots ", zap.Reflect("Snapshots are->", snapshots))
 			} else {
+				errr = updateRequestID(errr, requestID)
 				ctxLogger.Info("Failed to get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -207,6 +203,7 @@ func main() {
 			if errr == nil {
 				ctxLogger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
 			} else {
+				errr = updateRequestID(errr, requestID)
 				ctxLogger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -237,6 +234,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
+				er11 = updateRequestID(er11, requestID)
 				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
@@ -255,6 +253,7 @@ func main() {
 				ctxLogger.Info("Successfully Created volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID))
 				ctxLogger.Info("New volume from snapshot================>", zap.Reflect("New Volume->", vol))
 			} else {
+				errr = updateRequestID(errr, requestID)
 				ctxLogger.Info("Failed to create volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -268,6 +267,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("SUCCESSFULLY deleted volume ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
+				er11 = updateRequestID(er11, requestID)
 				ctxLogger.Info("FAILED volume deletion================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
@@ -281,13 +281,19 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully deleted snapshot ================>", zap.Reflect("Snapshot ID", snapshotID))
 			} else {
+				er11 = updateRequestID(er11, requestID)
 				ctxLogger.Info("failed snapshot deletion================>", zap.Reflect("Snapshot ID", snapshotID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 10 {
 			fmt.Println("You selected choice to list all snapshot")
-			list, _ := sess.ListSnapshots()
-			ctxLogger.Info("All snapshots ================>", zap.Reflect("Snapshots", list))
+			list, errr := sess.ListSnapshots()
+			if errr == nil {
+				ctxLogger.Info("SUCCESSFULLY got all snapshots ================>", zap.Reflect("Snapshots", list))
+			} else {
+				errr = updateRequestID(errr, requestID)
+				ctxLogger.Info("FAILED All snapshots ================>", zap.Reflect("Error", errr))
+			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 11 {
 			fmt.Println("Get volume ID by using order ID")
@@ -295,6 +301,7 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			_, error1 := sess.ListAllSnapshots(volumeID)
 			if error1 != nil {
+				error1 = updateRequestID(error1, requestID)
 				ctxLogger.Info("Failed to get volumeID", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 12 {
@@ -321,6 +328,7 @@ func main() {
 			}
 			error1 := sess.AuthorizeVolume(authRequest)
 			if error1 != nil {
+				error1 = updateRequestID(error1, requestID)
 				ctxLogger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 13 {
@@ -367,6 +375,7 @@ func main() {
 			if errr == nil {
 				ctxLogger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 			} else {
+				errr = updateRequestID(errr, requestID)
 				ctxLogger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -381,6 +390,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
+				er11 = updateRequestID(er11, requestID)
 				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")

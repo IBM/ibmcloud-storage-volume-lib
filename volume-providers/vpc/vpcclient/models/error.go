@@ -56,7 +56,7 @@ func (ei ErrorItem) Error() string {
 // Error ...
 func (e Error) Error() string {
 	if len(e.Errors) > 0 {
-		return e.Errors[0].Error()
+		return "Trace Code:" + e.Trace + ", " + e.Errors[0].Error()
 	}
 
 	return "Unknown error"

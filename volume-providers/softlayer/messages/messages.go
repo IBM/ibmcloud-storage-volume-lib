@@ -11,28 +11,10 @@ package messages
 
 import (
 	"fmt"
+	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
 
-// Wrapper Message/Error Class
-type Message struct {
-	Code        string
-	Description string
-	Type        string
-	RC          int
-	Action      string
-}
-
-//Implement the Error() interface method
-func (msg Message) Error() string {
-
-	return msg.Info()
-}
-
-func (msg Message) Info() string {
-
-	return fmt.Sprintf("{Code:%s, Description:%s, Type:%s, RC:%d}", msg.Code, msg.Description, msg.Type, msg.RC)
-}
-
+// GetUserErr ...
 func GetUserErr(code string, err error, args ...interface{}) error {
 	//Incase of no error message, dont construct the Error Object
 	if err == nil {
@@ -43,7 +25,8 @@ func GetUserErr(code string, err error, args ...interface{}) error {
 	return userMsg
 }
 
-func GetUserMsg(code string, args ...interface{}) Message {
+// GetUserMsg ...
+func GetUserMsg(code string, args ...interface{}) util.Message {
 	userMsg := messages_en[code]
 	if len(args) > 0 {
 		userMsg.Description = fmt.Sprintf(userMsg.Description, args...)
@@ -51,6 +34,7 @@ func GetUserMsg(code string, args ...interface{}) Message {
 	return userMsg
 }
 
+// GetUserError ...
 func GetUserError(code string, err error, args ...interface{}) error {
 	userMsg := GetUserMsg(code, args...)
 

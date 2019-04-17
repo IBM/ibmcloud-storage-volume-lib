@@ -86,26 +86,28 @@ func isEmptyStringValue(value *string) bool {
 }
 
 // OpenProviderSession ...
-func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, logger *zap.Logger) (session provider.Session, fatal bool, err1 error) {
+func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, logger *zap.Logger) (session provider.Session, fatal bool, errReturn error) {
 	prov, err := providers.Get(providerID)
 	if err != nil {
 		logger.Error("Not able to get the said provider", local.ZapError(err))
 		fatal = true
+		errReturn = err
 		return
 	}
 
 	ccf, err := prov.ContextCredentialsFactory(&conf.Softlayer.SoftlayerDataCenter)
 	if err != nil {
 		fatal = true // TODO Always fatal for unknown datacenter?
+		errReturn = err
 		return
 	}
 
-	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, logger)
-	if err == nil {
-		session, err1 = prov.OpenSession(nil, contextCredentials, logger)
+	contextCredentials, errReturn := GenerateContextCredentials(conf, providerID, ccf, logger)
+	if errReturn == nil {
+		session, errReturn = prov.OpenSession(nil, contextCredentials, logger)
 	}
 
-	if err != nil {
+	if errReturn != nil {
 		fatal = false
 		logger.Error("Failed to open provider session", local.ZapError(err), zap.Bool("Fatal", fatal))
 	}
