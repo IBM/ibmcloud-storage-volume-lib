@@ -20,8 +20,8 @@ import (
 
 // CreateVolume POSTs to /volumes
 func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error) {
-	ctxLogger.Info("Entry Backend CreateVolume")
-	defer ctxLogger.Info("Exit Backend CreateVolume")
+	ctxLogger.Debug("Entry Backend CreateVolume")
+	defer ctxLogger.Debug("Exit Backend CreateVolume")
 
 	defer util.TimeTracker("CreateVolume", time.Now())
 
@@ -35,7 +35,7 @@ func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume, ctxLogger *
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeTemplate))
+	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeTemplate), zap.Reflect("Operation", operation))
 
 	_, err := request.JSONBody(volumeTemplate).JSONSuccess(&volume).JSONError(&apiErr).Invoke()
 	if err != nil {

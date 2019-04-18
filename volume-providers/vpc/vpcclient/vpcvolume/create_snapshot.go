@@ -20,8 +20,8 @@ import (
 
 // CreateSnapshot POSTs to /volumes
 func (ss *SnapshotService) CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot, ctxLogger *zap.Logger) (*models.Snapshot, error) {
-	ctxLogger.Info("Entry Backend CreateSpanShot")
-	defer ctxLogger.Info("Exit Backend CreateSnapshot")
+	ctxLogger.Debug("Entry Backend CreateSpanShot")
+	defer ctxLogger.Debug("Exit Backend CreateSnapshot")
 
 	defer util.TimeTracker("CreateSnapshot", time.Now())
 
@@ -35,7 +35,7 @@ func (ss *SnapshotService) CreateSnapshot(volumeID string, snapshotTemplate *mod
 	var apiErr models.Error
 
 	request := ss.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", snapshotTemplate), zap.Reflect("Operation", operation))
 
 	_, err := request.PathParameter(volumeIDParam, volumeID).JSONBody(snapshotTemplate).JSONSuccess(&snapshot).JSONError(&apiErr).Invoke()
 	if err != nil {

@@ -20,8 +20,8 @@ import (
 
 // DeleteVolumeTag deletes tag of a volume
 func (vs *VolumeService) DeleteVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend DeleteVolumeTag")
-	defer ctxLogger.Info("Exit Backend DeleteVolumeTag")
+	ctxLogger.Debug("Entry Backend DeleteVolumeTag")
+	defer ctxLogger.Debug("Exit Backend DeleteVolumeTag")
 
 	defer util.TimeTracker("DeleteVolumeTag", time.Now())
 
@@ -34,7 +34,7 @@ func (vs *VolumeService) DeleteVolumeTag(volumeID string, tagName string, ctxLog
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()

@@ -20,8 +20,8 @@ import (
 
 // SetVolumeTag sets tag for a volume
 func (vs *VolumeService) SetVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend SetVolumeTag")
-	defer ctxLogger.Info("Exit Backend SetVolumeTag")
+	ctxLogger.Debug("Entry Backend SetVolumeTag")
+	defer ctxLogger.Debug("Exit Backend SetVolumeTag")
 
 	defer util.TimeTracker("SetVolumeTag", time.Now())
 
@@ -34,7 +34,7 @@ func (vs *VolumeService) SetVolumeTag(volumeID string, tagName string, ctxLogger
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()

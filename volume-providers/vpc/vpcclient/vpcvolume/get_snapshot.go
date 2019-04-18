@@ -20,8 +20,8 @@ import (
 
 // GetSnapshot GETs from /volumes
 func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*models.Snapshot, error) {
-	ctxLogger.Info("Entry Backend GetSnapshot")
-	defer ctxLogger.Info("Exit Backend GetSnapshot")
+	ctxLogger.Debug("Entry Backend GetSnapshot")
+	defer ctxLogger.Debug("Exit Backend GetSnapshot")
 
 	defer util.TimeTracker("GetShanpshot", time.Now())
 
@@ -35,7 +35,7 @@ func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string, ctxLo
 	var apiErr models.Error
 
 	request := ss.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID)
 

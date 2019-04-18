@@ -21,8 +21,8 @@ import (
 
 // ListVolumes GETs /volumes
 func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error) {
-	ctxLogger.Info("Entry Backend ListVolumes")
-	defer ctxLogger.Info("Exit Backend ListVolumes")
+	ctxLogger.Debug("Entry Backend ListVolumes")
+	defer ctxLogger.Debug("Exit Backend ListVolumes")
 
 	defer util.TimeTracker("ListVolumes", time.Now())
 
@@ -36,7 +36,7 @@ func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilter
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.JSONSuccess(&volumes).JSONError(&apiErr)
 

@@ -20,8 +20,8 @@ import (
 
 // DeleteSnapshotTag deletes tag of a snapshot
 func (ss *SnapshotService) DeleteSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend DeleteSnapshotTag")
-	defer ctxLogger.Info("Exit Backend DeleteSnapshotTag")
+	ctxLogger.Debug("Entry Backend DeleteSnapshotTag")
+	defer ctxLogger.Debug("Exit Backend DeleteSnapshotTag")
 
 	defer util.TimeTracker("DeleteSnapshotTag", time.Now())
 
@@ -34,7 +34,7 @@ func (ss *SnapshotService) DeleteSnapshotTag(volumeID string, snapshotID string,
 	var apiErr models.Error
 
 	request := ss.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()

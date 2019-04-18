@@ -20,8 +20,8 @@ import (
 
 // CheckVolumeTag checks if the given tag exists on a volume
 func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend CheckVolumeTag")
-	defer ctxLogger.Info("Exit Backend CheckVolumeTag")
+	ctxLogger.Debug("Entry Backend CheckVolumeTag")
+	defer ctxLogger.Debug("Exit Backend CheckVolumeTag")
 
 	defer util.TimeTracker("CheckVolumeTag", time.Now())
 
@@ -34,7 +34,7 @@ func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string, ctxLogg
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()

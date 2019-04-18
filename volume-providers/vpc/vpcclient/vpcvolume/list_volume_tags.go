@@ -20,8 +20,8 @@ import (
 
 // ListVolumeTags GETs /volumes/tags
 func (vs *VolumeService) ListVolumeTags(volumeID string, ctxLogger *zap.Logger) (*[]string, error) {
-	ctxLogger.Info("Entry Backend ListVolumeTags")
-	defer ctxLogger.Info("Exit Backend ListVolumeTags")
+	ctxLogger.Debug("Entry Backend ListVolumeTags")
+	defer ctxLogger.Debug("Exit Backend ListVolumeTags")
 
 	defer util.TimeTracker("ListVolumeTags", time.Now())
 
@@ -35,7 +35,7 @@ func (vs *VolumeService) ListVolumeTags(volumeID string, ctxLogger *zap.Logger) 
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).JSONSuccess(&tags).JSONError(&apiErr)
 	_, err := req.Invoke()

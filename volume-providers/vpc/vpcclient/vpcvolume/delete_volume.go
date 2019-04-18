@@ -20,8 +20,8 @@ import (
 
 // DeleteVolume POSTs to /volumes
 func (vs *VolumeService) DeleteVolume(volumeID string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend DeleteVolume")
-	defer ctxLogger.Info("Exit Backend DeleteVolume")
+	ctxLogger.Debug("Entry Backend DeleteVolume")
+	defer ctxLogger.Debug("Exit Backend DeleteVolume")
 
 	defer util.TimeTracker("DeleteVolume", time.Now())
 
@@ -34,7 +34,7 @@ func (vs *VolumeService) DeleteVolume(volumeID string, ctxLogger *zap.Logger) er
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	_, err := request.PathParameter(volumeIDParam, volumeID).JSONError(&apiErr).Invoke()
 	if err != nil {

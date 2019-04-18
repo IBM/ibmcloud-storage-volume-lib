@@ -20,8 +20,8 @@ import (
 
 // SetSnapshotTag sets tag for a snapshot
 func (ss *SnapshotService) SetSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend SetVolumeTag")
-	defer ctxLogger.Info("Exit Backend SetVolumeTag")
+	ctxLogger.Debug("Entry Backend SetVolumeTag")
+	defer ctxLogger.Debug("Exit Backend SetVolumeTag")
 
 	defer util.TimeTracker("SetSnapshotTag", time.Now())
 
@@ -34,7 +34,7 @@ func (ss *SnapshotService) SetSnapshotTag(volumeID string, snapshotID string, ta
 	var apiErr models.Error
 
 	request := ss.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()

@@ -20,8 +20,8 @@ import (
 
 // GetVolume POSTs to /volumes
 func (vs *VolumeService) GetVolume(volumeID string, ctxLogger *zap.Logger) (*models.Volume, error) {
-	ctxLogger.Info("Entry Backend GetVolume")
-	defer ctxLogger.Info("Exit Backend GetVolume")
+	ctxLogger.Debug("Entry Backend GetVolume")
+	defer ctxLogger.Debug("Exit Backend GetVolume")
 
 	defer util.TimeTracker("GetVolume", time.Now())
 
@@ -35,7 +35,7 @@ func (vs *VolumeService) GetVolume(volumeID string, ctxLogger *zap.Logger) (*mod
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID)
 	_, err := req.JSONSuccess(&volume).JSONError(&apiErr).Invoke()

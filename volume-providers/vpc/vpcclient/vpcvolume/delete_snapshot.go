@@ -20,8 +20,8 @@ import (
 
 // DeleteSnapshot DELETEs to /volumes
 func (ss *SnapshotService) DeleteSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend DeleteSpanshot")
-	defer ctxLogger.Info("Exit Backend DeleteSnapshot")
+	ctxLogger.Debug("Entry Backend DeleteSpanshot")
+	defer ctxLogger.Debug("Exit Backend DeleteSnapshot")
 
 	defer util.TimeTracker("DeleteSnapshot", time.Now())
 
@@ -34,7 +34,7 @@ func (ss *SnapshotService) DeleteSnapshot(volumeID string, snapshotID string, ct
 	var apiErr models.Error
 
 	request := ss.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	_, err := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONError(&apiErr).Invoke()
 	if err != nil {

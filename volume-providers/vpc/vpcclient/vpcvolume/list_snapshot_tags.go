@@ -20,8 +20,8 @@ import (
 
 // ListSnapshotTags GETs /volumes/snapshots/tags
 func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*[]string, error) {
-	ctxLogger.Info("Entry Backend ListSnapshotTags")
-	defer ctxLogger.Info("Exit Backend ListSnapshotTags")
+	ctxLogger.Debug("Entry Backend ListSnapshotTags")
+	defer ctxLogger.Debug("Exit Backend ListSnapshotTags")
 
 	defer util.TimeTracker("ListSnapshotTags", time.Now())
 
@@ -35,7 +35,7 @@ func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string, 
 	var apiErr models.Error
 
 	request := ss.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
 
 	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONSuccess(&tags).JSONError(&apiErr)
 	_, err := req.Invoke()

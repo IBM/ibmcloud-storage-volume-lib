@@ -20,8 +20,8 @@ import (
 
 // CheckSnapshotTag checks if the given tag exists on a snapshot
 func (ss *SnapshotService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error {
-	ctxLogger.Info("Entry Backend CreateSnapshotTag")
-	defer ctxLogger.Info("Exit Backend CreateSnapshotTag")
+	ctxLogger.Debug("Entry Backend CreateSnapshotTag")
+	defer ctxLogger.Debug("Exit Backend CreateSnapshotTag")
 
 	defer util.TimeTracker("CheckSnapshotTag", time.Now())
 
