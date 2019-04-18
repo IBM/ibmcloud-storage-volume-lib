@@ -1,5 +1,5 @@
-hash: 5190069e0f795b1e43cc6fa69751ee582b8be45f9207a94f56aacc35b51be2a1
-updated: 2019-04-02T14:12:33.552325+05:30
+hash: 305755bd30f5504440b1c20c36f5e96cf776e52a982c930e0c01ffa803b7bc6d
+updated: 2019-04-16T16:40:01.098574+05:30
 imports:
 - name: github.com/BurntSushi/toml
   version: bbd5bb678321a0d6e58f1099321dfa73391c1b6f
@@ -23,6 +23,8 @@ imports:
   version: ce4a1a486c03a3c6e1816df25b8c559d1879d380
 - name: github.com/rs/xid
   version: 15d26544def341f036c5f8dca987a4cbe575032c
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/softlayer/softlayer-go
   version: 82a74c5bf7ff93d32be01ebd603a266b0119a4b7
   subpackages:
