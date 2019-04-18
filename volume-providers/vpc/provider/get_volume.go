@@ -33,7 +33,7 @@ func (vpcs *VPCSession) GetVolume(id string) (respVolume *provider.Volume, err e
 
 	var volume *models.Volume
 	err = retry(func() error {
-		volume, err = vpcs.Apiclient.VolumeService().GetVolume(id)
+		volume, err = vpcs.Apiclient.VolumeService().GetVolume(id, vpcs.Logger)
 		return err
 	})
 

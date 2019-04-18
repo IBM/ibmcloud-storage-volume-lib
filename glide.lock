@@ -21,8 +21,6 @@ imports:
   - difflib
 - name: github.com/renier/xmlrpc
   version: ce4a1a486c03a3c6e1816df25b8c559d1879d380
-- name: github.com/rs/xid
-  version: 15d26544def341f036c5f8dca987a4cbe575032c
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/softlayer/softlayer-go

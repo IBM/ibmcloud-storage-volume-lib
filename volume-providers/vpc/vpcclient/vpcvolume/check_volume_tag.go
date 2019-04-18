@@ -14,11 +14,15 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 	"time"
 )
 
 // CheckVolumeTag checks if the given tag exists on a volume
-func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string) error {
+func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error {
+	ctxLogger.Info("Entry Backend CheckVolumeTag")
+	defer ctxLogger.Info("Exit Backend CheckVolumeTag")
+
 	defer util.TimeTracker("CheckVolumeTag", time.Now())
 
 	operation := &client.Operation{
@@ -29,7 +33,10 @@ func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string) error {
 
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&apiErr)
+	request := vs.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+
+	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return err

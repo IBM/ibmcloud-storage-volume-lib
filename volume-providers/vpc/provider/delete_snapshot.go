@@ -28,7 +28,7 @@ func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 	}
 
 	err = retry(func() error {
-		err = vpcs.Apiclient.SnapshotService().DeleteSnapshot("", snapshot.SnapshotID)
+		err = vpcs.Apiclient.SnapshotService().DeleteSnapshot("", snapshot.SnapshotID, vpcs.Logger)
 		return err
 	})
 

@@ -14,12 +14,16 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 	"strconv"
 	"time"
 )
 
 // ListVolumes GETs /volumes
-func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters) (*models.VolumeList, error) {
+func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error) {
+	ctxLogger.Info("Entry Backend ListVolumes")
+	defer ctxLogger.Info("Exit Backend ListVolumes")
+
 	defer util.TimeTracker("ListVolumes", time.Now())
 
 	operation := &client.Operation{
@@ -31,7 +35,10 @@ func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilter
 	var volumes models.VolumeList
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).JSONSuccess(&volumes).JSONError(&apiErr)
+	request := vs.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+
+	req := request.JSONSuccess(&volumes).JSONError(&apiErr)
 
 	if limit > 0 {
 		req.AddQueryValue("limit", strconv.Itoa(limit))

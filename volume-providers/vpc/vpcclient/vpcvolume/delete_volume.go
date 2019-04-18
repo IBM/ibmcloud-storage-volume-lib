@@ -14,11 +14,15 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 	"time"
 )
 
 // DeleteVolume POSTs to /volumes
-func (vs *VolumeService) DeleteVolume(volumeID string) error {
+func (vs *VolumeService) DeleteVolume(volumeID string, ctxLogger *zap.Logger) error {
+	ctxLogger.Info("Entry Backend DeleteVolume")
+	defer ctxLogger.Info("Exit Backend DeleteVolume")
+
 	defer util.TimeTracker("DeleteVolume", time.Now())
 
 	operation := &client.Operation{
@@ -29,7 +33,10 @@ func (vs *VolumeService) DeleteVolume(volumeID string) error {
 
 	var apiErr models.Error
 
-	_, err := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONError(&apiErr).Invoke()
+	request := vs.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+
+	_, err := request.PathParameter(volumeIDParam, volumeID).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return err
 	}

@@ -14,11 +14,15 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 	"time"
 )
 
 // ListVolumeTags GETs /volumes/tags
-func (vs *VolumeService) ListVolumeTags(volumeID string) (*[]string, error) {
+func (vs *VolumeService) ListVolumeTags(volumeID string, ctxLogger *zap.Logger) (*[]string, error) {
+	ctxLogger.Info("Entry Backend ListVolumeTags")
+	defer ctxLogger.Info("Exit Backend ListVolumeTags")
+
 	defer util.TimeTracker("ListVolumeTags", time.Now())
 
 	operation := &client.Operation{
@@ -30,7 +34,10 @@ func (vs *VolumeService) ListVolumeTags(volumeID string) (*[]string, error) {
 	var tags []string
 	var apiErr models.Error
 
-	req := vs.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).JSONSuccess(&tags).JSONError(&apiErr)
+	request := vs.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+
+	req := request.PathParameter(volumeIDParam, volumeID).JSONSuccess(&tags).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return nil, err
