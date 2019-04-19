@@ -22,7 +22,6 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
-	"github.com/rs/xid"
 	"go.uber.org/zap"
 	"net/http"
 	"os"
@@ -103,11 +102,11 @@ func (vpcp *VPCBlockProvider) ContextCredentialsFactory(zone *string) (local.Con
 }
 
 // OpenSession opens a session on the provider
-func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, logger *zap.Logger) (provider.Session, error) {
-	logger.Info("Entering OpenSession")
+func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, ctxLogger *zap.Logger) (provider.Session, error) {
+	ctxLogger.Info("Entering OpenSession")
 
 	defer func() {
-		logger.Debug("Exiting OpenSession")
+		ctxLogger.Debug("Exiting OpenSession")
 	}()
 
 	// validate that we have what we need - i.e. valid credentials
@@ -115,12 +114,8 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		return nil, util.NewError("Error Insufficient Authentication", "No authentication credential provided")
 	}
 
-	// Attempt to build an API client
-	uniqueID := xid.New()
-
 	apiConfig := riaas.Config{
 		BaseURL:    vpcp.config.EndpointURL,
-		ContextID:  uniqueID.String(),
 		HTTPClient: vpcp.httpClient,
 		APIVersion: vpcp.config.APIVersion,
 	}
@@ -132,7 +127,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	if vpcp.ClientProvider == nil {
 		vpcp.ClientProvider = riaas.DefaultRegionalAPIClientProvider{}
 	}
-	logger.Debug("", zap.Reflect("apiConfig.BaseURL", apiConfig.BaseURL))
+	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", apiConfig.BaseURL))
 
 	client, err := vpcp.ClientProvider.New(apiConfig)
 	if err != nil {
@@ -140,11 +135,11 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	}
 
 	// Create a token for all other API calls
-	token, err := getAccessToken(contextCredentials, logger)
+	token, err := getAccessToken(contextCredentials, ctxLogger)
 	if err != nil {
 		return nil, err
 	}
-	logger.Debug("", zap.Reflect("Token", token.Token))
+	ctxLogger.Debug("", zap.Reflect("Token", token.Token))
 
 	err = client.Login(token.Token)
 	if err != nil {
@@ -153,11 +148,11 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 
 	// Update retry logic default values
 	if vpcp.config.MaxRetryAttempt > 0 {
-		logger.Debug("", zap.Reflect("MaxRetryAttempt", vpcp.config.MaxRetryAttempt))
+		ctxLogger.Debug("", zap.Reflect("MaxRetryAttempt", vpcp.config.MaxRetryAttempt))
 		maxRetryAttempt = vpcp.config.MaxRetryAttempt
 	}
 	if vpcp.config.MaxRetryGap > 0 {
-		logger.Debug("", zap.Reflect("MaxRetryGap", vpcp.config.MaxRetryGap))
+		ctxLogger.Debug("", zap.Reflect("MaxRetryGap", vpcp.config.MaxRetryGap))
 		maxRetryGap = vpcp.config.MaxRetryGap
 	}
 
@@ -168,7 +163,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		VolumeType:         "vpc-block",
 		Provider:           VPC,
 		Apiclient:          client,
-		Logger:             logger,
+		Logger:             ctxLogger,
 	}
 
 	return vpcSession, nil

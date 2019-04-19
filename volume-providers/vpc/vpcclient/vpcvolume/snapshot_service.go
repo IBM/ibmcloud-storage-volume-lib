@@ -13,33 +13,34 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 )
 
 // SnapshotManager operations
 type SnapshotManager interface {
 	// Create the snapshot on the volume
-	CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot) (*models.Snapshot, error)
+	CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot, ctxLogger *zap.Logger) (*models.Snapshot, error)
 
 	// Delete the snapshot
-	DeleteSnapshot(volumeID string, snapshotID string) error
+	DeleteSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) error
 
 	// Get the snapshot
-	GetSnapshot(volumeID string, snapshotID string) (*models.Snapshot, error)
+	GetSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*models.Snapshot, error)
 
 	// List all the  snapshots for a given volume
-	ListSnapshots(volumeID string) (*models.SnapshotList, error)
+	ListSnapshots(volumeID string, ctxLogger *zap.Logger) (*models.SnapshotList, error)
 
 	// Set tag for a snapshot
-	SetSnapshotTag(volumeID string, snapshotID string, tagName string) error
+	SetSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error
 
 	// Delete tag of a snapshot
-	DeleteSnapshotTag(volumeID string, snapshotID string, tagName string) error
+	DeleteSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error
 
 	// List all tags of a snapshot
-	ListSnapshotTags(volumeID string, snapshotID string) (*[]string, error)
+	ListSnapshotTags(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*[]string, error)
 
 	// Check if the given tag exists on a snapshot
-	CheckSnapshotTag(volumeID string, snapshotID string, tagName string) error
+	CheckSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error
 }
 
 // SnapshotService ...
