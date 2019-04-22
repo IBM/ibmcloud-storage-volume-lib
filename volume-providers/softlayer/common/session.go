@@ -370,3 +370,19 @@ func (sls *SLSession) authorizeVolumeFromHostIPs(volumeID int, hostIPList []stri
 	sls.Logger.Info("Exit authorizeVolumeFromHostIPs ", zap.Reflect("result", result), zap.Error(err))
 	return err
 }
+
+// Attach ...
+func (sls *SLSession) Attach(attachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
+	volResponse := provider.VolumeResponse{
+		Status: provider.NOTSUPPORTED,
+	}
+	return volResponse, nil
+}
+
+//Detach detaches the volume/ fileset from the pod
+func (sls *SLSession) Detach(detachRequest provider.VolumeDetachRequest) (provider.VolumeResponse, error) {
+	volResponse := provider.VolumeResponse{
+		Status: provider.NOTSUPPORTED,
+	}
+	return volResponse, nil
+}

@@ -21,20 +21,20 @@ const (
 	NOTSUPPORTED = "Not supported"
 )
 
-// Plugin ...
-type Plugin interface {
+// VolumeMountManager ...
+type VolumeMountManager interface {
 
 	//Init method is to initialize the volume, it is a no op right now
-	Init() VolumeResponse
+	//Init() VolumeResponse
 
 	//Attach method attaches a volume/ fileset to a pod
-	Attach(attachRequest VolumeAttachRequest) VolumeResponse
+	Attach(attachRequest VolumeAttachRequest) (VolumeResponse, error)
 
 	//Detach detaches the volume/ fileset from the pod
-	Detach(detachRequest VolumeDetachRequest) VolumeResponse
+	Detach(detachRequest VolumeDetachRequest) (VolumeResponse, error)
 
 	//Mount method allows to mount the volume/fileset to a given location for a pod
-	Mount(mountRequest VolumeMountRequest) VolumeResponse
+	/*Mount(mountRequest VolumeMountRequest) VolumeResponse
 
 	//Unmount methods unmounts the volume/ fileset from the pod
 	Unmount(unmountRequest VolumeUnmountRequest) VolumeResponse
@@ -55,7 +55,7 @@ type Plugin interface {
 	MountDevice(deviceMountPath string, devicePath string, opts map[string]string) VolumeResponse
 
 	//Unmounts the global mount for the device. This is called once all bind mounts have been unmounted
-	UnmountDevice(deviceMountPath string) VolumeResponse
+	UnmountDevice(deviceMountPath string) VolumeResponse */
 }
 
 // VolumeResponse ...
@@ -100,4 +100,6 @@ type VolumeDetachRequest struct {
 type VolumeAttachRequest struct {
 	Opts     map[string]string `json:"opts"`
 	HostName string            `json:"hostName"`
+	// Only for VPC provider
+	VPCVolumeAttachment *VolumeAttachment `json:"vpcVolumeAttachment"`
 }

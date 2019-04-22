@@ -13,6 +13,7 @@ package riaas
 import (
 	"context"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/instances"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 )
 
@@ -23,6 +24,7 @@ type RegionalAPI interface {
 	Login(token string) error
 
 	VolumeService() vpcvolume.VolumeManager
+	VolumeMountService() instances.VolumeMountManager
 	SnapshotService() vpcvolume.SnapshotManager
 }
 
@@ -62,6 +64,11 @@ func (s *Session) Login(token string) error {
 // VolumeService returns the Volume service for managing volumes
 func (s *Session) VolumeService() vpcvolume.VolumeManager {
 	return vpcvolume.New(s.client)
+}
+
+// VolumeMountService returns the VolumeMountService for managing volumes
+func (s *Session) VolumeMountService() instances.VolumeMountManager {
+	return instances.New(s.client)
 }
 
 // SnapshotService returns the Snapshot service for managing snapshot

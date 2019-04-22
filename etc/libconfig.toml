@@ -5,12 +5,12 @@ debug_trace = false
 iam_url = "https://iam.bluemix.net"
 iam_client_id = "bx"
 iam_client_secret = "bx"
-iam_api_key = ""
+iam_api_key = "ZCAWPJdqc461e3QOPW1hI4Smlfsbisq6T_fnHJNmxHQx"
 refresh_token = ""
 
 
 [softlayer]
-softlayer_block_enabled = true
+softlayer_block_enabled = false
 softlayer_block_provider_name = "SOFTLAYER-BLOCK"
 softlayer_file_enabled = false
 softlayer_file_provider_name = "SOFTLAYER-FILE"
@@ -30,7 +30,7 @@ genesis_api_key = ""
 genesis_url = ""
 
 [vpc]
-vpc_enabled = false
+vpc_enabled = true
 vpc_block_provider_name = "vpc-classic"
 vpc_username = ""# keep blank for IAM auth
 vpc_api_key = "" # keep blank for IAM auth

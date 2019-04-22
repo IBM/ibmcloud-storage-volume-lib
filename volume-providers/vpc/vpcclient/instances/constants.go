@@ -8,13 +8,12 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package models
+package instances
 
-import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+const (
+	instancesPath                  = "instances"
+	instanceIDParam                = "instance_id"
+	instanceIDPath                 = instancesPath + "/{" + instanceIDParam + "}"
+	volumeAttachmentPath           = "volume_attachments"
+	instanceIDvolumeAttachmentPath = instanceIDPath + "/" + volumeAttachmentPath
 )
-
-// VolumeAttachment ...
-type VolumeAttachment struct {
-	provider.VolumeAttachment
-}

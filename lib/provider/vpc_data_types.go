@@ -10,6 +10,8 @@
 
 package provider
 
+import "time"
+
 // VPCVolume specific	parameters
 type VPCVolume struct {
 	Href              string              `json:"href,omitempty"`
@@ -43,9 +45,15 @@ type Profile struct {
 
 // VolumeAttachment ...
 type VolumeAttachment struct {
-	Href string `json:"href,omitempty"`
-	ID   string `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
+	Href       string `json:"href,omitempty"`
+	ID         string `json:"id,omitempty"`
+	Name       string `json:"name,omitempty"`
+	InstanceID string `json:"instance_id,omitempty"`
 
-	Volume *Volume `json:"volume,omitempty"`
+	Volume    *Volume    `json:"volume,omitempty"`
+	Status    string     `json:"status,omitempty"` //attaching, attached, detaching
+	Type      string     `json:"type,omitempty"`   //boot, data
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// If set to true, when deleting the instance the volume will also be deleted
+	DeleteVolumeOnInstanceDelete bool `json:"delete_volume_on_instance_delete,omitempty"`
 }
