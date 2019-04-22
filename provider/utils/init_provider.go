@@ -86,10 +86,10 @@ func isEmptyStringValue(value *string) bool {
 }
 
 // OpenProviderSession ...
-func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, logger *zap.Logger) (session provider.Session, fatal bool, err error) {
+func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, ctxLogger *zap.Logger) (session provider.Session, fatal bool, err error) {
 	prov, err := providers.Get(providerID)
 	if err != nil {
-		logger.Error("Not able to get the said provider, might be its not registered", local.ZapError(err))
+		ctxLogger.Error("Not able to get the said provider, might be its not registered", local.ZapError(err))
 		fatal = true
 		return
 	}
@@ -100,21 +100,21 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 		return
 	}
 
-	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, logger)
+	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
 	if err == nil {
-		session, err = prov.OpenSession(nil, contextCredentials, logger)
+		session, err = prov.OpenSession(nil, contextCredentials, ctxLogger)
 	}
 
 	if err != nil {
 		fatal = true
-		logger.Error("Failed to open provider session", local.ZapError(err), zap.Bool("Fatal", fatal))
+		ctxLogger.Error("Failed to open provider session", local.ZapError(err), zap.Bool("Fatal", fatal))
 	}
 	return
 }
 
 // GenerateContextCredentials ...
-func GenerateContextCredentials(conf *config.Config, providerID string, contextCredentialsFactory local.ContextCredentialsFactory, logger *zap.Logger) (provider.ContextCredentials, error) {
-	logger.Info("Generating generateContextCredentials for ", zap.String("Provider ID", providerID))
+func GenerateContextCredentials(conf *config.Config, providerID string, contextCredentialsFactory local.ContextCredentialsFactory, ctxLogger *zap.Logger) (provider.ContextCredentials, error) {
+	ctxLogger.Info("Generating generateContextCredentials for ", zap.String("Provider ID", providerID))
 
 	AccountID := conf.Bluemix.IamClientID
 	slUser := conf.Softlayer.SoftlayerUsername
@@ -125,13 +125,13 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 	switch {
 	case (providerID == conf.Softlayer.SoftlayerBlockProviderName || providerID == conf.Softlayer.SoftlayerFileProviderName) &&
 		!isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
-		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, logger)
+		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, ctxLogger)
 
 	case (providerID == conf.VPC.VPCBlockProviderName):
-		return contextCredentialsFactory.ForIAMAccessToken(iamAPIKey, logger)
+		return contextCredentialsFactory.ForIAMAccessToken(iamAPIKey, ctxLogger)
 
 	case (!isEmptyStringValue(&iamAPIKey) && (providerID != conf.VPC.VPCBlockProviderName)):
-		return contextCredentialsFactory.ForIAMAPIKey(AccountID, iamAPIKey, logger)
+		return contextCredentialsFactory.ForIAMAPIKey(AccountID, iamAPIKey, ctxLogger)
 
 	default:
 		return provider.ContextCredentials{}, util.NewError("ErrorInsufficientAuthentication",

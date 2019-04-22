@@ -13,34 +13,35 @@ package vpcvolume
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 )
 
 // VolumeManager operations
 type VolumeManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
-	CreateVolume(*models.Volume) (*models.Volume, error)
+	CreateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error)
 
 	// Delete the volume
-	DeleteVolume(volumeID string) error
+	DeleteVolume(volumeID string, ctxLogger *zap.Logger) error
 
 	// Get the volume by using ID
-	GetVolume(volumeID string) (*models.Volume, error)
+	GetVolume(volumeID string, ctxLogger *zap.Logger) (*models.Volume, error)
 
 	// Others
 	// Get volume lists by using snapshot tags
-	ListVolumes(limit int, filters *models.ListVolumeFilters) (*models.VolumeList, error)
+	ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error)
 
 	// Set tag for a volume
-	SetVolumeTag(volumeID string, tagName string) error
+	SetVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error
 
 	// Delete tag of a volume
-	DeleteVolumeTag(volumeID string, tagName string) error
+	DeleteVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error
 
 	// List all tags of a volume
-	ListVolumeTags(volumeID string) (*[]string, error)
+	ListVolumeTags(volumeID string, ctxLogger *zap.Logger) (*[]string, error)
 
 	// Check if the given tag exists on a volume
-	CheckVolumeTag(volumeID string, tagName string) error
+	CheckVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error
 }
 
 // VolumeService ...

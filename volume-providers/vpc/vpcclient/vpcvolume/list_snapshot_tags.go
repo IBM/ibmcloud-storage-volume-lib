@@ -14,11 +14,15 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 	"time"
 )
 
 // ListSnapshotTags GETs /volumes/snapshots/tags
-func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string) (*[]string, error) {
+func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*[]string, error) {
+	ctxLogger.Debug("Entry Backend ListSnapshotTags")
+	defer ctxLogger.Debug("Exit Backend ListSnapshotTags")
+
 	defer util.TimeTracker("ListSnapshotTags", time.Now())
 
 	operation := &client.Operation{
@@ -30,7 +34,10 @@ func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string) 
 	var tags []string
 	var apiErr models.Error
 
-	req := ss.client.NewRequest(operation).PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONSuccess(&tags).JSONError(&apiErr)
+	request := ss.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+	req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONSuccess(&tags).JSONError(&apiErr)
 	_, err := req.Invoke()
 	if err != nil {
 		return nil, err
