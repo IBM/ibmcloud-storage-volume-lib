@@ -12,6 +12,7 @@ package test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -23,14 +24,14 @@ import (
 )
 
 // SetupServer ...
-func SetupServer(t *testing.T) (m *http.ServeMux, c client.ClientSession, teardown func()) {
+func SetupServer(t *testing.T) (m *http.ServeMux, c client.SessionClient, teardown func()) {
 
 	m = http.NewServeMux()
 	s := httptest.NewServer(m)
 
 	log := new(bytes.Buffer)
 
-	c = client.New(s.URL, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
+	c = client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token")
 
 	teardown = func() {
 		s.Close()
