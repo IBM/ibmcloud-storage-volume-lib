@@ -15,6 +15,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 	"net/http"
 	"testing"
 )
@@ -68,6 +69,8 @@ func TestSetVolumeTag(t *testing.T) {
 			test.SetupMuxResponse(t, mux, "/volumes/volume-id/tags/tag-name", http.MethodPut, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
+
+			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
 
 			volumeService := vpcvolume.New(client)
 

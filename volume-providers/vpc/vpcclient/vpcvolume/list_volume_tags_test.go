@@ -54,6 +54,8 @@ func TestListVolumeTags(t *testing.T) {
 
 			defer teardown()
 
+			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
+
 			volumeService := vpcvolume.New(client)
 
 			volumeTags, err := volumeService.ListVolumeTags("volume-id", logger)

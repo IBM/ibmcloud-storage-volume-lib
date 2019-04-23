@@ -15,6 +15,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 	"net/http"
 	"testing"
 )
@@ -62,6 +63,8 @@ func TestDeleteSnapshotTag(t *testing.T) {
 			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots/snapshotid/tags/tag-name", http.MethodDelete, &emptyString, testcase.status, testcase.content, nil)
 
 			defer teardown()
+
+			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
 
 			snapshotService := vpcvolume.NewSnapshotManager(client)
 

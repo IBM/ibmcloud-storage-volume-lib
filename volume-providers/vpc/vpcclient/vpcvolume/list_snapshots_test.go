@@ -64,6 +64,8 @@ func TestListSnapshots(t *testing.T) {
 
 			defer teardown()
 
+			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
+
 			snapshotService := vpcvolume.NewSnapshotManager(client)
 
 			snapshots, err := snapshotService.ListSnapshots("volume-id", logger)

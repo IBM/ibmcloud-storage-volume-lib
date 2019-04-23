@@ -83,6 +83,8 @@ func TestCreateVolume(t *testing.T) {
 
 			defer teardown()
 
+			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
+
 			volumeService := vpcvolume.New(client)
 
 			volume, err := volumeService.CreateVolume(template, logger)
