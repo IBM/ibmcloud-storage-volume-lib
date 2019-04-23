@@ -69,11 +69,19 @@ func TestGetVolume(t *testing.T) {
 		}, {
 			name:    "Verify that the volume is parsed correctly",
 			status:  http.StatusOK,
-			content: "{\"id\":\"vol1\",\"status\":\"pending\"}",
+			content: "{\"id\":\"vol1\",\"name\":\"vol1\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}",
 			verify: func(t *testing.T, volume *models.Volume, err error) {
-
 				if assert.NotNil(t, volume) {
 					assert.Equal(t, "vol1", volume.ID)
+				}
+			},
+		}, {
+			name:    "False positive: What if the volume ID is not matched",
+			status:  http.StatusOK,
+			content: "{\"id\":\"wrong-vol\",\"name\":\"wrong-vol\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:wrong-vol\"}",
+			verify: func(t *testing.T, volume *models.Volume, err error) {
+				if assert.NotNil(t, volume) {
+					assert.NotEqual(t, "vol1", volume.ID)
 				}
 			},
 		},
@@ -81,7 +89,6 @@ func TestGetVolume(t *testing.T) {
 
 	for _, testcase := range testCases {
 		t.Run(testcase.name, func(t *testing.T) {
-
 			mux, client, teardown := test.SetupServer(t)
 			emptyString := ""
 			test.SetupMuxResponse(t, mux, "/volumes/volume-id", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
@@ -91,6 +98,7 @@ func TestGetVolume(t *testing.T) {
 			volumeService := vpcvolume.New(client)
 
 			volume, err := volumeService.GetVolume("volume-id", logger)
+			logger.Info("Volume details", zap.Reflect("volume", volume))
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())

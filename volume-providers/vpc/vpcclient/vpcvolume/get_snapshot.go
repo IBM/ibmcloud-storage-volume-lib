@@ -23,7 +23,7 @@ func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string, ctxLo
 	ctxLogger.Debug("Entry Backend GetSnapshot")
 	defer ctxLogger.Debug("Exit Backend GetSnapshot")
 
-	defer util.TimeTracker("GetShanpshot", time.Now())
+	defer util.TimeTracker("GetSnapshot", time.Now())
 
 	operation := &client.Operation{
 		Name:        "GetSnapshot",
