@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/bin/bash
 
 #/******************************************************************************
 # * Licensed Materials - Property of IBM
@@ -8,16 +8,8 @@
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 # *****************************************************************************/
 
-import yaml
+COVERAGE=$(cat cover.html | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
 
-f = open('OPENSOURCE', 'w')
-
-with open("glide.lock", 'r') as stream:
-    try:
-        data = yaml.load(stream, Loader=yaml.Loader)
-        for dep in data["imports"]:
-            f.write(dep["name"] + "," + dep["version"] + '\n')
-    except yaml.YAMLError as exc:
-        print(exc)
-
-f.close()
+echo "-------------------------------------------------------------------------"
+echo "COVERAGE IS ${COVERAGE}%"
+echo "-------------------------------------------------------------------------"

@@ -34,7 +34,13 @@ makefmt:
 
 .PHONY: test
 test:
+ifeq ($(ARCH), ppc64le) 
+	# POWER
+	$(GOPATH)/bin/gotestcover -v -coverprofile=cover.out ${GOPACKAGES}
+else 
+	# x86_64
 	$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES}
+endif
 
 .PHONY: coverage
 coverage:

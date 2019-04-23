@@ -1,4 +1,8 @@
 # ibmcloud-storage-volume-lib
+
+[![Build Status](https://travis.ibm.com/IBM/ibmcloud-storage-volume-lib.svg?token=ptbMq1PWtBZJZhvq3cph)](https://travis.ibm.com/IBM/ibmcloud-storage-volume-lib)
+[![Coverage](https://pages.github.ibm.com/IBM/ibmcloud-storage-volume-lib/coverage/master/badge.svg)](https://pages.github.ibm.com/IBM/ibmcloud-storage-volume-lib/coverage/master/cover.html)
+
 This library is for volume and snapshot management(create, delete, modify etc).
 As of now this only have block snapshot and volume creation functionalities but going forward it will have more functionalities.
 
