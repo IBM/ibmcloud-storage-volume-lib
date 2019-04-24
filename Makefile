@@ -9,6 +9,7 @@
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/) # With glide: GOPACKAGES=$(shell glide novendor)
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
 GOLINTPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers/softlayer )
+ARCH = $(shell uname -m)
 
 .PHONY: all
 all: deps fmt vet test
@@ -34,8 +35,13 @@ makefmt:
 
 .PHONY: test
 test:
+ifeq ($(ARCH), ppc64le)
+	# POWER
+	$(GOPATH)/bin/gotestcover -v -coverprofile=cover.out ${GOPACKAGES}
+else
 	# x86_64
 	$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES}
+endif
 
 .PHONY: coverage
 coverage:
