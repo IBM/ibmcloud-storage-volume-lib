@@ -40,11 +40,6 @@ func Test_NewError(t *testing.T) {
 			errorCode: "",
 		},
 		{
-			// Example of a specific errorCode
-			testName:  "ErrorInvalidInstanceID",
-			errorCode: reasoncode.ErrorInvalidInstanceID,
-		},
-		{
 			testName:        "Wrapped",
 			errorCode:       reasoncode.ErrorUnclassified,
 			wrappedMessages: []string{"This is a wrapped exception"},
@@ -147,7 +142,6 @@ func Test_NewError_ErrorDeepUnwrapString(t *testing.T) {
 func Test_ErrorReasonCode(t *testing.T) {
 	assert.Equal(t, reasoncode.ErrorUnclassified, ErrorReasonCode(errors.New("Test")))
 	assert.Equal(t, reasoncode.ErrorUnclassified, ErrorReasonCode(provider.Error{}))
-	assert.Equal(t, reasoncode.ErrorInvalidMachineConfig, ErrorReasonCode(NewError(reasoncode.ErrorInvalidMachineConfig, "Test")))
 }
 
 func Test_ErrorToFault(t *testing.T) {

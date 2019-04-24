@@ -56,7 +56,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 
 	vpcs.Logger.Info("Calling VPC provider for volume creation...")
 	var volume *models.Volume
-	err = retry(func() error {
+	err = retry(vpcs.Logger, func() error {
 		volume, err = vpcs.Apiclient.VolumeService().CreateVolume(volumeTemplate, vpcs.Logger)
 		return err
 	})

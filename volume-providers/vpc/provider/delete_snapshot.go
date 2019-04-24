@@ -27,7 +27,7 @@ func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error {
 		return userError.GetUserError("StorageFindFailedWithSnapshotId", err, snapshot.SnapshotID, "Not a valid snapshot ID")
 	}
 
-	err = retry(func() error {
+	err = retry(vpcs.Logger, func() error {
 		err = vpcs.Apiclient.SnapshotService().DeleteSnapshot("", snapshot.SnapshotID, vpcs.Logger)
 		return err
 	})

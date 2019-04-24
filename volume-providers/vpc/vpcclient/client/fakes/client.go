@@ -9,10 +9,10 @@ import (
 )
 
 type SessionClient struct {
-	NewRequestStub        func(operation *client.Operation) *client.Request
+	NewRequestStub        func(*client.Operation) *client.Request
 	newRequestMutex       sync.RWMutex
 	newRequestArgsForCall []struct {
-		operation *client.Operation
+		arg1 *client.Operation
 	}
 	newRequestReturns struct {
 		result1 *client.Request
@@ -20,21 +20,10 @@ type SessionClient struct {
 	newRequestReturnsOnCall map[int]struct {
 		result1 *client.Request
 	}
-	WithDebugStub        func(writer io.Writer) client.SessionClient
-	withDebugMutex       sync.RWMutex
-	withDebugArgsForCall []struct {
-		writer io.Writer
-	}
-	withDebugReturns struct {
-		result1 client.SessionClient
-	}
-	withDebugReturnsOnCall map[int]struct {
-		result1 client.SessionClient
-	}
-	WithAuthTokenStub        func(authToken string) client.SessionClient
+	WithAuthTokenStub        func(string) client.SessionClient
 	withAuthTokenMutex       sync.RWMutex
 	withAuthTokenArgsForCall []struct {
-		authToken string
+		arg1 string
 	}
 	withAuthTokenReturns struct {
 		result1 client.SessionClient
@@ -42,11 +31,22 @@ type SessionClient struct {
 	withAuthTokenReturnsOnCall map[int]struct {
 		result1 client.SessionClient
 	}
-	WithPathParameterStub        func(name, value string) client.SessionClient
+	WithDebugStub        func(io.Writer) client.SessionClient
+	withDebugMutex       sync.RWMutex
+	withDebugArgsForCall []struct {
+		arg1 io.Writer
+	}
+	withDebugReturns struct {
+		result1 client.SessionClient
+	}
+	withDebugReturnsOnCall map[int]struct {
+		result1 client.SessionClient
+	}
+	WithPathParameterStub        func(string, string) client.SessionClient
 	withPathParameterMutex       sync.RWMutex
 	withPathParameterArgsForCall []struct {
-		name  string
-		value string
+		arg1 string
+		arg2 string
 	}
 	withPathParameterReturns struct {
 		result1 client.SessionClient
@@ -54,11 +54,11 @@ type SessionClient struct {
 	withPathParameterReturnsOnCall map[int]struct {
 		result1 client.SessionClient
 	}
-	WithQueryValueStub        func(name, value string) client.SessionClient
+	WithQueryValueStub        func(string, string) client.SessionClient
 	withQueryValueMutex       sync.RWMutex
 	withQueryValueArgsForCall []struct {
-		name  string
-		value string
+		arg1 string
+		arg2 string
 	}
 	withQueryValueReturns struct {
 		result1 client.SessionClient
@@ -70,21 +70,22 @@ type SessionClient struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *SessionClient) NewRequest(operation *client.Operation) *client.Request {
+func (fake *SessionClient) NewRequest(arg1 *client.Operation) *client.Request {
 	fake.newRequestMutex.Lock()
 	ret, specificReturn := fake.newRequestReturnsOnCall[len(fake.newRequestArgsForCall)]
 	fake.newRequestArgsForCall = append(fake.newRequestArgsForCall, struct {
-		operation *client.Operation
-	}{operation})
-	fake.recordInvocation("NewRequest", []interface{}{operation})
+		arg1 *client.Operation
+	}{arg1})
+	fake.recordInvocation("NewRequest", []interface{}{arg1})
 	fake.newRequestMutex.Unlock()
 	if fake.NewRequestStub != nil {
-		return fake.NewRequestStub(operation)
+		return fake.NewRequestStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.newRequestReturns.result1
+	fakeReturns := fake.newRequestReturns
+	return fakeReturns.result1
 }
 
 func (fake *SessionClient) NewRequestCallCount() int {
@@ -93,13 +94,22 @@ func (fake *SessionClient) NewRequestCallCount() int {
 	return len(fake.newRequestArgsForCall)
 }
 
+func (fake *SessionClient) NewRequestCalls(stub func(*client.Operation) *client.Request) {
+	fake.newRequestMutex.Lock()
+	defer fake.newRequestMutex.Unlock()
+	fake.NewRequestStub = stub
+}
+
 func (fake *SessionClient) NewRequestArgsForCall(i int) *client.Operation {
 	fake.newRequestMutex.RLock()
 	defer fake.newRequestMutex.RUnlock()
-	return fake.newRequestArgsForCall[i].operation
+	argsForCall := fake.newRequestArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *SessionClient) NewRequestReturns(result1 *client.Request) {
+	fake.newRequestMutex.Lock()
+	defer fake.newRequestMutex.Unlock()
 	fake.NewRequestStub = nil
 	fake.newRequestReturns = struct {
 		result1 *client.Request
@@ -107,6 +117,8 @@ func (fake *SessionClient) NewRequestReturns(result1 *client.Request) {
 }
 
 func (fake *SessionClient) NewRequestReturnsOnCall(i int, result1 *client.Request) {
+	fake.newRequestMutex.Lock()
+	defer fake.newRequestMutex.Unlock()
 	fake.NewRequestStub = nil
 	if fake.newRequestReturnsOnCall == nil {
 		fake.newRequestReturnsOnCall = make(map[int]struct {
@@ -118,69 +130,22 @@ func (fake *SessionClient) NewRequestReturnsOnCall(i int, result1 *client.Reques
 	}{result1}
 }
 
-func (fake *SessionClient) WithDebug(writer io.Writer) client.SessionClient {
-	fake.withDebugMutex.Lock()
-	ret, specificReturn := fake.withDebugReturnsOnCall[len(fake.withDebugArgsForCall)]
-	fake.withDebugArgsForCall = append(fake.withDebugArgsForCall, struct {
-		writer io.Writer
-	}{writer})
-	fake.recordInvocation("WithDebug", []interface{}{writer})
-	fake.withDebugMutex.Unlock()
-	if fake.WithDebugStub != nil {
-		return fake.WithDebugStub(writer)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.withDebugReturns.result1
-}
-
-func (fake *SessionClient) WithDebugCallCount() int {
-	fake.withDebugMutex.RLock()
-	defer fake.withDebugMutex.RUnlock()
-	return len(fake.withDebugArgsForCall)
-}
-
-func (fake *SessionClient) WithDebugArgsForCall(i int) io.Writer {
-	fake.withDebugMutex.RLock()
-	defer fake.withDebugMutex.RUnlock()
-	return fake.withDebugArgsForCall[i].writer
-}
-
-func (fake *SessionClient) WithDebugReturns(result1 client.SessionClient) {
-	fake.WithDebugStub = nil
-	fake.withDebugReturns = struct {
-		result1 client.SessionClient
-	}{result1}
-}
-
-func (fake *SessionClient) WithDebugReturnsOnCall(i int, result1 client.SessionClient) {
-	fake.WithDebugStub = nil
-	if fake.withDebugReturnsOnCall == nil {
-		fake.withDebugReturnsOnCall = make(map[int]struct {
-			result1 client.SessionClient
-		})
-	}
-	fake.withDebugReturnsOnCall[i] = struct {
-		result1 client.SessionClient
-	}{result1}
-}
-
-func (fake *SessionClient) WithAuthToken(authToken string) client.SessionClient {
+func (fake *SessionClient) WithAuthToken(arg1 string) client.SessionClient {
 	fake.withAuthTokenMutex.Lock()
 	ret, specificReturn := fake.withAuthTokenReturnsOnCall[len(fake.withAuthTokenArgsForCall)]
 	fake.withAuthTokenArgsForCall = append(fake.withAuthTokenArgsForCall, struct {
-		authToken string
-	}{authToken})
-	fake.recordInvocation("WithAuthToken", []interface{}{authToken})
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("WithAuthToken", []interface{}{arg1})
 	fake.withAuthTokenMutex.Unlock()
 	if fake.WithAuthTokenStub != nil {
-		return fake.WithAuthTokenStub(authToken)
+		return fake.WithAuthTokenStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.withAuthTokenReturns.result1
+	fakeReturns := fake.withAuthTokenReturns
+	return fakeReturns.result1
 }
 
 func (fake *SessionClient) WithAuthTokenCallCount() int {
@@ -189,13 +154,22 @@ func (fake *SessionClient) WithAuthTokenCallCount() int {
 	return len(fake.withAuthTokenArgsForCall)
 }
 
+func (fake *SessionClient) WithAuthTokenCalls(stub func(string) client.SessionClient) {
+	fake.withAuthTokenMutex.Lock()
+	defer fake.withAuthTokenMutex.Unlock()
+	fake.WithAuthTokenStub = stub
+}
+
 func (fake *SessionClient) WithAuthTokenArgsForCall(i int) string {
 	fake.withAuthTokenMutex.RLock()
 	defer fake.withAuthTokenMutex.RUnlock()
-	return fake.withAuthTokenArgsForCall[i].authToken
+	argsForCall := fake.withAuthTokenArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *SessionClient) WithAuthTokenReturns(result1 client.SessionClient) {
+	fake.withAuthTokenMutex.Lock()
+	defer fake.withAuthTokenMutex.Unlock()
 	fake.WithAuthTokenStub = nil
 	fake.withAuthTokenReturns = struct {
 		result1 client.SessionClient
@@ -203,6 +177,8 @@ func (fake *SessionClient) WithAuthTokenReturns(result1 client.SessionClient) {
 }
 
 func (fake *SessionClient) WithAuthTokenReturnsOnCall(i int, result1 client.SessionClient) {
+	fake.withAuthTokenMutex.Lock()
+	defer fake.withAuthTokenMutex.Unlock()
 	fake.WithAuthTokenStub = nil
 	if fake.withAuthTokenReturnsOnCall == nil {
 		fake.withAuthTokenReturnsOnCall = make(map[int]struct {
@@ -214,22 +190,83 @@ func (fake *SessionClient) WithAuthTokenReturnsOnCall(i int, result1 client.Sess
 	}{result1}
 }
 
-func (fake *SessionClient) WithPathParameter(name string, value string) client.SessionClient {
-	fake.withPathParameterMutex.Lock()
-	ret, specificReturn := fake.withPathParameterReturnsOnCall[len(fake.withPathParameterArgsForCall)]
-	fake.withPathParameterArgsForCall = append(fake.withPathParameterArgsForCall, struct {
-		name  string
-		value string
-	}{name, value})
-	fake.recordInvocation("WithPathParameter", []interface{}{name, value})
-	fake.withPathParameterMutex.Unlock()
-	if fake.WithPathParameterStub != nil {
-		return fake.WithPathParameterStub(name, value)
+func (fake *SessionClient) WithDebug(arg1 io.Writer) client.SessionClient {
+	fake.withDebugMutex.Lock()
+	ret, specificReturn := fake.withDebugReturnsOnCall[len(fake.withDebugArgsForCall)]
+	fake.withDebugArgsForCall = append(fake.withDebugArgsForCall, struct {
+		arg1 io.Writer
+	}{arg1})
+	fake.recordInvocation("WithDebug", []interface{}{arg1})
+	fake.withDebugMutex.Unlock()
+	if fake.WithDebugStub != nil {
+		return fake.WithDebugStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.withPathParameterReturns.result1
+	fakeReturns := fake.withDebugReturns
+	return fakeReturns.result1
+}
+
+func (fake *SessionClient) WithDebugCallCount() int {
+	fake.withDebugMutex.RLock()
+	defer fake.withDebugMutex.RUnlock()
+	return len(fake.withDebugArgsForCall)
+}
+
+func (fake *SessionClient) WithDebugCalls(stub func(io.Writer) client.SessionClient) {
+	fake.withDebugMutex.Lock()
+	defer fake.withDebugMutex.Unlock()
+	fake.WithDebugStub = stub
+}
+
+func (fake *SessionClient) WithDebugArgsForCall(i int) io.Writer {
+	fake.withDebugMutex.RLock()
+	defer fake.withDebugMutex.RUnlock()
+	argsForCall := fake.withDebugArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *SessionClient) WithDebugReturns(result1 client.SessionClient) {
+	fake.withDebugMutex.Lock()
+	defer fake.withDebugMutex.Unlock()
+	fake.WithDebugStub = nil
+	fake.withDebugReturns = struct {
+		result1 client.SessionClient
+	}{result1}
+}
+
+func (fake *SessionClient) WithDebugReturnsOnCall(i int, result1 client.SessionClient) {
+	fake.withDebugMutex.Lock()
+	defer fake.withDebugMutex.Unlock()
+	fake.WithDebugStub = nil
+	if fake.withDebugReturnsOnCall == nil {
+		fake.withDebugReturnsOnCall = make(map[int]struct {
+			result1 client.SessionClient
+		})
+	}
+	fake.withDebugReturnsOnCall[i] = struct {
+		result1 client.SessionClient
+	}{result1}
+}
+
+func (fake *SessionClient) WithPathParameter(arg1 string, arg2 string) client.SessionClient {
+	fake.withPathParameterMutex.Lock()
+	ret, specificReturn := fake.withPathParameterReturnsOnCall[len(fake.withPathParameterArgsForCall)]
+	fake.withPathParameterArgsForCall = append(fake.withPathParameterArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	fake.recordInvocation("WithPathParameter", []interface{}{arg1, arg2})
+	fake.withPathParameterMutex.Unlock()
+	if fake.WithPathParameterStub != nil {
+		return fake.WithPathParameterStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.withPathParameterReturns
+	return fakeReturns.result1
 }
 
 func (fake *SessionClient) WithPathParameterCallCount() int {
@@ -238,13 +275,22 @@ func (fake *SessionClient) WithPathParameterCallCount() int {
 	return len(fake.withPathParameterArgsForCall)
 }
 
+func (fake *SessionClient) WithPathParameterCalls(stub func(string, string) client.SessionClient) {
+	fake.withPathParameterMutex.Lock()
+	defer fake.withPathParameterMutex.Unlock()
+	fake.WithPathParameterStub = stub
+}
+
 func (fake *SessionClient) WithPathParameterArgsForCall(i int) (string, string) {
 	fake.withPathParameterMutex.RLock()
 	defer fake.withPathParameterMutex.RUnlock()
-	return fake.withPathParameterArgsForCall[i].name, fake.withPathParameterArgsForCall[i].value
+	argsForCall := fake.withPathParameterArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *SessionClient) WithPathParameterReturns(result1 client.SessionClient) {
+	fake.withPathParameterMutex.Lock()
+	defer fake.withPathParameterMutex.Unlock()
 	fake.WithPathParameterStub = nil
 	fake.withPathParameterReturns = struct {
 		result1 client.SessionClient
@@ -252,6 +298,8 @@ func (fake *SessionClient) WithPathParameterReturns(result1 client.SessionClient
 }
 
 func (fake *SessionClient) WithPathParameterReturnsOnCall(i int, result1 client.SessionClient) {
+	fake.withPathParameterMutex.Lock()
+	defer fake.withPathParameterMutex.Unlock()
 	fake.WithPathParameterStub = nil
 	if fake.withPathParameterReturnsOnCall == nil {
 		fake.withPathParameterReturnsOnCall = make(map[int]struct {
@@ -263,22 +311,23 @@ func (fake *SessionClient) WithPathParameterReturnsOnCall(i int, result1 client.
 	}{result1}
 }
 
-func (fake *SessionClient) WithQueryValue(name string, value string) client.SessionClient {
+func (fake *SessionClient) WithQueryValue(arg1 string, arg2 string) client.SessionClient {
 	fake.withQueryValueMutex.Lock()
 	ret, specificReturn := fake.withQueryValueReturnsOnCall[len(fake.withQueryValueArgsForCall)]
 	fake.withQueryValueArgsForCall = append(fake.withQueryValueArgsForCall, struct {
-		name  string
-		value string
-	}{name, value})
-	fake.recordInvocation("WithQueryValue", []interface{}{name, value})
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	fake.recordInvocation("WithQueryValue", []interface{}{arg1, arg2})
 	fake.withQueryValueMutex.Unlock()
 	if fake.WithQueryValueStub != nil {
-		return fake.WithQueryValueStub(name, value)
+		return fake.WithQueryValueStub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.withQueryValueReturns.result1
+	fakeReturns := fake.withQueryValueReturns
+	return fakeReturns.result1
 }
 
 func (fake *SessionClient) WithQueryValueCallCount() int {
@@ -287,13 +336,22 @@ func (fake *SessionClient) WithQueryValueCallCount() int {
 	return len(fake.withQueryValueArgsForCall)
 }
 
+func (fake *SessionClient) WithQueryValueCalls(stub func(string, string) client.SessionClient) {
+	fake.withQueryValueMutex.Lock()
+	defer fake.withQueryValueMutex.Unlock()
+	fake.WithQueryValueStub = stub
+}
+
 func (fake *SessionClient) WithQueryValueArgsForCall(i int) (string, string) {
 	fake.withQueryValueMutex.RLock()
 	defer fake.withQueryValueMutex.RUnlock()
-	return fake.withQueryValueArgsForCall[i].name, fake.withQueryValueArgsForCall[i].value
+	argsForCall := fake.withQueryValueArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *SessionClient) WithQueryValueReturns(result1 client.SessionClient) {
+	fake.withQueryValueMutex.Lock()
+	defer fake.withQueryValueMutex.Unlock()
 	fake.WithQueryValueStub = nil
 	fake.withQueryValueReturns = struct {
 		result1 client.SessionClient
@@ -301,6 +359,8 @@ func (fake *SessionClient) WithQueryValueReturns(result1 client.SessionClient) {
 }
 
 func (fake *SessionClient) WithQueryValueReturnsOnCall(i int, result1 client.SessionClient) {
+	fake.withQueryValueMutex.Lock()
+	defer fake.withQueryValueMutex.Unlock()
 	fake.WithQueryValueStub = nil
 	if fake.withQueryValueReturnsOnCall == nil {
 		fake.withQueryValueReturnsOnCall = make(map[int]struct {
@@ -317,10 +377,10 @@ func (fake *SessionClient) Invocations() map[string][][]interface{} {
 	defer fake.invocationsMutex.RUnlock()
 	fake.newRequestMutex.RLock()
 	defer fake.newRequestMutex.RUnlock()
-	fake.withDebugMutex.RLock()
-	defer fake.withDebugMutex.RUnlock()
 	fake.withAuthTokenMutex.RLock()
 	defer fake.withAuthTokenMutex.RUnlock()
+	fake.withDebugMutex.RLock()
+	defer fake.withDebugMutex.RUnlock()
 	fake.withPathParameterMutex.RLock()
 	defer fake.withPathParameterMutex.RUnlock()
 	fake.withQueryValueMutex.RLock()

@@ -29,15 +29,16 @@ func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error {
 	vpcs.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
 	var volume *models.Volume
 
-	err = retry(func() error {
+	err = retry(vpcs.Logger, func() error {
 		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeRequest.VolumeID, vpcs.Logger)
 		return err
 	})
 	if err != nil {
 		return userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
 	}
+	vpcs.Logger.Info("Successfully retrieved given volume details from VPC provider", zap.Reflect("VolumeDetails", volume))
 
-	err = retry(func() error {
+	err = retry(vpcs.Logger, func() error {
 		snapshot, err = vpcs.Apiclient.SnapshotService().CreateSnapshot(volumeRequest.VolumeID, snapshot, vpcs.Logger)
 		return err
 	})

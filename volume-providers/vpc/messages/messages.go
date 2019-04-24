@@ -25,7 +25,7 @@ func GetUserErr(code string, err error, args ...interface{}) error {
 		return nil
 	}
 	userMsg := GetUserMsg(code, args...)
-	userMsg.Description = userMsg.Description
+	//userMsg.Description = userMsg.Description
 	userMsg.BackendError = err.Error()
 	return userMsg
 }
@@ -44,7 +44,7 @@ func GetUserError(code string, err error, args ...interface{}) error {
 	userMsg := GetUserMsg(code, args...)
 
 	if err != nil {
-		userMsg.Description = userMsg.Description
+		//userMsg.Description = userMsg.Description
 		userMsg.BackendError = err.Error()
 	}
 	return userMsg
