@@ -50,7 +50,11 @@ func retry(logger *zap.Logger, retryfunc func() error) error {
 		err = retryfunc()
 		if err != nil {
 			//Skip retry for the below type of Errors
-			if skipRetry(err.(*models.Error)) {
+			modelError, ok := err.(*models.Error)
+			if !ok {
+				continue
+			}
+			if skipRetry(modelError) {
 				break
 			}
 			if i >= 1 {
