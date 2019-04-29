@@ -23,9 +23,8 @@ import (
 	"go.uber.org/zap/zapcore"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/auth"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 )
 
 var (
@@ -117,7 +116,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedDuringRequest(t *testing.T) {
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed: did not work", err.Error())
-		assert.Equal(t, "ErrorFailedTokenExchange", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorFailedTokenExchange"), util.ErrorReasonCode(err))
 	}
 }
 
@@ -149,7 +148,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedDuringRequest_no_message(t *t
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "Unexpected IAM token exchange response", err.Error())
-		assert.Equal(t, "ErrorUnclassified", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorUnclassified"), util.ErrorReasonCode(err))
 	}
 }
 
@@ -182,7 +181,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedNoIamUrl(t *testing.T) {
 
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed", err.Error())
-		assert.Equal(t, "ErrorUnclassified", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorUnclassified"), util.ErrorReasonCode(err))
 		assert.Equal(t, []string{"Post /oidc/token: unsupported protocol scheme \"\""},
 			util.ErrorDeepUnwrapString(err))
 	}
@@ -216,7 +215,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedRequesting_empty_body(t *test
 
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed", err.Error())
-		assert.Equal(t, "ErrorUnclassified", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorUnclassified"), util.ErrorReasonCode(err))
 		assert.Equal(t, []string{"empty response body"},
 			util.ErrorDeepUnwrapString(err))
 	}
@@ -246,7 +245,7 @@ func Test_ExchangeAccessTokenForIMSToken_Success(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "testaccesstoken"}, logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(AccessToken{Token: "testaccesstoken"}, logger)
 	assert.Nil(t, err)
 	if assert.NotNil(t, r) {
 		assert.Equal(t, (*r).UserID, 123)
@@ -282,11 +281,11 @@ func Test_ExchangeAccessTokenForIMSToken_FailedDuringRequest(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badaccesstoken"}, logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(AccessToken{Token: "badaccesstoken"}, logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed: did not work", err.Error())
-		assert.Equal(t, "ErrorFailedTokenExchange", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorFailedTokenExchange"), util.ErrorReasonCode(err))
 		assert.Equal(t, []string{"more details requirements code: requirements error"},
 			util.ErrorDeepUnwrapString(err))
 	}
@@ -321,11 +320,11 @@ func Test_ExchangeAccessTokenForIMSToken_FailedAccountLocked(t *testing.T) {
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badaccesstoken"}, logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(AccessToken{Token: "badaccesstoken"}, logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "Infrastructure account is temporarily locked", err.Error())
-		assert.Equal(t, "ErrorProviderAccountTemporarilyLocked", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorProviderAccountTemporarilyLocked"), util.ErrorReasonCode(err))
 		assert.Equal(t, []string{"IAM token exchange request failed: OpenID Connect exception", "Failed external authentication. SoftLayer_Exception_User_Customer_AccountLocked: Account has been locked for 30 minutes"}, util.ErrorDeepUnwrapString(err))
 	}
 }
@@ -354,11 +353,11 @@ func Test_ExchangeAccessTokenForIMSToken_FailedDuringRequest_no_message(t *testi
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badrefreshtoken"}, logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(AccessToken{Token: "badrefreshtoken"}, logger)
 	assert.Nil(t, r)
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "Unexpected IAM token exchange response", err.Error())
-		assert.Equal(t, "ErrorUnclassified", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorUnclassified"), util.ErrorReasonCode(err))
 	}
 }
 
@@ -385,12 +384,12 @@ func Test_ExchangeAccessTokenForIMSToken_FailedRequesting_empty_body(t *testing.
 	tes, err := NewTokenExchangeService(&bluemixConf)
 	assert.NoError(t, err)
 
-	r, err := tes.ExchangeAccessTokenForIMSToken(auth.AccessToken{Token: "badrefreshtoken"}, logger)
+	r, err := tes.ExchangeAccessTokenForIMSToken(AccessToken{Token: "badrefreshtoken"}, logger)
 	assert.Nil(t, r)
 
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed", err.Error())
-		assert.Equal(t, "ErrorUnclassified", util.ErrorReasonCode(err))
+		assert.Equal(t, reasoncode.ReasonCode("ErrorUnclassified"), util.ErrorReasonCode(err))
 		assert.Equal(t, []string{"empty response body"}, util.ErrorDeepUnwrapString(err))
 	}
 }
@@ -406,7 +405,7 @@ func Test_ExchangeIAMAPIKeyForAccessToken(t *testing.T) {
 		{
 			name: "client error",
 			apiHandler: func(w http.ResponseWriter, r *http.Request) {
-				w.WriteHeader(-1)
+				w.WriteHeader(400)
 			},
 			expectedError:      sl.String("IAM token exchange request failed"),
 			expectedReasonCode: "ErrorUnclassified",
@@ -474,7 +473,7 @@ func Test_ExchangeIAMAPIKeyForAccessToken(t *testing.T) {
 			} else {
 				if assert.Error(t, actualError) {
 					assert.Equal(t, *testCase.expectedError, actualError.Error())
-					assert.Equal(t, testCase.expectedReasonCode, util.ErrorReasonCode(actualError))
+					assert.Equal(t, reasoncode.ReasonCode(testCase.expectedReasonCode), util.ErrorReasonCode(actualError))
 				}
 				assert.Nil(t, r)
 			}

@@ -11,7 +11,6 @@
 package provider
 
 import (
-	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
@@ -42,7 +41,7 @@ var skipErrorCodes = map[string]bool{
 }
 
 // retry ...
-func retry(retryfunc func() error) error {
+func retry(logger *zap.Logger, retryfunc func() error) error {
 	var err error
 	for i := 0; i < maxRetryAttempt; i++ {
 		if i > 0 {
@@ -51,7 +50,11 @@ func retry(retryfunc func() error) error {
 		err = retryfunc()
 		if err != nil {
 			//Skip retry for the below type of Errors
-			if skipRetry(err.(*models.Error)) {
+			modelError, ok := err.(*models.Error)
+			if !ok {
+				continue
+			}
+			if skipRetry(modelError) {
 				break
 			}
 			if i >= 1 {
@@ -61,7 +64,7 @@ func retry(retryfunc func() error) error {
 				}
 			}
 			if (i + 1) < maxRetryAttempt {
-				fmt.Printf("\nReattenmpting execution func: %#v, attempt =%d,  max attepmt = %d ,error=%#v", retryfunc, i+2, maxRetryAttempt, err) // TODO: need to use logger
+				logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryGap), zap.Error(err))
 			}
 			continue
 		}

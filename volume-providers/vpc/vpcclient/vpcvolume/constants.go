@@ -15,11 +15,11 @@ const (
 	volumeIDParam = "volume-id"
 	volumeIDPath  = volumesPath + "/{" + volumeIDParam + "}"
 
-	snapshotsPath   = volumesPath + "/{" + volumeIDParam + "}" + "snapshots"
+	snapshotsPath   = volumesPath + "/{" + volumeIDParam + "}/" + "snapshots"
 	snapshotIDParam = "snapshot-id"
 	snapshotIDPath  = snapshotsPath + "/{" + snapshotIDParam + "}"
 
-	volumeTagsPath    = volumesPath + "/{" + volumeIDParam + "}" + "tags"
+	volumeTagsPath    = volumesPath + "/{" + volumeIDParam + "}/" + "tags"
 	volumeTagParam    = "tag-name"
 	volumeTagNamePath = volumeTagsPath + "/{" + volumeTagParam + "}"
 

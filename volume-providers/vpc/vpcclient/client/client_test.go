@@ -70,18 +70,6 @@ func TestClient(t *testing.T) {
 			name:      "creates invokable requests from static operations (POST)",
 			operation: postOperation,
 		}, {
-			name:         "marshals bodies and responses",
-			operation:    postOperation,
-			responseBody: `{"id":"act1","status":"pending"}`,
-			verify: func(t *testing.T) {
-				assert.Equal(t, &models.InstanceAction{ID: "act1", Status: models.InstanceActionStatusPending}, result)
-			},
-			muxVerify: func(t *testing.T, r *http.Request) {
-				assert.Equal(t, "application/json", r.Header.Get("Accept"))
-				assert.Equal(t, "IBM-Kubernetes-Service", r.Header.Get("User-Agent"))
-				assert.Equal(t, "test-context", r.Header.Get("X-Request-ID"))
-			},
-		}, {
 			name:      "encodes query parameters",
 			operation: getOperation,
 			modifyRequest: func() {
@@ -120,9 +108,9 @@ func TestClient(t *testing.T) {
 		}, {
 			name:         "single error",
 			operation:    getOperation,
-			responseBody: "{\"errors\":[{\"message\":\"testerr\"}]}",
+			responseBody: "{\"errors\":[{\"message\":\" testerr \"}]}",
 			responseCode: http.StatusNotAcceptable,
-			expectErr:    "testerr",
+			expectErr:    "Trace Code:,  testerr  Please check ",
 			verify: func(t *testing.T) {
 				assert.Equal(t, 1, len(errResult.Errors))
 			},
@@ -131,7 +119,7 @@ func TestClient(t *testing.T) {
 			operation:    getOperation,
 			responseBody: "{\"errors\":[{\"message\":\"testerr\"},{\"message\":\"another\"}]}",
 			responseCode: http.StatusNotAcceptable,
-			expectErr:    "testerr",
+			expectErr:    "Trace Code:, testerr Please check ",
 			verify: func(t *testing.T) {
 				assert.Equal(t, 2, len(errResult.Errors))
 				assert.Equal(t, "another", errResult.Errors[1].Message)
@@ -159,7 +147,7 @@ func TestClient(t *testing.T) {
 			}
 
 			if testcase.responseBody != "" {
-				result = &models.InstanceAction{}
+				result = &models.Volume{}
 				request = request.JSONSuccess(&result)
 			}
 
@@ -248,7 +236,7 @@ func TestDebugMode(t *testing.T) {
 
 			log = &bytes.Buffer{}
 
-			riaas = client.New(context.Background(), s.URL, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
+			riaas = client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token")
 
 			defer s.Close()
 
@@ -322,7 +310,7 @@ func TestOperationURLProcessing(t *testing.T) {
 	for _, testcase := range testcases {
 
 		t.Run(testcase.name, func(t *testing.T) {
-			c := client.New(context.Background(), testcase.baseURL, http.DefaultClient, "test-context")
+			c := client.New(context.Background(), testcase.baseURL, http.DefaultClient, "test-context", "2019-01-01")
 			actualURL := c.NewRequest(testcase.operation).URL()
 			assert.Equal(t, testcase.expectedURL, actualURL)
 		})

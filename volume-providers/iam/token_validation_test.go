@@ -11,15 +11,13 @@
 package iam
 
 import (
-	"context"
-	"net/http"
 	"testing"
 
 	"github.com/dgrijalva/jwt-go"
 
-	"go.uber.org/zap"
-
+	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 func Test_GetIAMAccountIDFromAccessToken(t *testing.T) {
@@ -45,16 +43,16 @@ func Test_GetIAMAccountIDFromAccessToken(t *testing.T) {
 
 			httpSetup()
 
-			config := Config{
+			config := config.BluemixConfig{
 				IamURL:          server.URL,
 				IamClientID:     "test",
 				IamClientSecret: "secret",
 			}
 
-			tes, err := NewTokenExchangeService(&config, http.DefaultClient)
+			tes, err := NewTokenExchangeService(&config)
 			assert.NoError(t, err)
 
-			accountID, err := tes.GetIAMAccountIDFromAccessToken(context.Background(), AccessToken{Token: testcase.token}, logger)
+			accountID, err := tes.GetIAMAccountIDFromAccessToken(AccessToken{Token: testcase.token}, logger)
 			assert.Equal(t, testcase.expectedAccountID, accountID)
 			assert.NoError(t, err)
 

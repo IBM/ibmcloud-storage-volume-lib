@@ -32,7 +32,7 @@ func (vpcs *VPCSession) GetVolume(id string) (respVolume *provider.Volume, err e
 	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", id))
 
 	var volume *models.Volume
-	err = retry(func() error {
+	err = retry(vpcs.Logger, func() error {
 		volume, err = vpcs.Apiclient.VolumeService().GetVolume(id, vpcs.Logger)
 		return err
 	})
