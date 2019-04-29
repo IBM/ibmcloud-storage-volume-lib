@@ -31,7 +31,8 @@ type VolumeMountManager interface {
 	Attach(attachRequest VolumeAttachRequest) (VolumeResponse, error)
 
 	//Detach detaches the volume/ fileset from the pod
-	Detach(detachRequest VolumeDetachRequest) (VolumeResponse, error)
+	// TODO
+	Detach(detachRequest VolumeAttachRequest) (VolumeResponse, error)
 
 	//Mount method allows to mount the volume/fileset to a given location for a pod
 	/*Mount(mountRequest VolumeMountRequest) VolumeResponse
@@ -47,15 +48,16 @@ type VolumeMountManager interface {
 
 	//Wait for the volume to be detached on the node
 	WaitForDetach(devicePath string) VolumeResponse
+	*/
 
-	//Checks if the volume is attached to the node
-	IsAttached(request map[string]string, nodeName string) VolumeResponse
+	//GetAttachStatus retirves the current status of given volume attach request
+	GetAttachStatus(attachRequest VolumeAttachRequest) (VolumeResponse, error)
 
 	//Mounts the device to a global path which individual pods can then bind mount
-	MountDevice(deviceMountPath string, devicePath string, opts map[string]string) VolumeResponse
+	//MountDevice(deviceMountPath string, devicePath string, opts map[string]string) VolumeResponse
 
 	//Unmounts the global mount for the device. This is called once all bind mounts have been unmounted
-	UnmountDevice(deviceMountPath string) VolumeResponse */
+	//UnmountDevice(deviceMountPath string) VolumeResponse
 }
 
 // VolumeResponse ...
@@ -76,6 +78,9 @@ type VolumeResponse struct {
 	// By default we assume all the capabilities are supported.
 	// If the plugin does not support a capability, it can return false for that capability.
 	Capabilities map[string]bool `json:"capabilities,omitempty"`
+
+	// Only for VPC provider
+	VPCVolumeAttachment *VolumeAttachment `json:"vpcVolumeAttachment"`
 }
 
 // VolumeMountRequest ...

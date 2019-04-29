@@ -403,8 +403,9 @@ func main() {
 			fmt.Println("Enter the instance id to attach")
 			_, er11 = fmt.Scanf("%s", &instanceID)
 			volumeAttachment := &provider.VolumeAttachment{
-				Name:   volumeID + "-" + instanceID,
-				Volume: volume,
+				Name:       volumeID + "-" + instanceID,
+				Volume:     volume,
+				InstanceID: instanceID,
 			}
 			volumeAttachmentReq := provider.VolumeAttachRequest{
 				VPCVolumeAttachment: volumeAttachment,

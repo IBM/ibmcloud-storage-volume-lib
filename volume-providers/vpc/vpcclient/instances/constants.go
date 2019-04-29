@@ -11,9 +11,11 @@
 package instances
 
 const (
-	instancesPath                  = "instances"
-	instanceIDParam                = "instance_id"
-	instanceIDPath                 = instancesPath + "/{" + instanceIDParam + "}"
-	volumeAttachmentPath           = "volume_attachments"
-	instanceIDvolumeAttachmentPath = instanceIDPath + "/" + volumeAttachmentPath
+	instancesPath                    = "instances"
+	instanceIDParam                  = "instance-id"
+	volumeIDParam                    = "volume-id"
+	instanceIDPath                   = instancesPath + "/{" + instanceIDParam + "}"
+	volumeAttachmentPath             = "volume_attachments"
+	instanceIDvolumeAttachmentPath   = instanceIDPath + "/" + volumeAttachmentPath
+	instanceIDvolumeIDAttachmentPath = instanceIDvolumeAttachmentPath + "/{" + volumeIDParam + "}"
 )

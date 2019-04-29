@@ -11,15 +11,15 @@
 package instances
 
 import (
-	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"go.uber.org/zap"
 	"time"
 )
 
 // AttachVolume attached volume to instances with givne volume attachment details
-func (vs *VolumeMountService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment) (*models.VolumeAttachment, error) {
+func (vs *VolumeMountService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
 	defer util.TimeTracker("AttachVolume", time.Now())
 
 	operation := &client.Operation{
@@ -30,17 +30,13 @@ func (vs *VolumeMountService) AttachVolume(volumeAttachmentTemplate *models.Volu
 
 	var volumeAttachment models.VolumeAttachment
 	var apiErr models.Error
-	request := vs.client.NewRequest(operation).PathParameter(instanceIDvolumeAttachmentPath, volumeAttachmentTemplate.InstanceID).JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(&apiErr)
-	fmt.Println("Volume attachment request", request)
-	_, err := request.Invoke()
+
+	request := vs.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect("PathParameters", volumeAttachmentTemplate.InstanceID))
+	_, err := request.PathParameter(instanceIDParam, volumeAttachmentTemplate.InstanceID).JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}
 
 	return &volumeAttachment, nil
-}
-
-//DetachVolume detach volume with given volume AttachmentID
-func (vs *VolumeMountService) DetachVolume(volumeAttachmentID string) error {
-	return nil
 }

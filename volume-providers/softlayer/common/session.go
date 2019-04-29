@@ -380,7 +380,15 @@ func (sls *SLSession) Attach(attachRequest provider.VolumeAttachRequest) (provid
 }
 
 //Detach detaches the volume/ fileset from the pod
-func (sls *SLSession) Detach(detachRequest provider.VolumeDetachRequest) (provider.VolumeResponse, error) {
+func (sls *SLSession) Detach(detachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
+	volResponse := provider.VolumeResponse{
+		Status: provider.NOTSUPPORTED,
+	}
+	return volResponse, nil
+}
+
+//GetAttachStatus ...
+func (sls *SLSession) GetAttachStatus(detachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
 	volResponse := provider.VolumeResponse{
 		Status: provider.NOTSUPPORTED,
 	}

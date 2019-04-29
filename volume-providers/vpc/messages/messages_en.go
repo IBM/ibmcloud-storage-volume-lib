@@ -12,10 +12,18 @@ package messages
 
 import (
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 )
 
 // messagesEn ...
 var messagesEn = map[string]util.Message{
+	string(reasoncode.ErrorRequiredFieldMissing): util.Message{
+		Code:        string(reasoncode.ErrorRequiredFieldMissing),
+		Description: "[%] is required to complete the operation",
+		Type:        "InvalidRequest",
+		RC:          400,
+		Action:      "Please check the [BackendError] error which is returned",
+	},
 	"FailedToPlaceOrder": util.Message{
 		Code:        "FailedToPlaceOrder",
 		Description: "Failed to create volume with the storage provider",
@@ -50,6 +58,27 @@ var messagesEn = map[string]util.Message{
 		Type:        "RetrivalFailed",
 		RC:          400,
 		Action:      "Please check the snapshot ID once, You many need to verify by using 'ibmcloud is' cli.",
+	},
+	string(VolumeAttachFindFailed): util.Message{
+		Code:        string(VolumeAttachFindFailed),
+		Description: "Failed to find the volume attachment by using volume ID :'%s' and instance ID : '%s'.",
+		Type:        "RetrivalFailed",
+		RC:          400,
+		Action:      "Please check the volume attachment once, You many need to verify by using 'ibmcloud is in-vol' cli.",
+	},
+	string(VolumeAttachFailed): util.Message{
+		Code:        string(VolumeAttachFailed),
+		Description: "Failed to attach volume :'%s' to  instance : '%s'.",
+		Type:        "AttachDetachFailed",
+		RC:          500,
+		Action:      "Please check the volume and instance details once, You many need to verify by using 'ibmcloud is in|vol' cli.",
+	},
+	string(VolumeDetachFailed): util.Message{
+		Code:        string(VolumeDetachFailed),
+		Description: "Failed to detach volume :'%s' from  instance : '%s'.",
+		Type:        "AttachDetachFailed",
+		RC:          500,
+		Action:      "Please check the volume attachment once, You many need to verify by using 'ibmcloud is in-vol' cli.",
 	},
 	"InvalidVolumeID": util.Message{
 		Code:        "InvalidVolumeID",

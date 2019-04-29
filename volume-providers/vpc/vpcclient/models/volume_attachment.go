@@ -17,4 +17,10 @@ import (
 // VolumeAttachment ...
 type VolumeAttachment struct {
 	provider.VolumeAttachment
+	Volume *Volume `json:"volume,omitempty"`
+}
+
+// VolumeAttachmentList ...
+type VolumeAttachmentList struct {
+	VolumeAttachments []VolumeAttachment `json:"volume_attachments,omitempty"`
 }

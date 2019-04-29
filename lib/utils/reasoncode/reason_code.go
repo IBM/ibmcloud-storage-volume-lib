@@ -38,6 +38,10 @@ const (
 	// (Caller can treat this as a fatal failure)
 	ErrorBadRequest = ReasonCode("ErrorBadRequest")
 
+	// ErrorRequiredFieldMissing indicates the required field is missing from the request
+	// (Caller can treat this as a fatal failure)
+	ErrorRequiredFieldMissing = ReasonCode("ErrorRequiredFieldMissing")
+
 	// ErrorUnsupportedAuthType indicates the requested Auth-Type is not supported
 	// (Caller can treat this as a fatal failure)
 	ErrorUnsupportedAuthType = ReasonCode("ErrorUnsupportedAuthType")
@@ -66,4 +70,12 @@ const (
 	// ErrorInsufficientPermissions indicates an operation failed due to a confirmed problem with IaaS user permissions
 	// (Caller can retry later, but not indefinitely)
 	ErrorInsufficientPermissions = ReasonCode("ErrorInsufficientPermissions")
+)
+
+// Attach / Detach problems
+const (
+	//ErrorVolumeAttachFailed indicates if volume attach to instance is failed
+	ErrorVolumeAttachFailed = ReasonCode("ErrorVolumeAttachFailed")
+	//ErrorVolumeDetachFailed indicates if volume detach from instance is failed
+	ErrorVolumeDetachFailed = ReasonCode("ErrorVolumeDetachFailed")
 )
