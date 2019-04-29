@@ -39,7 +39,7 @@ func (vpcs *VPCSession) GetAttachStatus(volumeAttachRequest provider.VolumeAttac
 	}
 	vpcs.Logger.Info("Getting Attach  status from VPC provider...")
 	var volumeAttachResult *models.VolumeAttachment
-	err = retry(func() error {
+	err = retry(vpcs.Logger, func() error {
 		volumeAttachResult, err = vpcs.Apiclient.VolumeMountService().GetAttachStatus(&volumeAttachment, vpcs.Logger)
 		return err
 	})

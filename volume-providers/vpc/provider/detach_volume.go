@@ -49,7 +49,7 @@ func (vpcs *VPCSession) Detach(volumeAttachRequest provider.VolumeAttachRequest)
 	}
 	//Try attaching volume if it's not already attached or there is error in getting current volume attachment
 	vpcs.Logger.Info("Attaching volume from VPC provider...")
-	err = retry(func() error {
+	err = retry(vpcs.Logger, func() error {
 		volumeAttachResult, err = vpcs.Apiclient.VolumeMountService().AttachVolume(&volumeAttachment, vpcs.Logger)
 		return err
 	})
