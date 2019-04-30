@@ -21,7 +21,7 @@ import (
 
 // GetAttachStatus retrives the volume attach status with givne volume attachment details
 func (vs *VolumeMountService) GetAttachStatus(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
-	defer util.TimeTracker("AttachVolume", time.Now())
+	defer util.TimeTracker("GetAttachStatus", time.Now())
 
 	operation := &client.Operation{
 		Name:        "GetAttachStatus",

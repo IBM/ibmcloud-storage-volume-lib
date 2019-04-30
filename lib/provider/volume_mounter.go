@@ -31,7 +31,7 @@ type VolumeMountManager interface {
 	Attach(attachRequest VolumeAttachRequest) (VolumeResponse, error)
 
 	//Detach detaches the volume/ fileset from the pod
-	// TODO
+	// TODO shall we rename VolumeAttachRequest to VolumeAttachment so that it can be used for both volume attach/detach
 	Detach(detachRequest VolumeAttachRequest) (VolumeResponse, error)
 
 	//Mount method allows to mount the volume/fileset to a given location for a pod

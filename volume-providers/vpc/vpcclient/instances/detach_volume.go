@@ -21,7 +21,7 @@ import (
 
 // DetachVolume retrives the volume attach status with givne volume attachment details
 func (vs *VolumeMountService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
-	defer util.TimeTracker("AttachVolume", time.Now())
+	defer util.TimeTracker("DetachVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:        "DetachVolume",
@@ -39,7 +39,7 @@ func (vs *VolumeMountService) DetachVolume(volumeAttachmentTemplate *models.Volu
 	resp, err := req.JSONError(&apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attahment", zap.Error(err))
-		if resp != nil && resp.Status == "402" {
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			// volume Attachment is deleted. So do not want to retry
 			return resp, apiErr
 		} else {

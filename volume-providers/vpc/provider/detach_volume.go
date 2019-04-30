@@ -21,8 +21,8 @@ import (
 
 // Detach volume based on give volume attachment request
 func (vpcs *VPCSession) Detach(volumeAttachmentTemplate provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
-	vpcs.Logger.Debug("Entry of Attach method...")
-	defer vpcs.Logger.Debug("Exit from Attach method...")
+	vpcs.Logger.Debug("Entry of Detach method...")
+	defer vpcs.Logger.Debug("Exit from Detach method...")
 	var err error
 	vpcs.Logger.Info("Validating basic inputs for detach method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
 	err = validateAttachVolumeRequest(volumeAttachmentTemplate)
