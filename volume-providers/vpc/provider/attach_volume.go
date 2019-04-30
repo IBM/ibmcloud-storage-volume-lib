@@ -12,7 +12,6 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	//"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
@@ -21,7 +20,13 @@ import (
 )
 
 //VpcVolumeAttachment ...
-const VpcVolumeAttachment = "vpcVolumeAttachment"
+const (
+	VpcVolumeAttachment = "vpcVolumeAttachment"
+	StatusAttached      = "attached"
+	StatusDetached      = "detached"
+	StatusAttaching     = "attaching"
+	StatusDetaching     = "detaching"
+)
 
 // Attach volume baed on given volume attachment request
 func (vpcs *VPCSession) Attach(volumeAttachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {

@@ -14,6 +14,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 // VolumeMountManager operations
@@ -25,7 +26,7 @@ type VolumeMountManager interface {
 	GetAttachStatus(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
 
 	// Delete the volume
-	DetachVolume(*models.VolumeAttachment, *zap.Logger) error
+	DetachVolume(*models.VolumeAttachment, *zap.Logger) (*http.Response, error)
 }
 
 // VolumeMountService ...

@@ -11,53 +11,41 @@
 package instances
 
 import (
-	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"net/http"
 	"time"
 )
 
 // DetachVolume retrives the volume attach status with givne volume attachment details
-func (vs *VolumeMountService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) error {
+func (vs *VolumeMountService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
 	defer util.TimeTracker("AttachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:        "GetAttachStatus",
-		Method:      "GET",
-		PathPattern: instanceIDvolumeAttachmentPath,
+		Name:        "DetachVolume",
+		Method:      "DELETE",
+		PathPattern: instanceIDattachmentIDPath,
 	}
 
-	var volumeAttachmentList models.VolumeAttachmentList
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(volumeIDParam, volumeAttachmentTemplate.Volume.ID))
-	req := request.PathParameter(instanceIDParam, volumeAttachmentTemplate.InstanceID)
-	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(&apiErr).Invoke()
+	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.VolumeAttachment.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
+	req := request.PathParameter(instanceIDParam, volumeAttachmentTemplate.VolumeAttachment.InstanceID)
+	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	resp, err := req.JSONError(&apiErr).Invoke()
 	if err != nil {
-		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))
-		return err
-	}
-
-	for _, volumeAttachment := range volumeAttachmentList.VolumeAttachments {
-		if volumeAttachment.Volume.ID == volumeAttachmentTemplate.Volume.ID {
-			ctxLogger.Info("Successfully fetched volume attachment", zap.Reflect("volumeAttachment", volumeAttachment))
-			return nil
+		ctxLogger.Error("Error occured while deleting volume attahment", zap.Error(err))
+		if resp != nil && resp.Status == "402" {
+			// volume Attachment is deleted. So do not want to retry
+			return resp, apiErr
+		} else {
+			return resp, err
 		}
 	}
-	// Volume is not attached to instance
-	// form model error so that retry won't  happen
-	apiErr = models.Error{
-		Errors: []models.ErrorItem{
-			models.ErrorItem{
-				Code:    models.ErrorCodeNotFound,
-				Message: fmt.Sprintf("volume [%s]  is not attached to instance [%s]", volumeAttachmentTemplate.Volume.ID, volumeAttachmentTemplate.InstanceID),
-			},
-		},
-	}
-
-	return apiErr
+	ctxLogger.Info("Successfuly deleted the volume attachment")
+	return resp, nil
 }

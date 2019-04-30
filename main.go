@@ -91,7 +91,7 @@ func main() {
 
 	valid := true
 	for valid {
-		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n 14- Create VPC Snapshot \n 15- Attach VPC volume \n Your choice?:")
+		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n 14- Create VPC Snapshot \n 15- Attach VPC volume \n 16- Detach VPC volume \n Your choice?:")
 		var choiceN int
 		var volumeID string
 		var snapshotID string
@@ -416,6 +416,27 @@ func main() {
 				ctxLogger.Error("Failed to attach the volume", zap.Error(err))
 			}
 			fmt.Println("Volume attachment", response, err)
+		} else if choiceN == 16 {
+			fmt.Println("Enter the volume id to detach")
+			_, er11 = fmt.Scanf("%s", &volumeID)
+			volume := &provider.Volume{}
+			volume.VolumeID = volumeID
+			var instanceID string
+			fmt.Println("Enter the instance id to detach")
+			_, er11 = fmt.Scanf("%s", &instanceID)
+			volumeAttachment := &provider.VolumeAttachment{
+				Volume:     volume,
+				InstanceID: instanceID,
+			}
+			volumeDetachmentReq := provider.VolumeAttachRequest{
+				VPCVolumeAttachment: volumeAttachment,
+			}
+			response, err := sess.Detach(volumeDetachmentReq)
+			if err != nil {
+				updateRequestID(err, requestID)
+				ctxLogger.Error("Failed to detach the volume", zap.Error(err))
+			}
+			fmt.Println("Volume detach", response, err)
 		} else {
 			fmt.Println("No right choice")
 			return

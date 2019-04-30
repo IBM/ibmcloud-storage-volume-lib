@@ -12,54 +12,61 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	//"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
-	//"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 
 	"go.uber.org/zap"
+	"net/http"
 )
 
-// Detach volume baed on give volume attachment request
-func (vpcs *VPCSession) Detach(volumeAttachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
+// Detach volume based on give volume attachment request
+func (vpcs *VPCSession) Detach(volumeAttachmentTemplate provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
 	vpcs.Logger.Debug("Entry of Attach method...")
 	defer vpcs.Logger.Debug("Exit from Attach method...")
 	var err error
-	vpcs.Logger.Info("Validating basic inputs for Attach method...", zap.Reflect("volumeAttachRequest", volumeAttachRequest))
-	err = validateAttachVolumeRequest(volumeAttachRequest)
+	vpcs.Logger.Info("Validating basic inputs for detach method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
+	err = validateAttachVolumeRequest(volumeAttachmentTemplate)
 	volumeResponse := provider.VolumeResponse{}
 	if err != nil {
 		volumeResponse.Status = provider.FAILURE
 		volumeResponse.Message = err.Error()
 		return volumeResponse, err
 	}
-	volumeAttachment := models.VolumeAttachment{
-		VolumeAttachment: *volumeAttachRequest.VPCVolumeAttachment,
-		Volume: &models.Volume{
-			ID: volumeAttachRequest.VPCVolumeAttachment.Volume.VolumeID,
-		},
-	}
-	var volumeAttachResult *models.VolumeAttachment
+
+	var response *http.Response
 	// First , check if volume is already attached to given instance
 	vpcs.Logger.Info("Checking if volume is already attached ")
-	currentVolAttachment, _ := vpcs.GetAttachStatus(volumeAttachRequest)
+	currentVolAttachment, _ := vpcs.GetAttachStatus(volumeAttachmentTemplate)
 	if currentVolAttachment.Status == provider.SUCCESS && currentVolAttachment.VPCVolumeAttachment != nil {
-		vpcs.Logger.Info("volume is already attached", zap.Reflect("currentVolAttachment", currentVolAttachment))
-		return currentVolAttachment, nil
+		vpcs.Logger.Info("Found volume attachment", zap.Reflect("currentVolAttachment", currentVolAttachment))
+		if currentVolAttachment.VPCVolumeAttachment.Status != StatusDetaching {
+			//Try detaching volume if it's not already in detaching
+			volumeAttachment := models.VolumeAttachment{
+				VolumeAttachment: *currentVolAttachment.VPCVolumeAttachment,
+
+				Volume: &models.Volume{
+					ID: currentVolAttachment.VPCVolumeAttachment.Volume.VolumeID,
+				},
+			}
+			volumeAttachment.VolumeAttachment.InstanceID = volumeAttachmentTemplate.VPCVolumeAttachment.InstanceID
+			vpcs.Logger.Info("Detaching volume from VPC provider...")
+			err = retry(vpcs.Logger, func() error {
+				response, err = vpcs.Apiclient.VolumeMountService().DetachVolume(&volumeAttachment, vpcs.Logger)
+				return err
+			})
+			if err != nil {
+				userErr := userError.GetUserError(string(userError.VolumeDetachFailed), err, volumeAttachmentTemplate.VPCVolumeAttachment.Volume.VolumeID, volumeAttachmentTemplate.VPCVolumeAttachment.InstanceID, volumeAttachmentTemplate.VPCVolumeAttachment.ID)
+				volumeResponse.Message = userErr.Error()
+				return volumeResponse, userErr
+			}
+			volumeResponse.Status = provider.SUCCESS
+			vpcs.Logger.Info("Successfully detached volume from VPC provider", zap.Reflect("volumeResponse", volumeResponse), zap.Reflect("resp", response))
+		} else {
+			vpcs.Logger.Info("Volume is already getting detached")
+		}
+	} else {
+		vpcs.Logger.Info("No volume attachment found for", zap.Reflect("currentVolAttachment", currentVolAttachment))
+		volumeResponse.Status = provider.SUCCESS // consider volume detach success if its not already attached
 	}
-	//Try attaching volume if it's not already attached or there is error in getting current volume attachment
-	vpcs.Logger.Info("Attaching volume from VPC provider...")
-	err = retry(vpcs.Logger, func() error {
-		volumeAttachResult, err = vpcs.Apiclient.VolumeMountService().AttachVolume(&volumeAttachment, vpcs.Logger)
-		return err
-	})
-	if err != nil {
-		userErr := userError.GetUserError(string(userError.VolumeAttachFailed), err, volumeAttachRequest.VPCVolumeAttachment.Volume.VolumeID, volumeAttachRequest.VPCVolumeAttachment.InstanceID)
-		volumeResponse.Message = userErr.Error()
-		return volumeResponse, userErr
-	}
-	volumeResponse.Status = provider.SUCCESS
-	volumeResponse.VPCVolumeAttachment = &volumeAttachResult.VolumeAttachment
-	vpcs.Logger.Info("Successfully attached volume from VPC provider", zap.Reflect("volumeResponse", volumeResponse))
 	return volumeResponse, nil
 }

@@ -50,6 +50,7 @@ func (vpcs *VPCSession) GetAttachStatus(volumeAttachRequest provider.VolumeAttac
 	}
 	volumeResponse.Status = provider.SUCCESS
 	volumeResponse.VPCVolumeAttachment = &volumeAttachResult.VolumeAttachment
+	volumeResponse.VPCVolumeAttachment.Volume = FromProviderToLibVolume(volumeAttachResult.Volume, vpcs.Logger)
 	vpcs.Logger.Info("Successfully fetched volume attachment from VPC provider", zap.Reflect("volumeResponse", volumeResponse))
 	return volumeResponse, nil
 }
