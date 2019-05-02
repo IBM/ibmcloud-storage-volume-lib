@@ -11,41 +11,18 @@
 package provider
 
 import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"net/http"
-	"os"
 	"testing"
 )
 
-func GetTestContextLogger() (*zap.Logger, zap.AtomicLevel) {
-	consoleDebugging := zapcore.Lock(os.Stdout)
-	consoleErrors := zapcore.Lock(os.Stderr)
-	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.TimeKey = "ts"
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	traceLevel := zap.NewAtomicLevel()
-	traceLevel.SetLevel(zap.InfoLevel)
-	core := zapcore.NewTee(
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleDebugging, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return (lvl >= traceLevel.Level()) && (lvl < zapcore.ErrorLevel)
-		})),
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleErrors, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return lvl >= zapcore.ErrorLevel
-		})),
-	)
-	logger := zap.New(core, zap.AddCaller())
-	return logger, traceLevel
-}
-
 func TestGetVolume(t *testing.T) {
-	// Setup new style zap logger
-	logger, _ := GetTestContextLogger()
-	defer logger.Sync()
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
 
 	testCases := []struct {
 		name string
@@ -56,7 +33,7 @@ func TestGetVolume(t *testing.T) {
 
 		// Expected return
 		expectErr string
-		verify    func(*testing.T, *models.Volume, error)
+		verify    func(*testing.T, *provider.Volume, error)
 	}{
 		{
 			name:   "Verify that the correct endpoint is invoked",
@@ -70,18 +47,18 @@ func TestGetVolume(t *testing.T) {
 			name:    "Verify that the volume is parsed correctly",
 			status:  http.StatusOK,
 			content: "{\"id\":\"vol1\",\"name\":\"vol1\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}",
-			verify: func(t *testing.T, volume *models.Volume, err error) {
+			verify: func(t *testing.T, volume *provider.Volume, err error) {
 				if assert.NotNil(t, volume) {
-					assert.Equal(t, "vol1", volume.ID)
+					assert.Equal(t, "vol1", volume.VolumeID)
 				}
 			},
 		}, {
 			name:    "False positive: What if the volume ID is not matched",
 			status:  http.StatusOK,
 			content: "{\"id\":\"wrong-vol\",\"name\":\"wrong-vol\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:wrong-vol\"}",
-			verify: func(t *testing.T, volume *models.Volume, err error) {
+			verify: func(t *testing.T, volume *provider.Volume, err error) {
 				if assert.NotNil(t, volume) {
-					assert.NotEqual(t, "vol1", volume.ID)
+					assert.NotEqual(t, "vol1", volume.VolumeID)
 				}
 			},
 		},
@@ -93,13 +70,14 @@ func TestGetVolume(t *testing.T) {
 			emptyString := ""
 			test.SetupMuxResponse(t, mux, "/volumes/volume-id", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
 
+			assert.NotNil(t, client)
 			defer teardown()
 
-			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
+			vpcs, err := GetTestOpenSession(t, client, logger)
+			assert.NotNil(t, vpcs)
+			assert.Nil(t, err)
 
-			volumeService := vpcvolume.New(client)
-
-			volume, err := volumeService.GetVolume("volume-id", logger)
+			volume, err := vpcs.GetVolume("volume-id")
 			logger.Info("Volume details", zap.Reflect("volume", volume))
 
 			if testcase.expectErr != "" && assert.Error(t, err) {

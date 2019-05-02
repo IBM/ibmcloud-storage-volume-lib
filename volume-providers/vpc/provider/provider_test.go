@@ -12,25 +12,38 @@ package provider
 
 import (
 	"bytes"
-	"testing"
-
+	"context"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
+	iamFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam/fakes"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/fakes"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
 	"github.com/stretchr/testify/assert"
-
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"testing"
+	"time"
 )
 
 const (
 	TestProviderAccountID   = "test-provider-account"
 	TestProviderAccessToken = "test-provider-access-token"
 	TestIKSAccountID        = "test-iks-account"
+	TestZone                = "test-zone"
 	IamURL                  = "test-iam-url"
 	IamClientID             = "test-iam_client_id"
 	IamClientSecret         = "test-iam_client_secret"
 	IamAPIKey               = "test-iam_api_key"
 	RefreshToken            = "test-refresh_token"
 )
+
+var _ local.ContextCredentialsFactory = &auth.ContextCredentialsFactory{}
 
 func GetTestLogger(t *testing.T) (logger *zap.Logger, teardown func()) {
 
@@ -79,6 +92,7 @@ func TestNewProvider(t *testing.T) {
 	}
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
+
 	prov, err := NewProvider(conf, logger)
 	assert.Nil(t, prov)
 	assert.NotNil(t, err)
@@ -97,12 +111,175 @@ func TestNewProvider(t *testing.T) {
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
 			EndpointURL: "http://some_endpoint",
-			Timeout:     "30s",
+			Timeout:     "",
 		},
 	}
+
 	prov, err = NewProvider(conf, logger)
 	assert.NotNil(t, prov)
 	assert.Nil(t, err)
 
+	zone := "Test Zone"
+	contextCF, _ := prov.ContextCredentialsFactory(&zone)
+	assert.NotNil(t, contextCF)
+
 	return
+}
+
+func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error) {
+	var cp *fakes.RegionalAPIClientProvider
+	var uc, sc *fakes.RegionalAPI
+
+	logger.Info("Getting New test Provider")
+	conf := &config.Config{
+		Server: &config.ServerConfig{
+			DebugTrace: true,
+		},
+		Bluemix: &config.BluemixConfig{
+			IamURL:          IamURL,
+			IamClientID:     IamClientID,
+			IamClientSecret: IamClientSecret,
+			IamAPIKey:       IamClientSecret,
+			RefreshToken:    RefreshToken,
+		},
+		VPC: &config.VPCProviderConfig{
+			Enabled:         true,
+			EndpointURL:     "http://some_endpoint",
+			Timeout:         "30s",
+			MaxRetryAttempt: 5,
+			MaxRetryGap:     10,
+			APIVersion:      "2019-01-01",
+		},
+	}
+
+	p, err := NewProvider(conf, logger)
+	assert.NotNil(t, p)
+	assert.Nil(t, err)
+
+	timeout, _ := time.ParseDuration(conf.VPC.Timeout)
+
+	// Inject a fake RIAAS API client
+	cp = &fakes.RegionalAPIClientProvider{}
+	uc = &fakes.RegionalAPI{}
+	cp.NewReturnsOnCall(0, uc, nil)
+	sc = &fakes.RegionalAPI{}
+	cp.NewReturnsOnCall(1, sc, nil)
+
+	// Inject fake token exchange
+	tokenExchangeService := iamFakes.TokenExchangeService{
+		ExchangeIAMAPIKeyForAccessTokenStub: func(iamAPIKey string, logger *zap.Logger) (*iam.AccessToken, error) {
+			return &iam.AccessToken{
+				Token: TestProviderAccessToken,
+			}, nil
+		},
+		GetIAMAccountIDFromAccessTokenStub: func(accessToken iam.AccessToken, logger *zap.Logger) (string, error) {
+			if accessToken.Token == TestProviderAccessToken {
+				return TestProviderAccountID, nil
+			}
+
+			return accessToken.Token + "-account", nil
+		},
+	}
+
+	assert.NotNil(t, tokenExchangeService)
+
+	httpClient, err := config.GeneralCAHttpClientWithTimeout(timeout)
+	if err != nil {
+		logger.Error("Failed to prepare HTTP client", util.ZapError(err))
+		return nil, err
+	}
+	assert.NotNil(t, httpClient)
+
+	provider := &VPCBlockProvider{
+		timeout:        timeout,
+		serverConfig:   conf.Server,
+		config:         conf.VPC,
+		tokenGenerator: &tokenGenerator{config: conf.VPC},
+		httpClient:     httpClient,
+	}
+	assert.NotNil(t, provider)
+	assert.Equal(t, provider.timeout, timeout)
+
+	return provider, nil
+}
+
+func TestGetTestProvider(t *testing.T) {
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	prov, err := GetTestProvider(t, logger)
+	assert.NotNil(t, prov)
+	assert.Nil(t, err)
+
+	zone := "Test Zone"
+	contextCF, _ := prov.ContextCredentialsFactory(&zone)
+	assert.Nil(t, contextCF)
+	assert.NotNil(t, prov.httpClient)
+}
+
+func TestOpenSession(t *testing.T) {
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	prov, err := GetTestProvider(t, logger)
+
+	sessn, err := prov.OpenSession(context.Background(), provider.ContextCredentials{
+		AuthType:     provider.IAMAccessToken,
+		Credential:   TestProviderAccessToken,
+		IAMAccountID: TestIKSAccountID,
+	}, logger)
+
+	require.NoError(t, err)
+	assert.NotNil(t, sessn)
+
+	return
+}
+
+func GetTestOpenSession(t *testing.T, client client.SessionClient, logger *zap.Logger) (sessn provider.Session, err error) {
+
+	prov, err := GetTestProvider(t, logger)
+
+	sessn = &VPCSession{
+		VPCAccountID: TestIKSAccountID,
+		Config:       prov.config,
+		ContextCredentials: provider.ContextCredentials{
+			AuthType:     provider.IAMAccessToken,
+			Credential:   TestProviderAccessToken,
+			IAMAccountID: TestIKSAccountID,
+		},
+		VolumeType: "vpc-block",
+		Provider:   VPC,
+		//Apiclient:  client,
+		Logger: logger,
+	}
+
+	return
+}
+
+func TestGetTestOpenSession(t *testing.T) {
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	_, client, _ := test.SetupServer(t)
+	assert.NotNil(t, client)
+
+	vpcs, err := GetTestOpenSession(t, client, logger)
+	assert.NotNil(t, vpcs)
+	assert.Nil(t, err)
+
+	providerDisplayName := vpcs.GetProviderDisplayName()
+	assert.Equal(t, providerDisplayName, provider.VolumeProvider("VPC"))
+	vpcs.Close()
+
+	providerName := vpcs.ProviderName()
+	assert.Equal(t, providerName, provider.VolumeProvider("VPC"))
+
+	volumeType := vpcs.Type()
+	assert.Equal(t, volumeType, provider.VolumeType("vpc-block"))
+
+	volume, _ := vpcs.GetVolume("test volume")
+	assert.Nil(t, volume)
 }
