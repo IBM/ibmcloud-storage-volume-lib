@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	CUSTOM_PROFILE = "custom"
-	MIN_SIZE = 10
+	customProfile = "custom"
+	minSize       = 10
 )
 
 // CreateVolume Get the volume by using ID
@@ -37,12 +37,12 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 
 	// Build the template we'll send to RIAAS
 	volumeTemplate := &models.Volume{
-		Name:     *volumeRequest.Name,
-		Capacity: int64(*volumeRequest.Capacity),
-		Iops:     iops,
-		Tags:     volumeRequest.VPCVolume.Tags,
+		Name:          *volumeRequest.Name,
+		Capacity:      int64(*volumeRequest.Capacity),
+		Iops:          iops,
+		Tags:          volumeRequest.VPCVolume.Tags,
 		ResourceGroup: &resourceGroup,
-		Generation: models.GenerationType(vpcs.Config.VPCBlockProviderName),
+		Generation:    models.GenerationType(vpcs.Config.VPCBlockProviderName),
 		Profile: &models.Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},
@@ -85,7 +85,7 @@ func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup,
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil {
 		return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, nil)
-	} else if *volumeRequest.Capacity <= MIN_SIZE {
+	} else if *volumeRequest.Capacity <= minSize {
 		return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
 	}
 
@@ -94,7 +94,7 @@ func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup,
 		iops = ToInt64(*volumeRequest.Iops)
 	}
 
-	if volumeRequest.VPCVolume.Profile.Name != CUSTOM_PROFILE && iops > 0 {
+	if volumeRequest.VPCVolume.Profile.Name != customProfile && iops > 0 {
 		return resourceGroup, iops, userError.GetUserError("VolumeProfileIopsInvalid", nil)
 	}
 
