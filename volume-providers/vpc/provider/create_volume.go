@@ -102,6 +102,7 @@ func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup,
 	if len(volumeRequest.VPCVolume.ResourceGroup.ID) > 0 {
 		resourceGroup.ID = volumeRequest.VPCVolume.ResourceGroup.ID
 	} else if len(volumeRequest.VPCVolume.ResourceGroup.Name) > 0 {
+		// get the resource group ID from resource group name as Name is not supported by RIaaS
 		resourceGroup.Name = volumeRequest.VPCVolume.ResourceGroup.Name
 	} else {
 		return resourceGroup, iops, userError.GetUserError("EmptyResourceGroup", nil)

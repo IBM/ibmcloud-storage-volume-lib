@@ -348,7 +348,10 @@ func main() {
 
 			volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 
-			volume.VPCVolume.Profile = &provider.Profile{Name: "general-purpose"}
+			profile := "general-purpose"
+			fmt.Printf("\nPlease enter profile name supported profiles are [general-purpose, custom, 10iops-tier, 5iops-tier]: ")
+			_, er11 = fmt.Scanf("%s", &profile)
+			volume.VPCVolume.Profile = &provider.Profile{Name: profile}
 
 			fmt.Printf("\nPlease enter volume name: ")
 			_, er11 = fmt.Scanf("%s", &volumeName)
@@ -358,7 +361,7 @@ func main() {
 			_, er11 = fmt.Scanf("%d", &volSize)
 			volume.Capacity = &volSize
 
-			fmt.Printf("\nPlease enter iops (For general purpose profiles, leave it empty): ")
+			fmt.Printf("\nPlease enter iops (Only custom profiles require iops): ")
 			_, er11 = fmt.Scanf("%s", &Iops)
 			volume.Iops = &Iops
 
