@@ -15,7 +15,6 @@ import (
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
-	//"strconv"
 )
 
 const (
