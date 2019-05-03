@@ -85,7 +85,7 @@ func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup,
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil {
 		return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, nil)
-	} else if *volumeRequest.Capacity <= minSize {
+	} else if *volumeRequest.Capacity < minSize {
 		return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
 	}
 

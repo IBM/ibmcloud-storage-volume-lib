@@ -337,6 +337,7 @@ func main() {
 			volumeName := ""
 			volume.VolumeType = "vpc-block"
 
+			resiurceGType := 0
 			resourceGroup := "default resource group"
 			zone := "us-south-1"
 			volSize := 0
@@ -345,7 +346,7 @@ func main() {
 			volume.Az = zone
 			volume.VPCVolume.Generation = "gt"
 
-			volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{ID: resourceGroup}
+			volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 
 			volume.VPCVolume.Profile = &provider.Profile{Name: "general-purpose"}
 
@@ -361,9 +362,20 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &Iops)
 			volume.Iops = &Iops
 
-			fmt.Printf("\nPlease enter resource group: ")
-			_, er11 = fmt.Scanf("%s", &resourceGroup)
-			volume.VPCVolume.ResourceGroup.ID = resourceGroup
+			fmt.Printf("\nPlease enter resource group info type : 1- for ID and 2- for Name: ")
+			_, er11 = fmt.Scanf("%d", &resiurceGType)
+			if resiurceGType == 1 {
+				fmt.Printf("\nPlease enter resource group ID:")
+				_, er11 = fmt.Scanf("%s", &resourceGroup)
+				volume.VPCVolume.ResourceGroup.ID = resourceGroup
+			} else if resiurceGType == 2 {
+				fmt.Printf("\nPlease enter resource group Name:")
+				_, er11 = fmt.Scanf("%s", &resourceGroup)
+				volume.VPCVolume.ResourceGroup.Name = resourceGroup
+			} else {
+				fmt.Printf("\nWrong resource group type\n")
+				continue
+			}
 
 			fmt.Printf("\nPlease enter zone: ")
 			_, er11 = fmt.Scanf("%s", &zone)
