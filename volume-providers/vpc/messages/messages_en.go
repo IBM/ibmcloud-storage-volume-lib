@@ -86,6 +86,13 @@ var messagesEn = map[string]util.Message{
 		RC:          400,
 		Action:      "IOPS value not allowed by profile. Please review provided URL for profile and iops",
 	},
+	"EmptyResourceGroup": util.Message{
+		Code:        "EmptyResourceGroup",
+		Description: "Resource group information not provided",
+		Type:        "InvalidRequest",
+		RC:          400,
+		Action:      "VPC volume is associated with resource group. Please provide either resource group ID or Name to create volume",
+	},
 	"SnapshotSpaceOrderFailed": util.Message{
 		Code:        "SnapshotSpaceOrderFailed",
 		Description: "Snapshot space order failed for the given volume ID",

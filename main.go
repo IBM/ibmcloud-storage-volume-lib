@@ -337,6 +337,7 @@ func main() {
 			volumeName := ""
 			volume.VolumeType = "vpc-block"
 
+			resiurceGType := 0
 			resourceGroup := "default resource group"
 			zone := "us-south-1"
 			volSize := 0
@@ -345,9 +346,12 @@ func main() {
 			volume.Az = zone
 			volume.VPCVolume.Generation = "gt"
 
-			volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{ID: resourceGroup}
+			volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 
-			volume.VPCVolume.Profile = &provider.Profile{Name: "general-purpose"}
+			profile := "general-purpose"
+			fmt.Printf("\nPlease enter profile name supported profiles are [general-purpose, custom, 10iops-tier, 5iops-tier]: ")
+			_, er11 = fmt.Scanf("%s", &profile)
+			volume.VPCVolume.Profile = &provider.Profile{Name: profile}
 
 			fmt.Printf("\nPlease enter volume name: ")
 			_, er11 = fmt.Scanf("%s", &volumeName)
@@ -357,13 +361,24 @@ func main() {
 			_, er11 = fmt.Scanf("%d", &volSize)
 			volume.Capacity = &volSize
 
-			fmt.Printf("\nPlease enter iops (For general purpose profiles, leave it empty): ")
+			fmt.Printf("\nPlease enter iops (Only custom profiles require iops): ")
 			_, er11 = fmt.Scanf("%s", &Iops)
 			volume.Iops = &Iops
 
-			fmt.Printf("\nPlease enter resource group: ")
-			_, er11 = fmt.Scanf("%s", &resourceGroup)
-			volume.VPCVolume.ResourceGroup.ID = resourceGroup
+			fmt.Printf("\nPlease enter resource group info type : 1- for ID and 2- for Name: ")
+			_, er11 = fmt.Scanf("%d", &resiurceGType)
+			if resiurceGType == 1 {
+				fmt.Printf("\nPlease enter resource group ID:")
+				_, er11 = fmt.Scanf("%s", &resourceGroup)
+				volume.VPCVolume.ResourceGroup.ID = resourceGroup
+			} else if resiurceGType == 2 {
+				fmt.Printf("\nPlease enter resource group Name:")
+				_, er11 = fmt.Scanf("%s", &resourceGroup)
+				volume.VPCVolume.ResourceGroup.Name = resourceGroup
+			} else {
+				fmt.Printf("\nWrong resource group type\n")
+				continue
+			}
 
 			fmt.Printf("\nPlease enter zone: ")
 			_, er11 = fmt.Scanf("%s", &zone)
