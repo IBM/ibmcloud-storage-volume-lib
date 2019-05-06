@@ -15,14 +15,13 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
-  "go.uber.org/zap/zapcore"
-  "os"
+	"go.uber.org/zap/zapcore"
+	"os"
 	"testing"
 	"time"
 )
 
 var logger *zap.Logger
-
 
 func GetTestContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	consoleDebugging := zapcore.Lock(os.Stdout)
@@ -43,7 +42,6 @@ func GetTestContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	logger := zap.New(core, zap.AddCaller())
 	return logger, traceLevel
 }
-
 
 func TestRetry(t *testing.T) {
 	// Setup new style zap logger

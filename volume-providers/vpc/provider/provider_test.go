@@ -13,6 +13,7 @@ package provider
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
@@ -20,13 +21,15 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 	iamFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam/fakes"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/fakes"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
+	volumeServiceFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/fakes"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -41,6 +44,8 @@ const (
 	IamClientSecret         = "test-iam_client_secret"
 	IamAPIKey               = "test-iam_api_key"
 	RefreshToken            = "test-refresh_token"
+	TestEndpointURL         = "test-vpc-url"
+	TestApiVersion          = "2019-01-01"
 )
 
 var _ local.ContextCredentialsFactory = &auth.ContextCredentialsFactory{}
@@ -165,6 +170,9 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 	sc = &fakes.RegionalAPI{}
 	cp.NewReturnsOnCall(1, sc, nil)
 
+	volumeService := &volumeServiceFakes.VolumeService{}
+	uc.VolumeServiceReturns(volumeService)
+
 	// Inject fake token exchange
 	tokenExchangeService := iamFakes.TokenExchangeService{
 		ExchangeIAMAPIKeyForAccessTokenStub: func(iamAPIKey string, logger *zap.Logger) (*iam.AccessToken, error) {
@@ -223,9 +231,9 @@ func TestOpenSession(t *testing.T) {
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
 
-	prov, err := GetTestProvider(t, logger)
+	vpcp, err := GetTestProvider(t, logger)
 
-	sessn, err := prov.OpenSession(context.Background(), provider.ContextCredentials{
+	sessn, err := vpcp.OpenSession(context.Background(), provider.ContextCredentials{
 		AuthType:     provider.IAMAccessToken,
 		Credential:   TestProviderAccessToken,
 		IAMAccountID: TestIKSAccountID,
@@ -237,13 +245,26 @@ func TestOpenSession(t *testing.T) {
 	return
 }
 
-func GetTestOpenSession(t *testing.T, client client.SessionClient, logger *zap.Logger) (sessn provider.Session, err error) {
+func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn provider.Session, uc, sc *fakes.RegionalAPI, err error) {
+	vpcp, err := GetTestProvider(t, logger)
 
-	prov, err := GetTestProvider(t, logger)
+	m := http.NewServeMux()
+	s := httptest.NewServer(m)
+	assert.NotNil(t, s)
+
+	vpcp.httpClient = http.DefaultClient
+
+	// Inject a fake RIAAS API client
+	cp := &fakes.RegionalAPIClientProvider{}
+	uc = &fakes.RegionalAPI{}
+	cp.NewReturnsOnCall(0, uc, nil)
+	sc = &fakes.RegionalAPI{}
+	cp.NewReturnsOnCall(1, sc, nil)
+	vpcp.ClientProvider = cp
 
 	sessn = &VPCSession{
 		VPCAccountID: TestIKSAccountID,
-		Config:       prov.config,
+		Config:       vpcp.config,
 		ContextCredentials: provider.ContextCredentials{
 			AuthType:     provider.IAMAccessToken,
 			Credential:   TestProviderAccessToken,
@@ -251,8 +272,8 @@ func GetTestOpenSession(t *testing.T, client client.SessionClient, logger *zap.L
 		},
 		VolumeType: "vpc-block",
 		Provider:   VPC,
-		//Apiclient:  client,
-		Logger: logger,
+		Apiclient:  uc,
+		Logger:     logger,
 	}
 
 	return
@@ -263,11 +284,10 @@ func TestGetTestOpenSession(t *testing.T) {
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
 
-	_, client, _ := test.SetupServer(t)
-	assert.NotNil(t, client)
-
-	vpcs, err := GetTestOpenSession(t, client, logger)
+	vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 	assert.NotNil(t, vpcs)
+	assert.NotNil(t, uc)
+	assert.NotNil(t, sc)
 	assert.Nil(t, err)
 
 	providerDisplayName := vpcs.GetProviderDisplayName()
@@ -282,4 +302,35 @@ func TestGetTestOpenSession(t *testing.T) {
 
 	volume, _ := vpcs.GetVolume("test volume")
 	assert.Nil(t, volume)
+}
+
+// SetupMuxResponse ...
+func SetupMuxResponse(t *testing.T, m *http.ServeMux, path string, expectedMethod string, expectedContent *string, statusCode int, body string, verify func(t *testing.T, r *http.Request)) {
+
+	m.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+
+		assert.Equal(t, expectedMethod, r.Method)
+
+		authHeader := r.Header.Get("Authorization")
+		assert.Equal(t, "Bearer auth-token", authHeader)
+
+		acceptHeader := r.Header.Get("Accept")
+		assert.Equal(t, "application/json", acceptHeader)
+
+		if expectedContent != nil {
+			b, _ := ioutil.ReadAll(r.Body)
+			assert.Equal(t, *expectedContent, string(b))
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(statusCode)
+
+		if body != "" {
+			fmt.Fprint(w, body)
+		}
+
+		if verify != nil {
+			verify(t, r)
+		}
+	})
 }
