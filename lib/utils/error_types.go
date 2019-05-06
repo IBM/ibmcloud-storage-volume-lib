@@ -14,30 +14,31 @@ package util
 const (
 
 	// ProvisioningFailed volume or snapshot provisioning failed
-	ProvisioningFailed   = "ProvisioningFailed"
+	ProvisioningFailed = "ProvisioningFailed"
 
-  // DeletionFailed ...
-  DeletionFailed       = "DeletionFailed"
+	// DeletionFailed ...
+	DeletionFailed = "DeletionFailed"
 
-  // RetrivalFailed ...
-  RetrivalFailed       = "RetrivalFailed"
+	// RetrivalFailed ...
+	RetrivalFailed = "RetrivalFailed"
 
-  // InvalidRequest ...
-  InvalidRequest       = "InvalidRequest"
+	// InvalidRequest ...
+	InvalidRequest = "InvalidRequest"
 
-  // EntityNotFound ...
-  EntityNotFound       = "EntityNotFound"
+	// EntityNotFound ...
+	EntityNotFound = "EntityNotFound"
 
-  // PermissionDenied ...
-  PermissionDenied     = "PermissionDenied"
+	// PermissionDenied ...
+	PermissionDenied = "PermissionDenied"
 
-  // Unauthenticated ...
-  Unauthenticated      = "Unauthenticated"
+	// Unauthenticated ...
+	Unauthenticated = "Unauthenticated"
 
-	//
-	ErrorTypeFailed			 = "ErrorTypeConversionFailed"
-  )
+	// ErrorTypeFailed ...
+	ErrorTypeFailed = "ErrorTypeConversionFailed"
+)
 
+// GetErrorType return the user error type provided by volume provider
 func GetErrorType(err error) string {
 	providerError, ok := err.(Message)
 	if ok {
