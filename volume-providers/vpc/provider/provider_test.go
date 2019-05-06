@@ -13,7 +13,6 @@ package provider
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
@@ -27,7 +26,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -302,35 +300,4 @@ func TestGetTestOpenSession(t *testing.T) {
 
 	volume, _ := vpcs.GetVolume("test volume")
 	assert.Nil(t, volume)
-}
-
-// SetupMuxResponse ...
-func SetupMuxResponse(t *testing.T, m *http.ServeMux, path string, expectedMethod string, expectedContent *string, statusCode int, body string, verify func(t *testing.T, r *http.Request)) {
-
-	m.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-
-		assert.Equal(t, expectedMethod, r.Method)
-
-		authHeader := r.Header.Get("Authorization")
-		assert.Equal(t, "Bearer auth-token", authHeader)
-
-		acceptHeader := r.Header.Get("Accept")
-		assert.Equal(t, "application/json", acceptHeader)
-
-		if expectedContent != nil {
-			b, _ := ioutil.ReadAll(r.Body)
-			assert.Equal(t, *expectedContent, string(b))
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(statusCode)
-
-		if body != "" {
-			fmt.Fprint(w, body)
-		}
-
-		if verify != nil {
-			verify(t, r)
-		}
-	})
 }
