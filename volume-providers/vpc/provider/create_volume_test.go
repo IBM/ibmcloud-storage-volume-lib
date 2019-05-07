@@ -36,8 +36,9 @@ func TestCreateVolume(t *testing.T) {
 		volumeID       string
 		baseVolume     *models.Volume
 		providerVolume provider.Volume
+		profileName    string
 
-		setup func()
+		setup func(providerVolume *provider.Volume)
 
 		skipErrTest        bool
 		expectedErr        string
@@ -96,6 +97,54 @@ func TestCreateVolume(t *testing.T) {
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
+			},
+		}, {
+			name:     "Volume with general-purpose profile and invalid iops",
+			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+				Capacity: Int(10),
+				Iops:     String("1000"),
+				VPCVolume: provider.VPCVolume{
+					Profile: &provider.Profile{Name: "general-purpose"},
+				},
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			name:     "Volume with test-purpose profile and invalid iops",
+			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+				Capacity: Int(10),
+				VPCVolume: provider.VPCVolume{
+					Profile: &provider.Profile{Name: "test-purpose"},
+				},
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			name:     "Volume with no validation issues",
+			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+				Capacity: Int(10),
+				Iops:     String("0"),
+				VPCVolume: provider.VPCVolume{
+					Profile:       &provider.Profile{Name: "general-purpose"},
+					ResourceGroup: &provider.ResourceGroup{ID: "default resource group"},
+				},
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.Nil(t, err)
 			},
 		},
 	}

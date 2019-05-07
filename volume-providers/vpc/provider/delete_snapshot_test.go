@@ -22,7 +22,7 @@ import (
 	"testing"
 )
 
-func TestCreateSnapshot(t *testing.T) {
+func TestDeleteSnapshot(t *testing.T) {
 	//var err error
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
@@ -33,56 +33,55 @@ func TestCreateSnapshot(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name           string
-		baseSnapshot   *models.Snapshot
-		providerVolume *provider.Volume
-		baseVolume     *models.Volume
-		tags           map[string]string
-		setup          func()
+		name             string
+		baseVolume       *models.Volume
+		baseSnapshot     *models.Snapshot
+		providerVolume   *provider.Volume
+		providerSnapshot *provider.Snapshot
+
+		tags  map[string]string
+		setup func()
 
 		skipErrTest        bool
 		expectedErr        string
 		expectedReasonCode string
 
-		verify func(t *testing.T, snapshotResponse *provider.Snapshot, err error)
+		verify func(t *testing.T, err error)
 	}{
 		{
 			name: "Not supported yet",
-			providerVolume: &provider.Volume{
-				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerSnapshot: &provider.Snapshot{
+				SnapshotID: "s6f293bf-test-4bff-816f-e199c0c65db5",
+				Volume: provider.Volume{
+					VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+					Name:     String("Test volume"),
+					Capacity: Int(10),
+					Iops:     String("1000"),
+					VPCVolume: provider.VPCVolume{
+						Profile: &provider.Profile{Name: "general-purpose"},
+					},
+				},
 			},
-			baseVolume: &models.Volume{
-				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test-volume-name",
-				Status:   models.StatusType("OK"),
-				Capacity: int64(10),
-				Iops:     int64(1000),
-			},
-			baseSnapshot: &models.Snapshot{
-				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:   "test-snapshot-name",
-				Status: models.StatusType("OK"),
-			},
-			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
-				assert.Nil(t, snapshotResponse)
-				assert.NotNil(t, err)
+			verify: func(t *testing.T, err error) {
+				assert.Nil(t, err)
 			},
 		}, {
-			name: "Not supported yet",
-			providerVolume: &provider.Volume{
-				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			name: "Not a valid snapshot",
+			providerSnapshot: &provider.Snapshot{
+				SnapshotID: "s6f293bf-test-4bff-816f-e199c0c65db5",
+				Volume: provider.Volume{
+					VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+					Name:     String("Test volume"),
+					Capacity: Int(10),
+					Iops:     String("1000"),
+					VPCVolume: provider.VPCVolume{
+						Profile: &provider.Profile{Name: "general-purpose"},
+					},
+				},
 			},
-			baseVolume: &models.Volume{
-				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test-volume-name",
-				Status:   models.StatusType("OK"),
-				Capacity: int64(10),
-				Iops:     int64(1000),
-			},
-			expectedErr:        "{Code:StorageFindFailedWithSnapshotId, Type:InvalidRequest, Description:'Not a valid snapshot ID",
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Not a valid snapshot ID",
 			expectedReasonCode: "ErrorUnclassified",
-			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
-				assert.Nil(t, snapshotResponse)
+			verify: func(t *testing.T, err error) {
 				assert.NotNil(t, err)
 			},
 		},
@@ -105,14 +104,13 @@ func TestCreateSnapshot(t *testing.T) {
 			uc.VolumeServiceReturns(volumeService)
 
 			if testcase.expectedErr != "" {
-				snapshotService.CreateSnapshotReturns(testcase.baseSnapshot, errors.New(testcase.expectedReasonCode))
-				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
+				snapshotService.DeleteSnapshotReturns(errors.New(testcase.expectedReasonCode))
+				snapshotService.GetSnapshotReturns(testcase.baseSnapshot, errors.New(testcase.expectedReasonCode))
 			} else {
-				snapshotService.CreateSnapshotReturns(testcase.baseSnapshot, nil)
-				volumeService.GetVolumeReturns(testcase.baseVolume, nil)
+				snapshotService.DeleteSnapshotReturns(nil)
+				snapshotService.GetSnapshotReturns(testcase.baseSnapshot, nil)
 			}
-			snapshot, err := vpcs.CreateSnapshot(testcase.providerVolume, testcase.tags)
-			logger.Info("Snapshot details", zap.Reflect("snapshot", snapshot))
+			err = vpcs.DeleteSnapshot(testcase.providerSnapshot)
 
 			if testcase.expectedErr != "" {
 				assert.NotNil(t, err)
@@ -121,7 +119,7 @@ func TestCreateSnapshot(t *testing.T) {
 			}
 
 			if testcase.verify != nil {
-				testcase.verify(t, snapshot, err)
+				testcase.verify(t, err)
 			}
 
 		})

@@ -92,11 +92,11 @@ func validateVolumeRequest(volumeRequest provider.Volume) (err error) {
 
 	// General purpose profiles does not allow IOPs setting
 	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
-		return userError.GetUserError("IopsInvalid", nil, *volumeRequest.Iops)
+		return userError.GetUserError("IopsInvalid", nil, nil)
 	}
 
 	// General purpose profiles does not allow IOPs setting
-	if *volumeRequest.Iops > strconv.Itoa(0) && volumeRequest.VPCVolume.Profile.Name == "general-purpose" {
+	if volumeRequest.VPCVolume.Profile.Name == "general-purpose" && *volumeRequest.Iops > strconv.Itoa(0) {
 		return userError.GetUserError("VolumeProfileIopsInvalid", nil)
 	}
 	return nil
