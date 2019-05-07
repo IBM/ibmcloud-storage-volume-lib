@@ -53,10 +53,56 @@ func TestRetry(t *testing.T) {
 		if attempt == 2 {
 			err = nil
 		} else {
-			err = errors.New("Trace Code:, testerr Please check ")
+			errCode := models.ErrorCode("validation_invalid_name")
+			errItem := models.ErrorItem{
+				Code: errCode,
+			}
+
+			err = &models.Error{
+				Errors: []models.ErrorItem{errItem},
+			}
 		}
 		return err
 	})
+
+	err = retry(logger, func() error {
+		logger.Info("Testing retry with unsuccessful attempt")
+		errCode := models.ErrorCode("wrong_code")
+		errItem := models.ErrorItem{
+			Code: errCode,
+		}
+
+		err = &models.Error{
+			Errors: []models.ErrorItem{errItem},
+		}
+		return err
+	})
+}
+
+func TestSkipRetry(t *testing.T) {
+	errCode := models.ErrorCode("validation_invalid_name")
+	errItem := models.ErrorItem{
+		Code: errCode,
+	}
+
+	err := &models.Error{
+		Errors: []models.ErrorItem{errItem},
+	}
+
+	skip := skipRetry(err)
+	assert.Equal(t, skip, true)
+
+	errCode = models.ErrorCode("wrong_code")
+	errItem = models.ErrorItem{
+		Code: errCode,
+	}
+
+	err = &models.Error{
+		Errors: []models.ErrorItem{errItem},
+	}
+
+	skip = skipRetry(err)
+	assert.Equal(t, skip, false)
 }
 
 func TestRetryWithError(t *testing.T) {
