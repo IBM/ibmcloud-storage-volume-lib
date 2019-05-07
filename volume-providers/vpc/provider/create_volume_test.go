@@ -22,7 +22,7 @@ import (
 	"testing"
 )
 
-func TestGetVolume(t *testing.T) {
+func TestCreateVolume(t *testing.T) {
 	//var err error
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
@@ -32,9 +32,10 @@ func TestGetVolume(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name       string
-		volumeID   string
-		baseVolume *models.Volume
+		name           string
+		volumeID       string
+		baseVolume     *models.Volume
+		providerVolume provider.Volume
 
 		setup func()
 
@@ -45,41 +46,53 @@ func TestGetVolume(t *testing.T) {
 		verify func(t *testing.T, volumeResponse *provider.Volume, err error)
 	}{
 		{
-			name:     "OK",
+			name:     "Volume capacity is nil",
 			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+			},
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test-volume-name",
+				Name:     "test volume name",
 				Status:   models.StatusType("OK"),
 				Capacity: int64(10),
 				Iops:     int64(1000),
 				Zone:     &models.Zone{Name: "test-zone"},
 			},
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.NotNil(t, volumeResponse)
-				assert.Nil(t, err)
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
 			},
 		}, {
-			name:     "Wrong volume ID",
-			volumeID: "Wrong volume ID",
-			baseVolume: &models.Volume{
-				ID:       "wrong-wrong-id",
-				Name:     "test-volume-name",
-				Status:   models.StatusType("OK"),
-				Capacity: int64(10),
-				Iops:     int64(1000),
+			name:     "Volume name is nil",
+			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
-			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Wrong volume ID' volume ID is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#volume_id_invalid, BackendError:, RC:400}",
-			expectedReasonCode: "ErrorUnclassified",
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
 			},
 		}, {
-			name:               "Volume without zone",
-			volumeID:           "16f293bf-test-4bff-816f-e199c0c65db5",
-			expectedErr:        "{Code:ErrorUnclassified, Type:RetrivalFailed, Description:Failed to find '16f293bf-test-4bff-816f-e199c0c65db5' volume ID., BackendError:StorageFindFailedWithVolumeId, RC:404}",
-			expectedReasonCode: "ErrorUnclassified",
+			name:     "Volume name is empty",
+			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String(""),
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			name:     "Volume capacity is zero",
+			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+				Capacity: Int(0),
+			},
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
@@ -100,11 +113,11 @@ func TestGetVolume(t *testing.T) {
 			uc.VolumeServiceReturns(volumeService)
 
 			if testcase.expectedErr != "" {
-				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
+				volumeService.CreateVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
 			} else {
-				volumeService.GetVolumeReturns(testcase.baseVolume, nil)
+				volumeService.CreateVolumeReturns(testcase.baseVolume, nil)
 			}
-			volume, err := vpcs.GetVolume(testcase.volumeID)
+			volume, err := vpcs.CreateVolume(testcase.providerVolume)
 			logger.Info("Volume details", zap.Reflect("volume", volume))
 
 			if testcase.expectedErr != "" {
@@ -119,4 +132,14 @@ func TestGetVolume(t *testing.T) {
 
 		})
 	}
+}
+
+// String returns a pointer to the string value provided
+func String(v string) *string {
+	return &v
+}
+
+// Int returns a pointer to the int value provided
+func Int(v int) *int {
+	return &v
 }

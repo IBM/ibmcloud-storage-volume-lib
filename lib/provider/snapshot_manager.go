@@ -25,6 +25,9 @@ type SnapshotManager interface {
 	// Get the snapshot
 	GetSnapshot(snapshotID string) (*Snapshot, error)
 
+	// Get the snapshot with volume ID
+	GetSnapshotWithVolumeID(volumeID string, snapshotID string) (*Snapshot, error)
+
 	// Snapshot list by using tags
 	ListSnapshots() ([]*Snapshot, error)
 

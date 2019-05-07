@@ -16,72 +16,55 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
-	volumeServiceFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/fakes"
+	serviceFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/fakes"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"testing"
 )
 
-func TestGetVolume(t *testing.T) {
+func TestCreateSnapshot(t *testing.T) {
 	//var err error
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
 
 	var (
-		volumeService *volumeServiceFakes.VolumeService
+		snapshotService *serviceFakes.SnapshotService
+		volumeService   *serviceFakes.VolumeService
 	)
 
 	testCases := []struct {
-		name       string
-		volumeID   string
-		baseVolume *models.Volume
-
-		setup func()
+		name           string
+		baseSnapshot   *models.Snapshot
+		providerVolume *provider.Volume
+		baseVolume     *models.Volume
+		tags           map[string]string
+		setup          func()
 
 		skipErrTest        bool
 		expectedErr        string
 		expectedReasonCode string
 
-		verify func(t *testing.T, volumeResponse *provider.Volume, err error)
+		verify func(t *testing.T, snapshotResponse *provider.Snapshot, err error)
 	}{
 		{
-			name:     "OK",
-			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			name: "Not supported yet",
+			providerVolume: &provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			},
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     "test-volume-name",
 				Status:   models.StatusType("OK"),
 				Capacity: int64(10),
 				Iops:     int64(1000),
-				Zone:     &models.Zone{Name: "test-zone"},
 			},
-			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.NotNil(t, volumeResponse)
-				assert.Nil(t, err)
+			baseSnapshot: &models.Snapshot{
+				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:   "test-snapshot-name",
+				Status: models.StatusType("OK"),
 			},
-		}, {
-			name:     "Wrong volume ID",
-			volumeID: "Wrong volume ID",
-			baseVolume: &models.Volume{
-				ID:       "wrong-wrong-id",
-				Name:     "test-volume-name",
-				Status:   models.StatusType("OK"),
-				Capacity: int64(10),
-				Iops:     int64(1000),
-			},
-			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Wrong volume ID' volume ID is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#volume_id_invalid, BackendError:, RC:400}",
-			expectedReasonCode: "ErrorUnclassified",
-			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.Nil(t, volumeResponse)
-				assert.NotNil(t, err)
-			},
-		}, {
-			name:               "Volume without zone",
-			volumeID:           "16f293bf-test-4bff-816f-e199c0c65db5",
-			expectedErr:        "{Code:ErrorUnclassified, Type:RetrivalFailed, Description:Failed to find '16f293bf-test-4bff-816f-e199c0c65db5' volume ID., BackendError:StorageFindFailedWithVolumeId, RC:404}",
-			expectedReasonCode: "ErrorUnclassified",
-			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.Nil(t, volumeResponse)
+			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
+				assert.Nil(t, snapshotResponse)
 				assert.NotNil(t, err)
 			},
 		},
@@ -95,17 +78,23 @@ func TestGetVolume(t *testing.T) {
 			assert.NotNil(t, sc)
 			assert.Nil(t, err)
 
-			volumeService = &volumeServiceFakes.VolumeService{}
+			snapshotService = &serviceFakes.SnapshotService{}
+			assert.NotNil(t, snapshotService)
+			uc.SnapshotServiceReturns(snapshotService)
+
+			volumeService = &serviceFakes.VolumeService{}
 			assert.NotNil(t, volumeService)
 			uc.VolumeServiceReturns(volumeService)
 
 			if testcase.expectedErr != "" {
+				snapshotService.CreateSnapshotReturns(testcase.baseSnapshot, errors.New(testcase.expectedReasonCode))
 				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
 			} else {
+				snapshotService.CreateSnapshotReturns(testcase.baseSnapshot, nil)
 				volumeService.GetVolumeReturns(testcase.baseVolume, nil)
 			}
-			volume, err := vpcs.GetVolume(testcase.volumeID)
-			logger.Info("Volume details", zap.Reflect("volume", volume))
+			snapshot, err := vpcs.CreateSnapshot(testcase.providerVolume, testcase.tags)
+			logger.Info("Snapshot details", zap.Reflect("snapshot", snapshot))
 
 			if testcase.expectedErr != "" {
 				assert.NotNil(t, err)
@@ -114,7 +103,7 @@ func TestGetVolume(t *testing.T) {
 			}
 
 			if testcase.verify != nil {
-				testcase.verify(t, volume, err)
+				testcase.verify(t, snapshot, err)
 			}
 
 		})

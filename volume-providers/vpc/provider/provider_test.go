@@ -42,7 +42,7 @@ const (
 	IamClientSecret         = "test-iam_client_secret"
 	IamAPIKey               = "test-iam_api_key"
 	RefreshToken            = "test-refresh_token"
-	TestEndpointURL         = "test-vpc-url"
+	TestEndpointURL         = "http://some_endpoint"
 	TestApiVersion          = "2019-01-01"
 )
 
@@ -89,7 +89,7 @@ func TestNewProvider(t *testing.T) {
 		},
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
-			EndpointURL: "http://some_endpoint",
+			EndpointURL: TestEndpointURL,
 			Timeout:     "30s",
 		},
 	}
@@ -113,7 +113,7 @@ func TestNewProvider(t *testing.T) {
 		},
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
-			EndpointURL: "http://some_endpoint",
+			EndpointURL: TestEndpointURL,
 			Timeout:     "",
 		},
 	}
@@ -147,11 +147,11 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 		},
 		VPC: &config.VPCProviderConfig{
 			Enabled:         true,
-			EndpointURL:     "http://some_endpoint",
+			EndpointURL:     TestEndpointURL,
 			Timeout:         "30s",
 			MaxRetryAttempt: 5,
 			MaxRetryGap:     10,
-			APIVersion:      "2019-01-01",
+			APIVersion:      TestApiVersion,
 		},
 	}
 

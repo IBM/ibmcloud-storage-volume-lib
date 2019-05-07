@@ -31,9 +31,14 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 
 	err = retry(vpcs.Logger, func() error {
 		volume, err = vpcs.GetVolume(volumeRequest.VolumeID)
+		vpcs.Logger.Info("Volume details", zap.Reflect("Volume", volume))
 		return err
 	})
 	if err != nil {
+		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
+	}
+
+	if volume == nil {
 		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
 	}
 

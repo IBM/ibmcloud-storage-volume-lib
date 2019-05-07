@@ -29,6 +29,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 		return nil, err
 	}
 	vpcs.Logger.Info("Successfully validated inputs for CreateVolume request... ")
+
 	// Pending error handling
 	// TODO: Check if the volume already exists with same name.
 	// We can do this by scanning all volumes. But requesting the VPC team to get
