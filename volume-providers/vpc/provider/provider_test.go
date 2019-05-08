@@ -18,8 +18,6 @@ import (
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
-	iamFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam/fakes"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/fakes"
 	volumeServiceFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/fakes"
 	"github.com/stretchr/testify/assert"
@@ -171,24 +169,6 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 	volumeService := &volumeServiceFakes.VolumeService{}
 	uc.VolumeServiceReturns(volumeService)
 
-	// Inject fake token exchange
-	tokenExchangeService := iamFakes.TokenExchangeService{
-		ExchangeIAMAPIKeyForAccessTokenStub: func(iamAPIKey string, logger *zap.Logger) (*iam.AccessToken, error) {
-			return &iam.AccessToken{
-				Token: TestProviderAccessToken,
-			}, nil
-		},
-		GetIAMAccountIDFromAccessTokenStub: func(accessToken iam.AccessToken, logger *zap.Logger) (string, error) {
-			if accessToken.Token == TestProviderAccessToken {
-				return TestProviderAccountID, nil
-			}
-
-			return accessToken.Token + "-account", nil
-		},
-	}
-
-	assert.NotNil(t, tokenExchangeService)
-
 	httpClient, err := config.GeneralCAHttpClientWithTimeout(timeout)
 	if err != nil {
 		logger.Error("Failed to prepare HTTP client", util.ZapError(err))
@@ -239,6 +219,22 @@ func TestOpenSession(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.NotNil(t, sessn)
+
+	sessn, err = vpcp.OpenSession(context.Background(), provider.ContextCredentials{
+		AuthType:     provider.IAMAccessToken,
+		IAMAccountID: TestIKSAccountID,
+	}, logger)
+
+	require.Error(t, err)
+	assert.Nil(t, sessn)
+
+	sessn, err = vpcp.OpenSession(context.Background(), provider.ContextCredentials{
+		AuthType:     "WrongType",
+		IAMAccountID: TestIKSAccountID,
+	}, logger)
+
+	require.Error(t, err)
+	assert.Nil(t, sessn)
 
 	return
 }

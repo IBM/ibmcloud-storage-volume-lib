@@ -93,6 +93,13 @@ var messagesEn = map[string]util.Message{
 		RC:          400,
 		Action:      "VPC volume is associated with resource group. Please provide either resource group ID or Name to create volume",
 	},
+	"EmptyResourceGroupIDandName": util.Message{
+		Code:        "EmptyResourceGroupIDandName",
+		Description: "Resource group ID and name are empty",
+		Type:        util.InvalidRequest,
+		RC:          400,
+		Action:      "VPC volume is associated with resource group. Please provide either resource group ID or Name to create volume",
+	},
 	"SnapshotSpaceOrderFailed": util.Message{
 		Code:        "SnapshotSpaceOrderFailed",
 		Description: "Snapshot space order failed for the given volume ID",

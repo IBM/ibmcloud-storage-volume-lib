@@ -101,6 +101,11 @@ func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup,
 		return resourceGroup, iops, userError.GetUserError("EmptyResourceGroup", nil)
 	}
 
+	// validate and add resource group ID or Name whichever is provided by user
+	if len(volumeRequest.VPCVolume.ResourceGroup.ID) == 0 && len(volumeRequest.VPCVolume.ResourceGroup.Name) == 0 {
+		return resourceGroup, iops, userError.GetUserError("EmptyResourceGroupIDandName", nil)
+	}
+
 	if len(volumeRequest.VPCVolume.ResourceGroup.ID) > 0 {
 		resourceGroup.ID = volumeRequest.VPCVolume.ResourceGroup.ID
 	}

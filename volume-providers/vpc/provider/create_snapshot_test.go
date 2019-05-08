@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"testing"
+	"time"
 )
 
 func TestCreateSnapshot(t *testing.T) {
@@ -33,12 +34,13 @@ func TestCreateSnapshot(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name           string
-		baseSnapshot   *models.Snapshot
-		providerVolume *provider.Volume
-		baseVolume     *models.Volume
-		tags           map[string]string
-		setup          func()
+		name             string
+		baseSnapshot     *models.Snapshot
+		providerSnapshot *provider.Snapshot
+		providerVolume   *provider.Volume
+		baseVolume       *models.Volume
+		tags             map[string]string
+		setup            func()
 
 		skipErrTest        bool
 		expectedErr        string
@@ -115,6 +117,35 @@ func TestCreateSnapshot(t *testing.T) {
 				Capacity: int64(10),
 				Iops:     int64(1000),
 			},
+			expectedErr:        "{Code:StorageFindFailedWithSnapshotId, Type:InvalidRequest, Description:'Not a valid snapshot ID",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
+				assert.Nil(t, snapshotResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			name: "Create snapshot",
+			providerVolume: &provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			},
+			baseVolume: &models.Volume{
+				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     "test-volume-name",
+				Status:   models.StatusType("OK"),
+				Capacity: int64(10),
+				Iops:     int64(1000),
+			},
+			providerSnapshot: &provider.Snapshot{
+				Volume: provider.Volume{
+					VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				},
+				SnapshotID: "s6f293bf-test-4bff-816f-e199c0c65db5",
+			},
+			baseSnapshot: &models.Snapshot{
+				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:   "test-snapshot-name",
+				Status: models.StatusType("OK"),
+			},
 			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
 				assert.Nil(t, snapshotResponse)
 				assert.NotNil(t, err)
@@ -166,4 +197,70 @@ func TestCreateSnapshot(t *testing.T) {
 
 		})
 	}
+}
+
+func TestCreateSnapshotTwo(t *testing.T) {
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	timeNow := time.Now()
+
+	var (
+		snapshotService *serviceFakes.SnapshotService
+		volumeService   *serviceFakes.VolumeService
+		baseSnapshot    *models.Snapshot
+		providerVolume  *provider.Volume
+		baseVolume      *models.Volume
+		tags            map[string]string
+	)
+
+	providerVolume = &provider.Volume{
+		VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+	}
+	baseVolume = &models.Volume{
+		ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+		Name:     "test volume name",
+		Status:   models.StatusType("OK"),
+		Capacity: int64(10),
+		Iops:     int64(1000),
+		Zone:     &models.Zone{Name: "test-zone"},
+	}
+	baseSnapshot = &models.Snapshot{
+		ID:        "16f293bf-test-4bff-816f-e199c0c65db5",
+		Name:      "test-snapshot-name",
+		Status:    models.StatusType("OK"),
+		CreatedAt: &timeNow,
+	}
+	vpcs, uc, sc, err := GetTestOpenSession(t, logger)
+	assert.NotNil(t, vpcs)
+	assert.NotNil(t, uc)
+	assert.NotNil(t, sc)
+	assert.Nil(t, err)
+
+	snapshotService = &serviceFakes.SnapshotService{}
+	assert.NotNil(t, snapshotService)
+	uc.SnapshotServiceReturns(snapshotService)
+
+	volumeService = &serviceFakes.VolumeService{}
+	assert.NotNil(t, volumeService)
+	uc.VolumeServiceReturns(volumeService)
+
+	snapshotService.CreateSnapshotReturns(baseSnapshot, errors.New("ErrorUnclassified"))
+	volumeService.GetVolumeReturns(baseVolume, nil)
+
+	snapshot, err := vpcs.CreateSnapshot(providerVolume, tags)
+	logger.Info("Snapshot details", zap.Reflect("snapshot", snapshot))
+
+	assert.Nil(t, snapshot)
+	assert.NotNil(t, err)
+
+	snapshotService.CreateSnapshotReturns(baseSnapshot, nil)
+	volumeService.GetVolumeReturns(baseVolume, nil)
+
+	snapshot, err = vpcs.CreateSnapshot(providerVolume, tags)
+	logger.Info("Snapshot details", zap.Reflect("snapshot", snapshot))
+
+	assert.NotNil(t, snapshot)
+	assert.Nil(t, err)
 }

@@ -109,20 +109,6 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume with test-purpose profile and invalid iops",
-			providerVolume: provider.Volume{
-				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
-				Capacity: Int(10),
-				VPCVolume: provider.VPCVolume{
-					Profile: &provider.Profile{Name: "test-purpose"},
-				},
-			},
-			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.Nil(t, volumeResponse)
-				assert.NotNil(t, err)
-			},
-		}, {
 			name: "Volume with no validation issues",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -148,6 +134,40 @@ func TestCreateVolume(t *testing.T) {
 				VPCVolume: provider.VPCVolume{
 					Profile:       &provider.Profile{Name: "general-purpose"},
 					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
+				},
+			},
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: Volume creation failed. ",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			name: "Volume with test-purpose profile and invalid iops",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+				Capacity: Int(10),
+				VPCVolume: provider.VPCVolume{
+					Profile: &provider.Profile{Name: "test-purpose"},
+				},
+			},
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: Volume creation failed. ",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			name: "Volume creaion with ResourceGroup ID and Name empty",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+				Capacity: Int(10),
+				Iops:     String("0"),
+				VPCVolume: provider.VPCVolume{
+					Profile:       &provider.Profile{Name: "general-purpose"},
+					ResourceGroup: &provider.ResourceGroup{},
 				},
 			},
 			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: Volume creation failed. ",
