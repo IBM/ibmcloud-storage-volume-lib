@@ -15,7 +15,11 @@ import (
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
-	"strconv"
+)
+
+const (
+	customProfile = "custom"
+	minSize       = 10
 )
 
 // CreateVolume Get the volume by using ID
@@ -24,29 +28,20 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	defer vpcs.Logger.Debug("Exit from CreateVolume method...")
 
 	vpcs.Logger.Info("Basic validation for CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
-	err = validateVolumeRequest(volumeRequest)
+	resourceGroup, iops, err := validateVolumeRequest(volumeRequest)
 	if err != nil {
 		return nil, err
 	}
 	vpcs.Logger.Info("Successfully validated inputs for CreateVolume request... ")
 
-	// Pending error handling
-	// TODO: Check if the volume already exists with same name.
-	// We can do this by scanning all volumes. But requesting the VPC team to get
-	// an API for getting volume details with name instead of only ID.
-
-	iops := ToInt64(*volumeRequest.Iops)
-
 	// Build the template we'll send to RIAAS
 	volumeTemplate := &models.Volume{
-		Name:     *volumeRequest.Name,
-		Capacity: int64(*volumeRequest.Capacity),
-		Iops:     iops,
-		Tags:     volumeRequest.VPCVolume.Tags,
-		ResourceGroup: &models.ResourceGroup{
-			ID: volumeRequest.VPCVolume.ResourceGroup.ID,
-		},
-		Generation: models.GenerationType(vpcs.Config.VPCBlockProviderName),
+		Name:          *volumeRequest.Name,
+		Capacity:      int64(*volumeRequest.Capacity),
+		Iops:          iops,
+		Tags:          volumeRequest.VPCVolume.Tags,
+		ResourceGroup: &resourceGroup,
+		Generation:    models.GenerationType(vpcs.Config.VPCBlockProviderName),
 		Profile: &models.Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},
@@ -75,29 +70,44 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 }
 
 // validateVolumeRequest validating volume request
-func validateVolumeRequest(volumeRequest provider.Volume) (err error) {
+func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup, int64, error) {
+	resourceGroup := models.ResourceGroup{}
+	var iops int64
+	iops = 0
 	// Volume name should not be empty
 	if volumeRequest.Name == nil {
-		return userError.GetUserError("InvalidVolumeName", nil, nil)
+		return resourceGroup, iops, userError.GetUserError("InvalidVolumeName", nil, nil)
 	} else if len(*volumeRequest.Name) == 0 {
-		return userError.GetUserError("InvalidVolumeName", nil, *volumeRequest.Name)
+		return resourceGroup, iops, userError.GetUserError("InvalidVolumeName", nil, *volumeRequest.Name)
 	}
 
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil {
-		return userError.GetUserError("VolumeCapacityInvalid", nil, nil)
-	} else if *volumeRequest.Capacity <= 0 {
-		return userError.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
+		return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, nil)
+	} else if *volumeRequest.Capacity < minSize {
+		return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
 	}
 
-	// General purpose profiles does not allow IOPs setting
-	if volumeRequest.VPCVolume.Profile.Name != "general-purpose" && (volumeRequest.Iops == nil || *volumeRequest.Iops <= strconv.Itoa(0)) {
-		return userError.GetUserError("IopsInvalid", nil, nil)
+	// Read user provided error, no harm to pass the 0 values to RIaaS in case of tiered profiles
+	if volumeRequest.Iops != nil {
+		iops = ToInt64(*volumeRequest.Iops)
 	}
 
-	// General purpose profiles does not allow IOPs setting
-	if volumeRequest.VPCVolume.Profile.Name == "general-purpose" && *volumeRequest.Iops > strconv.Itoa(0) {
-		return userError.GetUserError("VolumeProfileIopsInvalid", nil)
+	if volumeRequest.VPCVolume.Profile.Name != customProfile && iops > 0 {
+		return resourceGroup, iops, userError.GetUserError("VolumeProfileIopsInvalid", nil)
 	}
-	return nil
+
+	// validate and add resource group ID or Name whichever is provided by user
+	if volumeRequest.VPCVolume.ResourceGroup == nil {
+		return resourceGroup, iops, userError.GetUserError("EmptyResourceGroup", nil)
+	}
+
+	if len(volumeRequest.VPCVolume.ResourceGroup.ID) > 0 {
+		resourceGroup.ID = volumeRequest.VPCVolume.ResourceGroup.ID
+	}
+	if len(volumeRequest.VPCVolume.ResourceGroup.Name) > 0 {
+		// get the resource group ID from resource group name as Name is not supported by RIaaS
+		resourceGroup.Name = volumeRequest.VPCVolume.ResourceGroup.Name
+	}
+	return resourceGroup, iops, nil
 }
