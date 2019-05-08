@@ -53,7 +53,7 @@ vet:
 
 .PHONY: build
 build:
-	go build -gcflags '-N -l' -o libSample . #go build main.go
+	go build -gcflags '-N -l' -o libSample samples/main.go
 
 .PHONY: clean
 clean:
