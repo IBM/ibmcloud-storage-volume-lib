@@ -402,15 +402,14 @@ func main() {
 			var instanceID string
 			fmt.Println("Enter the instance id to attach")
 			_, er11 = fmt.Scanf("%s", &instanceID)
-			volumeAttachment := &provider.VolumeAttachment{
-				Name:       volumeID + "-" + instanceID,
-				Volume:     volume,
+			volumeAttachmentReq := provider.VolumeAttachmentRequest{
+				VolumeID:   volumeID,
 				InstanceID: instanceID,
+				VPCVolumeAttachment: &provider.VolumeAttachment{
+					DeleteVolumeOnInstanceDelete: false,
+				},
 			}
-			volumeAttachmentReq := provider.VolumeAttachRequest{
-				VPCVolumeAttachment: volumeAttachment,
-			}
-			response, err := sess.Attach(volumeAttachmentReq)
+			response, err := sess.AttachVolume(volumeAttachmentReq)
 			if err != nil {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to attach the volume", zap.Error(err))
@@ -424,14 +423,11 @@ func main() {
 			var instanceID string
 			fmt.Println("Enter the instance id to detach")
 			_, er11 = fmt.Scanf("%s", &instanceID)
-			volumeAttachment := &provider.VolumeAttachment{
-				Volume:     volume,
+			volumeDetachmentReq := provider.VolumeAttachmentRequest{
+				VolumeID:   volumeID,
 				InstanceID: instanceID,
 			}
-			volumeDetachmentReq := provider.VolumeAttachRequest{
-				VPCVolumeAttachment: volumeAttachment,
-			}
-			response, err := sess.Detach(volumeDetachmentReq)
+			response, err := sess.DetachVolume(volumeDetachmentReq)
 			if err != nil {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to detach the volume", zap.Error(err))

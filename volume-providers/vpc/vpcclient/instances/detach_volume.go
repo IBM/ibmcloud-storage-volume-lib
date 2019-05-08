@@ -20,7 +20,7 @@ import (
 )
 
 // DetachVolume retrives the volume attach status with givne volume attachment details
-func (vs *VolumeMountService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
+func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
 	defer util.TimeTracker("DetachVolume", time.Now())
 
 	operation := &client.Operation{
@@ -33,8 +33,8 @@ func (vs *VolumeMountService) DetachVolume(volumeAttachmentTemplate *models.Volu
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.VolumeAttachment.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
-	req := request.PathParameter(instanceIDParam, volumeAttachmentTemplate.VolumeAttachment.InstanceID)
+	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
+	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
 	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
 	resp, err := req.JSONError(&apiErr).Invoke()
 	if err != nil {

@@ -19,54 +19,46 @@ import (
 	"net/http"
 )
 
-// Detach volume based on give volume attachment request
-func (vpcs *VPCSession) Detach(volumeAttachmentTemplate provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
-	vpcs.Logger.Debug("Entry of Detach method...")
-	defer vpcs.Logger.Debug("Exit from Detach method...")
+// DetachVolume detach volume based on given volume attachment request
+func (vpcs *VPCSession) DetachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) (*http.Response, error) {
+	vpcs.Logger.Debug("Entry of DetachVolume method...")
+	defer vpcs.Logger.Debug("Exit from DetachVolume method...")
 	var err error
 	vpcs.Logger.Info("Validating basic inputs for detach method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
-	err = validateAttachVolumeRequest(volumeAttachmentTemplate)
-	volumeResponse := provider.VolumeResponse{}
+	err = vpcs.validateAttachVolumeRequest(volumeAttachmentTemplate)
 	if err != nil {
-		volumeResponse.Status = provider.FAILURE
-		volumeResponse.Message = err.Error()
-		return volumeResponse, err
+		return nil, err
 	}
 
 	var response *http.Response
 	// First , check if volume is already attached to given instance
 	vpcs.Logger.Info("Checking if volume is already attached ")
-	currentVolAttachment, _ := vpcs.GetAttachStatus(volumeAttachmentTemplate)
-	if currentVolAttachment.Status == provider.SUCCESS && currentVolAttachment.VPCVolumeAttachment != nil {
+	currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
+	if err == nil && currentVolAttachment.Status != StatusDetaching {
+		// If no error and current volume is not already in detaching state ( i.e in attached or attaching state) attemp to detach
 		vpcs.Logger.Info("Found volume attachment", zap.Reflect("currentVolAttachment", currentVolAttachment))
-		if currentVolAttachment.VPCVolumeAttachment.Status != StatusDetaching {
-			//Try detaching volume if it's not already in detaching
-			volumeAttachment := models.VolumeAttachment{
-				VolumeAttachment: *currentVolAttachment.VPCVolumeAttachment,
-
-				Volume: &models.Volume{
-					ID: currentVolAttachment.VPCVolumeAttachment.Volume.VolumeID,
-				},
-			}
-			volumeAttachment.VolumeAttachment.InstanceID = volumeAttachmentTemplate.VPCVolumeAttachment.InstanceID
-			vpcs.Logger.Info("Detaching volume from VPC provider...")
-			err = retry(vpcs.Logger, func() error {
-				response, err = vpcs.Apiclient.VolumeMountService().DetachVolume(&volumeAttachment, vpcs.Logger)
-				return err
-			})
-			if err != nil {
-				userErr := userError.GetUserError(string(userError.VolumeDetachFailed), err, volumeAttachmentTemplate.VPCVolumeAttachment.Volume.VolumeID, volumeAttachmentTemplate.VPCVolumeAttachment.InstanceID, volumeAttachmentTemplate.VPCVolumeAttachment.ID)
-				volumeResponse.Message = userErr.Error()
-				return volumeResponse, userErr
-			}
-			volumeResponse.Status = provider.SUCCESS
-			vpcs.Logger.Info("Successfully detached volume from VPC provider", zap.Reflect("volumeResponse", volumeResponse), zap.Reflect("resp", response))
-		} else {
-			vpcs.Logger.Info("Volume is already getting detached")
+		volumeAttachment := models.NewVolumeAttachment(volumeAttachmentTemplate)
+		volumeAttachment.ID = currentVolAttachment.VPCVolumeAttachment.ID
+		vpcs.Logger.Info("Detaching volume from VPC provider...")
+		err = retry(vpcs.Logger, func() error {
+			response, err = vpcs.Apiclient.VolumeAttachService().DetachVolume(&volumeAttachment, vpcs.Logger)
+			return err
+		})
+		if err != nil {
+			userErr := userError.GetUserError(string(userError.VolumeDetachFailed), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, volumeAttachment.ID)
+			vpcs.Logger.Error("Volume detach failed with error", zap.Error(err))
+			return response, userErr
 		}
-	} else {
-		vpcs.Logger.Info("No volume attachment found for", zap.Reflect("currentVolAttachment", currentVolAttachment))
-		volumeResponse.Status = provider.SUCCESS // consider volume detach success if its not already attached
+		vpcs.Logger.Info("Successfully detached volume from VPC provider", zap.Reflect("resp", response))
+		return response, nil
+	} else if err != nil {
+		vpcs.Logger.Error("Error ocucred while finding volume attachment", zap.Error(err))
+		return nil, err
 	}
-	return volumeResponse, nil
+	vpcs.Logger.Info("No volume attachment found for", zap.Reflect("currentVolAttachment", currentVolAttachment))
+	// consider volume detach success if its  already  in Detaching
+	response = &http.Response{
+		StatusCode: http.StatusOK,
+	}
+	return response, nil
 }

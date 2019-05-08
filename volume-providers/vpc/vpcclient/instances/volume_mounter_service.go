@@ -18,27 +18,27 @@ import (
 )
 
 // VolumeMountManager operations
-type VolumeMountManager interface {
+type VolumeAttachManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
 	AttachVolume(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
 
-	// GetAttachStatus retrives the current staus of  given volume attachment
-	GetAttachStatus(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
+	// GetAttachStatus retrives the VolumeAttachment of  given request
+	ListVolumeAttachment(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachmentList, error)
 
 	// Delete the volume
 	DetachVolume(*models.VolumeAttachment, *zap.Logger) (*http.Response, error)
 }
 
-// VolumeMountService ...
-type VolumeMountService struct {
+// VolumeAttachService ...
+type VolumeAttachService struct {
 	client client.SessionClient
 }
 
-var _ VolumeMountManager = &VolumeMountService{}
+var _ VolumeAttachManager = &VolumeAttachService{}
 
 // New ...
-func New(client client.SessionClient) VolumeMountManager {
-	return &VolumeMountService{
+func New(client client.SessionClient) VolumeAttachManager {
+	return &VolumeAttachService{
 		client: client,
 	}
 }

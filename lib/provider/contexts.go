@@ -14,7 +14,7 @@ package provider
 //go:generate counterfeiter -o fakes/context.go --fake-name Context . Context
 type Context interface {
 	VolumeManager
-	VolumeMountManager
+	VolumeAttachManager
 	SnapshotManager
 }
 

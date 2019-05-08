@@ -11,7 +11,6 @@
 package instances
 
 import (
-	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
@@ -19,8 +18,8 @@ import (
 	"time"
 )
 
-// GetAttachStatus retrives the volume attach status with givne volume attachment details
-func (vs *VolumeMountService) GetAttachStatus(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
+// ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
+func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
 	defer util.TimeTracker("GetAttachStatus", time.Now())
 
 	operation := &client.Operation{
@@ -34,30 +33,12 @@ func (vs *VolumeMountService) GetAttachStatus(volumeAttachmentTemplate *models.V
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(volumeIDParam, volumeAttachmentTemplate.Volume.ID))
-	req := request.PathParameter(instanceIDParam, volumeAttachmentTemplate.InstanceID)
+	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID))
+	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
 	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(&apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))
 		return nil, err
 	}
-
-	for _, volumeAttachment := range volumeAttachmentList.VolumeAttachments {
-		if volumeAttachment.Volume.ID == volumeAttachmentTemplate.Volume.ID {
-			ctxLogger.Info("Successfully fetched volume attachment", zap.Reflect("volumeAttachment", volumeAttachment))
-			return &volumeAttachment, nil
-		}
-	}
-	// Volume is not attached to instance
-	// form model error so that retry won't  happen
-	apiErr = models.Error{
-		Errors: []models.ErrorItem{
-			models.ErrorItem{
-				Code:    models.ErrorCodeNotFound,
-				Message: fmt.Sprintf("volume [%s]  is not attached to instance [%s]", volumeAttachmentTemplate.Volume.ID, volumeAttachmentTemplate.InstanceID),
-			},
-		},
-	}
-
-	return nil, apiErr
+	return &volumeAttachmentList, nil
 }

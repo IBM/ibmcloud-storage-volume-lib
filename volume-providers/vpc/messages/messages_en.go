@@ -69,14 +69,14 @@ var messagesEn = map[string]util.Message{
 	string(VolumeAttachFailed): util.Message{
 		Code:        string(VolumeAttachFailed),
 		Description: "Failed to attach volume :'%s' to  instance : '%s'.",
-		Type:        "AttachDetachFailed",
+		Type:        "AttachFailed",
 		RC:          500,
 		Action:      "Please check the volume and instance details once, You many need to verify by using 'ibmcloud is in|vol' cli.",
 	},
 	string(VolumeDetachFailed): util.Message{
 		Code:        string(VolumeDetachFailed),
 		Description: "Failed to detach volume :'%s' from  instance : '%s'.",
-		Type:        "AttachDetachFailed",
+		Type:        "DetachFailed",
 		RC:          500,
 		Action:      "Please check the volume attachment once, You many need to verify by using 'ibmcloud is in-vol' cli.",
 	},

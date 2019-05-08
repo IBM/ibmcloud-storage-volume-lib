@@ -28,63 +28,53 @@ const (
 	StatusDetaching     = "detaching"
 )
 
-// Attach volume baed on given volume attachment request
-func (vpcs *VPCSession) Attach(volumeAttachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
-	vpcs.Logger.Debug("Entry of Attach method...")
-	defer vpcs.Logger.Debug("Exit from Attach method...")
+// AttachVolume attach volume based on given volume attachment request
+func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
+	vpcs.Logger.Debug("Entry of AttachVolume method...")
+	defer vpcs.Logger.Debug("Exit from AttachVolume method...")
 	var err error
-	vpcs.Logger.Info("Validating basic inputs for Attach method...", zap.Reflect("volumeAttachRequest", volumeAttachRequest))
-	err = validateAttachVolumeRequest(volumeAttachRequest)
-	volumeResponse := provider.VolumeResponse{}
+	vpcs.Logger.Info("Validating basic inputs for Attach method...", zap.Reflect("volumeAttachRequest", volumeAttachmentRequest))
+	err = vpcs.validateAttachVolumeRequest(volumeAttachmentRequest)
 	if err != nil {
-		volumeResponse.Status = provider.FAILURE
-		volumeResponse.Message = err.Error()
-		return volumeResponse, err
-	}
-	volumeAttachment := models.VolumeAttachment{
-		VolumeAttachment: *volumeAttachRequest.VPCVolumeAttachment,
-		Volume: &models.Volume{
-			ID: volumeAttachRequest.VPCVolumeAttachment.Volume.VolumeID,
-		},
+		return nil, err
 	}
 	var volumeAttachResult *models.VolumeAttachment
-	// First , check if volume is already attached to given instance
+	// First , check if volume is already attached or attaching to given instance
 	vpcs.Logger.Info("Checking if volume is already attached ")
-	currentVolAttachment, _ := vpcs.GetAttachStatus(volumeAttachRequest)
-	if currentVolAttachment.Status == provider.SUCCESS && currentVolAttachment.VPCVolumeAttachment != nil {
+	currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentRequest)
+	if err == nil && currentVolAttachment != nil && currentVolAttachment.Status != StatusDetaching {
 		vpcs.Logger.Info("volume is already attached", zap.Reflect("currentVolAttachment", currentVolAttachment))
 		return currentVolAttachment, nil
 	}
 	//Try attaching volume if it's not already attached or there is error in getting current volume attachment
 	vpcs.Logger.Info("Attaching volume from VPC provider...")
+	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
 	err = retry(vpcs.Logger, func() error {
-		volumeAttachResult, err = vpcs.Apiclient.VolumeMountService().AttachVolume(&volumeAttachment, vpcs.Logger)
+		volumeAttachResult, err = vpcs.Apiclient.VolumeAttachService().AttachVolume(&volumeAttachment, vpcs.Logger)
 		return err
 	})
 	if err != nil {
-		userErr := userError.GetUserError(string(userError.VolumeAttachFailed), err, volumeAttachRequest.VPCVolumeAttachment.Volume.VolumeID, volumeAttachRequest.VPCVolumeAttachment.InstanceID)
-		volumeResponse.Message = userErr.Error()
-		return volumeResponse, userErr
+		userErr := userError.GetUserError(string(userError.VolumeAttachFailed), err, volumeAttachmentRequest.VolumeID, volumeAttachmentRequest.InstanceID)
+		return nil, userErr
 	}
-	volumeResponse.Status = provider.SUCCESS
-	volumeResponse.VPCVolumeAttachment = &volumeAttachResult.VolumeAttachment
-	vpcs.Logger.Info("Successfully attached volume from VPC provider", zap.Reflect("volumeResponse", volumeResponse))
-	return volumeResponse, nil
+	varp := volumeAttachResult.ToVolumeAttachmentResponse()
+	vpcs.Logger.Info("Successfully attached volume from VPC provider", zap.Reflect("volumeResponse", varp))
+	return varp, nil
 }
 
 // validateVolume validating volume ID
-func validateAttachVolumeRequest(volumeAttachRequest provider.VolumeAttachRequest) error {
+func (vpcs *VPCSession) validateAttachVolumeRequest(volumeAttachRequest provider.VolumeAttachmentRequest) error {
 	var err error
-	vpcVolumeAttachmentMissing := volumeAttachRequest.VPCVolumeAttachment == nil
-	volumeMissing := vpcVolumeAttachmentMissing || volumeAttachRequest.VPCVolumeAttachment.Volume == nil
 	// Check for InstanceID - required validation
-	if vpcVolumeAttachmentMissing || len(volumeAttachRequest.VPCVolumeAttachment.InstanceID) == 0 {
-		err = userError.GetUserError(string(reasoncode.ErrorRequiredFieldMissing), nil, "VolumeAttachRequest.VPCVolumeAttachment.InstanceID")
+	if len(volumeAttachRequest.InstanceID) == 0 {
+		err = userError.GetUserError(string(reasoncode.ErrorRequiredFieldMissing), nil, "InstanceID")
+		vpcs.Logger.Error("volumeAttachRequest.InstanceID is required", zap.Error(err))
 		return err
 	}
 	// Check for VolumeID - required validation
-	if volumeMissing || len(volumeAttachRequest.VPCVolumeAttachment.Volume.VolumeID) == 0 {
-		err = userError.GetUserError(string(reasoncode.ErrorRequiredFieldMissing), nil, "VolumeAttachRequest.VPCVolumeAttachment.Volume.VolumeID")
+	if len(volumeAttachRequest.VolumeID) == 0 {
+		err = userError.GetUserError(string(reasoncode.ErrorRequiredFieldMissing), nil, "VolumeID")
+		vpcs.Logger.Error("volumeAttachRequest.VolumeID is required", zap.Error(err))
 		return err
 	}
 	return nil

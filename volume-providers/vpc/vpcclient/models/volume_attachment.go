@@ -12,15 +12,65 @@ package models
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"time"
 )
 
-// VolumeAttachment ...
+// VolumeAttachment for riaas client
 type VolumeAttachment struct {
-	provider.VolumeAttachment
-	Volume *Volume `json:"volume,omitempty"`
+	ID   string `json:"id"`
+	Href string `json:"href,omitempty"`
+	Name string `json:"name,omitempty"`
+	// Status of volume attachment named - attaching , attached, detaching
+	Status string `json:"status,omitempty"`
+	Type   string `json:"type,omitempty"` //boot, data
+	// InstanceID this volume is attached to
+	InstanceID *string    `json:"instance_id,omitempty"`
+	Volume     *Volume    `json:"volume,omitempty"`
+	CreatedAt  *time.Time `json:"created_at,omitempty"`
+	// If set to true, when deleting the instance the volume will also be deleted
+	DeleteVolumeOnInstanceDelete bool `json:"delete_volume_on_instance_delete,omitempty"`
 }
 
 // VolumeAttachmentList ...
 type VolumeAttachmentList struct {
 	VolumeAttachments []VolumeAttachment `json:"volume_attachments,omitempty"`
+}
+
+// NewVolumeAttachment creates VolumeAttachment from VolumeAttachmentRequest
+func NewVolumeAttachment(volumeAttachmentRequest provider.VolumeAttachmentRequest) VolumeAttachment {
+	va := VolumeAttachment{
+		InstanceID: &volumeAttachmentRequest.InstanceID,
+		Volume: &Volume{
+			ID: volumeAttachmentRequest.VolumeID,
+		},
+	}
+	if volumeAttachmentRequest.VPCVolumeAttachment != nil {
+		va.Href = volumeAttachmentRequest.VPCVolumeAttachment.Href
+		va.Name = volumeAttachmentRequest.VPCVolumeAttachment.Name
+		va.DeleteVolumeOnInstanceDelete = volumeAttachmentRequest.VPCVolumeAttachment.DeleteVolumeOnInstanceDelete
+
+	}
+	return va
+}
+
+//ToVolumeAttachmentResponse converts VolumeAttachment VolumeAttachmentResponse
+func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachmentResponse {
+	varp := &provider.VolumeAttachmentResponse{
+		VolumeAttachmentRequest: provider.VolumeAttachmentRequest{
+			VolumeID: va.Volume.ID,
+			VPCVolumeAttachment: &provider.VolumeAttachment{
+				DeleteVolumeOnInstanceDelete: va.DeleteVolumeOnInstanceDelete,
+				ID:                           va.ID,
+				Href:                         va.Href,
+				Name:                         va.Name,
+				Type:                         va.Type,
+			},
+		},
+		Status:    va.Status,
+		CreatedAt: va.CreatedAt,
+	}
+	if va.InstanceID != nil {
+		varp.InstanceID = *va.InstanceID
+	}
+	return varp
 }

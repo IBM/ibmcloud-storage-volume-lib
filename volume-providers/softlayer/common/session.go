@@ -13,6 +13,7 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -371,25 +372,26 @@ func (sls *SLSession) authorizeVolumeFromHostIPs(volumeID int, hostIPList []stri
 	return err
 }
 
-// Attach ...
-func (sls *SLSession) Attach(attachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
-	volResponse := provider.VolumeResponse{
+// AttachVolume ...
+func (sls *SLSession) AttachVolume(attachRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
+	volResponse := &provider.VolumeAttachmentResponse{
 		Status: provider.NOTSUPPORTED,
 	}
 	return volResponse, nil
 }
 
-//Detach detaches the volume/ fileset from the pod
-func (sls *SLSession) Detach(detachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
-	volResponse := provider.VolumeResponse{
-		Status: provider.NOTSUPPORTED,
+//DetachVolume detaches the volume/ fileset from the pod
+func (sls *SLSession) DetachVolume(detachRequest provider.VolumeAttachmentRequest) (*http.Response, error) {
+
+	volResponse := &http.Response{
+		StatusCode: http.StatusNotImplemented,
 	}
 	return volResponse, nil
 }
 
-//GetAttachStatus ...
-func (sls *SLSession) GetAttachStatus(detachRequest provider.VolumeAttachRequest) (provider.VolumeResponse, error) {
-	volResponse := provider.VolumeResponse{
+//GetVolumeAttachment ...
+func (sls *SLSession) GetVolumeAttachment(detachRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
+	volResponse := &provider.VolumeAttachmentResponse{
 		Status: provider.NOTSUPPORTED,
 	}
 	return volResponse, nil

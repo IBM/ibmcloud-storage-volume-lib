@@ -24,7 +24,7 @@ type RegionalAPI interface {
 	Login(token string) error
 
 	VolumeService() vpcvolume.VolumeManager
-	VolumeMountService() instances.VolumeMountManager
+	VolumeAttachService() instances.VolumeAttachManager
 	SnapshotService() vpcvolume.SnapshotManager
 }
 
@@ -66,8 +66,8 @@ func (s *Session) VolumeService() vpcvolume.VolumeManager {
 	return vpcvolume.New(s.client)
 }
 
-// VolumeMountService returns the VolumeMountService for managing volumes
-func (s *Session) VolumeMountService() instances.VolumeMountManager {
+// VolumeAttachService returns the VolumeMountService for managing volumes
+func (s *Session) VolumeAttachService() instances.VolumeAttachManager {
 	return instances.New(s.client)
 }
 
