@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"testing"
+	"time"
 )
 
 func TestOrderSnapshot(t *testing.T) {
@@ -37,6 +38,7 @@ func TestOrderSnapshot(t *testing.T) {
 		baseSnapshot   *models.Snapshot
 		providerVolume provider.Volume
 		baseVolume     *models.Volume
+		tags           map[string]string
 		setup          func()
 
 		skipErrTest        bool
@@ -122,4 +124,61 @@ func TestOrderSnapshot(t *testing.T) {
 
 		})
 	}
+}
+
+func TestOrderSnapshotTwo(t *testing.T) {
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	timeNow := time.Now()
+
+	var (
+		snapshotService *serviceFakes.SnapshotService
+		volumeService   *serviceFakes.VolumeService
+		baseSnapshot    *models.Snapshot
+		providerVolume  provider.Volume
+		baseVolume      *models.Volume
+	)
+
+	providerVolume = provider.Volume{
+		VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+	}
+	baseVolume = &models.Volume{
+		ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+		Name:     "test volume name",
+		Status:   models.StatusType("OK"),
+		Capacity: int64(10),
+		Iops:     int64(1000),
+		Zone:     &models.Zone{Name: "test-zone"},
+	}
+	baseSnapshot = &models.Snapshot{
+		ID:        "16f293bf-test-4bff-816f-e199c0c65db5",
+		Name:      "test-snapshot-name",
+		Status:    models.StatusType("OK"),
+		CreatedAt: &timeNow,
+	}
+	vpcs, uc, sc, err := GetTestOpenSession(t, logger)
+	assert.NotNil(t, vpcs)
+	assert.NotNil(t, uc)
+	assert.NotNil(t, sc)
+	assert.Nil(t, err)
+
+	snapshotService = &serviceFakes.SnapshotService{}
+	assert.NotNil(t, snapshotService)
+	uc.SnapshotServiceReturns(snapshotService)
+
+	volumeService = &serviceFakes.VolumeService{}
+	assert.NotNil(t, volumeService)
+	uc.VolumeServiceReturns(volumeService)
+
+	snapshotService.CreateSnapshotReturns(baseSnapshot, errors.New("ErrorUnclassified"))
+	volumeService.GetVolumeReturns(baseVolume, nil)
+	err = vpcs.OrderSnapshot(providerVolume)
+	assert.NotNil(t, err)
+
+	snapshotService.CreateSnapshotReturns(baseSnapshot, nil)
+	volumeService.GetVolumeReturns(baseVolume, nil)
+	err = vpcs.OrderSnapshot(providerVolume)
+	assert.Nil(t, err)
 }

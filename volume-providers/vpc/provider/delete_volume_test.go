@@ -74,7 +74,25 @@ func TestDeleteVolume(t *testing.T) {
 				Capacity: Int(10),
 				Iops:     String("1000"),
 				VPCVolume: provider.VPCVolume{
-					Profile: &provider.Profile{Name: "general-purpose"},
+					Profile:       &provider.Profile{Name: "general-purpose"},
+					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
+				},
+			},
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Not a valid volume ID",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, err error) {
+				assert.NotNil(t, err)
+			},
+		}, {
+			name: "Incorrect volume ID",
+			providerVolume: &provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("Test volume"),
+				Capacity: Int(10),
+				Iops:     String("1000"),
+				VPCVolume: provider.VPCVolume{
+					Profile:       &provider.Profile{Name: "general-purpose"},
+					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
 				},
 			},
 			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Not a valid volume ID",
