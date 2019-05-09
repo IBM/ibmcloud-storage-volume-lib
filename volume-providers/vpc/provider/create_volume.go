@@ -92,19 +92,26 @@ func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup,
 	if volumeRequest.Iops != nil {
 		iops = ToInt64(*volumeRequest.Iops)
 	}
-
 	if volumeRequest.VPCVolume.Profile.Name != customProfile && iops > 0 {
 		return resourceGroup, iops, userError.GetUserError("VolumeProfileIopsInvalid", nil)
 	}
 
 	// validate and add resource group ID or Name whichever is provided by user
+	if volumeRequest.VPCVolume.ResourceGroup == nil {
+		return resourceGroup, iops, userError.GetUserError("EmptyResourceGroup", nil)
+	}
+
+	// validate and add resource group ID or Name whichever is provided by user
+	if len(volumeRequest.VPCVolume.ResourceGroup.ID) == 0 && len(volumeRequest.VPCVolume.ResourceGroup.Name) == 0 {
+		return resourceGroup, iops, userError.GetUserError("EmptyResourceGroupIDandName", nil)
+	}
+
 	if len(volumeRequest.VPCVolume.ResourceGroup.ID) > 0 {
 		resourceGroup.ID = volumeRequest.VPCVolume.ResourceGroup.ID
-	} else if len(volumeRequest.VPCVolume.ResourceGroup.Name) > 0 {
+	}
+	if len(volumeRequest.VPCVolume.ResourceGroup.Name) > 0 {
 		// get the resource group ID from resource group name as Name is not supported by RIaaS
 		resourceGroup.Name = volumeRequest.VPCVolume.ResourceGroup.Name
-	} else {
-		return resourceGroup, iops, userError.GetUserError("EmptyResourceGroup", nil)
 	}
 	return resourceGroup, iops, nil
 }
