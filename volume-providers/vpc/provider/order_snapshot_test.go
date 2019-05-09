@@ -34,7 +34,7 @@ func TestOrderSnapshot(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name           string
+		testCaseName   string
 		baseSnapshot   *models.Snapshot
 		providerVolume provider.Volume
 		baseVolume     *models.Volume
@@ -48,7 +48,7 @@ func TestOrderSnapshot(t *testing.T) {
 		verify func(t *testing.T, err error)
 	}{
 		{
-			name: "Not supported yet",
+			testCaseName: "Not supported yet",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
@@ -68,7 +68,7 @@ func TestOrderSnapshot(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			name: "Not supported yet",
+			testCaseName: "Not supported yet",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
@@ -88,7 +88,7 @@ func TestOrderSnapshot(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

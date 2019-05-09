@@ -32,9 +32,9 @@ func TestGetVolume(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name       string
-		volumeID   string
-		baseVolume *models.Volume
+		testCaseName string
+		volumeID     string
+		baseVolume   *models.Volume
 
 		setup func()
 
@@ -45,8 +45,8 @@ func TestGetVolume(t *testing.T) {
 		verify func(t *testing.T, volumeResponse *provider.Volume, err error)
 	}{
 		{
-			name:     "OK",
-			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			testCaseName: "OK",
+			volumeID:     "16f293bf-test-4bff-816f-e199c0c65db5",
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     "test-volume-name",
@@ -60,8 +60,8 @@ func TestGetVolume(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			name:     "Wrong volume ID",
-			volumeID: "Wrong volume ID",
+			testCaseName: "Wrong volume ID",
+			volumeID:     "Wrong volume ID",
 			baseVolume: &models.Volume{
 				ID:       "wrong-wrong-id",
 				Name:     "test-volume-name",
@@ -76,7 +76,7 @@ func TestGetVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name:               "Volume without zone",
+			testCaseName:       "Volume without zone",
 			volumeID:           "16f293bf-test-4bff-816f-e199c0c65db5",
 			expectedErr:        "{Code:ErrorUnclassified, Type:RetrivalFailed, Description:Failed to find '16f293bf-test-4bff-816f-e199c0c65db5' volume ID., BackendError:StorageFindFailedWithVolumeId, RC:404}",
 			expectedReasonCode: "ErrorUnclassified",
@@ -88,7 +88,7 @@ func TestGetVolume(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

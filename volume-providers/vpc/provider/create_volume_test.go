@@ -32,7 +32,7 @@ func TestCreateVolume(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name           string
+		testCaseName   string
 		baseVolume     *models.Volume
 		providerVolume provider.Volume
 		profileName    string
@@ -46,25 +46,25 @@ func TestCreateVolume(t *testing.T) {
 		verify func(t *testing.T, volumeResponse *provider.Volume, err error)
 	}{
 		{
-			name: "Volume capacity is nil",
-			providerVolume: provider.Volume{
-				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
-			},
+			testCaseName: "Volume capacity is nil",
 			baseVolume: &models.Volume{
-				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test volume name",
-				Status:   models.StatusType("OK"),
-				Capacity: int64(10),
-				Iops:     int64(1000),
-				Zone:     &models.Zone{Name: "test-zone"},
+				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:   "test volume name",
+				Status: models.StatusType("OK"),
+				Iops:   int64(1000),
+				Zone:   &models.Zone{Name: "test-zone"},
+			},
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("test volume name"),
+				Capacity: nil,
 			},
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume name is nil",
+			testCaseName: "Volume name is nil",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
@@ -73,7 +73,14 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume name is empty",
+			testCaseName: "Volume name is empty",
+			baseVolume: &models.Volume{
+				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
+				Status: models.StatusType("OK"),
+				Name:   "",
+				Iops:   int64(1000),
+				Zone:   &models.Zone{Name: "test-zone"},
+			},
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String(""),
@@ -83,10 +90,10 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume capacity is zero",
+			testCaseName: "Volume capacity is zero",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
+				Name:     String("test volume name"),
 				Capacity: Int(0),
 			},
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
@@ -94,10 +101,10 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume with general-purpose profile and invalid iops",
+			testCaseName: "Volume with general-purpose profile and invalid iops",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
+				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("1000"),
 				VPCVolume: provider.VPCVolume{
@@ -109,10 +116,10 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume with no validation issues",
+			testCaseName: "Volume with no validation issues",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
+				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("0"),
 				VPCVolume: provider.VPCVolume{
@@ -125,10 +132,10 @@ func TestCreateVolume(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			name: "Volume creaion failure",
+			testCaseName: "Volume creaion failure",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
+				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("0"),
 				VPCVolume: provider.VPCVolume{
@@ -143,10 +150,10 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume with test-purpose profile and invalid iops",
+			testCaseName: "Volume with test-purpose profile and invalid iops",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
+				Name:     String("test volume name"),
 				Capacity: Int(10),
 				VPCVolume: provider.VPCVolume{
 					Profile: &provider.Profile{Name: "test-purpose"},
@@ -159,10 +166,10 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume creaion with ResourceGroup ID and Name empty",
+			testCaseName: "Volume creaion with resource group ID and Name empty",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("Test volume"),
+				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("0"),
 				VPCVolume: provider.VPCVolume{
@@ -180,7 +187,7 @@ func TestCreateVolume(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

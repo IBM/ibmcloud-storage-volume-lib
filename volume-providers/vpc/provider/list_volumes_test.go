@@ -31,9 +31,9 @@ func TestListVolumes(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name       string
-		volumeID   string
-		baseVolume *models.Volume
+		testCaseName string
+		volumeID     string
+		baseVolume   *models.Volume
 
 		tags map[string]string
 
@@ -46,8 +46,8 @@ func TestListVolumes(t *testing.T) {
 		verify func(t *testing.T, volumes []*provider.Volume, err error)
 	}{
 		{
-			name:     "Not supported",
-			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			testCaseName: "Not supported",
+			volumeID:     "16f293bf-test-4bff-816f-e199c0c65db5",
 			tags: map[string]string{
 				"dev": "volume1",
 			},
@@ -59,7 +59,7 @@ func TestListVolumes(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

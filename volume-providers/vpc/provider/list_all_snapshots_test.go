@@ -25,8 +25,8 @@ func TestListAllSnapshots(t *testing.T) {
 	defer teardown()
 
 	testCases := []struct {
-		name     string
-		volumeID string
+		testCaseName string
+		volumeID     string
 
 		setup func()
 
@@ -37,8 +37,8 @@ func TestListAllSnapshots(t *testing.T) {
 		verify func(t *testing.T, volumes []*provider.Snapshot, err error)
 	}{
 		{
-			name:     "Not supported yet",
-			volumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			testCaseName: "Not supported yet",
+			volumeID:     "16f293bf-test-4bff-816f-e199c0c65db5",
 			verify: func(t *testing.T, snapshots []*provider.Snapshot, err error) {
 				assert.Nil(t, snapshots)
 				assert.Nil(t, err)
@@ -47,7 +47,7 @@ func TestListAllSnapshots(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

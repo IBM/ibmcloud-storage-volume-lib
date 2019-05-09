@@ -25,7 +25,7 @@ func TestCreateVolumeFromSnapshot(t *testing.T) {
 	defer teardown()
 
 	testCases := []struct {
-		name         string
+		testCaseName string
 		baseSnapshot *provider.Snapshot
 
 		tags map[string]string
@@ -39,7 +39,7 @@ func TestCreateVolumeFromSnapshot(t *testing.T) {
 		verify func(t *testing.T, volumes *provider.Volume, err error)
 	}{
 		{
-			name: "Not supported",
+			testCaseName: "Not supported",
 			baseSnapshot: &provider.Snapshot{
 				SnapshotID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
@@ -54,7 +54,7 @@ func TestCreateVolumeFromSnapshot(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

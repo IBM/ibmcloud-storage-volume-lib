@@ -33,7 +33,7 @@ func TestGetSnapshotWithVolumeID(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name         string
+		testCaseName string
 		volumeID     string
 		snapshotID   string
 		baseSnapshot *models.Snapshot
@@ -47,9 +47,9 @@ func TestGetSnapshotWithVolumeID(t *testing.T) {
 		verify func(t *testing.T, snapshotResponse *provider.Snapshot, err error)
 	}{
 		{
-			name:       "Not supported yet",
-			volumeID:   "v6f293bf-test-4bff-816f-e199c0c65db5",
-			snapshotID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			testCaseName: "Not supported yet",
+			volumeID:     "v6f293bf-test-4bff-816f-e199c0c65db5",
+			snapshotID:   "16f293bf-test-4bff-816f-e199c0c65db5",
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     "test-volume-name",
@@ -68,7 +68,7 @@ func TestGetSnapshotWithVolumeID(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			name:               "Wrong volume ID",
+			testCaseName:       "Wrong volume ID",
 			volumeID:           "Wrong volume ID",
 			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Wrong volume ID' volume ID is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#volume_id_invalid, BackendError:, RC:400}",
 			expectedReasonCode: "ErrorUnclassified",
@@ -80,7 +80,7 @@ func TestGetSnapshotWithVolumeID(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)
@@ -129,7 +129,7 @@ func TestGetSnapshot(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name string
+		testCaseName string
 
 		snapshotID   string
 		baseSnapshot *models.Snapshot
@@ -142,8 +142,8 @@ func TestGetSnapshot(t *testing.T) {
 		verify func(t *testing.T, snapshotResponse *provider.Snapshot, err error)
 	}{
 		{
-			name:       "Not supported yet",
-			snapshotID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			testCaseName: "Not supported yet",
+			snapshotID:   "16f293bf-test-4bff-816f-e199c0c65db5",
 			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
 				assert.Nil(t, snapshotResponse)
 				assert.Nil(t, err)
@@ -152,7 +152,7 @@ func TestGetSnapshot(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

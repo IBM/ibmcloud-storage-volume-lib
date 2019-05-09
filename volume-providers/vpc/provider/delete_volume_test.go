@@ -32,7 +32,7 @@ func TestDeleteVolume(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name           string
+		testCaseName   string
 		baseVolume     *models.Volume
 		providerVolume *provider.Volume
 
@@ -46,7 +46,7 @@ func TestDeleteVolume(t *testing.T) {
 		verify func(t *testing.T, err error)
 	}{
 		{
-			name: "Not supported yet",
+			testCaseName: "Not supported yet",
 			providerVolume: &provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("Test volume"),
@@ -60,14 +60,14 @@ func TestDeleteVolume(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			name:               "False positive: No volume being sent",
+			testCaseName:       "False positive: No volume being sent",
 			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Not a valid volume ID",
 			expectedReasonCode: "ErrorUnclassified",
 			verify: func(t *testing.T, err error) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Incorrect volume ID",
+			testCaseName: "Incorrect volume ID",
 			providerVolume: &provider.Volume{
 				VolumeID: "wrong volume ID",
 				Name:     String("Test volume"),
@@ -84,7 +84,7 @@ func TestDeleteVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Incorrect volume ID",
+			testCaseName: "Incorrect volume ID",
 			providerVolume: &provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("Test volume"),
@@ -104,7 +104,7 @@ func TestDeleteVolume(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

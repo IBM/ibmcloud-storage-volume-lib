@@ -25,8 +25,8 @@ func TestGetVolumeByRequestID(t *testing.T) {
 	defer teardown()
 
 	testCases := []struct {
-		name      string
-		requestID string
+		testCaseName string
+		requestID    string
 
 		setup func()
 
@@ -37,8 +37,8 @@ func TestGetVolumeByRequestID(t *testing.T) {
 		verify func(t *testing.T, volumeResponse *provider.Volume, err error)
 	}{
 		{
-			name:      "Not supported yet",
-			requestID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			testCaseName: "Not supported yet",
+			requestID:    "16f293bf-test-4bff-816f-e199c0c65db5",
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
 				assert.Nil(t, volumeResponse)
 				assert.Nil(t, err)
@@ -47,7 +47,7 @@ func TestGetVolumeByRequestID(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

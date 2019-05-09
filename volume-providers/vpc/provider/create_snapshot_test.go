@@ -34,7 +34,7 @@ func TestCreateSnapshot(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name             string
+		testCaseName     string
 		baseSnapshot     *models.Snapshot
 		providerSnapshot *provider.Snapshot
 		providerVolume   *provider.Volume
@@ -49,20 +49,20 @@ func TestCreateSnapshot(t *testing.T) {
 		verify func(t *testing.T, snapshotResponse *provider.Snapshot, err error)
 	}{
 		{
-			name: "Not supported yet",
+			testCaseName: "Not supported yet",
 			providerVolume: &provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test-volume-name",
+				Name:     "test volume name",
 				Status:   models.StatusType("OK"),
 				Capacity: int64(10),
 				Iops:     int64(1000),
 			},
 			baseSnapshot: &models.Snapshot{
 				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:   "test-snapshot-name",
+				Name:   "test snapshot name",
 				Status: models.StatusType("OK"),
 			},
 			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
@@ -70,13 +70,13 @@ func TestCreateSnapshot(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Not supported yet",
+			testCaseName: "Not supported yet",
 			providerVolume: &provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test-volume-name",
+				Name:     "test volume name",
 				Status:   models.StatusType("OK"),
 				Capacity: int64(10),
 				Iops:     int64(1000),
@@ -88,7 +88,7 @@ func TestCreateSnapshot(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name:               "Volume is nil",
+			testCaseName:       "Volume is nil",
 			expectedErr:        "{Code:StorageFindFailedWithSnapshotId, Type:InvalidRequest, Description:'Not a valid snapshot ID",
 			expectedReasonCode: "ErrorUnclassified",
 			verify: func(t *testing.T, snapshotResponse *provider.Snapshot, err error) {
@@ -96,7 +96,7 @@ func TestCreateSnapshot(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Volume is not valid",
+			testCaseName: "Volume is not valid",
 			providerVolume: &provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
@@ -105,14 +105,14 @@ func TestCreateSnapshot(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name:        "Snapshot creation failed",
-			skipErrTest: true,
+			testCaseName: "Snapshot creation failed",
+			skipErrTest:  true,
 			providerVolume: &provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test-volume-name",
+				Name:     "test volume name",
 				Status:   models.StatusType("OK"),
 				Capacity: int64(10),
 				Iops:     int64(1000),
@@ -124,13 +124,13 @@ func TestCreateSnapshot(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name: "Create snapshot",
+			testCaseName: "Create snapshot",
 			providerVolume: &provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 			},
 			baseVolume: &models.Volume{
 				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     "test-volume-name",
+				Name:     "test volume name",
 				Status:   models.StatusType("OK"),
 				Capacity: int64(10),
 				Iops:     int64(1000),
@@ -154,7 +154,7 @@ func TestCreateSnapshot(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

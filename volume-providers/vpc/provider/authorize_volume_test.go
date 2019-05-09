@@ -25,8 +25,8 @@ func TestAuthorizeVolume(t *testing.T) {
 	defer teardown()
 
 	testCases := []struct {
-		name    string
-		volAuth provider.VolumeAuthorization
+		testCaseName string
+		volAuth      provider.VolumeAuthorization
 
 		setup func(t *testing.T)
 
@@ -37,7 +37,7 @@ func TestAuthorizeVolume(t *testing.T) {
 		verify func(t *testing.T, err error)
 	}{
 		{
-			name: "Not supported",
+			testCaseName: "Not supported",
 			volAuth: provider.VolumeAuthorization{
 				Volume: provider.Volume{
 					VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -53,7 +53,7 @@ func TestAuthorizeVolume(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			if testcase.setup != nil {
 				testcase.setup(t)
 			}

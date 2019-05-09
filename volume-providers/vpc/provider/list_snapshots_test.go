@@ -31,9 +31,9 @@ func TestListSnapshots(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name       string
-		volumeID   string
-		baseVolume *models.Volume
+		testCaseName string
+		volumeID     string
+		baseVolume   *models.Volume
 
 		setup func()
 
@@ -44,7 +44,7 @@ func TestListSnapshots(t *testing.T) {
 		verify func(t *testing.T, volumes []*provider.Snapshot, err error)
 	}{
 		{
-			name: "Not supported yet",
+			testCaseName: "Not supported yet",
 			verify: func(t *testing.T, snapshots []*provider.Snapshot, err error) {
 				assert.Nil(t, snapshots)
 				assert.Nil(t, err)
@@ -53,7 +53,7 @@ func TestListSnapshots(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)

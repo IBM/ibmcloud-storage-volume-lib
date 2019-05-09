@@ -33,7 +33,7 @@ func TestDeleteSnapshot(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name             string
+		testCaseName     string
 		baseVolume       *models.Volume
 		baseSnapshot     *models.Snapshot
 		providerVolume   *provider.Volume
@@ -49,7 +49,7 @@ func TestDeleteSnapshot(t *testing.T) {
 		verify func(t *testing.T, err error)
 	}{
 		{
-			name: "Not supported yet",
+			testCaseName: "Not supported yet",
 			providerSnapshot: &provider.Snapshot{
 				SnapshotID: "s6f293bf-test-4bff-816f-e199c0c65db5",
 				Volume: provider.Volume{
@@ -66,7 +66,7 @@ func TestDeleteSnapshot(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			name: "Not a valid snapshot",
+			testCaseName: "Not a valid snapshot",
 			providerSnapshot: &provider.Snapshot{
 				SnapshotID: "s6f293bf-test-4bff-816f-e199c0c65db5",
 				Volume: provider.Volume{
@@ -88,7 +88,7 @@ func TestDeleteSnapshot(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		t.Run(testcase.name, func(t *testing.T) {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
 			assert.NotNil(t, vpcs)
 			assert.NotNil(t, uc)
