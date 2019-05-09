@@ -102,13 +102,14 @@ func TestCreateVolume(t *testing.T) {
 			},
 		}, {
 			testCaseName: "Volume with general-purpose profile and invalid iops",
+			profileName:  "general-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("1000"),
 				VPCVolume: provider.VPCVolume{
-					Profile: &provider.Profile{Name: "general-purpose"},
+					Profile: &provider.Profile{Name: profileName},
 				},
 			},
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
@@ -117,13 +118,14 @@ func TestCreateVolume(t *testing.T) {
 			},
 		}, {
 			testCaseName: "Volume with no validation issues",
+			profileName:  "general-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("0"),
 				VPCVolume: provider.VPCVolume{
-					Profile:       &provider.Profile{Name: "general-purpose"},
+					Profile:       &provider.Profile{Name: profileName},
 					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
 				},
 			},
@@ -133,13 +135,14 @@ func TestCreateVolume(t *testing.T) {
 			},
 		}, {
 			testCaseName: "Volume creaion failure",
+			profileName:  "general-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("0"),
 				VPCVolume: provider.VPCVolume{
-					Profile:       &provider.Profile{Name: "general-purpose"},
+					Profile:       &provider.Profile{Name: profileName},
 					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
 				},
 			},
@@ -151,12 +154,13 @@ func TestCreateVolume(t *testing.T) {
 			},
 		}, {
 			testCaseName: "Volume with test-purpose profile and invalid iops",
+			profileName:  "test-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("test volume name"),
 				Capacity: Int(10),
 				VPCVolume: provider.VPCVolume{
-					Profile: &provider.Profile{Name: "test-purpose"},
+					Profile: &provider.Profile{Name: profileName},
 				},
 			},
 			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: Volume creation failed. ",
@@ -167,13 +171,14 @@ func TestCreateVolume(t *testing.T) {
 			},
 		}, {
 			testCaseName: "Volume creaion with resource group ID and Name empty",
+			profileName:  "general-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("test volume name"),
 				Capacity: Int(10),
 				Iops:     String("0"),
 				VPCVolume: provider.VPCVolume{
-					Profile:       &provider.Profile{Name: "general-purpose"},
+					Profile:       &provider.Profile{Name: profileName},
 					ResourceGroup: &provider.ResourceGroup{},
 				},
 			},
