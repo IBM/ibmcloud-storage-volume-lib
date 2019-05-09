@@ -41,7 +41,7 @@ const (
 	IamAPIKey               = "test-iam_api_key"
 	RefreshToken            = "test-refresh_token"
 	TestEndpointURL         = "http://some_endpoint"
-	TestApiVersion          = "2019-01-01"
+	TestAPIVersion          = "2019-01-01"
 )
 
 var _ local.ContextCredentialsFactory = &auth.ContextCredentialsFactory{}
