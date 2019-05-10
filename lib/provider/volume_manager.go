@@ -31,6 +31,11 @@ type VolumeManager interface {
 	// Get the volume by using ID  //
 	GetVolume(id string) (*Volume, error)
 
+	// Get the volume by using Name,
+	// actually some of providers(like VPC) has the capability to provide volume
+	// details by usig user provided volume name
+	GetVolumeByName(name string) (*Volume, error)
+
 	// Others
 	// Get volume lists by using snapshot tags
 	ListVolumes(tags map[string]string) ([]*Volume, error)

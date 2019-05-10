@@ -45,3 +45,26 @@ func (vs *VolumeService) GetVolume(volumeID string, ctxLogger *zap.Logger) (*mod
 
 	return &volume, nil
 }
+
+// GetVolumeByName GETs /volumes
+func (vs *VolumeService) GetVolumeByName(volumeName string, ctxLogger *zap.Logger) (*models.Volume, error) {
+	ctxLogger.Debug("Entry Backend GetVolumeByName")
+	defer ctxLogger.Debug("Exit Backend GetVolumeByName")
+
+	defer util.TimeTracker("GetVolumeByName", time.Now())
+
+	// Get the volume details for a single volume, ListVolumeFilters will return only 1 volume in list
+	filters := &models.ListVolumeFilters{VolumeName: volumeName}
+	volumes, err := vs.ListVolumes(1, filters, ctxLogger)
+	if err != nil {
+		return nil, err
+	}
+
+	if volumes != nil {
+		volumeslist := volumes.Volumes
+		if volumeslist != nil && len(volumeslist) > 0 {
+				return volumeslist[0], nil
+		}
+	}
+	return nil, err
+}

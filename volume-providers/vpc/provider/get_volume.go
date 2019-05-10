@@ -48,6 +48,36 @@ func (vpcs *VPCSession) GetVolume(id string) (respVolume *provider.Volume, err e
 	return respVolume, err
 }
 
+// GetVolumeByName ...
+func (vpcs *VPCSession) GetVolumeByName(name string) (respVolume *provider.Volume, err error) {
+	vpcs.Logger.Debug("Entry of GetVolumeByName method...")
+	defer vpcs.Logger.Debug("Exit from GetVolumeByName method...")
+
+	vpcs.Logger.Info("Basic validation for volume Name...", zap.Reflect("VolumeName", name))
+	if len(name) <= 0 {
+		err = userError.GetUserError("InvalidVolumeName", nil, name)
+		return
+	}
+
+	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeName", name))
+
+	var volume *models.Volume
+	err = retry(vpcs.Logger, func() error {
+		volume, err = vpcs.Apiclient.VolumeService().GetVolumeByName(name, vpcs.Logger)
+		return err
+	})
+
+	if err != nil {
+		return nil, userError.GetUserError("StorageFindFailedWithVolumeName", err, name)
+	}
+
+	vpcs.Logger.Info("Successfully retrieved volume details from VPC provider", zap.Reflect("VolumeDetails", volume))
+
+	// Converting volume to lib volume type
+	respVolume = FromProviderToLibVolume(volume, vpcs.Logger)
+	return respVolume, err
+}
+
 // validateVolumeID validating basic volume ID
 func validateVolumeID(volumeID string) (err error) {
 	if IsValidVolumeIDFormat(volumeID) {
