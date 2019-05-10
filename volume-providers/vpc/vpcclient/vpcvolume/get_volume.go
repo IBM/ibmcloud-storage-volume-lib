@@ -63,7 +63,7 @@ func (vs *VolumeService) GetVolumeByName(volumeName string, ctxLogger *zap.Logge
 	if volumes != nil {
 		volumeslist := volumes.Volumes
 		if volumeslist != nil && len(volumeslist) > 0 {
-				return volumeslist[0], nil
+			return volumeslist[0], nil
 		}
 	}
 	return nil, err

@@ -37,7 +37,7 @@ type ListVolumeFilters struct {
 	ResourceGroupID string
 	Tag             string
 	ZoneName        string
-	VolumeName 			string
+	VolumeName      string
 }
 
 // VolumeList ...

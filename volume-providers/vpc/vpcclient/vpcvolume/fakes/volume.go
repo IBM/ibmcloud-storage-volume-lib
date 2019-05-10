@@ -435,6 +435,10 @@ func (fake *VolumeService) GetVolumeReturnsOnCall(i int, result1 *models.Volume,
 	}{result1, result2}
 }
 
+func (fake *VolumeService) GetVolumeByName(name string, logger *zap.Logger) (*models.Volume, error) {
+	return nil, nil
+}
+
 func (fake *VolumeService) ListVolumeTags(arg1 string, arg2 *zap.Logger) (*[]string, error) {
 	fake.listVolumeTagsMutex.Lock()
 	ret, specificReturn := fake.listVolumeTagsReturnsOnCall[len(fake.listVolumeTagsArgsForCall)]

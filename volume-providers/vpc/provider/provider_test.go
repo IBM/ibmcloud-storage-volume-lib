@@ -41,6 +41,7 @@ const (
 	IamAPIKey               = "test-iam_api_key"
 	RefreshToken            = "test-refresh_token"
 	TestEndpointURL         = "http://some_endpoint"
+	TestAPIVersion          = "2019-01-01"
 )
 
 var _ local.ContextCredentialsFactory = &auth.ContextCredentialsFactory{}
@@ -148,7 +149,7 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 			Timeout:         "30s",
 			MaxRetryAttempt: 5,
 			MaxRetryGap:     10,
-			APIVersion:      TestApiVersion,
+			APIVersion:      TestAPIVersion,
 		},
 	}
 
