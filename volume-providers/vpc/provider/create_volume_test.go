@@ -29,6 +29,7 @@ func TestCreateVolume(t *testing.T) {
 
 	var (
 		volumeService *volumeServiceFakes.VolumeService
+		profileName   string
 	)
 
 	testCases := []struct {
