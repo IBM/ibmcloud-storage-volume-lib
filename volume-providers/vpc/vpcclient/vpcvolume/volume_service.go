@@ -27,6 +27,9 @@ type VolumeManager interface {
 	// Get the volume by using ID
 	GetVolume(volumeID string, ctxLogger *zap.Logger) (*models.Volume, error)
 
+	// Get the volume by using volume name
+	GetVolumeByName(volumeName string, ctxLogger *zap.Logger) (*models.Volume, error)
+
 	// Others
 	// Get volume lists by using snapshot tags
 	ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error)

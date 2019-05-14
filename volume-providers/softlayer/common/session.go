@@ -280,6 +280,12 @@ func (sls *SLSession) GetSnapshot(snapshotId string) (*provider.Snapshot, error)
 	return snapshot, nil
 }
 
+// Get the snapshot with volume ID
+func (sls *SLSession) GetSnapshotWithVolumeID(volumeID string, snapshotID string) (*provider.Snapshot, error) {
+	//! TODO: we may implement
+	return nil, nil
+}
+
 // Snapshot list by using tags
 func (sls *SLSession) ListSnapshots() ([]*provider.Snapshot, error) {
 	// Step 1- Get all snapshots from the SL which belongs to a IBM Infrastructure a/c
@@ -395,4 +401,11 @@ func (sls *SLSession) GetVolumeAttachment(detachRequest provider.VolumeAttachmen
 		Status: provider.NOTSUPPORTED,
 	}
 	return volResponse, nil
+}
+
+//GetVolumeByName ...
+func (sls *SLSession) GetVolumeByName(name string) (*provider.Volume, error) {
+	sls.Logger.Info("Entry GetVolumeByName method not supported", zap.Reflect("VolumeName", name))
+	sls.Logger.Info("Exit GetVolumeByName method not supported", zap.Reflect("VolumeName", name))
+	return nil, nil
 }

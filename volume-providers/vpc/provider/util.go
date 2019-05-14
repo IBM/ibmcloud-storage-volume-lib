@@ -107,6 +107,18 @@ func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libV
 	logger.Debug("Entry of FromProviderToLibVolume method...")
 	defer logger.Debug("Exit from FromProviderToLibVolume method...")
 
+	if vpcVolume == nil {
+		logger.Info("Volume details are empty")
+		return
+	}
+
+	if vpcVolume.Zone == nil {
+		logger.Info("Volume zone is empty")
+		return
+	}
+
+	logger.Debug("Volume details of VPC client", zap.Reflect("models.Volume", vpcVolume))
+
 	volumeCap := int(vpcVolume.Capacity)
 	iops := strconv.Itoa(int(vpcVolume.Iops))
 	var createdDate time.Time

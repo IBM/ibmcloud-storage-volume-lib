@@ -22,18 +22,26 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 	vpcs.Logger.Info("Entry CreateSnapshot", zap.Reflect("volumeRequest", volumeRequest))
 	defer vpcs.Logger.Info("Exit CreateSnapshot", zap.Reflect("volumeRequest", volumeRequest))
 
+	if volumeRequest == nil {
+		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", nil, "Not a valid volume ID")
+	}
+
 	var snapshot *models.Snapshot
 	var err error
 
 	// Step 1- validate input which are required
 	vpcs.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
-	var volume *provider.Volume
 
+	var volume *models.Volume
 	err = retry(vpcs.Logger, func() error {
-		volume, err = vpcs.GetVolume(volumeRequest.VolumeID)
+		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeRequest.VolumeID, vpcs.Logger)
 		return err
 	})
 	if err != nil {
+		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, "Not a valid volume ID")
+	}
+
+	if volume == nil {
 		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
 	}
 
@@ -48,10 +56,16 @@ func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[
 	vpcs.Logger.Info("Successfully created snapshot with backend (vpcclient) call")
 	vpcs.Logger.Info("Backend created snapshot details", zap.Reflect("Snapshot", snapshot))
 
-	respSnapshot := &provider.Snapshot{
-		Volume:               *volume,
-		SnapshotID:           snapshot.ID,
-		SnapshotCreationTime: *snapshot.CreatedAt,
+	// Converting volume to lib volume type
+	volumeResponse := FromProviderToLibVolume(volume, vpcs.Logger)
+	if volumeResponse != nil {
+		respSnapshot := &provider.Snapshot{
+			Volume:               *volumeResponse,
+			SnapshotID:           snapshot.ID,
+			SnapshotCreationTime: *snapshot.CreatedAt,
+		}
+		return respSnapshot, nil
 	}
-	return respSnapshot, nil
+
+	return nil, userError.GetUserError("CoversionNotSuccessful", err, "Not able to prepare provider volume")
 }

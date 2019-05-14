@@ -91,7 +91,9 @@ func main() {
 
 	valid := true
 	for valid {
-		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n 14- Create VPC Snapshot \n 15- Attach VPC volume \n 16- Detach VPC volume \n Your choice?:")
+
+		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n 14- Create VPC Snapshot \n 15- Attach VPC volume \n 16- Detach VPC volume \n 17- Get volume by name \n Your choice?:")
+
 		var choiceN int
 		var volumeID string
 		var snapshotID string
@@ -449,6 +451,19 @@ func main() {
 				ctxLogger.Error("Failed to detach the volume", zap.Error(err))
 			}
 			fmt.Println("Volume detach", response, err)
+		} else if choiceN == 17 {
+			fmt.Println("You selected get VPC volume by name")
+			volumeName := ""
+			fmt.Printf("Please enter volume Name to get the details: ")
+			_, er11 = fmt.Scanf("%s", &volumeName)
+			volumeobj1, er11 := sess.GetVolumeByName(volumeName)
+			if er11 == nil {
+				ctxLogger.Info("Successfully got VPC volume details ================>", zap.Reflect("VolumeDetail", volumeobj1))
+			} else {
+				er11 = updateRequestID(er11, requestID)
+				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("VolumeName", volumeName), zap.Reflect("Error", er11))
+			}
+			fmt.Printf("\n\n")
 		} else {
 			fmt.Println("No right choice")
 			return
