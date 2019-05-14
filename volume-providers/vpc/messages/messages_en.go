@@ -12,13 +12,12 @@ package messages
 
 import (
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 )
 
 // messagesEn ...
 var messagesEn = map[string]util.Message{
-	string(reasoncode.ErrorRequiredFieldMissing): util.Message{
-		Code:        string(reasoncode.ErrorRequiredFieldMissing),
+	"ErrorRequiredFieldMissing": util.Message{
+		Code:        "ErrorRequiredFieldMissing",
 		Description: "[%] is required to complete the operation",
 		Type:        "InvalidRequest",
 		RC:          400,
@@ -66,22 +65,22 @@ var messagesEn = map[string]util.Message{
 		RC:          400,
 		Action:      "Please check the snapshot ID once, You many need to verify by using 'ibmcloud is' cli.",
 	},
-	string(VolumeAttachFindFailed): util.Message{
-		Code:        string(VolumeAttachFindFailed),
+	VolumeAttachFindFailed: util.Message{
+		Code:        VolumeAttachFindFailed,
 		Description: "Failed to find the volume attachment by using volume ID :'%s' and instance ID : '%s'.",
 		Type:        "RetrivalFailed",
 		RC:          400,
 		Action:      "Please check the volume attachment once, You many need to verify by using 'ibmcloud is in-vol' cli.",
 	},
-	string(VolumeAttachFailed): util.Message{
-		Code:        string(VolumeAttachFailed),
+	VolumeAttachFailed: util.Message{
+		Code:        VolumeAttachFailed,
 		Description: "Failed to attach volume :'%s' to  instance : '%s'.",
 		Type:        "AttachFailed",
 		RC:          500,
 		Action:      "Please check the volume and instance details once, You many need to verify by using 'ibmcloud is in|vol' cli.",
 	},
-	string(VolumeDetachFailed): util.Message{
-		Code:        string(VolumeDetachFailed),
+	VolumeDetachFailed: util.Message{
+		Code:        VolumeDetachFailed,
 		Description: "Failed to detach volume :'%s' from  instance : '%s'.",
 		Type:        "DetachFailed",
 		RC:          500,

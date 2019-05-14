@@ -10,15 +10,12 @@
 
 package messages
 
-// ReasonCode ...
-type ReasonCode string
-
 // Attach / Detach problems
 const (
 	//VolumeAttachFailed indicates if volume attach to instance is failed
-	VolumeAttachFailed = ReasonCode("VolumeAttachFailed")
+	VolumeAttachFailed = "VolumeAttachFailed"
 	//VolumeDetachFailed indicates if volume detach from instance is failed
-	VolumeDetachFailed = ReasonCode("VolumeDetachFailed")
+	VolumeDetachFailed = "VolumeDetachFailed"
 	//VolumeAttachFindFailed indicates if the volume attachment is not found with given request
-	VolumeAttachFindFailed = ReasonCode("VolumeAttachFindFailed")
+	VolumeAttachFindFailed = "VolumeAttachFindFailed"
 )
