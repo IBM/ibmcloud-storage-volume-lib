@@ -41,7 +41,7 @@ func (vpcs *VPCSession) GetVolume(id string) (respVolume *provider.Volume, err e
 		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, id)
 	}
 
-	vpcs.Logger.Info("Successfully retrieved volume details from VPC provider", zap.Reflect("VolumeDetails", volume))
+	vpcs.Logger.Info("Successfully retrieved volume details from VPC backend", zap.Reflect("VolumeDetails", volume))
 
 	// Converting volume to lib volume type
 	respVolume = FromProviderToLibVolume(volume, vpcs.Logger)
@@ -71,7 +71,7 @@ func (vpcs *VPCSession) GetVolumeByName(name string) (respVolume *provider.Volum
 		return nil, userError.GetUserError("StorageFindFailedWithVolumeName", err, name)
 	}
 
-	vpcs.Logger.Info("Successfully retrieved volume details from VPC provider", zap.Reflect("VolumeDetails", volume))
+	vpcs.Logger.Info("Successfully retrieved volume details from VPC backend", zap.Reflect("VolumeDetails", volume))
 
 	// Converting volume to lib volume type
 	respVolume = FromProviderToLibVolume(volume, vpcs.Logger)

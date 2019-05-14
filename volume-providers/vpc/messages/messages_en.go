@@ -66,9 +66,8 @@ var messagesEn = map[string]util.Message{
 		Action:      "Volume ID is not valid. Please review provided URL for valid volume ID.",
 	},
 	"InvalidVolumeName": util.Message{
-		Code: "InvalidVolumeName",
-		// TODO! for volume name invalid URL
-		Description: "'%s' volume name is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#volume_id_invalid",
+		Code:        "InvalidVolumeName",
+		Description: "'%s' volume name is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#validation_invalid_name",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Volume name is not valid. Please review provided URL for valid volume name.",
