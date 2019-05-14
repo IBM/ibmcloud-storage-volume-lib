@@ -54,7 +54,9 @@ func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilter
 		if filters.ZoneName != "" {
 			req.AddQueryValue("zone.name", filters.ZoneName)
 		}
-
+		if filters.VolumeName != "" {
+			req.AddQueryValue("name", filters.VolumeName)
+		}
 	}
 
 	_, err := req.Invoke()

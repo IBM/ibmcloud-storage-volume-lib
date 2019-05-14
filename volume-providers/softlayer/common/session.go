@@ -376,3 +376,9 @@ func (sls *SLSession) authorizeVolumeFromHostIPs(volumeID int, hostIPList []stri
 	sls.Logger.Info("Exit authorizeVolumeFromHostIPs ", zap.Reflect("result", result), zap.Error(err))
 	return err
 }
+
+func (sls *SLSession) GetVolumeByName(name string) (*provider.Volume, error) {
+	sls.Logger.Info("Entry GetVolumeByName method not supported", zap.Reflect("VolumeName", name))
+	sls.Logger.Info("Exit GetVolumeByName method not supported", zap.Reflect("VolumeName", name))
+	return nil, nil
+}

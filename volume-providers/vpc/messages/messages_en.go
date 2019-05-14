@@ -44,6 +44,13 @@ var messagesEn = map[string]util.Message{
 		RC:          404,
 		Action:      "Please check volume ID if this is correct, You may need to verify by using 'ibmcloud is volume VOLUME_ID' cli.",
 	},
+	"StorageFindFailedWithVolumeName": util.Message{
+		Code:        "StorageFindFailedWithVolumeName",
+		Description: "Failed to find '%s' volume Name.",
+		Type:        util.RetrivalFailed,
+		RC:          404,
+		Action:      "Please check volume name if this is correct, You may need to verify by using 'ibmcloud is volumes' cli.",
+	},
 	"StorageFindFailedWithSnapshotId": util.Message{
 		Code:        "StorageFindFailedWithSnapshotId",
 		Description: "Failed to find the volume by using '%s' snapshot ID. Description: %s",
@@ -63,7 +70,7 @@ var messagesEn = map[string]util.Message{
 		Description: "'%s' volume name is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#validation_invalid_name",
 		Type:        util.InvalidRequest,
 		RC:          400,
-		Action:      "Volume name is not valid. Please check review provided URL for valid volume name.",
+		Action:      "Volume name is not valid. Please review provided URL for valid volume name.",
 	},
 	"VolumeCapacityInvalid": util.Message{
 		Code:        "VolumeCapacityInvalid",
