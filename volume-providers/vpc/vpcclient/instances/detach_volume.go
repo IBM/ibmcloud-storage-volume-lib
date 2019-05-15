@@ -42,10 +42,8 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			// volume Attachment is deleted. So do not want to retry
 			return resp, apiErr
-		} else {
-			return resp, err
 		}
 	}
 	ctxLogger.Info("Successfuly deleted the volume attachment")
-	return resp, nil
+	return resp, err
 }

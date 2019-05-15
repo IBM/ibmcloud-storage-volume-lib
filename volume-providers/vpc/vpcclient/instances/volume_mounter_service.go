@@ -17,7 +17,7 @@ import (
 	"net/http"
 )
 
-// VolumeMountManager operations
+// VolumeAttachManager operations
 type VolumeAttachManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
 	AttachVolume(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
