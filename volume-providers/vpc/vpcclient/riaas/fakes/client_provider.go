@@ -2,9 +2,9 @@
 package fakes
 
 import (
-	"sync"
+	sync "sync"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
+	riaas "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
 )
 
 type RegionalAPIClientProvider struct {
