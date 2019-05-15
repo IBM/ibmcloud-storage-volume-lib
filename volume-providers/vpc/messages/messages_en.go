@@ -18,7 +18,7 @@ import (
 var messagesEn = map[string]util.Message{
 	"ErrorRequiredFieldMissing": util.Message{
 		Code:        "ErrorRequiredFieldMissing",
-		Description: "[%] is required to complete the operation",
+		Description: "[%s] is required to complete the operation",
 		Type:        "InvalidRequest",
 		RC:          400,
 		Action:      "Please check the [BackendError] error which is returned",
