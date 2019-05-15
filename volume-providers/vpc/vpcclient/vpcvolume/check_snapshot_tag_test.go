@@ -11,7 +11,7 @@
 package vpcvolume_test
 
 import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	//"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +34,7 @@ func TestCheckSnapshotTag(t *testing.T) {
 
 		// Expected return
 		expectErr string
-		verify    func(*testing.T, *models.Snapshot, error)
+		verify    func(*testing.T, error)
 	}{
 		{
 			name:   "Verify that the correct endpoint is invoked",
@@ -46,12 +46,18 @@ func TestCheckSnapshotTag(t *testing.T) {
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:    "Verify that the snapshot is parsed correctly",
-			status:  http.StatusOK,
+			status:  http.StatusNotFound,
 			content: "{\"id\":\"snapshot1\",\"name\":\"snapshot1\",\"status\":\"pending\"}",
-			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.Equal(t, "snapshot1", snapshot.ID)
-				}
+			verify: func(t *testing.T, err error) {
+				assert.NotNil(t, err)
+
+			},
+		}, {
+			name:    "Verify that the snapshot tag exists",
+			status:  http.StatusOK,
+			content: "{\"id\":\"snapshot1\",\"name\":\"snapshot1\",\"status\":\"pending\", \"tags\":[\"test-tag\"]}",
+			verify: func(t *testing.T, err error) {
+				assert.NotNil(t, err)
 			},
 		},
 	}
@@ -60,7 +66,7 @@ func TestCheckSnapshotTag(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			emptyString := ""
-			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots/snapshot-id/tags/tag-name", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, "volumes/volume1/snapshots/snapshot1/tags/test-tag", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -68,10 +74,12 @@ func TestCheckSnapshotTag(t *testing.T) {
 
 			snapshotService := vpcvolume.NewSnapshotManager(client)
 
-			err := snapshotService.CheckSnapshotTag("volume-id", "snapshot-id", "tag-name", logger)
+			err := snapshotService.CheckSnapshotTag("volume1", "snapshot1", "test-tag", logger)
 
+			if testcase.verify != nil {
+				testcase.verify(t, err)
+			}
 			// vpc snapshot functionality is not yet ready. It would return error for now
-			assert.Error(t, err)
 		})
 	}
 }
