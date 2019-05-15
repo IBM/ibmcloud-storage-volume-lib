@@ -13,6 +13,7 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -377,6 +378,32 @@ func (sls *SLSession) authorizeVolumeFromHostIPs(volumeID int, hostIPList []stri
 	return err
 }
 
+// AttachVolume ...
+func (sls *SLSession) AttachVolume(attachRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
+	volResponse := &provider.VolumeAttachmentResponse{
+		Status: provider.NOTSUPPORTED,
+	}
+	return volResponse, nil
+}
+
+//DetachVolume detaches the volume/ fileset from the pod
+func (sls *SLSession) DetachVolume(detachRequest provider.VolumeAttachmentRequest) (*http.Response, error) {
+
+	volResponse := &http.Response{
+		StatusCode: http.StatusNotImplemented,
+	}
+	return volResponse, nil
+}
+
+//GetVolumeAttachment ...
+func (sls *SLSession) GetVolumeAttachment(detachRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
+	volResponse := &provider.VolumeAttachmentResponse{
+		Status: provider.NOTSUPPORTED,
+	}
+	return volResponse, nil
+}
+
+//GetVolumeByName ...
 func (sls *SLSession) GetVolumeByName(name string) (*provider.Volume, error) {
 	sls.Logger.Info("Entry GetVolumeByName method not supported", zap.Reflect("VolumeName", name))
 	sls.Logger.Info("Exit GetVolumeByName method not supported", zap.Reflect("VolumeName", name))

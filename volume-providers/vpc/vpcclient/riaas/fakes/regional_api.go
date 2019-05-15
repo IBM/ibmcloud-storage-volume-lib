@@ -2,10 +2,11 @@
 package fakes
 
 import (
-	"sync"
+	sync "sync"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
+	instances "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/instances"
+	riaas "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
+	vpcvolume "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 )
 
 type RegionalAPI struct {
@@ -29,6 +30,16 @@ type RegionalAPI struct {
 	}
 	snapshotServiceReturnsOnCall map[int]struct {
 		result1 vpcvolume.SnapshotManager
+	}
+	VolumeAttachServiceStub        func() instances.VolumeAttachManager
+	volumeAttachServiceMutex       sync.RWMutex
+	volumeAttachServiceArgsForCall []struct {
+	}
+	volumeAttachServiceReturns struct {
+		result1 instances.VolumeAttachManager
+	}
+	volumeAttachServiceReturnsOnCall map[int]struct {
+		result1 instances.VolumeAttachManager
 	}
 	VolumeServiceStub        func() vpcvolume.VolumeManager
 	volumeServiceMutex       sync.RWMutex
@@ -156,6 +167,58 @@ func (fake *RegionalAPI) SnapshotServiceReturnsOnCall(i int, result1 vpcvolume.S
 	}{result1}
 }
 
+func (fake *RegionalAPI) VolumeAttachService() instances.VolumeAttachManager {
+	fake.volumeAttachServiceMutex.Lock()
+	ret, specificReturn := fake.volumeAttachServiceReturnsOnCall[len(fake.volumeAttachServiceArgsForCall)]
+	fake.volumeAttachServiceArgsForCall = append(fake.volumeAttachServiceArgsForCall, struct {
+	}{})
+	fake.recordInvocation("VolumeAttachService", []interface{}{})
+	fake.volumeAttachServiceMutex.Unlock()
+	if fake.VolumeAttachServiceStub != nil {
+		return fake.VolumeAttachServiceStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.volumeAttachServiceReturns
+	return fakeReturns.result1
+}
+
+func (fake *RegionalAPI) VolumeAttachServiceCallCount() int {
+	fake.volumeAttachServiceMutex.RLock()
+	defer fake.volumeAttachServiceMutex.RUnlock()
+	return len(fake.volumeAttachServiceArgsForCall)
+}
+
+func (fake *RegionalAPI) VolumeAttachServiceCalls(stub func() instances.VolumeAttachManager) {
+	fake.volumeAttachServiceMutex.Lock()
+	defer fake.volumeAttachServiceMutex.Unlock()
+	fake.VolumeAttachServiceStub = stub
+}
+
+func (fake *RegionalAPI) VolumeAttachServiceReturns(result1 instances.VolumeAttachManager) {
+	fake.volumeAttachServiceMutex.Lock()
+	defer fake.volumeAttachServiceMutex.Unlock()
+	fake.VolumeAttachServiceStub = nil
+	fake.volumeAttachServiceReturns = struct {
+		result1 instances.VolumeAttachManager
+	}{result1}
+}
+
+func (fake *RegionalAPI) VolumeAttachServiceReturnsOnCall(i int, result1 instances.VolumeAttachManager) {
+	fake.volumeAttachServiceMutex.Lock()
+	defer fake.volumeAttachServiceMutex.Unlock()
+	fake.VolumeAttachServiceStub = nil
+	if fake.volumeAttachServiceReturnsOnCall == nil {
+		fake.volumeAttachServiceReturnsOnCall = make(map[int]struct {
+			result1 instances.VolumeAttachManager
+		})
+	}
+	fake.volumeAttachServiceReturnsOnCall[i] = struct {
+		result1 instances.VolumeAttachManager
+	}{result1}
+}
+
 func (fake *RegionalAPI) VolumeService() vpcvolume.VolumeManager {
 	fake.volumeServiceMutex.Lock()
 	ret, specificReturn := fake.volumeServiceReturnsOnCall[len(fake.volumeServiceArgsForCall)]
@@ -215,6 +278,8 @@ func (fake *RegionalAPI) Invocations() map[string][][]interface{} {
 	defer fake.loginMutex.RUnlock()
 	fake.snapshotServiceMutex.RLock()
 	defer fake.snapshotServiceMutex.RUnlock()
+	fake.volumeAttachServiceMutex.RLock()
+	defer fake.volumeAttachServiceMutex.RUnlock()
 	fake.volumeServiceMutex.RLock()
 	defer fake.volumeServiceMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

@@ -18,3 +18,9 @@ func SafeStringValue(s *string) string {
 	}
 	return *s
 }
+
+// StringHasValue returns true if the argument is neither nil nor a pointer to the
+// zero/empty string.
+func StringHasValue(s *string) bool {
+	return s != nil && *s != ""
+}

@@ -16,6 +16,13 @@ import (
 
 // messagesEn ...
 var messagesEn = map[string]util.Message{
+	"ErrorRequiredFieldMissing": util.Message{
+		Code:        "ErrorRequiredFieldMissing",
+		Description: "[%s] is required to complete the operation",
+		Type:        "InvalidRequest",
+		RC:          400,
+		Action:      "Please check the [BackendError] error which is returned",
+	},
 	"FailedToPlaceOrder": util.Message{
 		Code:        "FailedToPlaceOrder",
 		Description: "Failed to create volume with the storage provider",
@@ -57,6 +64,27 @@ var messagesEn = map[string]util.Message{
 		Type:        util.RetrivalFailed,
 		RC:          400,
 		Action:      "Please check the snapshot ID once, You many need to verify by using 'ibmcloud is' cli.",
+	},
+	VolumeAttachFindFailed: util.Message{
+		Code:        VolumeAttachFindFailed,
+		Description: "Failed to find the volume attachment by using volume ID :'%s' and instance ID : '%s'.",
+		Type:        "RetrivalFailed",
+		RC:          400,
+		Action:      "Please check the volume attachment once, You many need to verify by using 'ibmcloud is in-vol' cli.",
+	},
+	VolumeAttachFailed: util.Message{
+		Code:        VolumeAttachFailed,
+		Description: "Failed to attach volume :'%s' to  instance : '%s'.",
+		Type:        "AttachFailed",
+		RC:          500,
+		Action:      "Please check the volume and instance details once, You many need to verify by using 'ibmcloud is in|vol' cli.",
+	},
+	VolumeDetachFailed: util.Message{
+		Code:        VolumeDetachFailed,
+		Description: "Failed to detach volume :'%s' from  instance : '%s'.",
+		Type:        "DetachFailed",
+		RC:          500,
+		Action:      "Please check the volume attachment once, You many need to verify by using 'ibmcloud is in-vol' cli.",
 	},
 	"InvalidVolumeID": util.Message{
 		Code:        "InvalidVolumeID",

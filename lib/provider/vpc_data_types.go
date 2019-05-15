@@ -44,8 +44,12 @@ type Profile struct {
 // VolumeAttachment ...
 type VolumeAttachment struct {
 	Href string `json:"href,omitempty"`
-	ID   string `json:"id,omitempty"`
+	// ID volume attachment identifier
+	ID string `json:"id,omitempty"`
+	// Name volume attachment named
 	Name string `json:"name,omitempty"`
-
-	Volume *Volume `json:"volume,omitempty"`
+	// Type of the volume - boot,data
+	Type string `json:"type,omitempty"`
+	// If set to true, when deleting the instance the volume will also be deleted
+	DeleteVolumeOnInstanceDelete bool `json:"delete_volume_on_instance_delete,omitempty"`
 }
