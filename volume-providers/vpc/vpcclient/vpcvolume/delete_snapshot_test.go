@@ -11,7 +11,7 @@
 package vpcvolume_test
 
 import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	//"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +34,7 @@ func TestDeleteSnapshot(t *testing.T) {
 
 		// Expected return
 		expectErr string
-		verify    func(*testing.T, *models.Snapshot, error)
+		verify    func(*testing.T, error)
 	}{
 		{
 			name:   "Verify that the correct endpoint is invoked",
@@ -45,13 +45,10 @@ func TestDeleteSnapshot(t *testing.T) {
 			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
-			name:    "Verify that the snapshot is parsed correctly",
-			status:  http.StatusOK,
-			content: "{\"id\":\"snapshot1\",\"status\":\"pending\"}",
-			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.Equal(t, "snapshot1", snapshot.ID)
-				}
+			name:   "Verify that the snapshot is parsed correctly",
+			status: http.StatusOK,
+			verify: func(t *testing.T, err error) {
+				assert.NotNil(t, err)
 			},
 		},
 	}
@@ -59,8 +56,7 @@ func TestDeleteSnapshot(t *testing.T) {
 	for _, testcase := range testCases {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
-			requestBody := ""
-			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots/snapshot-id", http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, "volumes/volume1/snapshots/snapshot1", http.MethodDelete, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -68,10 +64,11 @@ func TestDeleteSnapshot(t *testing.T) {
 
 			snapshotService := vpcvolume.NewSnapshotManager(client)
 
-			err := snapshotService.DeleteSnapshot("volume-id", "snapshot-id", logger)
+			err := snapshotService.DeleteSnapshot("volume1", "snapshot1", logger)
 
-			// vpc snapshot functionality is not yet ready. It would return error for now
-			assert.Error(t, err)
+			if testcase.verify != nil {
+				testcase.verify(t, err)
+			}
 		})
 	}
 }

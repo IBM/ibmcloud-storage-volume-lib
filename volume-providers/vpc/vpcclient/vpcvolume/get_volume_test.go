@@ -117,3 +117,66 @@ func TestGetVolume(t *testing.T) {
 		})
 	}
 }
+
+func TestGetVolumeByName(t *testing.T) {
+	// Setup new style zap logger
+	logger, _ := GetTestContextLogger()
+	defer logger.Sync()
+
+	testCases := []struct {
+		name string
+
+		// Response
+		status  int
+		volumes string
+		content string
+
+		// Expected return
+		expectErr string
+		verify    func(*testing.T, *models.Volume, error)
+	}{
+		{
+			name:   "Verify that the correct endpoint is invoked",
+			status: http.StatusNoContent,
+		}, {
+			name:      "Verify that a 404 is returned to the caller",
+			status:    http.StatusNotFound,
+			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
+			expectErr: "Trace Code:, testerr Please check ",
+		}, {
+			name:    "Verify that the volume name is parsed correctly",
+			status:  http.StatusOK,
+			content: "{\"volumes\":[{\"id\":\"vol1\",\"name\":\"vol1\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}]}",
+			verify: func(t *testing.T, volume *models.Volume, err error) {
+				if assert.NotNil(t, volume) {
+					assert.Equal(t, "vol1", volume.ID)
+				}
+			},
+		}, {
+			name:      "Verify that the volume is empty if the volumes are empty",
+			status:    http.StatusOK,
+			expectErr: "Trace Code:, testerr Please check ",
+		},
+	}
+
+	for _, testcase := range testCases {
+		t.Run(testcase.name, func(t *testing.T) {
+			mux, client, teardown := test.SetupServer(t)
+			emptyString := ""
+			test.SetupMuxResponse(t, mux, "/volumes", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
+
+			defer teardown()
+
+			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
+
+			volumeService := vpcvolume.New(client)
+			volume, err := volumeService.GetVolumeByName("vol1", logger)
+			logger.Info("Volume details", zap.Reflect("volume", volume))
+
+			if testcase.verify != nil {
+				testcase.verify(t, volume, err)
+			}
+
+		})
+	}
+}

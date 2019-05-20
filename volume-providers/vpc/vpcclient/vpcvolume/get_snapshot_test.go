@@ -49,18 +49,8 @@ func TestGetSnapshot(t *testing.T) {
 			status:  http.StatusOK,
 			content: "{\"id\":\"snapshot1\",\"name\":\"snapshot1\",\"status\":\"pending\"}",
 			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.Equal(t, "snapshot1", snapshot.ID)
-				}
-			},
-		}, {
-			name:    "False positive: What if the snapshot ID is not matched",
-			status:  http.StatusOK,
-			content: "{\"id\":\"wrong-snapshot\",\"name\":\"wrong-snapshot\",\"status\":\"pending\"}",
-			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.NotEqual(t, "snapshot1", snapshot.ID)
-				}
+				assert.Nil(t, snapshot)
+				assert.NotNil(t, err)
 			},
 		},
 	}
@@ -69,19 +59,19 @@ func TestGetSnapshot(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			emptyString := ""
-			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots/snapshot-id", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, "volumes/volume1/snapshots/snapshot1", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
 			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
 
 			snapshotService := vpcvolume.NewSnapshotManager(client)
-
 			snapshot, err := snapshotService.GetSnapshot("volume1", "snapshot1", logger)
 			logger.Info("Snapshot details", zap.Reflect("snapshot", snapshot))
 
-			// vpc snapshot functionality is not yet ready. It would return error for now
-			assert.Error(t, err)
+			if testcase.verify != nil {
+				testcase.verify(t, snapshot, err)
+			}
 		})
 	}
 }

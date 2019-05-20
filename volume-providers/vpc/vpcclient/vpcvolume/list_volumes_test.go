@@ -91,6 +91,17 @@ func TestListVolumes(t *testing.T) {
 				actualValues := r.URL.Query()
 				assert.Equal(t, expectedValues, actualValues)
 			},
+		}, {
+			name: "Verify that volume name is added to the query",
+			filters: &models.ListVolumeFilters{
+				VolumeName: "testname",
+			},
+			status: http.StatusNoContent,
+			muxVerify: func(t *testing.T, r *http.Request) {
+				expectedValues := url.Values{"name": []string{"testname"}, "version": []string{models.APIVersion}}
+				actualValues := r.URL.Query()
+				assert.Equal(t, expectedValues, actualValues)
+			},
 		},
 	}
 
