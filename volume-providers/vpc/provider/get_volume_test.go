@@ -120,3 +120,111 @@ func TestGetVolume(t *testing.T) {
 		})
 	}
 }
+
+func TestGetVolumeByName(t *testing.T) {
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	var (
+		volumeService *volumeServiceFakes.VolumeService
+	)
+
+	testCases := []struct {
+		testCaseName string
+		volumeName   string
+		baseVolume   *models.Volume
+
+		setup func()
+
+		skipErrTest        bool
+		expectedErr        string
+		expectedReasonCode string
+
+		verify func(t *testing.T, volumeResponse *provider.Volume, err error)
+	}{
+		{
+			testCaseName: "OK",
+			volumeName:   "Test volume",
+			baseVolume: &models.Volume{
+				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     "test-volume-name",
+				Status:   models.StatusType("OK"),
+				Capacity: int64(10),
+				Iops:     int64(1000),
+				Zone:     &models.Zone{Name: "test-zone"},
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.NotNil(t, volumeResponse)
+				assert.Nil(t, err)
+			},
+		}, {
+			testCaseName: "Wrong volume ID",
+			volumeName:   "Wrong volume name",
+			baseVolume: &models.Volume{
+				ID:       "wrong-wrong-id",
+				Name:     "test-volume-name",
+				Status:   models.StatusType("OK"),
+				Capacity: int64(10),
+				Iops:     int64(1000),
+			},
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Wrong volume ID' volume ID is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#volume_id_invalid, BackendError:, RC:400}",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			testCaseName:       "Volume without zone",
+			volumeName:         "Test volume",
+			expectedErr:        "{Code:ErrorUnclassified, Type:RetrivalFailed, Description:Failed to find '16f293bf-test-4bff-816f-e199c0c65db5' volume ID., BackendError:StorageFindFailedWithVolumeId, RC:404}",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			testCaseName:       "Empty volume name",
+			volumeName:         "",
+			expectedErr:        "{Code:ErrorUnclassified, Type:RetrivalFailed, Description:Failed to find '16f293bf-test-4bff-816f-e199c0c65db5' volume ID., BackendError:StorageFindFailedWithVolumeId, RC:404}",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		},
+	}
+
+	for _, testcase := range testCases {
+		t.Run(testcase.testCaseName, func(t *testing.T) {
+			vpcs, uc, sc, err := GetTestOpenSession(t, logger)
+			assert.NotNil(t, vpcs)
+			assert.NotNil(t, uc)
+			assert.NotNil(t, sc)
+			assert.Nil(t, err)
+
+			volumeService = &volumeServiceFakes.VolumeService{}
+			assert.NotNil(t, volumeService)
+			uc.VolumeServiceReturns(volumeService)
+
+			if testcase.expectedErr != "" {
+				volumeService.GetVolumeByNameReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
+			} else {
+				volumeService.GetVolumeByNameReturns(testcase.baseVolume, nil)
+			}
+			volume, err := vpcs.GetVolumeByName(testcase.volumeName)
+			logger.Info("Volume details", zap.Reflect("volume", volume))
+
+			if testcase.expectedErr != "" {
+				assert.NotNil(t, err)
+				logger.Info("Error details", zap.Reflect("Error details", err.Error()))
+				assert.Equal(t, reasoncode.ReasonCode(testcase.expectedReasonCode), util.ErrorReasonCode(err))
+			}
+
+			if testcase.verify != nil {
+				testcase.verify(t, volume, err)
+			}
+
+		})
+	}
+}
