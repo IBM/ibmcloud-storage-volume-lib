@@ -18,4 +18,8 @@ const (
 	VolumeDetachFailed = "VolumeDetachFailed"
 	//VolumeAttachFindFailed indicates if the volume attachment is not found with given request
 	VolumeAttachFindFailed = "VolumeAttachFindFailed"
+	//VolumeAttachTimedOut indicates the volume attach is not completed within the specified time out
+	VolumeAttachTimedOut = "VolumeAttachTimedOut"
+	//VolumeDetachTimedOut indicates the volume detach is not completed within the specified time out
+	VolumeDetachTimedOut = "VolumeDetachTimedOut"
 )

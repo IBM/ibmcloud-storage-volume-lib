@@ -23,7 +23,6 @@ import (
 const (
 	VpcVolumeAttachment = "vpcVolumeAttachment"
 	StatusAttached      = "attached"
-	StatusDetached      = "detached"
 	StatusAttaching     = "attaching"
 	StatusDetaching     = "detaching"
 )

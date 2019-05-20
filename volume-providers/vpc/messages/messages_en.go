@@ -79,12 +79,26 @@ var messagesEn = map[string]util.Message{
 		RC:          500,
 		Action:      "Please check the volume and instance details once, You many need to verify by using 'ibmcloud is in|vol' cli.",
 	},
+	VolumeAttachTimedOut: util.Message{
+		Code:        VolumeAttachTimedOut,
+		Description: "Volume attach timed out. Failed to attach volume :'%s' to  instance : '%s' in %s",
+		Type:        "AttachFailed",
+		RC:          500,
+		Action:      "Please check the volume and instance details once, You many need to verify by using 'ibmcloud is in|vol' cli.",
+	},
 	VolumeDetachFailed: util.Message{
 		Code:        VolumeDetachFailed,
 		Description: "Failed to detach volume :'%s' from  instance : '%s'.",
 		Type:        "DetachFailed",
 		RC:          500,
 		Action:      "Please check the volume attachment once, You many need to verify by using 'ibmcloud is in-vol' cli.",
+	},
+	VolumeDetachTimedOut: util.Message{
+		Code:        VolumeDetachTimedOut,
+		Description: "Volume detach timed out. Failed to detach volume :'%s' from  instance : '%s' in %s",
+		Type:        "AttachFailed",
+		RC:          500,
+		Action:      "Please check the volume and instance details once, You many need to verify by using 'ibmcloud is in-vol' cli.",
 	},
 	"InvalidVolumeID": util.Message{
 		Code:        "InvalidVolumeID",

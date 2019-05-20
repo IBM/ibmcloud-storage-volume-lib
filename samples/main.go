@@ -432,6 +432,11 @@ func main() {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to attach the volume", zap.Error(err))
 			}
+			err = sess.WaitForAttachVolume(volumeAttachmentReq)
+			if err != nil {
+				updateRequestID(err, requestID)
+				ctxLogger.Error("Failed to complete volume attach", zap.Error(err))
+			}
 			fmt.Println("Volume attachment", response, err)
 		} else if choiceN == 16 {
 			fmt.Println("Enter the volume id to detach")
@@ -449,6 +454,11 @@ func main() {
 			if err != nil {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to detach the volume", zap.Error(err))
+			}
+			err = sess.WaitForDetachVolume(volumeDetachmentReq)
+			if err != nil {
+				updateRequestID(err, requestID)
+				ctxLogger.Error("Failed to complete volume detach", zap.Error(err))
 			}
 			fmt.Println("Volume detach", response, err)
 		} else if choiceN == 17 {
