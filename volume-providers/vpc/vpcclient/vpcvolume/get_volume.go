@@ -55,7 +55,7 @@ func (vs *VolumeService) GetVolumeByName(volumeName string, ctxLogger *zap.Logge
 
 	// Get the volume details for a single volume, ListVolumeFilters will return only 1 volume in list
 	filters := &models.ListVolumeFilters{VolumeName: volumeName}
-	volumes, err := vs.ListVolumes(10, filters, ctxLogger)
+	volumes, err := vs.ListVolumes(1, filters, ctxLogger)
 	if err != nil {
 		return nil, err
 	}
