@@ -33,11 +33,11 @@ type VolumeAttachManager interface {
 	//Its non bloking call and does not wait to complete the detachment
 	DetachVolume(detachRequest VolumeAttachmentRequest) (*http.Response, error)
 
-	//WaitForAttachVolume waits for the volume to be attached on the node
+	//WaitForAttachVolume waits for the volume to be attached to the host
 	// Retunn error if wait is timed out OR there is other error
 	WaitForAttachVolume(attachRequest VolumeAttachmentRequest) error
 
-	//WaitForDetachVolume waits for the volume to be detached on the node
+	//WaitForDetachVolume waits for the volume to be detached from the host
 	// Retunn error if wait is timed out OR there is other error
 	WaitForDetachVolume(detachRequest VolumeAttachmentRequest) error
 

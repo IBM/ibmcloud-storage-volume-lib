@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-// WaitForDetachVolume waits for volume to be detached from node. e.g waits till status becomes detached
+// WaitForDetachVolume waits for volume to be detached from node. e.g waits till no volume attachment is found
 func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) error {
 	vpcs.Logger.Debug("Entry of WaitForDetachVolume method...")
 	defer vpcs.Logger.Debug("Exit from WaitForDetachVolume method...")
@@ -54,8 +54,7 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 		vpcs.Logger.Info("Volume is still detaching. Retry..", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
 		time.Sleep(retryGapDuration)
 	}
-	userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout+" seconds")
+	userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
 	vpcs.Logger.Info("Wait for detach timed out", zap.Error(userErr))
-
 	return userErr
 }
