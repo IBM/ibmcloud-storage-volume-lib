@@ -128,7 +128,7 @@ type VPCProviderConfig struct {
 	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
 	EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
 	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
-	MaxRetryAttempt      int    `toml:"max_retry_attempt" `
+	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
 	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"RETRY_INTERVAL"`
 	APIVersion           string `toml:"api_version"`
 }
