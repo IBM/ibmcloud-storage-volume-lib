@@ -28,11 +28,7 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 	if err != nil {
 		return err
 	}
-
-	maxTimeoutConfig, _ := time.ParseDuration(vpcs.Config.Timeout)
-	maxTimeout := int(maxTimeoutConfig.Seconds())
-	maxRetryAttempt := maxTimeout / vpcs.Config.MaxRetryGap
-	retryGapDuration := time.Duration(vpcs.Config.MaxRetryGap) * time.Second
+	maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
 	retryCount := 0
 	vpcs.Logger.Info("Waiting for volume to be detached", zap.Int("maxTimeout", maxTimeout))
 	for retryCount < maxRetryAttempt {

@@ -405,8 +405,8 @@ func (sls *SLSession) GetVolumeAttachment(detachRequest provider.VolumeAttachmen
 }
 
 //WaitForAttachVolume ...
-func (sls *SLSession) WaitForAttachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) error {
-	return errors.New("Unsupported")
+func (sls *SLSession) WaitForAttachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
+	return nil, errors.New("Unsupported")
 }
 
 //WaitForDetachVolume ...

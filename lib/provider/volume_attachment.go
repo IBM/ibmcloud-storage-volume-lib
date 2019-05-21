@@ -35,7 +35,7 @@ type VolumeAttachManager interface {
 
 	//WaitForAttachVolume waits for the volume to be attached to the host
 	// Retunn error if wait is timed out OR there is other error
-	WaitForAttachVolume(attachRequest VolumeAttachmentRequest) error
+	WaitForAttachVolume(attachRequest VolumeAttachmentRequest) (*VolumeAttachmentResponse, error)
 
 	//WaitForDetachVolume waits for the volume to be detached from the host
 	// Retunn error if wait is timed out OR there is other error

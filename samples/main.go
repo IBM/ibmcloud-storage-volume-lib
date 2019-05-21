@@ -432,7 +432,10 @@ func main() {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to attach the volume", zap.Error(err))
 			}
-			err = sess.WaitForAttachVolume(volumeAttachmentReq)
+			volumeAttachmentReq.VPCVolumeAttachment = &provider.VolumeAttachment{
+				ID: response.VPCVolumeAttachment.ID,
+			}
+			response, err = sess.WaitForAttachVolume(volumeAttachmentReq)
 			if err != nil {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to complete volume attach", zap.Error(err))

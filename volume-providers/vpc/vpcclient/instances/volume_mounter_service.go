@@ -21,10 +21,10 @@ import (
 type VolumeAttachManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
 	AttachVolume(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
-
-	// GetAttachStatus retrives the VolumeAttachment of  given request
+	// GetVolumeAttachment retrives the single VolumeAttachment based on the instance ID and attachmentID
+	GetVolumeAttachment(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
+	// ListVolumeAttachment retrives the VolumeAttachment list for given server
 	ListVolumeAttachment(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachmentList, error)
-
 	// Delete the volume
 	DetachVolume(*models.VolumeAttachment, *zap.Logger) (*http.Response, error)
 }

@@ -16,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 func getEnv(key string) string {
@@ -139,4 +140,16 @@ func GetEtcPath() string {
 	srcPath := filepath.Join("src", "github.com", "IBM",
 		"ibmcloud-storage-volume-lib")
 	return filepath.Join(goPath, srcPath, "etc")
+}
+
+//GetTimeOutParameters retrives the parameteer to implement retry logic
+// maxTimeout - Maximum time out for the operations
+//retryGapDuration - The time interval for next attempt
+// maxRetryAttempt - maxmum retry attempts derived based on  maxTimeout and retryGapDuration
+func (config *VPCProviderConfig) GetTimeOutParameters() (int, int, time.Duration) {
+	maxTimeoutConfig, _ := time.ParseDuration(config.Timeout)
+	maxTimeout := int(maxTimeoutConfig.Seconds())
+	maxRetryAttempt := maxTimeout / config.MaxRetryGap
+	retryGapDuration := time.Duration(config.MaxRetryGap) * time.Second
+	return maxTimeout, maxRetryAttempt, retryGapDuration
 }

@@ -19,18 +19,15 @@ import (
 )
 
 // WaitForAttachVolume waits for volume to be attached to node. e.g waits till status becomes attached
-func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) error {
+func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
 	vpcs.Logger.Debug("Entry of WaitForAttachVolume method...")
 	defer vpcs.Logger.Debug("Exit from WaitForAttachVolume method...")
 	vpcs.Logger.Info("Validating basic inputs for WaitForAttachVolume method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
 	err := vpcs.validateAttachVolumeRequest(volumeAttachmentTemplate)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	maxTimeoutConfig, _ := time.ParseDuration(vpcs.Config.Timeout)
-	maxTimeout := int(maxTimeoutConfig.Seconds())
-	maxRetryAttempt := maxTimeout / vpcs.Config.MaxRetryGap
-	retryGapDuration := time.Duration(vpcs.Config.MaxRetryGap) * time.Second
+	maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
 	retryCount := 0
 	vpcs.Logger.Info("Waiting for volume to be attached", zap.Int("maxTimeout", maxTimeout))
 	for retryCount < maxRetryAttempt {
@@ -38,11 +35,11 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 		if errAPI == nil && currentVolAttachment.Status == StatusAttached {
 			// volume is attached return no error
 			vpcs.Logger.Info("Volume attachment is complete", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
-			return nil
+			return currentVolAttachment, nil
 		} else if errAPI != nil {
 			// do not retry if there is error
 			vpcs.Logger.Error("Error occured while finding volume attachment", zap.Error(errAPI))
-			return errAPI
+			return nil, errAPI
 		}
 		// retry if attach status is not "attached"
 		retryCount = retryCount + 1
@@ -52,5 +49,5 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
 	vpcs.Logger.Info("Wait for attach timed out", zap.Error(userErr))
 
-	return userErr
+	return nil, userErr
 }

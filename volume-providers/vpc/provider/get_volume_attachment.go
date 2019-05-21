@@ -11,17 +11,16 @@
 package provider
 
 import (
+	"errors"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
-
-	"errors"
 	"go.uber.org/zap"
 )
 
 // GetVolumeAttachment  get the volume attachment based on the request
 func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
-	vpcs.Logger.Debug("Entry of GetVolumeAttachment method...")
+	vpcs.Logger.Debug("Entry of GetVolumeAttachment method...", zap.Reflect("volumeAttachmentRequest", volumeAttachmentRequest))
 	defer vpcs.Logger.Debug("Exit from GetVolumeAttachment method...")
 	var err error
 	vpcs.Logger.Info("Validating basic inputs for GetVolumeAttachment method...", zap.Reflect("volumeAttachRequest", volumeAttachmentRequest))
@@ -29,22 +28,59 @@ func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.Vol
 	if err != nil {
 		return nil, err
 	}
+	var volumeAttachmentResponse *provider.VolumeAttachmentResponse
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
-	vpcs.Logger.Info("Getting VolumeAttachmentList from VPC provider...")
-	var volumeAttachmentList *models.VolumeAttachmentList
+	if len(volumeAttachment.ID) > 0 {
+		//Get volume attachmet by ID if its specified
+		volumeAttachmentResponse, err = vpcs.getVolumeAttachmentByID(volumeAttachment)
+	} else {
+		// Get volume attachment by Volume ID. This is inefficient operation which requires iteration over volume attachment list
+		volumeAttachmentResponse, err = vpcs.getVolumeAttachmentByVolumeID(volumeAttachment)
+	}
+	vpcs.Logger.Info("Volume attachment response", zap.Reflect("volumeAttachmentResponse", volumeAttachmentResponse), zap.Error(err))
+	return volumeAttachmentResponse, err
+
+}
+
+func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.VolumeAttachment) (*provider.VolumeAttachmentResponse, error) {
+	vpcs.Logger.Debug("Entry of getVolumeAttachmentByID()")
+	defer vpcs.Logger.Debug("Exit from getVolumeAttachmentByID()")
+	vpcs.Logger.Info("Getting VolumeAttachment from VPC provider...")
+	var err error
+	var volumeAttachmentResult *models.VolumeAttachment
 	err = retry(vpcs.Logger, func() error {
-		volumeAttachmentList, err = vpcs.Apiclient.VolumeAttachService().ListVolumeAttachment(&volumeAttachment, vpcs.Logger)
+		volumeAttachmentResult, err = vpcs.Apiclient.VolumeAttachService().GetVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
 		return err
 	})
 	if err != nil {
 		// API call is failed
-		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.VolumeID, volumeAttachmentRequest.InstanceID)
+		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, volumeAttachmentRequest.InstanceID)
+		return nil, userErr
+	}
+	volumeAttachmentResponse := volumeAttachmentResult.ToVolumeAttachmentResponse()
+	vpcs.Logger.Info("Successfuly retrived volume attachment", zap.Reflect("volumeAttachmentResponse", volumeAttachmentResponse))
+	return volumeAttachmentResponse, err
+}
+
+func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest models.VolumeAttachment) (*provider.VolumeAttachmentResponse, error) {
+	vpcs.Logger.Debug("Entry of getVolumeAttachmentByVolumeID()")
+	defer vpcs.Logger.Debug("Exit from getVolumeAttachmentByVolumeID()")
+	vpcs.Logger.Info("Getting VolumeAttachmentList from VPC provider...")
+	var volumeAttachmentList *models.VolumeAttachmentList
+	var err error
+	err = retry(vpcs.Logger, func() error {
+		volumeAttachmentList, err = vpcs.Apiclient.VolumeAttachService().ListVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
+		return err
+	})
+	if err != nil {
+		// API call is failed
+		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, volumeAttachmentRequest.InstanceID)
 		return nil, userErr
 	}
 	// Iterate over the volume attachment list for given instance
 	for _, volumeAttachmentItem := range volumeAttachmentList.VolumeAttachments {
 		// Check if volume ID is matching with requested volume ID
-		if volumeAttachmentItem.Volume.ID == volumeAttachmentRequest.VolumeID {
+		if volumeAttachmentItem.Volume.ID == volumeAttachmentRequest.Volume.ID {
 			vpcs.Logger.Info("Successfully found volume attachment", zap.Reflect("volumeAttachment", volumeAttachmentItem))
 			volumeResponse := volumeAttachmentItem.ToVolumeAttachmentResponse()
 			vpcs.Logger.Info("Successfully fetched volume attachment from VPC provider", zap.Reflect("volumeResponse", volumeResponse))
@@ -52,8 +88,7 @@ func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.Vol
 		}
 	}
 	// No volume attahment found in the  list. So return error
-	userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), errors.New("No VolumeAttachment Found"), volumeAttachmentRequest.VolumeID, volumeAttachmentRequest.InstanceID)
+	userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), errors.New("No VolumeAttachment Found"), volumeAttachmentRequest.Volume.ID, volumeAttachmentRequest.InstanceID)
 	vpcs.Logger.Error("Volume attachment not found", zap.Error(err))
 	return nil, userErr
-
 }
