@@ -49,9 +49,16 @@ type VPCBlockProvider struct {
 
 	ClientProvider riaas.RegionalAPIClientProvider
 	httpClient     *http.Client
+	globalConfig   *config.Config
+	getAPIConfig   func() riaas.Config
+}
+
+type IksVpcBlockProvider struct {
+	VPCBlockProvider
 }
 
 var _ local.Provider = &VPCBlockProvider{}
+var _ local.Provider = &IksVpcBlockProvider{}
 
 // NewProvider initialises an instance of an IaaS provider.
 func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error) {
@@ -88,11 +95,36 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		tokenGenerator: &tokenGenerator{config: conf.VPC},
 		contextCF:      contextCF,
 		httpClient:     httpClient,
+		getAPIConfig: func() riaas.Config {
+			return riaas.Config{
+				BaseURL:    conf.VPC.EndpointURL,
+				HTTPClient: httpClient,
+				APIVersion: conf.VPC.APIVersion,
+			}
+		},
 	}
 	logger.Info("", zap.Reflect("Provider config", provider.config))
 
 	userError.MessagesEn = messages.InitMessages()
 	return provider, nil
+}
+
+func NewIksVpcProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error) {
+
+	provider, _ := NewProvider(conf, logger)
+	vpcBlockProvider, _ := provider.(*VPCBlockProvider)
+	iksVpcBlockProvider := &IksVpcBlockProvider{
+		VPCBlockProvider: *vpcBlockProvider,
+	}
+	iksVpcBlockProvider.VPCBlockProvider.getAPIConfig = func() riaas.Config {
+		return riaas.Config{
+			BaseURL: conf.Bluemix.IamURL,
+			//HTTPClient: httpClient,
+			//APIVersion: conf.VPC.APIVersion,
+		}
+	}
+	return iksVpcBlockProvider, nil
+
 }
 
 // ContextCredentialsFactory ...
@@ -114,11 +146,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		return nil, util.NewError("Error Insufficient Authentication", "No authentication credential provided")
 	}
 
-	apiConfig := riaas.Config{
-		BaseURL:    vpcp.config.EndpointURL,
-		HTTPClient: vpcp.httpClient,
-		APIVersion: vpcp.config.APIVersion,
-	}
+	apiConfig := vpcp.getAPIConfig()
 
 	if vpcp.serverConfig.DebugTrace {
 		apiConfig.DebugWriter = os.Stdout

@@ -71,6 +71,13 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 		providerRegistry.Register(conf.VPC.VPCBlockProviderName, prov)
 		haveProviders = true
 	}
+	// TODO: Add condition
+	prov, err := vpc_provider.NewIksVpcProvider(conf, logger)
+	if err != nil {
+		logger.Info("IKS VPC block provider error!")
+		return nil, err
+	}
+	providerRegistry.Register("IksVpcBlockProvider", prov)
 
 	if haveProviders {
 		logger.Info("Provider registration done!!!")
