@@ -431,6 +431,7 @@ func main() {
 			if err != nil {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to attach the volume", zap.Error(err))
+				return
 			}
 			volumeAttachmentReq.VPCVolumeAttachment = &provider.VolumeAttachment{
 				ID: response.VPCVolumeAttachment.ID,
@@ -457,6 +458,7 @@ func main() {
 			if err != nil {
 				updateRequestID(err, requestID)
 				ctxLogger.Error("Failed to detach the volume", zap.Error(err))
+				return
 			}
 			err = sess.WaitForDetachVolume(volumeDetachmentReq)
 			if err != nil {
