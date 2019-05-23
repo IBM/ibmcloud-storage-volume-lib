@@ -6,7 +6,7 @@
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 # ******************************************************************************/
 
-GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers/softlayer/ ) # With glide: GOPACKAGES=$(shell glide novendor)
+GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers/softlayer/ | grep -v /samples) # With glide: GOPACKAGES=$(shell glide novendor)
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
 GOLINTPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers/softlayer/ )
 ARCH = $(shell uname -m)
