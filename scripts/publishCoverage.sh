@@ -8,6 +8,7 @@
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 # *****************************************************************************/
 
+echo "Publishing the coverage results"
 if [ "$TRAVIS_GO_VERSION" == "tip" ]; then
 	echo "Coverage information is not required for tip version."
 	exit 0
