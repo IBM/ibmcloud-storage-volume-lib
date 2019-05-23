@@ -18,7 +18,7 @@ all: deps fmt vet test
 deps:
 	glide install
 	go get github.com/pierrre/gotestcover
-	go get github.com/golang/lint/golint
+	go get golang.org/x/lint/golint
 
 .PHONY: fmt
 fmt: lint
