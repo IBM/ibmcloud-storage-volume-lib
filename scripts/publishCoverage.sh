@@ -8,6 +8,7 @@
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 # *****************************************************************************/
 
+echo "Publishing the coverage results"
 if [ "$TRAVIS_GO_VERSION" == "tip" ]; then
 	echo "Coverage information is not required for tip version."
 	exit 0
@@ -42,6 +43,7 @@ if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT" ]; then
 fi
 
 # Compute overall coverage percentage
+echo "Computing the coverages"
 OLD_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
 cp $TRAVIS_BUILD_DIR/cover.html $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH
 cp $TRAVIS_BUILD_DIR/cover.html $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT
@@ -68,6 +70,7 @@ else
 fi
 
 # Update gh-pages branch or PR
+echo "Updating gh-pages"
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 	git status
 	git add .
