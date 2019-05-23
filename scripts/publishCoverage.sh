@@ -13,7 +13,7 @@ if [ "$TRAVIS_GO_VERSION" == "tip" ]; then
 	exit 0
 fi
 
-mkdir $TRAVIS_BUILD_DIR/gh-pages
+mkdir -p $TRAVIS_BUILD_DIR/gh-pages
 cd $TRAVIS_BUILD_DIR/gh-pages
 
 OLD_COVERAGE=0
