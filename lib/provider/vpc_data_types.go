@@ -17,7 +17,7 @@ type VPCVolume struct {
 	Generation          GenerationType       `json:"generation,omitempty"`
 	VolumeEncryptionKey *VolumeEncryptionKey `json:"encryption_key,omitempty"`
 	Profile             *Profile             `json:"profile,omitempty"`
-	Tags                []string             `json:"tags,omitempty"`
+	Tags                []string             `json:"volume_tags,omitempty"`
 	VolumeAttachments   *[]VolumeAttachment  `json:"volume_attachments,omitempty"`
 	CRN                 string               `json:"crn,omitempty"`
 }
