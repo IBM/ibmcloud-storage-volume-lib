@@ -26,21 +26,13 @@ before_script:
   - go get github.com/pierrre/gotestcover
 
 script:
-  - echo $GOPATH
   - mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
   - mkdir -p $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
-
-  - DIR="$(pwd)"
-  - echo "Present working directory: $DIR"
-  - ls -altr $DIR
-
-  - rm -rf .git
   - rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
   - cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
   - make vet
   - make fmt
   - make test
-  - make verify-gofmt
   - make coverage
 
 after_success:
