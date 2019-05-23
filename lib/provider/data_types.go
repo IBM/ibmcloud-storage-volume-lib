@@ -110,7 +110,7 @@ type Snapshot struct {
 	SnapshotCreationTime time.Time `json:"snapCreationTime,omitempty"`
 
 	// tags for the snapshot
-	SnapshotTags SnapshotTags `json:"tags"`
+	SnapshotTags SnapshotTags `json:"tags,omitempty"`
 }
 
 // VolumeAuthorization capture details of autorization to be made
