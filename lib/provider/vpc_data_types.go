@@ -12,13 +12,14 @@ package provider
 
 // VPCVolume specific	parameters
 type VPCVolume struct {
-	Href              string              `json:"href,omitempty"`
-	ResourceGroup     *ResourceGroup      `json:"resource_group,omitempty"`
-	Generation        GenerationType      `json:"generation,omitempty"`
-	Profile           *Profile            `json:"profile,omitempty"`
-	Tags              []string            `json:"tags,omitempty"`
-	VolumeAttachments *[]VolumeAttachment `json:"volume_attachments,omitempty"`
-	CRN               string              `json:"crn,omitempty"`
+	Href                string               `json:"href,omitempty"`
+	ResourceGroup       *ResourceGroup       `json:"resource_group,omitempty"`
+	Generation          GenerationType       `json:"generation,omitempty"`
+	VolumeEncryptionKey *VolumeEncryptionKey `json:"encryption_key,omitempty"`
+	Profile             *Profile             `json:"profile,omitempty"`
+	Tags                []string             `json:"tags,omitempty"`
+	VolumeAttachments   *[]VolumeAttachment  `json:"volume_attachments,omitempty"`
+	CRN                 string               `json:"crn,omitempty"`
 }
 
 // GenerationType ...
@@ -52,4 +53,9 @@ type VolumeAttachment struct {
 	Type string `json:"type,omitempty"`
 	// If set to true, when deleting the instance the volume will also be deleted
 	DeleteVolumeOnInstanceDelete bool `json:"delete_volume_on_instance_delete,omitempty"`
+}
+
+// VolumeEncryptionKey ...
+type VolumeEncryptionKey struct {
+	CRN string `json:"crn,omitempty"`
 }

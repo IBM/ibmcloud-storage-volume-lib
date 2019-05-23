@@ -189,6 +189,24 @@ func TestCreateVolume(t *testing.T) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
 			},
+		}, {
+			testCaseName: "Volume creation with encryption",
+			profileName:  "general-purpose",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("test volume name"),
+				Capacity: Int(10),
+				Iops:     String("0"),
+				VPCVolume: provider.VPCVolume{
+					Profile:             &provider.Profile{Name: profileName},
+					ResourceGroup:       &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
+					VolumeEncryptionKey: &provider.VolumeEncryptionKey{CRN: "crn:v1:bluemix:public:kms:us-south:a/abcd32a619db2b564b82a816400bcd12:t36097fd-5051-4582-a641-8f51b5334cfa:key:abc05f428-5fb7-4546-958b-0f4e65266d5c"},
+				},
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.Nil(t, err)
+			},
 		},
 	}
 
