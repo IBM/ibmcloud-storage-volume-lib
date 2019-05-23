@@ -1,4 +1,4 @@
-# ibmcloud-storage-volume-lib
+# IBM Cloud storage common library
 
 [![Build Status](https://travis-ci.com/IBM/ibmcloud-storage-volume-lib.svg?branch=master)](https://travis-ci.com/IBM/ibmcloud-storage-volume-lib)
 [![Coverage](https://ibm.github.io/ibmcloud-storage-volume-lib/coverage/master/badge.svg)](https://ibm.github.io/ibmcloud-storage-volume-lib/coverage/master/cover.html)
@@ -6,17 +6,15 @@
 This library is for volume and snapshot management(create, delete, modify etc).
 As of now this only have block snapshot and volume creation functionalities but going forward it will have more functionalities.
 
-# Purpose:
-By using this library user can enable multiple volume providers as well by just adding/modifying configuration, as of now this library has only Softlayer provider(block only) support.
+# Purpose
+By using this library user can enable multiple volume providers by adding/modifying configuration.
 
-# How to use:
-To use this library user need to see what all capabilities are there in this library by just checking `ibmcloud-storage-volume-lib/lib/provider/*_manager.go` files and concreate implementation for each provider which can be seen under `ibmcloud-storage-volume-lib/volume-providers` directory.
+# How to use
+To use this library user need to check what all capabilities are supported in this library by checking `ibmcloud-storage-volume-lib/lib/provider/*_manager.go` files and concreate implementation for each provider which can be seen under `ibmcloud-storage-volume-lib/volume-providers` directory.
 
-NOTE: as of now this library has only Softlayer block & file support
-
-## Steps to use:
+## Steps to use
 Following steps has to followed by user to use this library
-### Step 1:
+### Step 1
 Update the glide.yaml to get the source code of this library, also only export the following packages to their application
 
 ```
@@ -26,9 +24,9 @@ Update the glide.yaml to get the source code of this library, also only export t
 provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
 ```
 
-User can see the refrence from `ibmcloud-storage-volume-lib/main.go` sample file
+User can see the refrence from `ibmcloud-storage-volume-lib/samples`.
 
-### Step 2:
+### Step 2
 How to provide configuration
 ##### Option 1:
 User need to modify `ibmcloud-storage-volume-lib/etc/libconfig.toml` for enabling supported providers and provide IAaS a/c details to connect to the IAaS provider.
@@ -89,7 +87,7 @@ softlayer_api_timeout = "20s"
 ```
 
 
-### Step 3:
+### Step 3
 From the implementation file which uses use this library, user need to initilaze the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
 
 `github.com/IBM/ibmcloud-storage-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
@@ -105,23 +103,23 @@ sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, conf.S
 `OpenProviderSession` call will be required for all enabled provider.
 Once session is ready the user can all any method/interface which are part of `ibmcloud-storage-volume-lib/lib/provider/*_manager.go`. Sample code can be found `ibmcloud-storage-volume-lib/main.go`
 
-## How to build the sample code:
+## How to build the sample code
 To build the sample code, just need to follow following commands
 
-### Step 1:
+### Step 1
 Set the GOPATH as per your system and directory lets say `/home/user/test`   and create a sub directory under this by using following command
 
 ```
 $mkdir -p src/github.com/IBM
 ```
 
-### Step 2:
+### Step 2
 Change the directory to `src/github.com/IBM`  nad check out the code
 ```
 git clone https://github.com/IBM/ibmcloud-storage-volume-lib.git
 ```
 
-### Step 3:
+### Step 3
 Change the directory `$cd ibmcloud-storage-volume-lib`  and run the following command to build the sample code
 
 ```
