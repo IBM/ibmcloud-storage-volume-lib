@@ -18,6 +18,7 @@ import (
 )
 
 // VolumeAttachManager operations
+//go:generate counterfeiter -o fakes/volume_atacher_service.go --fake-name VolumeAttachManager . VolumeAttachManager
 type VolumeAttachManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
 	AttachVolume(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
