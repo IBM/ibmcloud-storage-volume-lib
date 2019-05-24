@@ -54,7 +54,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.V
 	})
 	if err != nil {
 		// API call is failed
-		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, volumeAttachmentRequest.InstanceID)
+		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
 		return nil, userErr
 	}
 	volumeAttachmentResponse := volumeAttachmentResult.ToVolumeAttachmentResponse()
@@ -74,7 +74,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 	})
 	if err != nil {
 		// API call is failed
-		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, volumeAttachmentRequest.InstanceID)
+		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
 		return nil, userErr
 	}
 	// Iterate over the volume attachment list for given instance
@@ -88,7 +88,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 		}
 	}
 	// No volume attahment found in the  list. So return error
-	userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), errors.New("No VolumeAttachment Found"), volumeAttachmentRequest.Volume.ID, volumeAttachmentRequest.InstanceID)
+	userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), errors.New("No VolumeAttachment Found"), volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
 	vpcs.Logger.Error("Volume attachment not found", zap.Error(err))
 	return nil, userErr
 }
