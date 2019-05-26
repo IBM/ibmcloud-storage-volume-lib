@@ -54,6 +54,15 @@ func TestCreateVolume(t *testing.T) {
 				}
 			},
 		}, {
+			name:    "Verify that the volume is parsed correctly with encryption key",
+			status:  http.StatusOK,
+			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"encryption_key\":{\"crn\":\"crn:v1:bluemix:public:kms:us-south:a/abcd32a619db2b564b82a816400bcd12:t36097fd-5051-4582-a641-8f51b5334cfa:key:abc05f428-5fb7-4546-958b-0f4e65266d5c\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}",
+			verify: func(t *testing.T, volume *models.Volume, err error) {
+				if assert.NotNil(t, volume) {
+					assert.Equal(t, "volume-id", volume.ID)
+				}
+			},
+		}, {
 			name:    "False positive: What if the volume ID is not matched",
 			status:  http.StatusOK,
 			content: "{\"id\":\"wrong-vol\",\"name\":\"wrong-vol\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:wrong-vol\"}",

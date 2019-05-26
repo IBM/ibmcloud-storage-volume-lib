@@ -1,0 +1,43 @@
+language: go
+
+go:
+  - 1.12.1
+  - tip
+
+group: bluezone
+
+matrix:
+  fast_finish: true
+  allow_failures:
+  - go: tip
+  
+cache:
+  bundler: true
+
+sudo: true
+
+before_install:
+  - sudo add-apt-repository ppa:masterminds/glide -y && sudo apt-get update -q
+  - sudo apt-get install glide -y
+  - sudo apt-get install bc
+
+before_script:
+  - make deps
+  - go get github.com/pierrre/gotestcover
+
+script:
+  - mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+  - mkdir -p $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
+  - rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
+  - cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
+  - make vet
+  - make fmt
+  - make test
+  - make coverage
+
+after_success:
+    - ./scripts/calculateCoverage.sh
+    - ./scripts/publishCoverage.sh
+
+after_failure:
+    - ./scripts/handleFailure.sh

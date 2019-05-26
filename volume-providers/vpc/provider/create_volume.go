@@ -34,14 +34,20 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	}
 	vpcs.Logger.Info("Successfully validated inputs for CreateVolume request... ")
 
-	// Build the template we'll send to RIAAS
+	var encryptionKeyCRN string
+	if volumeRequest.VPCVolume.VolumeEncryptionKey != nil && len(volumeRequest.VPCVolume.VolumeEncryptionKey.CRN) > 0 {
+		encryptionKeyCRN = volumeRequest.VPCVolume.VolumeEncryptionKey.CRN
+	}
+
+	// Build the template to send to backend
 	volumeTemplate := &models.Volume{
-		Name:          *volumeRequest.Name,
-		Capacity:      int64(*volumeRequest.Capacity),
-		Iops:          iops,
-		Tags:          volumeRequest.VPCVolume.Tags,
-		ResourceGroup: &resourceGroup,
-		Generation:    models.GenerationType(vpcs.Config.VPCBlockProviderName),
+		Name:                *volumeRequest.Name,
+		Capacity:            int64(*volumeRequest.Capacity),
+		Iops:                iops,
+		Tags:                volumeRequest.VPCVolume.Tags,
+		ResourceGroup:       &resourceGroup,
+		Generation:          models.GenerationType(vpcs.Config.VPCBlockProviderName),
+		VolumeEncryptionKey: &models.VolumeEncryptionKey{CRN: encryptionKeyCRN},
 		Profile: &models.Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},
