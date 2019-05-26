@@ -21,6 +21,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+	vpcprovider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
 	"go.uber.org/zap"
 	"net/http"
@@ -39,84 +40,21 @@ const (
 	timeoutDefault = "120s"
 )
 
-// VPCBlockProvider implements provider.Provider
-type VPCBlockProvider struct {
-	timeout        time.Duration
-	serverConfig   *config.ServerConfig
-	config         *config.VPCProviderConfig
-	tokenGenerator *tokenGenerator
-	contextCF      local.ContextCredentialsFactory
-
-	ClientProvider riaas.RegionalAPIClientProvider
-	httpClient     *http.Client
-	globalConfig   *config.Config
-	GetAPIConfig   func() riaas.Config
-}
-
 type IksVpcBlockProvider struct {
-	VPCBlockProvider
+	vpcprovider.VPCBlockProvider
+	conf *config.Config
 }
 
-var _ local.Provider = &VPCBlockProvider{}
 var _ local.Provider = &IksVpcBlockProvider{}
-
-// NewProvider initialises an instance of an IaaS provider.
-func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error) {
-	logger.Info("Entering NewProvider")
-
-	if conf.Bluemix == nil || conf.VPC == nil {
-		return nil, errors.New("Incomplete config for VPCBlockProvider")
-	}
-
-	contextCF, err := auth.NewContextCredentialsFactory(conf.Bluemix, nil, conf.VPC)
-	if err != nil {
-		return nil, err
-	}
-	timeoutString := conf.VPC.Timeout
-	if timeoutString == "" || timeoutString == "0s" {
-		logger.Info("Using VPC default timeout")
-		timeoutString = "120s"
-	}
-	timeout, err := time.ParseDuration(timeoutString)
-	if err != nil {
-		return nil, err
-	}
-
-	httpClient, err := config.GeneralCAHttpClientWithTimeout(timeout)
-	if err != nil {
-		logger.Error("Failed to prepare HTTP client", util.ZapError(err))
-		return nil, err
-	}
-
-	provider := &VPCBlockProvider{
-		timeout:        timeout,
-		serverConfig:   conf.Server,
-		config:         conf.VPC,
-		tokenGenerator: &tokenGenerator{config: conf.VPC},
-		contextCF:      contextCF,
-		httpClient:     httpClient,
-		GetAPIConfig: func() riaas.Config {
-			return riaas.Config{
-				BaseURL:    conf.VPC.EndpointURL,
-				HTTPClient: httpClient,
-				APIVersion: conf.VPC.APIVersion,
-			}
-		},
-	}
-	logger.Info("", zap.Reflect("Provider config", provider.config))
-
-	userError.MessagesEn = messages.InitMessages()
-	return provider, nil
-}
 
 func NewIksVpcProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error) {
 
-	provider, _ := NewProvider(conf, logger)
-	vpcBlockProvider, _ := provider.(*VPCBlockProvider)
+	provider, _ := vpcprovider.NewProvider(conf, logger)
+	vpcBlockProvider, _ := provider.(*vpcprovider.VPCBlockProvider)
 	iksVpcBlockProvider := &IksVpcBlockProvider{
 		VPCBlockProvider: *vpcBlockProvider,
 	}
-	iksVpcBlockProvider.VPCBlockProvider.GetAPIConfig = func() riaas.Config {
+	iksVpcBlockProvider.VPCBlockProvider.getAPIConfig = func() riaas.Config {
 		return riaas.Config{
 			BaseURL: conf.Bluemix.IamURL,
 			//HTTPClient: httpClient,
@@ -146,7 +84,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		return nil, util.NewError("Error Insufficient Authentication", "No authentication credential provided")
 	}
 
-	apiConfig := vpcp.GetAPIConfig()
+	apiConfig := vpcp.getAPIConfig()
 
 	if vpcp.serverConfig.DebugTrace {
 		apiConfig.DebugWriter = os.Stdout
