@@ -18,6 +18,7 @@ import (
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
 	softlayer_file "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/file"
+	iks_vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/iks/provider"
 	vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
@@ -75,6 +76,18 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 			return nil, err
 		}
 		providerRegistry.Register(conf.VPC.VPCBlockProviderName, prov)
+		haveProviders = true
+	}
+
+	// IKS provider registration
+	if conf.IKS != nil && conf.IKS.Enabled {
+		logger.Info("Configuring IKS-VPC Block Provider")
+		prov, err := iks_vpc_provider.NewProvider(conf, logger)
+		if err != nil {
+			logger.Info("VPC block provider error!")
+			return nil, err
+		}
+		providerRegistry.Register(conf.IKS.IKSBlockProviderName, prov)
 		haveProviders = true
 	}
 
@@ -146,7 +159,7 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 		!isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
 		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, ctxLogger)
 
-	case (providerID == conf.VPC.VPCBlockProviderName):
+	case (providerID == conf.VPC.VPCBlockProviderName || providerID == conf.IKS.IKSBlockProviderName):
 		return contextCredentialsFactory.ForIAMAccessToken(iamAPIKey, ctxLogger)
 
 	case (!isEmptyStringValue(&iamAPIKey) && (providerID != conf.VPC.VPCBlockProviderName)):

@@ -38,6 +38,7 @@ type Config struct {
 	Softlayer *SoftlayerConfig
 	Gen2      *Gen2Config
 	VPC       *VPCProviderConfig
+	IKS       *IKSConfig
 }
 
 //ReadConfig loads the config from file
@@ -90,6 +91,7 @@ type BluemixConfig struct {
 	IamClientSecret string `toml:"iam_client_secret" json:"-"`
 	IamAPIKey       string `toml:"iam_api_key" json:"-"`
 	RefreshToken    string `toml:"refresh_token" json:"-"`
+	APIEndpointURL  string `toml:"containers_api_route"`
 }
 
 // SoftlayerConfig ...
@@ -132,6 +134,12 @@ type VPCProviderConfig struct {
 	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
 	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"RETRY_INTERVAL"`
 	APIVersion           string `toml:"api_version"`
+}
+
+//IKSConfig config
+type IKSConfig struct {
+	Enabled              bool   `toml:"iks_enabled" envconfig:"IKS_ENABLED"`
+	IKSBlockProviderName string `toml:"iks_block_provider_name" envconfig:"IKS_BLOCK_PROVIDER_NAME"`
 }
 
 // GetEtcPath returns the path to the etc directory
