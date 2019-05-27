@@ -19,7 +19,7 @@ export PVG_BX_CLUSTER_WORKERS_COUNT=1
 export PVG_BX_DASH_O="contsto2@in.ibm.com"
 
 # Setup the region data
-if [[ "${TEST_REGION}" == "armada-dev" || "${TEST_REGION}" == "armada-prestage" || "${TEST_REGION}" == "armada-stage" ]]; then
+if [[ "${TEST_REGION}" == "dev" || "${TEST_REGION}" == "prestage" || "${TEST_REGION}" == "stage" ]]; then
     bx cs region-set "us-south"
 else
     bx cs region-set "${TEST_REGION}"
@@ -27,19 +27,19 @@ fi
 
 # Return the first zone for cluster creation
 function get_first_zone {
-    local zones_array=( `bx cs zones |tail -n +3` )      
+    local zones_array=( `bx cs zones |tail -n +3` )
     echo "${zones_array[0]}"
 }
 
 # Return public VLAN of the zone
 function get_public_vlan {
-    local public_vlan=( `bx cs vlans --zone $1 |grep -i Cruiser|grep -i public | head -n 1|awk '{ print $1}'` )      
+    local public_vlan=( `bx cs vlans --zone $1 |grep -i Cruiser|grep -i public | head -n 1|awk '{ print $1}'` )
     echo "$public_vlan"
 }
 
 # Return private VLAN of the zone
 function get_private_vlan {
-    local private_vlan=( `bx cs vlans --zone $1 |grep -i Cruiser|grep -i private | head -n 1|awk '{ print $1}'` )      
+    local private_vlan=( `bx cs vlans --zone $1 |grep -i Cruiser|grep -i private | head -n 1|awk '{ print $1}'` )
     echo "$private_vlan"
 }
 
@@ -107,7 +107,7 @@ function setKubeConfigPath {
         echo "Cluster name not specified, ${FUNCNAME[0]} skipped"
         return 0
     fi
-    set_issue_repo "armada-api"
+    set_issue_repo "api"
 
     bluemix_home="$BLUEMIX_HOME"
     if [ -z ${BLUEMIX_HOME+x} ]; then
@@ -142,12 +142,12 @@ function setKubeConfigPath {
 }
 
 # Setup the region data
-if [[ "${TEST_REGION}" == "armada-dev" || "${TEST_REGION}" == "armada-prestage" || "${TEST_REGION}" == "armada-stage" ]]; then
+if [[ "${TEST_REGION}" == "dev" || "${TEST_REGION}" == "prestage" || "${TEST_REGION}" == "stage" ]]; then
     export PVG_BX_DASH_C=8ee729d7f903db130b00257d91b6977f
     export PVG_BX_DASH_A=https://api.stage1.ng.bluemix.net
-    if [[ "${TEST_REGION}" == "armada-dev" ]]; then
+    if [[ "${TEST_REGION}" == "dev" ]]; then
         export ARMADA_API_ENDPOINT=https://dev.cont.bluemix.net
-    elif [[ "${TEST_REGION}" == "armada-prestage" ]]; then
+    elif [[ "${TEST_REGION}" == "prestage" ]]; then
         export ARMADA_API_ENDPOINT=https://prestage.cont.bluemix.net
     else
         export ARMADA_API_ENDPOINT=https://stage.cont.bluemix.net

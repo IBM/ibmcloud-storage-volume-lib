@@ -250,8 +250,7 @@ func CreateTestingNS(baseName string, c clientset.Interface, labels map[string]s
 
 	namespaceObj := &v1.Namespace{
 		ObjectMeta: v1.ObjectMeta{
-			//GenerateName: fmt.Sprintf("e2e-tests-armada-"),
-			Name:      "armada-storage-e2e-namespace",
+			Name:      "volume-lib-e2e-namespace",
 			Namespace: "",
 			Labels:    labels,
 		},
@@ -265,7 +264,7 @@ func CreateTestingNS(baseName string, c clientset.Interface, labels map[string]s
 		if err != nil {
 			Logf("Unexpected error while creating namespace: %v", err)
 			Logf("Trying to get namespace...")
-			got, err = c.Core().Namespaces().Get("armada-storage-e2e-namespace")
+			got, err = c.Core().Namespaces().Get("volume-lib-e2e-namespace")
 			if err != nil {
 				Logf("Unexpected error while getting namespace: %v", err)
 				return false, nil

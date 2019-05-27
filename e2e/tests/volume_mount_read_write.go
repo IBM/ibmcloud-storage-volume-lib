@@ -20,7 +20,7 @@ import (
 )
 
 var _ = framework.KubeDescribe("Volumes [Feature:VolumeMountTest]", func() {
-	f := framework.NewDefaultFramework("armada-storage")
+	f := framework.NewDefaultFramework("storage")
 	// filled in BeforeEach
 	var c clientset.Interface
 	var ns string

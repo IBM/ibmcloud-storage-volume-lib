@@ -32,7 +32,7 @@ fi
 
 # Source Gate supplied common functions
 . $PVG_TEST_UTILS
-export PVG_CLUSTER_CRUISER="armada-stg-e2e-cluster"
+export PVG_CLUSTER_CRUISER="stg-e2e-cluster"
 
 # Remove the created clusters
 function rm_cluster {
@@ -69,15 +69,15 @@ bx cs clusters
 unset DOCKER_HOST
 docker -v
 mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-mkdir -p $GOPATH/src/github.ibm.com/alchemy-containers/armada-storage-e2e
+mkdir -p $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e
 DIR="$(pwd)"
 echo "Present working directory: $DIR"
 ls -altr $DIR
 rm -rf .git
 sed -i "s/PVG_PHASE/"$PVG_PHASE"/g" common/constants.go
-rsync -az . $GOPATH/src/github.ibm.com/alchemy-containers/armada-storage-e2e
-cd $GOPATH/src/github.ibm.com/alchemy-containers/armada-storage-e2e
-ls -altr $GOPATH/src/github.ibm.com/alchemy-containers/armada-storage-e2e
+rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e
+cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e
+ls -altr $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e
 
 # Verify cluster is up and running
 echo "Checking the cluster for deployed state..."
@@ -132,14 +132,14 @@ check_pods_state
 kubectl cluster-info
 kubectl config view
 
-cd $GOPATH/src/github.ibm.com/alchemy-containers/armada-storage-e2e
+cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e
 DIR="$(pwd)"
 echo "Present working directory: $DIR"
 ls -altr $DIR
 
 echo "Starting armada storage basic e2e tests"
 export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
-make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-storage-e2e-test
+make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE storage-e2e-test
 echo "Finished armada storage basic e2e tests"
 
 exit 0

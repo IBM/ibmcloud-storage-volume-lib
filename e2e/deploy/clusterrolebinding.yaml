@@ -5,7 +5,7 @@
  -subjects:
  -  - kind: ServiceAccount
  -    name: storage-e2e
- -    namespace: armada-storage-e2e-namespace
+ -    namespace: volume-lib-e2e-namespace
  -roleRef:
  -  kind: ClusterRole
  -  name: storage-e2e-runner
