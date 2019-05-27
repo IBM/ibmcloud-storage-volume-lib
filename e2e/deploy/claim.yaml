@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testclaimname # user can choose any name as per kubernetes
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "ibmc-file-bronze" # name of the class which was created by using class.yaml file
+spec:
+  accessModes:
+    - ReadWriteMany # access mode
+  resources:
+    requests:
+      storage: 20Gi #

@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: storage-deployment
+  labels:
+    app: storage-plugin
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: storage-plugin
+        tier: frontend
+    spec:
+      containers:
+        - name: storage-container
+          image: 10.140.132.215:5001/armada-master/storage-file-plugin:latest # user can also use alchemyregistry.hursley.ibm.com:5000/armada-master/storage-file-plugin:latest
+          securityContext:
+            capabilities:
+              add:
+                - DAC_READ_SEARCH
+          args:
+            - "-provisioner=kubernetes.io/ibmc-file"
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: STORAGE_CONFIG_PATH  # Storage plugin config path where secrets are mounted, this should be similar to secret mount path
+              value: /etc/storage_ibmc
+          volumeMounts:
+            - name: storagesecret
+              mountPath: /etc/storage_ibmc
+              readOnly: true
+          imagePullPolicy: "IfNotPresent"
+      volumes:
+        - name: storagesecret # resource name for secrets
+          secret:
+            secretName: storage-secret # secrets name which was created by using slclient.toml file
+
