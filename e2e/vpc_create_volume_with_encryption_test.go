@@ -80,20 +80,15 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 
 		volume.VolumeType = volumeType
 		volume.VPCVolume.Generation = generation
-
 		volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
-
 		profile := vpcProfile
 		volume.VPCVolume.Profile = &provider.Profile{Name: profile}
-
 		volume.Name = &volName
 		volume.Capacity = &volSize
 		volume.Iops = &Iops
 		volume.VPCVolume.ResourceGroup.ID = resourceGroupID
-
 		volume.Az = vpcZone
 
-		//volume.SnapshotSpace = &volSize
 		volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
 		volumeObj, err := sess.CreateVolume(*volume)
 		if err == nil {

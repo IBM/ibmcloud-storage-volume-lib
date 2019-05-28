@@ -10,7 +10,7 @@ matrix:
   fast_finish: true
   allow_failures:
   - go: tip
-  
+
 cache:
   bundler: true
 
@@ -24,6 +24,9 @@ before_install:
 before_script:
   - make deps
   - go get github.com/pierrre/gotestcover
+  - sudo sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
+  - sudo sed -i "s/ZONE/"$ZONE"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
+  - sudo sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/config.toml
 
 script:
   - mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
@@ -34,10 +37,11 @@ script:
   - make fmt
   - make test
   - make coverage
+  - make volume-lib-e2e-test && touch "Passing" || touch "Failed"
 
 after_success:
-    - ./scripts/calculateCoverage.sh
-    - ./scripts/publishCoverage.sh
+  - ./scripts/calculateCoverage.sh
+  - ./scripts/publishCoverage.sh
 
 after_failure:
-    - ./scripts/handleFailure.sh
+  - ./scripts/handleFailure.sh
