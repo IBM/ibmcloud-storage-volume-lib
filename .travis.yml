@@ -30,7 +30,8 @@ script:
   - mkdir -p $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
   - rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
   - cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
-  - openssl aes-256-cbc -d -in secret.txt.enc -out secret.txt -k $DECRYPT_SECRET
+  - openssl aes-256-cbc -d -in $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/secret.txt.enc -out secret.txt -k $DECRYPT_SECRET
+  - source secret.txt
   - sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
   - sed -i "s/VPC_ZONE/"$VPC_ZONE"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
   - sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/config.toml
