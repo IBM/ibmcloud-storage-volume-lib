@@ -1,9 +1,0 @@
-##user need to use proper info
-[bluemix]
-pay_tier = "paid" # as of now no need to change this value
-
-[softlayer]
-softlayer_username = "XXXXXXXXXX" ## provide SoftLayer account usernamd
-softlayer_api_key = "XXXXXXXXXX" # provide softlayer api key
-softlayer_endpoint_url = "https://api.softlayer.com/rest/v3" # No need to changes if this url not different for your softlayer a/c
-softlayer_datacenter = "mex01" # Datacenter name where your softlayer a/c belongs
