@@ -1,0 +1,4442 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/IBM/ibmcloud-storage-volume-lib/config/config.go (80.8%)</option>
+				
+				<option value="file1">github.com/IBM/ibmcloud-storage-volume-lib/config/tls.go (100.0%)</option>
+				
+				<option value="file2">github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/data_utils.go (75.0%)</option>
+				
+				<option value="file3">github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/error_types.go (0.0%)</option>
+				
+				<option value="file4">github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/error_utils.go (0.0%)</option>
+				
+				<option value="file5">github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/messages.go (0.0%)</option>
+				
+				<option value="file6">github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/time_tracker.go (100.0%)</option>
+				
+				<option value="file7">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth/apikey.go (100.0%)</option>
+				
+				<option value="file8">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth/factory.go (0.0%)</option>
+				
+				<option value="file9">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth/ims_token.go (0.0%)</option>
+				
+				<option value="file10">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam/token_exchange.go (87.3%)</option>
+				
+				<option value="file11">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam/token_validation.go (75.0%)</option>
+				
+				<option value="file12">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/attach_volume.go (0.0%)</option>
+				
+				<option value="file13">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/authorize_volume.go (100.0%)</option>
+				
+				<option value="file14">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/create_snapshot.go (100.0%)</option>
+				
+				<option value="file15">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/create_volume.go (100.0%)</option>
+				
+				<option value="file16">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/create_volume_from_snapshot.go (100.0%)</option>
+				
+				<option value="file17">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/delete_snapshot.go (92.3%)</option>
+				
+				<option value="file18">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/delete_volume.go (100.0%)</option>
+				
+				<option value="file19">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/detach_volume.go (0.0%)</option>
+				
+				<option value="file20">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/error.go (100.0%)</option>
+				
+				<option value="file21">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/get_snapshot.go (94.7%)</option>
+				
+				<option value="file22">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/get_volume.go (100.0%)</option>
+				
+				<option value="file23">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/get_volume_attachment.go (0.0%)</option>
+				
+				<option value="file24">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/get_volume_with_request_id.go (100.0%)</option>
+				
+				<option value="file25">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/list_all_snapshots.go (100.0%)</option>
+				
+				<option value="file26">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/list_snapshots.go (100.0%)</option>
+				
+				<option value="file27">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/list_volumes.go (100.0%)</option>
+				
+				<option value="file28">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/order_snapshot.go (100.0%)</option>
+				
+				<option value="file29">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/provider.go (85.2%)</option>
+				
+				<option value="file30">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/session.go (100.0%)</option>
+				
+				<option value="file31">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/token_generator.go (92.7%)</option>
+				
+				<option value="file32">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/util.go (100.0%)</option>
+				
+				<option value="file33">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/wait_for_attach_volume.go (0.0%)</option>
+				
+				<option value="file34">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider/wait_for_detach_volume.go (0.0%)</option>
+				
+				<option value="file35">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/util/errors_util.go (100.0%)</option>
+				
+				<option value="file36">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/authentication.go (80.0%)</option>
+				
+				<option value="file37">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/client.go (81.0%)</option>
+				
+				<option value="file38">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/params.go (100.0%)</option>
+				
+				<option value="file39">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/request.go (79.2%)</option>
+				
+				<option value="file40">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/config.go (0.0%)</option>
+				
+				<option value="file41">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/riaas.go (23.1%)</option>
+				
+				<option value="file42">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/check_snapshot_tag.go (91.7%)</option>
+				
+				<option value="file43">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/check_volume_tag.go (100.0%)</option>
+				
+				<option value="file44">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/create_snapshot.go (91.7%)</option>
+				
+				<option value="file45">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/create_volume.go (100.0%)</option>
+				
+				<option value="file46">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/delete_snapshot.go (90.9%)</option>
+				
+				<option value="file47">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/delete_snapshot_tag.go (91.7%)</option>
+				
+				<option value="file48">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/delete_volume.go (100.0%)</option>
+				
+				<option value="file49">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/delete_volume_tag.go (100.0%)</option>
+				
+				<option value="file50">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/get_snapshot.go (92.3%)</option>
+				
+				<option value="file51">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/get_volume.go (100.0%)</option>
+				
+				<option value="file52">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/list_snapshot_tags.go (92.3%)</option>
+				
+				<option value="file53">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/list_snapshots.go (91.7%)</option>
+				
+				<option value="file54">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/list_volume_tags.go (100.0%)</option>
+				
+				<option value="file55">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/list_volumes.go (100.0%)</option>
+				
+				<option value="file56">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/set_snapshot_tag.go (91.7%)</option>
+				
+				<option value="file57">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/set_volume_tag.go (100.0%)</option>
+				
+				<option value="file58">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/snapshot_service.go (100.0%)</option>
+				
+				<option value="file59">github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/volume_service.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package config
+
+import (
+        "github.com/BurntSushi/toml"
+        "go.uber.org/zap"
+        "os"
+        "path/filepath"
+        "strings"
+        "time"
+)
+
+func getEnv(key string) string <span class="cov10" title="9">{
+        return os.Getenv(strings.ToUpper(key))
+}</span>
+
+// GetGoPath inspects the environment for the GOPATH variable
+func GetGoPath() string <span class="cov8" title="6">{
+        if goPath := getEnv("GOPATH"); goPath != "" </span><span class="cov3" title="2">{
+                return goPath
+        }</span>
+        <span class="cov6" title="4">return ""</span>
+}
+
+// Config is the parent struct for all the configuration information for -cluster
+type Config struct {
+        Server    *ServerConfig  `required:"true"`
+        Bluemix   *BluemixConfig //`required:"true"`
+        Softlayer *SoftlayerConfig
+        Gen2      *Gen2Config
+        VPC       *VPCProviderConfig
+        IKS       *IKSConfig
+}
+
+//ReadConfig loads the config from file
+func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) <span class="cov3" title="2">{
+        // load the default config, if confPath not provided
+        if confPath == "" </span><span class="cov1" title="1">{
+                confPath = GetDefaultConfPath()
+        }</span>
+
+        // Parse config file
+        <span class="cov3" title="2">var conf Config
+        logger.Info("parsing conf file", zap.String("confpath", confPath))
+        err := ParseConfig(confPath, &amp;conf, logger)
+        return &amp;conf, err</span>
+}
+
+// GetConfPath get configuration file path
+func GetConfPath() string <span class="cov3" title="2">{
+        if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" </span><span class="cov1" title="1">{
+                return filepath.Join(confPath, "libconfig.toml")
+        }</span>
+        //Get default conf path
+        <span class="cov1" title="1">return GetDefaultConfPath()</span>
+}
+
+// GetDefaultConfPath get default config file path
+func GetDefaultConfPath() string <span class="cov5" title="3">{
+        return filepath.Join(GetEtcPath(), "libconfig.toml")
+}</span>
+
+// ParseConfig ...
+func ParseConfig(filePath string, conf interface{}, logger *zap.Logger) error <span class="cov7" title="5">{
+        _, err := toml.DecodeFile(filePath, conf)
+        if err != nil </span><span class="cov1" title="1">{
+                logger.Error("Failed to parse config file", zap.Error(err))
+        }</span>
+        <span class="cov7" title="5">return err</span>
+}
+
+// ServerConfig configuration options for the provider server itself
+type ServerConfig struct {
+        // DebugTrace is a flag to enable the debug level trace within the provider code.
+        DebugTrace bool `toml:"debug_trace" envconfig:"DEBUG_TRACE"`
+}
+
+// BluemixConfig ...
+type BluemixConfig struct {
+        IamURL          string `toml:"iam_url"`
+        IamClientID     string `toml:"iam_client_id"`
+        IamClientSecret string `toml:"iam_client_secret" json:"-"`
+        IamAPIKey       string `toml:"iam_api_key" json:"-"`
+        RefreshToken    string `toml:"refresh_token" json:"-"`
+        APIEndpointURL  string `toml:"containers_api_route"`
+}
+
+// SoftlayerConfig ...
+type SoftlayerConfig struct {
+        SoftlayerBlockEnabled        bool   `toml:"softlayer_block_enabled" envconfig:"SOFTLAYER_BLOCK_ENABLED"`
+        SoftlayerBlockProviderName   string `toml:"softlayer_block_provider_name" envconfig:"SOFTLAYER_BLOCK_PROVIDER_NAME"`
+        SoftlayerFileEnabled         bool   `toml:"softlayer_file_enabled" envconfig:"SOFTLAYER_FILE_ENABLED"`
+        SoftlayerFileProviderName    string `toml:"softlayer_file_provider_name" envconfig:"SOFTLAYER_FILE_PROVIDER_NAME"`
+        SoftlayerUsername            string `toml:"softlayer_username" json:"-"`
+        SoftlayerAPIKey              string `toml:"softlayer_api_key" json:"-"`
+        SoftlayerEndpointURL         string `toml:"softlayer_endpoint_url"`
+        SoftlayerDataCenter          string `toml:"softlayer_datacenter"`
+        SoftlayerTimeout             string `toml:"softlayer_api_timeout" envconfig:"SOFTLAYER_API_TIMEOUT"`
+        SoftlayerVolProvisionTimeout string `toml:"softlayer_vol_provision_timeout" envconfig:"SOFTLAYER_VOL_PROVISION_TIMEOUT"`
+        SoftlayerRetryInterval       string `toml:"softlayer_api_retry_interval" envconfig:"SOFTLAYER_API_RETRY_INTERVAL"`
+
+        //Configuration values for JWT tokens
+        SoftlayerJWTKID       string `toml:"softlayer_jwt_kid"`
+        SoftlayerJWTTTL       int    `toml:"softlayer_jwt_ttl"`
+        SoftlayerJWTValidFrom int    `toml:"softlayer_jwt_valid"`
+
+        SoftlayerIMSEndpointURL string `toml:"softlayer_iam_endpoint_url"`
+        SoftlayerAPIDebug       bool
+}
+
+// Gen2Config ...
+type Gen2Config struct {
+        Gen2ProviderEnabled bool   `toml:"genesis_provider_enabled"`
+        Gen2Username        string `toml:"genesis_user_name"`
+        Gen2APIKey          string `toml:"genesis_api_key"`
+        Gen2URL             string `toml:"genesis_url"`
+}
+
+// VPCProviderConfig configures a specific instance of a VPC provider (e.g. GT/GC/Z)
+type VPCProviderConfig struct {
+        Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
+        VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
+        EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
+        Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
+        MaxRetryAttempt      int    `toml:"max_retry_attempt"`
+        MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"RETRY_INTERVAL"`
+        APIVersion           string `toml:"api_version"`
+}
+
+//IKSConfig config
+type IKSConfig struct {
+        Enabled              bool   `toml:"iks_enabled" envconfig:"IKS_ENABLED"`
+        IKSBlockProviderName string `toml:"iks_block_provider_name" envconfig:"IKS_BLOCK_PROVIDER_NAME"`
+}
+
+// GetEtcPath returns the path to the etc directory
+func GetEtcPath() string <span class="cov6" title="4">{
+        goPath := GetGoPath()
+        srcPath := filepath.Join("src", "github.com", "IBM",
+                "ibmcloud-storage-volume-lib")
+        return filepath.Join(goPath, srcPath, "etc")
+}</span>
+
+//GetTimeOutParameters retrives the parameteer to implement retry logic
+// maxTimeout - Maximum time out for the operations
+//retryGapDuration - The time interval for next attempt
+// maxRetryAttempt - maxmum retry attempts derived based on  maxTimeout and retryGapDuration
+func (config *VPCProviderConfig) GetTimeOutParameters() (int, int, time.Duration) <span class="cov0" title="0">{
+        maxTimeoutConfig, _ := time.ParseDuration(config.Timeout)
+        maxTimeout := int(maxTimeoutConfig.Seconds())
+        maxRetryAttempt := maxTimeout / config.MaxRetryGap
+        retryGapDuration := time.Duration(config.MaxRetryGap) * time.Second
+        return maxTimeout, maxRetryAttempt, retryGapDuration
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package config
+
+import (
+        "crypto/tls"
+        "net/http"
+        "time"
+)
+
+// GeneralCAHttpClient returns an http.Client configured for general use
+func GeneralCAHttpClient() (*http.Client, error) <span class="cov8" title="1">{
+
+        httpClient := &amp;http.Client{
+
+                Transport: &amp;http.Transport{
+                        TLSClientConfig: &amp;tls.Config{
+                                MinVersion: tls.VersionTLS12, // Require TLS 1.2 or higher
+                        },
+                },
+
+                // softlayer.go has been overriding http.DefaultClient and forcing 120s
+                // timeout on us, so we'll continue to force it on ourselves in case
+                // we've accidentally become acustomed to it.
+                Timeout: time.Second * 120,
+        }
+
+        return httpClient, nil
+}</span>
+
+// GeneralCAHttpClientWithTimeout returns an http.Client configured for general use
+func GeneralCAHttpClientWithTimeout(timeout time.Duration) (*http.Client, error) <span class="cov8" title="1">{
+
+        httpClient := &amp;http.Client{
+
+                Transport: &amp;http.Transport{
+                        TLSClientConfig: &amp;tls.Config{
+                                MinVersion: tls.VersionTLS12, // Require TLS 1.2 or higher
+                        },
+                },
+
+                Timeout: timeout,
+        }
+
+        return httpClient, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package util
+
+// SafeStringValue returns the referenced string value, treating nil as equivalent to "".
+// It is intended as a type-safe and nil-safe test for empty values in data fields of
+func SafeStringValue(s *string) string <span class="cov10" title="2">{
+        if s == nil </span><span class="cov1" title="1">{
+                return ""
+        }</span>
+        <span class="cov1" title="1">return *s</span>
+}
+
+// StringHasValue returns true if the argument is neither nil nor a pointer to the
+// zero/empty string.
+func StringHasValue(s *string) bool <span class="cov0" title="0">{
+        return s != nil &amp;&amp; *s != ""
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package util
+
+// These are the error types which all provider should categorize their errors
+const (
+
+        // ProvisioningFailed volume or snapshot provisioning failed
+        ProvisioningFailed = "ProvisioningFailed"
+
+        // DeletionFailed ...
+        DeletionFailed = "DeletionFailed"
+
+        // RetrivalFailed ...
+        RetrivalFailed = "RetrivalFailed"
+
+        // InvalidRequest ...
+        InvalidRequest = "InvalidRequest"
+
+        // EntityNotFound ...
+        EntityNotFound = "EntityNotFound"
+
+        // PermissionDenied ...
+        PermissionDenied = "PermissionDenied"
+
+        // Unauthenticated ...
+        Unauthenticated = "Unauthenticated"
+
+        // ErrorTypeFailed ...
+        ErrorTypeFailed = "ErrorTypeConversionFailed"
+)
+
+// GetErrorType return the user error type provided by volume provider
+func GetErrorType(err error) string <span class="cov0" title="0">{
+        providerError, ok := err.(Message)
+        if ok </span><span class="cov0" title="0">{
+                return providerError.Type
+        }</span>
+        <span class="cov0" title="0">return ErrorTypeFailed</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package util
+
+import (
+        "errors"
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+        "go.uber.org/zap"
+        "go.uber.org/zap/zapcore"
+        "reflect"
+)
+
+// NewError returns an error that is implemented by provider.Error.
+// If optional wrapped errors are a provider.Error, this preserves all child wrapped
+// errors in depth-first order.
+func NewError(code reasoncode.ReasonCode, msg string, wrapped ...error) error <span class="cov0" title="0">{
+        return NewErrorWithProperties(code, msg, nil, wrapped...)
+}</span>
+
+// NewErrorWithProperties returns an error that is implemented provider.Error and
+// which is decorated with diagnostic properties.
+// If optional wrapped errors are a provider.Error, this preserves all child wrapped
+// errors in depth-first order.
+func NewErrorWithProperties(code reasoncode.ReasonCode, msg string, properties map[string]string, wrapped ...error) error <span class="cov0" title="0">{
+        if code == "" </span><span class="cov0" title="0">{
+                code = "" // TODO: ErrorUnclassified
+        }</span>
+        <span class="cov0" title="0">var werrs []string
+        for _, w := range wrapped </span><span class="cov0" title="0">{
+                if w != nil </span><span class="cov0" title="0">{
+                        werrs = append(werrs, w.Error())
+                        if p, isPerr := w.(provider.Error); isPerr </span><span class="cov0" title="0">{
+                                for _, u := range p.Wrapped() </span><span class="cov0" title="0">{
+                                        werrs = append(werrs, u)
+                                }</span>
+                        }
+                }
+        }
+        <span class="cov0" title="0">return provider.Error{
+                Fault: provider.Fault{
+                        ReasonCode: code,
+                        Message:    msg,
+                        Properties: properties,
+                        Wrapped:    werrs,
+                },
+        }</span>
+}
+
+// ErrorDeepUnwrapString returns the full list of unwrapped error strings
+// Returns empty slice if not a provider.Error
+func ErrorDeepUnwrapString(err error) []string <span class="cov0" title="0">{
+        if perr, isPerr := err.(provider.Error); isPerr &amp;&amp; perr.Wrapped() != nil </span><span class="cov0" title="0">{
+                return perr.Wrapped()
+        }</span>
+        <span class="cov0" title="0">return []string{}</span>
+}
+
+// ErrorReasonCode returns reason code if a provider.Error, else ErrorUnclassified
+func ErrorReasonCode(err error) reasoncode.ReasonCode <span class="cov0" title="0">{
+        if pErr, isPerr := err.(provider.Error); isPerr </span><span class="cov0" title="0">{
+                if code := pErr.Code(); code != "" </span><span class="cov0" title="0">{
+                        return code
+                }</span>
+        }
+        <span class="cov0" title="0">return reasoncode.ErrorUnclassified</span>
+}
+
+// ErrorToFault returns or builds a Fault pointer for an error (e.g. for a response object)
+// Returns nil if no error,
+func ErrorToFault(err error) *provider.Fault <span class="cov0" title="0">{
+        if err == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">if pErr, isPerr := err.(provider.Error); isPerr </span><span class="cov0" title="0">{
+                return &amp;pErr.Fault
+        }</span>
+        <span class="cov0" title="0">return &amp;provider.Fault{
+                ReasonCode: "", // TODO: ErrorUnclassified,
+                Message:    err.Error(),
+        }</span>
+}
+
+// FaultToError builds a Error from a Fault pointer (e.g. from a response object)
+// Returns nil error if no Fault.
+func FaultToError(fault *provider.Fault) error <span class="cov0" title="0">{
+        if fault == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">return provider.Error{Fault: *fault}</span>
+}
+
+// SetResponseFault sets the Fault field of any response struct
+func SetResponseFault(fault error, response interface{}) error <span class="cov0" title="0">{
+        value := reflect.ValueOf(response)
+        if value.Kind() != reflect.Ptr || value.Elem().Kind() != reflect.Struct </span><span class="cov0" title="0">{
+                return errors.New("Value must be a pointer to a struct")
+        }</span>
+        <span class="cov0" title="0">field := value.Elem().FieldByName("Fault")
+        if field.Kind() != reflect.Ptr </span><span class="cov0" title="0">{
+                return errors.New("Value struct must have Fault provider.Fault field")
+        }</span>
+        <span class="cov0" title="0">field.Set(reflect.ValueOf(ErrorToFault(fault)))
+        return nil</span>
+}
+
+// ZapError returns a zapcore.Field for an error that includes the metadata
+// associated with a provider.Error. If the error is not a provider.Error then
+// the standard zap.Error is used.
+func ZapError(err error) zapcore.Field <span class="cov0" title="0">{
+        if perr, isPerr := err.(provider.Error); isPerr </span><span class="cov0" title="0">{
+                // Use zap.Relfect() to format all fields of struct
+                // zap.Any() would select standard error formatting
+                return zap.Reflect("error", perr)
+        }</span>
+
+        <span class="cov0" title="0">return zap.Error(err)</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Bluemix Container Registry, 5737-D42
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets,  * irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package util
+
+import (
+        "fmt"
+)
+
+// Message Wrapper Message/Error Class
+type Message struct {
+        Code         string
+        Type         string
+        RequestID    string
+        Description  string
+        BackendError string
+        RC           int
+        Action       string
+}
+
+// Error Implement the Error() interface method
+func (msg Message) Error() string <span class="cov0" title="0">{
+        return msg.Info()
+}</span>
+
+// Info ...
+func (msg Message) Info() string <span class="cov0" title="0">{
+        return fmt.Sprintf("{Code:%s, Type:%s, Description:%s, BackendError:%s, RC:%d}", msg.Code, msg.Type, msg.Description, msg.BackendError, msg.RC)
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package util
+
+import (
+        "fmt"
+        "log"
+        "time"
+)
+
+// TimeTracker Get execution time of a function
+func TimeTracker(functionName string, start time.Time) <span class="cov8" title="1">{
+        elapsed := time.Since(start)
+
+        log.Println(fmt.Sprintf("TIME TAKEN BY FUNCTION %s IS %s", functionName, elapsed))
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package auth
+
+import (
+        "go.uber.org/zap"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+)
+
+// ForIaaSAPIKey ...
+func (ccf *ContextCredentialsFactory) ForIaaSAPIKey(iamAccountID, userid, apikey string, logger *zap.Logger) (provider.ContextCredentials, error) <span class="cov8" title="1">{
+        return provider.ContextCredentials{
+                AuthType:     provider.IaaSAPIKey,
+                IAMAccountID: iamAccountID,
+                UserID:       userid,
+                Credential:   apikey,
+        }, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package auth
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/config"
+        "github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
+)
+
+// ContextCredentialsFactory ...
+type ContextCredentialsFactory struct {
+        softlayerConfig      *config.SoftlayerConfig
+        vpcConfig            *config.VPCProviderConfig
+        tokenExchangeService iam.TokenExchangeService
+}
+
+var _ local.ContextCredentialsFactory = &amp;ContextCredentialsFactory{}
+
+// NewContextCredentialsFactory ...
+func NewContextCredentialsFactory(bluemixConfig *config.BluemixConfig, softlayerConfig *config.SoftlayerConfig, vpcConfig *config.VPCProviderConfig) (*ContextCredentialsFactory, error) <span class="cov0" title="0">{
+        tokenExchangeService, err := iam.NewTokenExchangeService(bluemixConfig)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;ContextCredentialsFactory{
+                softlayerConfig:      softlayerConfig,
+                vpcConfig:            vpcConfig,
+                tokenExchangeService: tokenExchangeService,
+        }, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package auth
+
+import (
+        "strconv"
+
+        "go.uber.org/zap"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+)
+
+const (
+        // IMSToken is an IMS user ID and token
+        IMSToken = provider.AuthType("IMS_TOKEN")
+        // IAMAccessToken ...
+        IAMAccessToken = provider.AuthType("IAM_ACCESS_TOKEN")
+)
+
+// ForRefreshToken ...
+func (ccf *ContextCredentialsFactory) ForRefreshToken(refreshToken string, logger *zap.Logger) (provider.ContextCredentials, error) <span class="cov0" title="0">{
+
+        accessToken, err := ccf.tokenExchangeService.ExchangeRefreshTokenForAccessToken(refreshToken, logger)
+        if err != nil </span><span class="cov0" title="0">{
+                // Must preserve provider error code in the ErrorProviderAccountTemporarilyLocked case
+                logger.Error("Unable to retrieve access token from refresh token", local.ZapError(err))
+                return provider.ContextCredentials{}, err
+        }</span>
+
+        <span class="cov0" title="0">imsToken, err := ccf.tokenExchangeService.ExchangeAccessTokenForIMSToken(*accessToken, logger)
+        if err != nil </span><span class="cov0" title="0">{
+                // Must preserve provider error code in the ErrorProviderAccountTemporarilyLocked case
+                logger.Error("Unable to retrieve IAM token from access token", local.ZapError(err))
+                return provider.ContextCredentials{}, err
+        }</span>
+
+        <span class="cov0" title="0">return forIMSToken("", imsToken), nil</span>
+}
+
+// ForIAMAPIKey ...
+func (ccf *ContextCredentialsFactory) ForIAMAPIKey(iamAccountID, apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) <span class="cov0" title="0">{
+
+        imsToken, err := ccf.tokenExchangeService.ExchangeIAMAPIKeyForIMSToken(apiKey, logger)
+        if err != nil </span><span class="cov0" title="0">{
+                // Must preserve provider error code in the ErrorProviderAccountTemporarilyLocked case
+                logger.Error("Unable to retrieve IMS credentials from IAM API key", local.ZapError(err))
+                return provider.ContextCredentials{}, err
+        }</span>
+
+        <span class="cov0" title="0">return forIMSToken(iamAccountID, imsToken), nil</span>
+}
+
+// ForIAMAccessToken ...
+func (ccf *ContextCredentialsFactory) ForIAMAccessToken(apiKey string, logger *zap.Logger) (provider.ContextCredentials, error) <span class="cov0" title="0">{
+
+        iamAccessToken, err := ccf.tokenExchangeService.ExchangeIAMAPIKeyForAccessToken(apiKey, logger)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Unable to retrieve IAM access toekn from IAM API key", local.ZapError(err))
+                return provider.ContextCredentials{}, err
+        }</span>
+        <span class="cov0" title="0">iamAccountID, err := ccf.tokenExchangeService.GetIAMAccountIDFromAccessToken(iam.AccessToken{Token: iamAccessToken.Token}, logger)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Unable to retrieve IAM access toekn from IAM API key", local.ZapError(err))
+                return provider.ContextCredentials{}, err
+        }</span>
+
+        <span class="cov0" title="0">return forIAMAccessToken(iamAccountID, iamAccessToken), nil</span>
+}
+
+// forIMSToken ...
+func forIMSToken(iamAccountID string, imsToken *iam.IMSToken) provider.ContextCredentials <span class="cov0" title="0">{
+        return provider.ContextCredentials{
+                AuthType:     IMSToken,
+                IAMAccountID: iamAccountID,
+                UserID:       strconv.Itoa(imsToken.UserID),
+                Credential:   imsToken.Token,
+        }
+}</span>
+
+// forIAMAccessToken ...
+func forIAMAccessToken(iamAccountID string, iamAccessToken *iam.AccessToken) provider.ContextCredentials <span class="cov0" title="0">{
+        return provider.ContextCredentials{
+                AuthType:     IAMAccessToken,
+                IAMAccountID: iamAccountID,
+                Credential:   iamAccessToken.Token,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package iam
+
+import (
+        "encoding/base64"
+        "errors"
+        "fmt"
+        "net/http"
+
+        "go.uber.org/zap"
+
+        "github.com/IBM-Cloud/ibm-cloud-cli-sdk/common/rest"
+        "github.com/IBM/ibmcloud-storage-volume-lib/config"
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+)
+
+// tokenExchangeService ...
+type tokenExchangeService struct {
+        bluemixConf *config.BluemixConfig
+        httpClient  *http.Client
+}
+
+// TokenExchangeService ...
+var _ TokenExchangeService = &amp;tokenExchangeService{}
+
+// NewTokenExchangeServiceWithClient ...
+func NewTokenExchangeServiceWithClient(bluemixConf *config.BluemixConfig, httpClient *http.Client) (TokenExchangeService, error) <span class="cov0" title="0">{
+        return &amp;tokenExchangeService{
+                bluemixConf: bluemixConf,
+                httpClient:  httpClient,
+        }, nil
+}</span>
+
+// NewTokenExchangeService ...
+func NewTokenExchangeService(bluemixConf *config.BluemixConfig) (TokenExchangeService, error) <span class="cov10" title="15">{
+        httpClient, err := config.GeneralCAHttpClient()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov10" title="15">return &amp;tokenExchangeService{
+                bluemixConf: bluemixConf,
+                httpClient:  httpClient,
+        }, nil</span>
+}
+
+// tokenExchangeRequest ...
+type tokenExchangeRequest struct {
+        tes     *tokenExchangeService
+        request *rest.Request
+        client  *rest.Client
+        logger  *zap.Logger
+}
+
+// tokenExchangeResponse ...
+type tokenExchangeResponse struct {
+        AccessToken string `json:"access_token"`
+        ImsToken    string `json:"ims_token"`
+        ImsUserID   int    `json:"ims_user_id"`
+}
+
+// ExchangeRefreshTokenForAccessToken ...
+func (tes *tokenExchangeService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*AccessToken, error) <span class="cov6" title="5">{
+        r := tes.newTokenExchangeRequest(logger)
+
+        r.request.Field("grant_type", "refresh_token")
+        r.request.Field("refresh_token", refreshToken)
+
+        return r.exchangeForAccessToken()
+}</span>
+
+// ExchangeAccessTokenForIMSToken ...
+func (tes *tokenExchangeService) ExchangeAccessTokenForIMSToken(accessToken AccessToken, logger *zap.Logger) (*IMSToken, error) <span class="cov6" title="5">{
+        r := tes.newTokenExchangeRequest(logger)
+
+        r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:derive")
+        r.request.Field("response_type", "ims_portal")
+        r.request.Field("access_token", accessToken.Token)
+
+        return r.exchangeForIMSToken()
+}</span>
+
+// ExchangeIAMAPIKeyForIMSToken ...
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*IMSToken, error) <span class="cov0" title="0">{
+        r := tes.newTokenExchangeRequest(logger)
+
+        r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
+        r.request.Field("response_type", "ims_portal")
+        r.request.Field("apikey", iamAPIKey)
+
+        return r.exchangeForIMSToken()
+}</span>
+
+// ExchangeIAMAPIKeyForAccessToken ...
+func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey string, logger *zap.Logger) (*AccessToken, error) <span class="cov5" title="4">{
+        r := tes.newTokenExchangeRequest(logger)
+
+        r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
+        r.request.Field("apikey", iamAPIKey)
+
+        return r.exchangeForAccessToken()
+}</span>
+
+// exchangeForAccessToken ...
+func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) <span class="cov8" title="9">{
+        iamResp, err := r.sendTokenExchangeRequest()
+        if err != nil </span><span class="cov7" title="7">{
+                return nil, err
+        }</span>
+        <span class="cov3" title="2">return &amp;AccessToken{Token: iamResp.AccessToken}, nil</span>
+}
+
+// exchangeForIMSToken ...
+func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) <span class="cov6" title="5">{
+        iamResp, err := r.sendTokenExchangeRequest()
+        if err != nil </span><span class="cov5" title="4">{
+                return nil, err
+        }</span>
+        <span class="cov1" title="1">return &amp;IMSToken{
+                UserID: iamResp.ImsUserID,
+                Token:  iamResp.ImsToken,
+        }, nil</span>
+}
+
+// newTokenExchangeRequest ...
+func (tes *tokenExchangeService) newTokenExchangeRequest(logger *zap.Logger) *tokenExchangeRequest <span class="cov9" title="14">{
+        client := rest.NewClient()
+        client.HTTPClient = tes.httpClient
+
+        return &amp;tokenExchangeRequest{
+                tes:     tes,
+                request: rest.PostRequest(fmt.Sprintf("%s/oidc/token", tes.bluemixConf.IamURL)),
+                client:  client,
+                logger:  logger,
+        }
+}</span>
+
+// sendTokenExchangeRequest ...
+func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeResponse, error) <span class="cov9" title="14">{
+        // Set headers
+        basicAuth := fmt.Sprintf("%s:%s", r.tes.bluemixConf.IamClientID, r.tes.bluemixConf.IamClientSecret)
+        r.request.Set("Authorization", fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(basicAuth))))
+        r.request.Set("Accept", "application/json")
+
+        // Make the request
+        var successV tokenExchangeResponse
+        var errorV = struct {
+                ErrorMessage string `json:"errorMessage"`
+                ErrorType    string `json:"errorCode"`
+                ErrorDetails string `json:"errorDetails"`
+                Requirements struct {
+                        Error string `json:"error"`
+                        Code  string `json:"code"`
+                } `json:"requirements"`
+        }{}
+
+        r.logger.Info("Sending IAM token exchange request")
+        resp, err := r.client.Do(r.request, &amp;successV, &amp;errorV)
+
+        if err != nil </span><span class="cov5" title="4">{
+                r.logger.Error("IAM token exchange request failed", zap.Reflect("Response", resp), zap.Error(err))
+
+                // TODO Handle timeout here?
+
+                return nil,
+                        util.NewError("ErrorUnclassified",
+                                "IAM token exchange request failed", err)
+        }</span>
+
+        <span class="cov8" title="10">if resp != nil &amp;&amp; resp.StatusCode == 200 </span><span class="cov4" title="3">{
+                r.logger.Debug("IAM token exchange request successful")
+                return &amp;successV, nil
+        }</span>
+
+        // TODO Check other status code values? (but be careful not to mask the reason codes, below)
+
+        <span class="cov7" title="7">if errorV.ErrorMessage != "" </span><span class="cov5" title="4">{
+                r.logger.Error("IAM token exchange request failed with message",
+                        zap.Int("StatusCode", resp.StatusCode),
+                        zap.String("ErrorMessage:", errorV.ErrorMessage),
+                        zap.String("ErrorType:", errorV.ErrorType),
+                        zap.Reflect("Error", errorV))
+
+                err := util.NewError("ErrorFailedTokenExchange",
+                        "IAM token exchange request failed: "+errorV.ErrorMessage,
+                        errors.New(errorV.ErrorDetails+" "+errorV.Requirements.Code+": "+errorV.Requirements.Error))
+
+                if errorV.Requirements.Code == "SoftLayer_Exception_User_Customer_AccountLocked" </span><span class="cov1" title="1">{
+                        err = util.NewError("ErrorProviderAccountTemporarilyLocked",
+                                "Infrastructure account is temporarily locked", err)
+                }</span>
+
+                <span class="cov5" title="4">return nil, err</span>
+        }
+
+        <span class="cov4" title="3">r.logger.Error("Unexpected IAM token exchange response",
+                zap.Int("StatusCode", resp.StatusCode), zap.Reflect("Response", resp))
+
+        return nil,
+                util.NewError("ErrorUnclassified",
+                        "Unexpected IAM token exchange response")</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package iam
+
+import (
+        "errors"
+
+        "github.com/dgrijalva/jwt-go"
+
+        "go.uber.org/zap"
+)
+
+type accessTokenClaims struct {
+        jwt.StandardClaims
+
+        Account struct {
+                Bss string `json:"bss"`
+        } `json:"account"`
+}
+
+func (r *tokenExchangeService) GetIAMAccountIDFromAccessToken(accessToken AccessToken, logger *zap.Logger) (accountID string, err error) <span class="cov8" title="1">{
+
+        // TODO - TEMPORARY CODE - VERIFY SIGNATURE HERE
+        token, _, err := new(jwt.Parser).ParseUnverified(accessToken.Token, &amp;accessTokenClaims{})
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">token.Valid = true
+        // TODO - TEMPORARY CODE - DONT OVERRIDE VERIFICATION
+
+        claims, haveClaims := token.Claims.(*accessTokenClaims)
+
+        logger.Debug("Access token parsed", zap.Bool("haveClaims", haveClaims), zap.Bool("valid", token.Valid))
+
+        if !token.Valid || !haveClaims </span><span class="cov0" title="0">{
+                err = errors.New("Access token invalid")
+                return
+        }</span>
+
+        <span class="cov8" title="1">accountID = claims.Account.Bss
+        logger.Debug("GetIAMAccountIDFromAccessToken", zap.Reflect("claims.Account.Bss", claims.Account.Bss))
+
+        return</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+
+        "go.uber.org/zap"
+)
+
+//VpcVolumeAttachment ...
+const (
+        VpcVolumeAttachment = "vpcVolumeAttachment"
+        StatusAttached      = "attached"
+        StatusAttaching     = "attaching"
+        StatusDetaching     = "detaching"
+)
+
+// AttachVolume attach volume based on given volume attachment request
+func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) <span class="cov0" title="0">{
+        vpcs.Logger.Debug("Entry of AttachVolume method...")
+        defer vpcs.Logger.Debug("Exit from AttachVolume method...")
+        var err error
+        vpcs.Logger.Info("Validating basic inputs for Attach method...", zap.Reflect("volumeAttachRequest", volumeAttachmentRequest))
+        err = vpcs.validateAttachVolumeRequest(volumeAttachmentRequest)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">var volumeAttachResult *models.VolumeAttachment
+        // First , check if volume is already attached or attaching to given instance
+        vpcs.Logger.Info("Checking if volume is already attached ")
+        currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentRequest)
+        if err == nil &amp;&amp; currentVolAttachment != nil &amp;&amp; currentVolAttachment.Status != StatusDetaching </span><span class="cov0" title="0">{
+                vpcs.Logger.Info("volume is already attached", zap.Reflect("currentVolAttachment", currentVolAttachment))
+                return currentVolAttachment, nil
+        }</span>
+        //Try attaching volume if it's not already attached or there is error in getting current volume attachment
+        <span class="cov0" title="0">vpcs.Logger.Info("Attaching volume from VPC provider...")
+        volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
+        err = retry(vpcs.Logger, func() error </span><span class="cov0" title="0">{
+                volumeAttachResult, err = vpcs.Apiclient.VolumeAttachService().AttachVolume(&amp;volumeAttachment, vpcs.Logger)
+                return err
+        }</span>)
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                userErr := userError.GetUserError(string(userError.VolumeAttachFailed), err, volumeAttachmentRequest.VolumeID, volumeAttachmentRequest.InstanceID)
+                return nil, userErr
+        }</span>
+        <span class="cov0" title="0">varp := volumeAttachResult.ToVolumeAttachmentResponse()
+        vpcs.Logger.Info("Successfully attached volume from VPC provider", zap.Reflect("volumeResponse", varp))
+        return varp, nil</span>
+}
+
+// validateVolume validating volume ID
+func (vpcs *VPCSession) validateAttachVolumeRequest(volumeAttachRequest provider.VolumeAttachmentRequest) error <span class="cov0" title="0">{
+        var err error
+        // Check for InstanceID - required validation
+        if len(volumeAttachRequest.InstanceID) == 0 </span><span class="cov0" title="0">{
+                err = userError.GetUserError(string(reasoncode.ErrorRequiredFieldMissing), nil, "InstanceID")
+                vpcs.Logger.Error("volumeAttachRequest.InstanceID is required", zap.Error(err))
+                return err
+        }</span>
+        // Check for VolumeID - required validation
+        <span class="cov0" title="0">if len(volumeAttachRequest.VolumeID) == 0 </span><span class="cov0" title="0">{
+                err = userError.GetUserError(string(reasoncode.ErrorRequiredFieldMissing), nil, "VolumeID")
+                vpcs.Logger.Error("volumeAttachRequest.VolumeID is required", zap.Error(err))
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "go.uber.org/zap"
+)
+
+//AuthorizeVolume allows aceess to volume  based on given authorization
+func (vpcs *VPCSession) AuthorizeVolume(volumeAuthorization provider.VolumeAuthorization) error <span class="cov8" title="1">{
+        vpcs.Logger.Info("Entry AuthorizeVolume", zap.Reflect("volumeAuthorization", volumeAuthorization))
+        defer vpcs.Logger.Info("Exit AuthorizeVolume", zap.Reflect("volumeAuthorization", volumeAuthorization))
+
+        return nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+// CreateSnapshot Create snapshot from given volume
+func (vpcs *VPCSession) CreateSnapshot(volumeRequest *provider.Volume, tags map[string]string) (*provider.Snapshot, error) <span class="cov7" title="8">{
+        vpcs.Logger.Info("Entry CreateSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+        defer vpcs.Logger.Info("Exit CreateSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+
+        if volumeRequest == nil </span><span class="cov1" title="1">{
+                return nil, userError.GetUserError("StorageFindFailedWithVolumeId", nil, "Not a valid volume ID")
+        }</span>
+
+        <span class="cov7" title="7">var snapshot *models.Snapshot
+        var err error
+
+        // Step 1- validate input which are required
+        vpcs.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
+
+        var volume *models.Volume
+        err = retry(vpcs.Logger, func() error </span><span class="cov10" title="15">{
+                volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeRequest.VolumeID, vpcs.Logger)
+                return err
+        }</span>)
+        <span class="cov7" title="7">if err != nil </span><span class="cov3" title="2">{
+                return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, "Not a valid volume ID")
+        }</span>
+
+        <span class="cov6" title="5">if volume == nil </span><span class="cov1" title="1">{
+                return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
+        }</span>
+
+        <span class="cov5" title="4">err = retry(vpcs.Logger, func() error </span><span class="cov7" title="8">{
+                snapshot, err = vpcs.Apiclient.SnapshotService().CreateSnapshot(volumeRequest.VolumeID, snapshot, vpcs.Logger)
+                return err
+        }</span>)
+        <span class="cov5" title="4">if err != nil </span><span class="cov1" title="1">{
+                return nil, userError.GetUserError("SnapshotSpaceOrderFailed", err)
+        }</span>
+
+        <span class="cov4" title="3">vpcs.Logger.Info("Successfully created snapshot with backend (vpcclient) call")
+        vpcs.Logger.Info("Backend created snapshot details", zap.Reflect("Snapshot", snapshot))
+
+        // Converting volume to lib volume type
+        volumeResponse := FromProviderToLibVolume(volume, vpcs.Logger)
+        if volumeResponse != nil </span><span class="cov1" title="1">{
+                respSnapshot := &amp;provider.Snapshot{
+                        Volume:               *volumeResponse,
+                        SnapshotID:           snapshot.ID,
+                        SnapshotCreationTime: *snapshot.CreatedAt,
+                }
+                return respSnapshot, nil
+        }</span>
+
+        <span class="cov3" title="2">return nil, userError.GetUserError("CoversionNotSuccessful", err, "Not able to prepare provider volume")</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+const (
+        customProfile = "custom"
+        minSize       = 10
+)
+
+// CreateVolume Get the volume by using ID
+func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeResponse *provider.Volume, err error) <span class="cov10" title="10">{
+        vpcs.Logger.Debug("Entry of CreateVolume method...")
+        defer vpcs.Logger.Debug("Exit from CreateVolume method...")
+
+        vpcs.Logger.Info("Basic validation for CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
+        resourceGroup, iops, err := validateVolumeRequest(volumeRequest)
+        if err != nil </span><span class="cov8" title="7">{
+                return nil, err
+        }</span>
+        <span class="cov5" title="3">vpcs.Logger.Info("Successfully validated inputs for CreateVolume request... ")
+
+        var encryptionKeyCRN string
+        if volumeRequest.VPCVolume.VolumeEncryptionKey != nil &amp;&amp; len(volumeRequest.VPCVolume.VolumeEncryptionKey.CRN) &gt; 0 </span><span class="cov1" title="1">{
+                encryptionKeyCRN = volumeRequest.VPCVolume.VolumeEncryptionKey.CRN
+        }</span>
+
+        // Build the template to send to backend
+        <span class="cov5" title="3">volumeTemplate := &amp;models.Volume{
+                Name:                *volumeRequest.Name,
+                Capacity:            int64(*volumeRequest.Capacity),
+                Iops:                iops,
+                Tags:                volumeRequest.VPCVolume.Tags,
+                ResourceGroup:       &amp;resourceGroup,
+                Generation:          models.GenerationType(vpcs.Config.VPCBlockProviderName),
+                VolumeEncryptionKey: &amp;models.VolumeEncryptionKey{CRN: encryptionKeyCRN},
+                Profile: &amp;models.Profile{
+                        Name: volumeRequest.VPCVolume.Profile.Name,
+                },
+                Zone: &amp;models.Zone{
+                        Name: volumeRequest.Az,
+                },
+        }
+
+        vpcs.Logger.Info("Calling VPC provider for volume creation...")
+        var volume *models.Volume
+        err = retry(vpcs.Logger, func() error </span><span class="cov8" title="7">{
+                volume, err = vpcs.Apiclient.VolumeService().CreateVolume(volumeTemplate, vpcs.Logger)
+                return err
+        }</span>)
+
+        <span class="cov5" title="3">if err != nil </span><span class="cov1" title="1">{
+                vpcs.Logger.Debug("Failed to create volume from VPC provider", zap.Reflect("BackendError", err))
+                return nil, userError.GetUserError("FailedToPlaceOrder", err)
+        }</span>
+
+        <span class="cov3" title="2">vpcs.Logger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
+
+        // Converting volume to lib volume type
+        volumeResponse = FromProviderToLibVolume(volume, vpcs.Logger)
+        return volumeResponse, err</span>
+}
+
+// validateVolumeRequest validating volume request
+func validateVolumeRequest(volumeRequest provider.Volume) (models.ResourceGroup, int64, error) <span class="cov10" title="10">{
+        resourceGroup := models.ResourceGroup{}
+        var iops int64
+        iops = 0
+        // Volume name should not be empty
+        if volumeRequest.Name == nil </span><span class="cov1" title="1">{
+                return resourceGroup, iops, userError.GetUserError("InvalidVolumeName", nil, nil)
+        }</span> else<span class="cov9" title="9"> if len(*volumeRequest.Name) == 0 </span><span class="cov1" title="1">{
+                return resourceGroup, iops, userError.GetUserError("InvalidVolumeName", nil, *volumeRequest.Name)
+        }</span>
+
+        // Capacity should not be empty
+        <span class="cov9" title="8">if volumeRequest.Capacity == nil </span><span class="cov1" title="1">{
+                return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, nil)
+        }</span> else<span class="cov8" title="7"> if *volumeRequest.Capacity &lt; minSize </span><span class="cov1" title="1">{
+                return resourceGroup, iops, userError.GetUserError("VolumeCapacityInvalid", nil, *volumeRequest.Capacity)
+        }</span>
+
+        // Read user provided error, no harm to pass the 0 values to RIaaS in case of tiered profiles
+        <span class="cov8" title="6">if volumeRequest.Iops != nil </span><span class="cov7" title="5">{
+                iops = ToInt64(*volumeRequest.Iops)
+        }</span>
+        <span class="cov8" title="6">if volumeRequest.VPCVolume.Profile.Name != customProfile &amp;&amp; iops &gt; 0 </span><span class="cov1" title="1">{
+                return resourceGroup, iops, userError.GetUserError("VolumeProfileIopsInvalid", nil)
+        }</span>
+
+        // validate and add resource group ID or Name whichever is provided by user
+        <span class="cov7" title="5">if volumeRequest.VPCVolume.ResourceGroup == nil </span><span class="cov1" title="1">{
+                return resourceGroup, iops, userError.GetUserError("EmptyResourceGroup", nil)
+        }</span>
+
+        // validate and add resource group ID or Name whichever is provided by user
+        <span class="cov6" title="4">if len(volumeRequest.VPCVolume.ResourceGroup.ID) == 0 &amp;&amp; len(volumeRequest.VPCVolume.ResourceGroup.Name) == 0 </span><span class="cov1" title="1">{
+                return resourceGroup, iops, userError.GetUserError("EmptyResourceGroupIDandName", nil)
+        }</span>
+
+        <span class="cov5" title="3">if len(volumeRequest.VPCVolume.ResourceGroup.ID) &gt; 0 </span><span class="cov5" title="3">{
+                resourceGroup.ID = volumeRequest.VPCVolume.ResourceGroup.ID
+        }</span>
+        <span class="cov5" title="3">if len(volumeRequest.VPCVolume.ResourceGroup.Name) &gt; 0 </span><span class="cov5" title="3">{
+                // get the resource group ID from resource group name as Name is not supported by RIaaS
+                resourceGroup.Name = volumeRequest.VPCVolume.ResourceGroup.Name
+        }</span>
+        <span class="cov5" title="3">return resourceGroup, iops, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "go.uber.org/zap"
+)
+
+// CreateVolumeFromSnapshot creates the volume by using ID
+func (vpcs *VPCSession) CreateVolumeFromSnapshot(snapshot provider.Snapshot, tags map[string]string) (*provider.Volume, error) <span class="cov8" title="1">{
+        vpcs.Logger.Info("Entry CreateVolumeFromSnapshot", zap.Reflect("Snapshot", snapshot))
+        defer vpcs.Logger.Info("Exit CreateVolumeFromSnapshot", zap.Reflect("Snapshot", snapshot))
+
+        return nil, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "go.uber.org/zap"
+)
+
+// DeleteSnapshot delete snapshot
+func (vpcs *VPCSession) DeleteSnapshot(snapshot *provider.Snapshot) error <span class="cov4" title="2">{
+        vpcs.Logger.Info("Entry DeleteSnapshot", zap.Reflect("snapshot", snapshot))
+        defer vpcs.Logger.Info("Exit DeleteSnapshot", zap.Reflect("snapshot", snapshot))
+
+        var err error
+        _, err = vpcs.GetSnapshot(snapshot.SnapshotID)
+        if err != nil </span><span class="cov0" title="0">{
+                return userError.GetUserError("StorageFindFailedWithSnapshotId", err, snapshot.SnapshotID, "Not a valid snapshot ID")
+        }</span>
+
+        <span class="cov4" title="2">err = retry(vpcs.Logger, func() error </span><span class="cov10" title="6">{
+                err = vpcs.Apiclient.SnapshotService().DeleteSnapshot(snapshot.Volume.VolumeID, snapshot.SnapshotID, vpcs.Logger)
+                return err
+        }</span>)
+
+        <span class="cov4" title="2">if err != nil </span><span class="cov1" title="1">{
+                return userError.GetUserError("FailedToDeleteSnapshot", err)
+        }</span>
+
+        <span class="cov1" title="1">vpcs.Logger.Info("Successfully deleted the snapshot with backend (vpcclient) call)")
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "go.uber.org/zap"
+)
+
+// DeleteVolume deletes the volume
+func (vpcs *VPCSession) DeleteVolume(volume *provider.Volume) (err error) <span class="cov7" title="4">{
+        vpcs.Logger.Debug("Entry of DeleteVolume method...")
+        defer vpcs.Logger.Debug("Exit from DeleteVolume method...")
+
+        vpcs.Logger.Info("Validating basic inputs for DeleteVolume method...", zap.Reflect("VolumeDetails", volume))
+        err = validateVolume(volume)
+        if err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov4" title="2">vpcs.Logger.Info("Deleting volume from VPC provider...")
+        err = retry(vpcs.Logger, func() error </span><span class="cov10" title="6">{
+                err = vpcs.Apiclient.VolumeService().DeleteVolume(volume.VolumeID, vpcs.Logger)
+                return err
+        }</span>)
+
+        <span class="cov4" title="2">if err != nil </span><span class="cov1" title="1">{
+                return userError.GetUserError("FailedToDeleteVolume", err, volume.VolumeID)
+        }</span>
+
+        <span class="cov1" title="1">vpcs.Logger.Info("Successfully deleted volume from VPC provider")
+        return err</span>
+}
+
+// validateVolume validating volume ID
+func validateVolume(volume *provider.Volume) (err error) <span class="cov7" title="4">{
+        if volume == nil </span><span class="cov1" title="1">{
+                err = userError.GetUserError("InvalidVolumeID", nil, nil)
+                return
+        }</span>
+
+        <span class="cov6" title="3">if IsValidVolumeIDFormat(volume.VolumeID) </span><span class="cov4" title="2">{
+                return nil
+        }</span>
+        <span class="cov1" title="1">err = userError.GetUserError("InvalidVolumeID", nil, volume.VolumeID)
+        return</span>
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+
+        "go.uber.org/zap"
+        "net/http"
+)
+
+// DetachVolume detach volume based on given volume attachment request
+func (vpcs *VPCSession) DetachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) (*http.Response, error) <span class="cov0" title="0">{
+        vpcs.Logger.Debug("Entry of DetachVolume method...")
+        defer vpcs.Logger.Debug("Exit from DetachVolume method...")
+        var err error
+        vpcs.Logger.Info("Validating basic inputs for detach method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
+        err = vpcs.validateAttachVolumeRequest(volumeAttachmentTemplate)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var response *http.Response
+        // First , check if volume is already attached to given instance
+        vpcs.Logger.Info("Checking if volume is already attached ")
+        currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
+        if err == nil &amp;&amp; currentVolAttachment.Status != StatusDetaching </span><span class="cov0" title="0">{
+                // If no error and current volume is not already in detaching state ( i.e in attached or attaching state) attemp to detach
+                vpcs.Logger.Info("Found volume attachment", zap.Reflect("currentVolAttachment", currentVolAttachment))
+                volumeAttachment := models.NewVolumeAttachment(volumeAttachmentTemplate)
+                volumeAttachment.ID = currentVolAttachment.VPCVolumeAttachment.ID
+                vpcs.Logger.Info("Detaching volume from VPC provider...")
+                err = retry(vpcs.Logger, func() error </span><span class="cov0" title="0">{
+                        response, err = vpcs.Apiclient.VolumeAttachService().DetachVolume(&amp;volumeAttachment, vpcs.Logger)
+                        return err
+                }</span>)
+                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                        userErr := userError.GetUserError(string(userError.VolumeDetachFailed), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, volumeAttachment.ID)
+                        vpcs.Logger.Error("Volume detach failed with error", zap.Error(err))
+                        return response, userErr
+                }</span>
+                <span class="cov0" title="0">vpcs.Logger.Info("Successfully detached volume from VPC provider", zap.Reflect("resp", response))
+                return response, nil</span>
+        }
+        <span class="cov0" title="0">vpcs.Logger.Info("No volume attachment found for", zap.Reflect("currentVolAttachment", currentVolAttachment), zap.Error(err))
+        // consider volume detach success if its  already  in Detaching or VolumeAttachment is not found
+        response = &amp;http.Response{
+                StatusCode: http.StatusOK,
+        }
+        return response, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+)
+
+// Error implements the error interface for a Fault.
+// Most easily constructed using util.NewError() or util.NewErrorWithProperties()
+type Error struct {
+        // Fault ...
+        Fault Fault
+}
+
+// Fault encodes a fault condition.
+// Does not implement the error interface so that cannot be accidentally
+// misassigned to error variables when returned in a function response.
+type Fault struct {
+        // Message is the fault message (required)
+        Message string `json:"msg"`
+
+        // ReasonCode is fault reason code (required)  //TODO: will have better reasoncode mechanism
+        ReasonCode reasoncode.ReasonCode `json:"code"`
+
+        // WrappedErrors contains wrapped error messages (if applicable)
+        Wrapped []string `json:"wrapped,omitempty"`
+
+        // Properties contains diagnostic properties (if applicable)
+        Properties map[string]string `json:"properties,omitempty"`
+}
+
+// FaultResponse is an optional Fault
+type FaultResponse struct {
+        Fault *Fault `json:"fault,omitempty"`
+}
+
+var _ error = Error{}
+
+// Error satisfies the error contract
+func (err Error) Error() string <span class="cov10" title="6">{
+        return err.Fault.Message
+}</span>
+
+// Code satisfies the legacy provider.Error interface
+func (err Error) Code() reasoncode.ReasonCode <span class="cov10" title="6">{
+        if err.Fault.ReasonCode == "" </span><span class="cov1" title="1">{
+                return reasoncode.ErrorUnclassified
+        }</span>
+        <span class="cov9" title="5">return err.Fault.ReasonCode</span>
+}
+
+// Wrapped mirrors the legacy provider.Error interface
+func (err Error) Wrapped() []string <span class="cov10" title="6">{
+        return err.Fault.Wrapped
+}</span>
+
+// Properties satisfies the legacy provider.Error interface
+func (err Error) Properties() map[string]string <span class="cov10" title="6">{
+        return err.Fault.Properties
+}</span>
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+// GetSnapshot get snapshot
+func (vpcs *VPCSession) GetSnapshot(snapshotID string) (*provider.Snapshot, error) <span class="cov6" title="3">{
+        vpcs.Logger.Info("Entry GetSnapshot", zap.Reflect("SnapshotID", snapshotID))
+        defer vpcs.Logger.Info("Exit GetSnapshot", zap.Reflect("SnapshotID", snapshotID))
+
+        return nil, nil
+}</span>
+
+// GetSnapshotWithVolumeID get snapshot
+func (vpcs *VPCSession) GetSnapshotWithVolumeID(volumeID string, snapshotID string) (*provider.Snapshot, error) <span class="cov4" title="2">{
+        vpcs.Logger.Info("Entry GetSnapshot", zap.Reflect("SnapshotID", snapshotID))
+        defer vpcs.Logger.Info("Exit GetSnapshot", zap.Reflect("SnapshotID", snapshotID))
+
+        var err error
+        var snapshot *models.Snapshot
+
+        err = retry(vpcs.Logger, func() error </span><span class="cov10" title="6">{
+                snapshot, err = vpcs.Apiclient.SnapshotService().GetSnapshot(volumeID, snapshotID, vpcs.Logger)
+                return err
+        }</span>)
+
+        <span class="cov4" title="2">if err != nil </span><span class="cov1" title="1">{
+                return nil, userError.GetUserError("FailedToDeleteSnapshot", err)
+        }</span>
+
+        <span class="cov1" title="1">vpcs.Logger.Info("Successfully retrieved the snapshot details", zap.Reflect("Snapshot", snapshot))
+
+        volume, err := vpcs.GetVolume(volumeID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volume.VolumeID, "Not a valid volume ID")
+        }</span>
+
+        <span class="cov1" title="1">respSnapshot := &amp;provider.Snapshot{
+                SnapshotID: snapshot.ID,
+                Volume:     *volume,
+        }
+
+        vpcs.Logger.Info("Successfully retrieved the snapshot details", zap.Reflect("Provider snapshot", respSnapshot))
+        return respSnapshot, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+// GetVolume gets the volume by using ID
+func (vpcs *VPCSession) GetVolume(id string) (respVolume *provider.Volume, err error) <span class="cov7" title="5">{
+        vpcs.Logger.Debug("Entry of GetVolume method...")
+        defer vpcs.Logger.Debug("Exit from GetVolume method...")
+
+        vpcs.Logger.Info("Basic validation for volume ID...", zap.Reflect("VolumeID", id))
+        // validating volume ID
+        err = validateVolumeID(id)
+        if err != nil </span><span class="cov3" title="2">{
+                return nil, err
+        }</span>
+
+        <span class="cov5" title="3">vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", id))
+
+        var volume *models.Volume
+        err = retry(vpcs.Logger, func() error </span><span class="cov8" title="7">{
+                volume, err = vpcs.Apiclient.VolumeService().GetVolume(id, vpcs.Logger)
+                return err
+        }</span>)
+
+        <span class="cov5" title="3">if err != nil </span><span class="cov1" title="1">{
+                return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, id)
+        }</span>
+
+        <span class="cov3" title="2">vpcs.Logger.Info("Successfully retrieved volume details from VPC backend", zap.Reflect("VolumeDetails", volume))
+
+        // Converting volume to lib volume type
+        respVolume = FromProviderToLibVolume(volume, vpcs.Logger)
+        return respVolume, err</span>
+}
+
+// GetVolumeByName ...
+func (vpcs *VPCSession) GetVolumeByName(name string) (respVolume *provider.Volume, err error) <span class="cov6" title="4">{
+        vpcs.Logger.Debug("Entry of GetVolumeByName method...")
+        defer vpcs.Logger.Debug("Exit from GetVolumeByName method...")
+
+        vpcs.Logger.Info("Basic validation for volume Name...", zap.Reflect("VolumeName", name))
+        if len(name) &lt;= 0 </span><span class="cov1" title="1">{
+                err = userError.GetUserError("InvalidVolumeName", nil, name)
+                return
+        }</span>
+
+        <span class="cov5" title="3">vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeName", name))
+
+        var volume *models.Volume
+        err = retry(vpcs.Logger, func() error </span><span class="cov10" title="11">{
+                volume, err = vpcs.Apiclient.VolumeService().GetVolumeByName(name, vpcs.Logger)
+                return err
+        }</span>)
+
+        <span class="cov5" title="3">if err != nil </span><span class="cov3" title="2">{
+                return nil, userError.GetUserError("StorageFindFailedWithVolumeName", err, name)
+        }</span>
+
+        <span class="cov1" title="1">vpcs.Logger.Info("Successfully retrieved volume details from VPC backend", zap.Reflect("VolumeDetails", volume))
+
+        // Converting volume to lib volume type
+        respVolume = FromProviderToLibVolume(volume, vpcs.Logger)
+        return respVolume, err</span>
+}
+
+// validateVolumeID validating basic volume ID
+func validateVolumeID(volumeID string) (err error) <span class="cov7" title="5">{
+        if IsValidVolumeIDFormat(volumeID) </span><span class="cov5" title="3">{
+                return nil
+        }</span>
+        <span class="cov3" title="2">err = userError.GetUserError("InvalidVolumeID", nil, volumeID)
+        return</span>
+}
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "errors"
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+// GetVolumeAttachment  get the volume attachment based on the request
+func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) <span class="cov0" title="0">{
+        vpcs.Logger.Debug("Entry of GetVolumeAttachment method...", zap.Reflect("volumeAttachmentRequest", volumeAttachmentRequest))
+        defer vpcs.Logger.Debug("Exit from GetVolumeAttachment method...")
+        var err error
+        vpcs.Logger.Info("Validating basic inputs for GetVolumeAttachment method...", zap.Reflect("volumeAttachRequest", volumeAttachmentRequest))
+        err = vpcs.validateAttachVolumeRequest(volumeAttachmentRequest)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">var volumeAttachmentResponse *provider.VolumeAttachmentResponse
+        volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
+        if len(volumeAttachment.ID) &gt; 0 </span><span class="cov0" title="0">{
+                //Get volume attachmet by ID if its specified
+                volumeAttachmentResponse, err = vpcs.getVolumeAttachmentByID(volumeAttachment)
+        }</span> else<span class="cov0" title="0"> {
+                // Get volume attachment by Volume ID. This is inefficient operation which requires iteration over volume attachment list
+                volumeAttachmentResponse, err = vpcs.getVolumeAttachmentByVolumeID(volumeAttachment)
+        }</span>
+        <span class="cov0" title="0">vpcs.Logger.Info("Volume attachment response", zap.Reflect("volumeAttachmentResponse", volumeAttachmentResponse), zap.Error(err))
+        return volumeAttachmentResponse, err</span>
+
+}
+
+func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.VolumeAttachment) (*provider.VolumeAttachmentResponse, error) <span class="cov0" title="0">{
+        vpcs.Logger.Debug("Entry of getVolumeAttachmentByID()")
+        defer vpcs.Logger.Debug("Exit from getVolumeAttachmentByID()")
+        vpcs.Logger.Info("Getting VolumeAttachment from VPC provider...")
+        var err error
+        var volumeAttachmentResult *models.VolumeAttachment
+        err = retry(vpcs.Logger, func() error </span><span class="cov0" title="0">{
+                volumeAttachmentResult, err = vpcs.Apiclient.VolumeAttachService().GetVolumeAttachment(&amp;volumeAttachmentRequest, vpcs.Logger)
+                return err
+        }</span>)
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                // API call is failed
+                userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
+                return nil, userErr
+        }</span>
+        <span class="cov0" title="0">volumeAttachmentResponse := volumeAttachmentResult.ToVolumeAttachmentResponse()
+        vpcs.Logger.Info("Successfuly retrived volume attachment", zap.Reflect("volumeAttachmentResponse", volumeAttachmentResponse))
+        return volumeAttachmentResponse, err</span>
+}
+
+func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest models.VolumeAttachment) (*provider.VolumeAttachmentResponse, error) <span class="cov0" title="0">{
+        vpcs.Logger.Debug("Entry of getVolumeAttachmentByVolumeID()")
+        defer vpcs.Logger.Debug("Exit from getVolumeAttachmentByVolumeID()")
+        vpcs.Logger.Info("Getting VolumeAttachmentList from VPC provider...")
+        var volumeAttachmentList *models.VolumeAttachmentList
+        var err error
+        err = retry(vpcs.Logger, func() error </span><span class="cov0" title="0">{
+                volumeAttachmentList, err = vpcs.Apiclient.VolumeAttachService().ListVolumeAttachment(&amp;volumeAttachmentRequest, vpcs.Logger)
+                return err
+        }</span>)
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                // API call is failed
+                userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
+                return nil, userErr
+        }</span>
+        // Iterate over the volume attachment list for given instance
+        <span class="cov0" title="0">for _, volumeAttachmentItem := range volumeAttachmentList.VolumeAttachments </span><span class="cov0" title="0">{
+                // Check if volume ID is matching with requested volume ID
+                if volumeAttachmentItem.Volume.ID == volumeAttachmentRequest.Volume.ID </span><span class="cov0" title="0">{
+                        vpcs.Logger.Info("Successfully found volume attachment", zap.Reflect("volumeAttachment", volumeAttachmentItem))
+                        volumeResponse := volumeAttachmentItem.ToVolumeAttachmentResponse()
+                        vpcs.Logger.Info("Successfully fetched volume attachment from VPC provider", zap.Reflect("volumeResponse", volumeResponse))
+                        return volumeResponse, nil
+                }</span>
+        }
+        // No volume attahment found in the  list. So return error
+        <span class="cov0" title="0">userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), errors.New("No VolumeAttachment Found"), volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
+        vpcs.Logger.Error("Volume attachment not found", zap.Error(err))
+        return nil, userErr</span>
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "go.uber.org/zap"
+)
+
+// GetVolumeByRequestID get volume by volume ID
+func (vpcs *VPCSession) GetVolumeByRequestID(requestID string) (*provider.Volume, error) <span class="cov8" title="1">{
+        vpcs.Logger.Info("Entry GetVolumeByRequestID", zap.Reflect("requestID", requestID))
+        defer vpcs.Logger.Info("Exit GetVolumeByRequestID", zap.Reflect("requestID", requestID))
+
+        return nil, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "go.uber.org/zap"
+)
+
+// ListAllSnapshots list all snapshots
+func (vpcs *VPCSession) ListAllSnapshots(volumeID string) ([]*provider.Snapshot, error) <span class="cov8" title="1">{
+        vpcs.Logger.Info("Entry ListAllSnapshots", zap.Reflect("VolumeID", volumeID))
+        defer vpcs.Logger.Info("Exit ListAllSnapshots", zap.Reflect("VolumeID", volumeID))
+
+        return nil, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+)
+
+// ListSnapshots list all snapshots
+func (vpcs *VPCSession) ListSnapshots() ([]*provider.Snapshot, error) <span class="cov8" title="1">{
+        vpcs.Logger.Info("Entry ListeSnapshots")
+        defer vpcs.Logger.Info("Exit ListSnapshots")
+
+        return nil, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "go.uber.org/zap"
+)
+
+// ListVolumes list all volumes
+func (vpcs *VPCSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) <span class="cov8" title="1">{
+        vpcs.Logger.Info("Entry ListVolumes", zap.Reflect("Tags", tags))
+        defer vpcs.Logger.Info("Exit ListVolumes", zap.Reflect("Tags", tags))
+
+        //! TODO: we may implement
+        return nil, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file28" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+// OrderSnapshot order snapshot
+func (vpcs *VPCSession) OrderSnapshot(volumeRequest provider.Volume) error <span class="cov7" title="4">{
+        vpcs.Logger.Info("Entry OrderSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+        defer vpcs.Logger.Info("Exit OrderSnapshot", zap.Reflect("volumeRequest", volumeRequest))
+
+        var snapshot *models.Snapshot
+        var err error
+
+        // Step 1- validate input which are required
+        vpcs.Logger.Info("Requested volume is:", zap.Reflect("Volume", volumeRequest))
+        var volume *models.Volume
+
+        err = retry(vpcs.Logger, func() error </span><span class="cov10" title="8">{
+                volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeRequest.VolumeID, vpcs.Logger)
+                return err
+        }</span>)
+        <span class="cov7" title="4">if err != nil </span><span class="cov1" title="1">{
+                return userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeRequest.VolumeID, "Not a valid volume ID")
+        }</span>
+        <span class="cov5" title="3">vpcs.Logger.Info("Successfully retrieved given volume details from VPC provider", zap.Reflect("VolumeDetails", volume))
+
+        err = retry(vpcs.Logger, func() error </span><span class="cov9" title="7">{
+                snapshot, err = vpcs.Apiclient.SnapshotService().CreateSnapshot(volumeRequest.VolumeID, snapshot, vpcs.Logger)
+                return err
+        }</span>)
+        <span class="cov5" title="3">if err != nil </span><span class="cov1" title="1">{
+                return userError.GetUserError("SnapshotSpaceOrderFailed", err)
+        }</span>
+
+        <span class="cov4" title="2">vpcs.Logger.Info("Successfully created the snapshot with backend (vpcclient) call.", zap.Reflect("Snapshot", snapshot))
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file29" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "context"
+        "errors"
+        "github.com/IBM/ibmcloud-storage-volume-lib/config"
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/iam"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
+        "go.uber.org/zap"
+        "net/http"
+        "os"
+        "time"
+)
+
+const (
+        // displayName ...
+        displayName = "IBM Cloud container service"
+        // vpcProviderDisplayName ...
+        vpcProviderDisplayName = "IBM Cloud infrastructure"
+        // vpcExceptionPrefix ...
+        vpcExceptionPrefix = "IBM Cloud infrastructure exception"
+        // timeoutDefault ...
+        timeoutDefault = "120s"
+)
+
+// VPCBlockProvider implements provider.Provider
+type VPCBlockProvider struct {
+        timeout        time.Duration
+        serverConfig   *config.ServerConfig
+        config         *config.VPCProviderConfig
+        tokenGenerator *tokenGenerator
+        contextCF      local.ContextCredentialsFactory
+
+        ClientProvider riaas.RegionalAPIClientProvider
+        httpClient     *http.Client
+        APIConfig      riaas.Config
+}
+
+var _ local.Provider = &amp;VPCBlockProvider{}
+
+// NewProvider initialises an instance of an IaaS provider.
+func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error) <span class="cov10" title="47">{
+        logger.Info("Entering NewProvider")
+
+        if conf.Bluemix == nil || conf.VPC == nil </span><span class="cov1" title="1">{
+                return nil, errors.New("Incomplete config for VPCBlockProvider")
+        }</span>
+
+        <span class="cov9" title="46">contextCF, err := auth.NewContextCredentialsFactory(conf.Bluemix, nil, conf.VPC)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov9" title="46">timeoutString := conf.VPC.Timeout
+        if timeoutString == "" || timeoutString == "0s" </span><span class="cov1" title="1">{
+                logger.Info("Using VPC default timeout")
+                timeoutString = "120s"
+        }</span>
+        <span class="cov9" title="46">timeout, err := time.ParseDuration(timeoutString)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov9" title="46">httpClient, err := config.GeneralCAHttpClientWithTimeout(timeout)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Failed to prepare HTTP client", util.ZapError(err))
+                return nil, err
+        }</span>
+
+        <span class="cov9" title="46">provider := &amp;VPCBlockProvider{
+                timeout:        timeout,
+                serverConfig:   conf.Server,
+                config:         conf.VPC,
+                tokenGenerator: &amp;tokenGenerator{config: conf.VPC},
+                contextCF:      contextCF,
+                httpClient:     httpClient,
+                APIConfig: riaas.Config{
+                        BaseURL:    conf.VPC.EndpointURL,
+                        HTTPClient: httpClient,
+                        APIVersion: conf.VPC.APIVersion,
+                },
+        }
+        logger.Info("", zap.Reflect("Provider config", provider.config))
+
+        userError.MessagesEn = messages.InitMessages()
+        return provider, nil</span>
+}
+
+// ContextCredentialsFactory ...
+func (vpcp *VPCBlockProvider) ContextCredentialsFactory(zone *string) (local.ContextCredentialsFactory, error) <span class="cov2" title="2">{
+        //  Datacenter hint not required by VPC provider implementation
+        return vpcp.contextCF, nil
+}</span>
+
+// OpenSession opens a session on the provider
+func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, ctxLogger *zap.Logger) (provider.Session, error) <span class="cov3" title="3">{
+        ctxLogger.Info("Entering OpenSession")
+
+        defer func() </span><span class="cov3" title="3">{
+                ctxLogger.Debug("Exiting OpenSession")
+        }</span>()
+
+        // validate that we have what we need - i.e. valid credentials
+        <span class="cov3" title="3">if contextCredentials.Credential == "" </span><span class="cov2" title="2">{
+                return nil, util.NewError("Error Insufficient Authentication", "No authentication credential provided")
+        }</span>
+
+        <span class="cov1" title="1">if vpcp.serverConfig.DebugTrace </span><span class="cov1" title="1">{
+                vpcp.APIConfig.DebugWriter = os.Stdout
+        }</span>
+
+        <span class="cov1" title="1">if vpcp.ClientProvider == nil </span><span class="cov1" title="1">{
+                vpcp.ClientProvider = riaas.DefaultRegionalAPIClientProvider{}
+        }</span>
+        <span class="cov1" title="1">ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", vpcp.APIConfig.BaseURL))
+
+        client, err := vpcp.ClientProvider.New(vpcp.APIConfig)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // Create a token for all other API calls
+        <span class="cov1" title="1">token, err := getAccessToken(contextCredentials, ctxLogger)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov1" title="1">ctxLogger.Debug("", zap.Reflect("Token", token.Token))
+
+        err = client.Login(token.Token)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // Update retry logic default values
+        <span class="cov1" title="1">if vpcp.config.MaxRetryAttempt &gt; 0 </span><span class="cov1" title="1">{
+                ctxLogger.Debug("", zap.Reflect("MaxRetryAttempt", vpcp.config.MaxRetryAttempt))
+                maxRetryAttempt = vpcp.config.MaxRetryAttempt
+        }</span>
+        <span class="cov1" title="1">if vpcp.config.MaxRetryGap &gt; 0 </span><span class="cov1" title="1">{
+                ctxLogger.Debug("", zap.Reflect("MaxRetryGap", vpcp.config.MaxRetryGap))
+                maxRetryGap = vpcp.config.MaxRetryGap
+        }</span>
+
+        <span class="cov1" title="1">vpcSession := &amp;VPCSession{
+                VPCAccountID:       contextCredentials.IAMAccountID,
+                Config:             vpcp.config,
+                ContextCredentials: contextCredentials,
+                VolumeType:         "vpc-block",
+                Provider:           VPC,
+                Apiclient:          client,
+                Logger:             ctxLogger,
+        }
+        return vpcSession, nil</span>
+}
+
+// getAccessToken ...
+func getAccessToken(creds provider.ContextCredentials, logger *zap.Logger) (token *iam.AccessToken, err error) <span class="cov1" title="1">{
+        switch creds.AuthType </span>{
+        case provider.IAMAccessToken:<span class="cov1" title="1">
+                token = &amp;iam.AccessToken{Token: creds.Credential}</span>
+        default:<span class="cov0" title="0">
+                err = errors.New("Unknown AuthType")</span>
+        }
+        <span class="cov1" title="1">return</span>
+}
+</pre>
+		
+		<pre class="file" id="file30" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/config"
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
+        "go.uber.org/zap"
+)
+
+// VPCSession implements lib.Session
+type VPCSession struct {
+        VPCAccountID       string
+        Config             *config.VPCProviderConfig
+        ContextCredentials provider.ContextCredentials
+        VolumeType         provider.VolumeType
+        Provider           provider.VolumeProvider
+        Apiclient          riaas.RegionalAPI
+        APIVersion         string
+        Logger             *zap.Logger
+}
+
+const (
+        // VPC storage provider
+        VPC = provider.VolumeProvider("VPC")
+        // VolumeType ...
+        VolumeType = provider.VolumeType("vpc-block")
+        // SnapshotMask ...
+        SnapshotMask = "id,username,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],parentVolume[snapshotCapacityGb],parentVolume[id],parentVolume[storageTierLevel],parentVolume[notes],storageType[keyName],serviceResource[datacenter[name]],billingItem[location,hourlyFlag],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes"
+)
+
+var (
+        // DeleteVolumeReason ...
+        DeleteVolumeReason = "deleted by ibm-volume-lib on behalf of user request"
+)
+
+// Close at present does nothing
+func (*VPCSession) Close() {<span class="cov8" title="1">
+        // Do nothing for now
+}</span>
+
+// GetProviderDisplayName returns the name of the VPC provider
+func (vpcs *VPCSession) GetProviderDisplayName() provider.VolumeProvider <span class="cov8" title="1">{
+        return VPC
+}</span>
+
+// ProviderName ...
+func (vpcs *VPCSession) ProviderName() provider.VolumeProvider <span class="cov8" title="1">{
+        return VPC
+}</span>
+
+// Type ...
+func (vpcs *VPCSession) Type() provider.VolumeType <span class="cov8" title="1">{
+        return VolumeType
+}</span>
+</pre>
+		
+		<pre class="file" id="file31" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "crypto/rsa"
+        "errors"
+        "io/ioutil"
+        "path/filepath"
+        "time"
+
+        "github.com/dgrijalva/jwt-go"
+        "go.uber.org/zap"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/config"
+        "github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
+)
+
+// tokenGenerator ...
+type tokenGenerator struct {
+        config *config.VPCProviderConfig
+
+        tokenKID        string
+        tokenTTL        time.Duration
+        tokenBeforeTime time.Duration
+
+        privateKey *rsa.PrivateKey // Secret. Do not export
+}
+
+// readConfig ...
+func (tg *tokenGenerator) readConfig(logger zap.Logger) (err error) <span class="cov10" title="6">{
+        logger.Info("Entering readConfig")
+        defer func() </span><span class="cov10" title="6">{
+                logger.Info("Exiting readConfig", zap.Duration("tokenTTL", tg.tokenTTL), zap.Duration("tokenBeforeTime", tg.tokenBeforeTime), zap.String("tokenKID", tg.tokenKID), local.ZapError(err))
+        }</span>()
+
+        <span class="cov10" title="6">if tg.privateKey != nil </span><span class="cov7" title="4">{
+                return
+        }</span>
+
+        <span class="cov4" title="2">path := filepath.Join(config.GetEtcPath(), tg.tokenKID)
+
+        pem, err := ioutil.ReadFile(path)
+        if err != nil </span><span class="cov1" title="1">{
+                logger.Error("Error reading PEM", local.ZapError(err))
+                return
+        }</span>
+
+        <span class="cov1" title="1">privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(pem)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Error parsing PEM", local.ZapError(err))
+                return
+        }</span>
+
+        <span class="cov1" title="1">tg.privateKey = privateKey
+
+        return</span>
+}
+
+// buildToken ...
+func (tg *tokenGenerator) buildToken(contextCredentials provider.ContextCredentials, ts time.Time, logger zap.Logger) (token *jwt.Token, err error) <span class="cov10" title="6">{
+        logger.Info("Entering getJWTToken", zap.Reflect("contextCredentials", contextCredentials))
+        defer func() </span><span class="cov10" title="6">{
+                logger.Info("Exiting getJWTToken", zap.Reflect("token", token), local.ZapError(err))
+        }</span>()
+
+        <span class="cov10" title="6">err = tg.readConfig(logger)
+        if err != nil </span><span class="cov1" title="1">{
+                return
+        }</span>
+
+        <span class="cov9" title="5">claims := jwt.MapClaims{
+                "iss": "armada",
+                "exp": ts.Add(tg.tokenTTL).Unix(),
+                "nbf": ts.Add(tg.tokenBeforeTime).Unix(),
+                "iat": ts.Unix(),
+        }
+
+        switch </span>{
+        case contextCredentials.UserID == "":<span class="cov1" title="1">
+                errStr := "User ID is not configured"
+                logger.Error(errStr)
+                err = errors.New(errStr)
+                return</span>
+
+        case contextCredentials.AuthType == auth.IMSToken:<span class="cov4" title="2">
+                claims["ims_user_id"] = contextCredentials.UserID</span>
+
+        default:<span class="cov4" title="2">
+                claims["ims_username"] = contextCredentials.UserID</span>
+
+        }
+
+        <span class="cov7" title="4">token = jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+        token.Header["kid"] = tg.tokenKID
+
+        return</span>
+}
+
+// getServiceToken ...
+func (tg *tokenGenerator) getServiceToken(contextCredentials provider.ContextCredentials, logger zap.Logger) (signedToken *string, err error) <span class="cov10" title="6">{
+        token, err := tg.buildToken(contextCredentials, time.Now(), logger)
+        if err != nil </span><span class="cov4" title="2">{
+                return
+        }</span>
+
+        <span class="cov7" title="4">signedString, err := token.SignedString(tg.privateKey)
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov7" title="4">signedToken = &amp;signedString
+
+        return</span>
+}
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "strconv"
+        "strings"
+        "time"
+)
+
+// maxRetryAttempt ...
+var maxRetryAttempt = 5
+
+// maxRetryGap ...
+var maxRetryGap = 30
+
+// retryGap ...
+var retryGap = 5
+
+var volumeIDPartsCount = 5
+
+var skipErrorCodes = map[string]bool{
+        "validation_invalid_name":          true,
+        "volume_capacity_max":              true,
+        "volume_id_invalid":                true,
+        "volume_profile_iops_invalid":      true,
+        "volume_capacity_zero_or_negative": true,
+        "not_found":                        true,
+        "internal_error":                   false,
+        "invalid_route":                    false,
+}
+
+// retry ...
+func retry(logger *zap.Logger, retryfunc func() error) error <span class="cov8" title="36">{
+        var err error
+        for i := 0; i &lt; maxRetryAttempt; i++ </span><span class="cov10" title="92">{
+                if i &gt; 0 </span><span class="cov9" title="56">{
+                        time.Sleep(time.Duration(retryGap) * time.Second)
+                }</span>
+                <span class="cov10" title="92">err = retryfunc()
+                if err != nil </span><span class="cov9" title="71">{
+                        //Skip retry for the below type of Errors
+                        modelError, ok := err.(*models.Error)
+                        if !ok </span><span class="cov9" title="65">{
+                                continue</span>
+                        }
+                        <span class="cov4" title="6">if skipRetry(modelError) </span><span class="cov1" title="1">{
+                                break</span>
+                        }
+                        <span class="cov4" title="5">if i &gt;= 1 </span><span class="cov3" title="4">{
+                                retryGap = 2 * retryGap
+                                if retryGap &gt; maxRetryGap </span><span class="cov3" title="3">{
+                                        retryGap = maxRetryGap
+                                }</span>
+                        }
+                        <span class="cov4" title="5">if (i + 1) &lt; maxRetryAttempt </span><span class="cov3" title="4">{
+                                logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryGap), zap.Error(err))
+                        }</span>
+                        <span class="cov4" title="5">continue</span>
+                }
+                <span class="cov7" title="21">return err</span>
+        }
+        <span class="cov6" title="15">return err</span>
+}
+
+// skipRetry skip retry as per listed error codes
+func skipRetry(err *models.Error) bool <span class="cov5" title="8">{
+        for _, errorItem := range err.Errors </span><span class="cov5" title="8">{
+                skipStatus, ok := skipErrorCodes[string(errorItem.Code)]
+                if ok </span><span class="cov2" title="2">{
+                        return skipStatus
+                }</span>
+        }
+        <span class="cov4" title="6">return false</span>
+}
+
+// ToInt ...
+func ToInt(valueInInt string) int <span class="cov2" title="2">{
+        value, err := strconv.Atoi(valueInInt)
+        if err != nil </span><span class="cov1" title="1">{
+                return 0
+        }</span>
+        <span class="cov1" title="1">return value</span>
+}
+
+// ToInt64 ...
+func ToInt64(valueInInt string) int64 <span class="cov4" title="7">{
+        value, err := strconv.ParseInt(valueInInt, 10, 64)
+        if err != nil </span><span class="cov1" title="1">{
+                return 0
+        }</span>
+        <span class="cov4" title="6">return value</span>
+}
+
+// FromProviderToLibVolume converting vpc provider volume type to generic lib volume type
+func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libVolume *provider.Volume) <span class="cov5" title="9">{
+        logger.Debug("Entry of FromProviderToLibVolume method...")
+        defer logger.Debug("Exit from FromProviderToLibVolume method...")
+
+        if vpcVolume == nil </span><span class="cov2" title="2">{
+                logger.Info("Volume details are empty")
+                return
+        }</span>
+
+        <span class="cov4" title="7">if vpcVolume.Zone == nil </span><span class="cov2" title="2">{
+                logger.Info("Volume zone is empty")
+                return
+        }</span>
+
+        <span class="cov4" title="5">logger.Debug("Volume details of VPC client", zap.Reflect("models.Volume", vpcVolume))
+
+        volumeCap := int(vpcVolume.Capacity)
+        iops := strconv.Itoa(int(vpcVolume.Iops))
+        var createdDate time.Time
+        if vpcVolume.CreatedAt != nil </span><span class="cov1" title="1">{
+                createdDate = *vpcVolume.CreatedAt
+        }</span>
+
+        <span class="cov4" title="5">libVolume = &amp;provider.Volume{
+                VolumeID:     vpcVolume.ID,
+                Provider:     VPC,
+                Capacity:     &amp;volumeCap,
+                Iops:         &amp;iops,
+                VolumeType:   VolumeType,
+                CreationTime: createdDate,
+        }
+        if vpcVolume.Zone != nil </span><span class="cov4" title="5">{
+                libVolume.Region = vpcVolume.Zone.Name
+        }</span>
+        <span class="cov4" title="5">return</span>
+}
+
+// IsValidVolumeIDFormat validating
+func IsValidVolumeIDFormat(volID string) bool <span class="cov5" title="10">{
+        parts := strings.Split(volID, "-")
+        if len(parts) != volumeIDPartsCount </span><span class="cov3" title="4">{
+                return false
+        }</span>
+        <span class="cov4" title="6">return true</span>
+}
+</pre>
+		
+		<pre class="file" id="file33" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+
+        "go.uber.org/zap"
+        "time"
+)
+
+// WaitForAttachVolume waits for volume to be attached to node. e.g waits till status becomes attached
+func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) <span class="cov0" title="0">{
+        vpcs.Logger.Debug("Entry of WaitForAttachVolume method...")
+        defer vpcs.Logger.Debug("Exit from WaitForAttachVolume method...")
+        vpcs.Logger.Info("Validating basic inputs for WaitForAttachVolume method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
+        err := vpcs.validateAttachVolumeRequest(volumeAttachmentTemplate)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
+        retryCount := 0
+        vpcs.Logger.Info("Waiting for volume to be attached", zap.Int("maxTimeout", maxTimeout))
+        for retryCount &lt; maxRetryAttempt </span><span class="cov0" title="0">{
+                currentVolAttachment, errAPI := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
+                if errAPI == nil &amp;&amp; currentVolAttachment.Status == StatusAttached </span><span class="cov0" title="0">{
+                        // volume is attached return no error
+                        vpcs.Logger.Info("Volume attachment is complete", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
+                        return currentVolAttachment, nil
+                }</span> else<span class="cov0" title="0"> if errAPI != nil </span><span class="cov0" title="0">{
+                        // do not retry if there is error
+                        vpcs.Logger.Error("Error occured while finding volume attachment", zap.Error(errAPI))
+                        return nil, errAPI
+                }</span>
+                // retry if attach status is not "attached"
+                <span class="cov0" title="0">retryCount = retryCount + 1
+                vpcs.Logger.Info("Volume is still attaching. Retry..", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
+                time.Sleep(retryGapDuration)</span>
+        }
+        <span class="cov0" title="0">userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
+        vpcs.Logger.Info("Wait for attach timed out", zap.Error(userErr))
+
+        return nil, userErr</span>
+}
+</pre>
+		
+		<pre class="file" id="file34" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package provider
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+        util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+        "go.uber.org/zap"
+        "time"
+)
+
+// WaitForDetachVolume waits for volume to be detached from node. e.g waits till no volume attachment is found
+func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) error <span class="cov0" title="0">{
+        vpcs.Logger.Debug("Entry of WaitForDetachVolume method...")
+        defer vpcs.Logger.Debug("Exit from WaitForDetachVolume method...")
+        var err error
+        vpcs.Logger.Info("Validating basic inputs for WaitForDetachVolume method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
+        err = vpcs.validateAttachVolumeRequest(volumeAttachmentTemplate)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
+        retryCount := 0
+        vpcs.Logger.Info("Waiting for volume to be detached", zap.Int("maxTimeout", maxTimeout))
+        for retryCount &lt; maxRetryAttempt </span><span class="cov0" title="0">{
+                currentVolAttachment, errAPI := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
+                if errAPI != nil </span><span class="cov0" title="0">{
+                        if errMsg, ok := errAPI.(util.Message); ok </span><span class="cov0" title="0">{
+                                if errMsg.Code == userError.VolumeAttachFindFailed </span><span class="cov0" title="0">{
+                                        // Consider volume detachment is complete if  error code is VolumeAttachFindFailed
+                                        vpcs.Logger.Info("Volume detachment is complete", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt))
+                                        return nil
+                                }</span>
+                                // do not retry if there is another error
+                                <span class="cov0" title="0">vpcs.Logger.Error("Error occured while finding volume attachment", zap.Error(errAPI))
+                                return errAPI</span>
+                        }
+                }
+                // retry when volume attachment is still there
+                <span class="cov0" title="0">retryCount = retryCount + 1
+                vpcs.Logger.Info("Volume is still detaching. Retry..", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
+                time.Sleep(retryGapDuration)</span>
+        }
+        <span class="cov0" title="0">userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
+        vpcs.Logger.Info("Wait for detach timed out", zap.Error(userErr))
+        return userErr</span>
+}
+</pre>
+		
+		<pre class="file" id="file35" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2017, 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package util
+
+import (
+        "errors"
+        "reflect"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
+
+        "go.uber.org/zap"
+        "go.uber.org/zap/zapcore"
+)
+
+// NewError returns an error that is implemented by provider.Error.
+// If optional wrapped errors are a provider.Error, this preserves all child wrapped
+// errors in depth-first order.
+func NewError(code reasoncode.ReasonCode, msg string, wrapped ...error) error <span class="cov8" title="16">{
+        return NewErrorWithProperties(code, msg, nil, wrapped...)
+}</span>
+
+// NewErrorWithProperties returns an error that is implemented provider.Error and
+// which is decorated with diagnostic properties.
+// If optional wrapped errors are a provider.Error, this preserves all child wrapped
+// errors in depth-first order.
+func NewErrorWithProperties(code reasoncode.ReasonCode, msg string, properties map[string]string, wrapped ...error) error <span class="cov9" title="20">{
+        if code == "" </span><span class="cov2" title="2">{
+                code = reasoncode.ErrorUnclassified
+        }</span>
+        <span class="cov9" title="20">var werrs []string
+        for _, w := range wrapped </span><span class="cov10" title="26">{
+                if w != nil </span><span class="cov9" title="20">{
+                        werrs = append(werrs, w.Error())
+                        if p, isPerr := w.(provider.Error); isPerr </span><span class="cov4" title="4">{
+                                for _, u := range p.Wrapped() </span><span class="cov5" title="6">{
+                                        werrs = append(werrs, u)
+                                }</span>
+                        }
+                }
+        }
+        <span class="cov9" title="20">return provider.Error{
+                Fault: provider.Fault{
+                        ReasonCode: code,
+                        Message:    msg,
+                        Properties: properties,
+                        Wrapped:    werrs,
+                },
+        }</span>
+}
+
+// ErrorDeepUnwrapString returns the full list of unwrapped error strings
+// Returns empty slice if not a provider.Error
+func ErrorDeepUnwrapString(err error) []string <span class="cov5" title="6">{
+        if perr, isPerr := err.(provider.Error); isPerr &amp;&amp; perr.Wrapped() != nil </span><span class="cov4" title="3">{
+                return perr.Wrapped()
+        }</span>
+        <span class="cov4" title="3">return []string{}</span>
+}
+
+// ErrorReasonCode returns reason code if a provider.Error, else ErrorUnclassified
+func ErrorReasonCode(err error) reasoncode.ReasonCode <span class="cov2" title="2">{
+        if pErr, isPerr := err.(provider.Error); isPerr </span><span class="cov1" title="1">{
+                if code := pErr.Code(); code != reasoncode.ReasonCode("") </span><span class="cov1" title="1">{
+                        return code
+                }</span>
+        }
+        <span class="cov1" title="1">return reasoncode.ErrorUnclassified</span>
+}
+
+// ErrorToFault returns or builds a Fault pointer for an error (e.g. for a response object)
+// Returns nil if no error,
+func ErrorToFault(err error) *provider.Fault <span class="cov5" title="5">{
+        if err == nil </span><span class="cov2" title="2">{
+                return nil
+        }</span>
+        <span class="cov4" title="3">if pErr, isPerr := err.(provider.Error); isPerr </span><span class="cov1" title="1">{
+                return &amp;pErr.Fault
+        }</span>
+        <span class="cov2" title="2">return &amp;provider.Fault{
+                ReasonCode: reasoncode.ErrorUnclassified,
+                Message:    err.Error(),
+        }</span>
+}
+
+// FaultToError builds a Error from a Fault pointer (e.g. from a response object)
+// Returns nil error if no Fault.
+func FaultToError(fault *provider.Fault) error <span class="cov2" title="2">{
+        if fault == nil </span><span class="cov1" title="1">{
+                return nil
+        }</span>
+        <span class="cov1" title="1">return provider.Error{Fault: *fault}</span>
+}
+
+// SetResponseFault sets the Fault field of any response struct
+func SetResponseFault(fault error, response interface{}) error <span class="cov5" title="5">{
+        value := reflect.ValueOf(response)
+        if value.Kind() != reflect.Ptr || value.Elem().Kind() != reflect.Struct </span><span class="cov1" title="1">{
+                return errors.New("Value must be a pointer to a struct")
+        }</span>
+        <span class="cov4" title="4">field := value.Elem().FieldByName("Fault")
+        if field.Kind() != reflect.Ptr </span><span class="cov2" title="2">{
+                return errors.New("Value struct must have Fault provider.Fault field")
+        }</span>
+        <span class="cov2" title="2">field.Set(reflect.ValueOf(ErrorToFault(fault)))
+        return nil</span>
+}
+
+// ZapError returns a zapcore.Field for an error that includes the metadata
+// associated with a provider.Error. If the error is not a provider.Error then
+// the standard zap.Error is used.
+func ZapError(err error) zapcore.Field <span class="cov4" title="3">{
+        if perr, isPerr := err.(provider.Error); isPerr </span><span class="cov1" title="1">{
+                // Use zap.Relfect() to format all fields of struct
+                // zap.Any() would select standard error formatting
+                return zap.Reflect("error", perr)
+        }</span>
+
+        <span class="cov2" title="2">return zap.Error(err)</span>
+}
+</pre>
+		
+		<pre class="file" id="file36" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package client
+
+import (
+        "errors"
+)
+
+// ErrAuthenticationRequired is returned if a request is made before an authentication
+// token has been provided to the client
+var ErrAuthenticationRequired = errors.New("Authentication token required")
+
+type authenticationHandler struct {
+        authToken     string
+        resourceGroup string
+}
+
+// Before is called before each request
+func (a *authenticationHandler) Before(request *Request) error <span class="cov10" title="11">{
+        request.resourceGroup = a.resourceGroup
+
+        if a.authToken == "" </span><span class="cov0" title="0">{
+                return ErrAuthenticationRequired
+        }</span>
+        <span class="cov10" title="11">request.headers.Set("Authorization", "Bearer "+a.authToken)
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file37" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package client
+
+import (
+        "context"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "io"
+        "net/http"
+        "net/url"
+)
+
+// handler ...
+type handler interface {
+        Before(request *Request) error
+}
+
+// SessionClient provides an interface for a REST API client
+// go:generate counterfeiter -o fakes/client.go --fake-name SessionClient . SessionClient
+type SessionClient interface {
+        NewRequest(operation *Operation) *Request
+        WithDebug(writer io.Writer) SessionClient
+        WithAuthToken(authToken string) SessionClient
+        WithPathParameter(name, value string) SessionClient
+        WithQueryValue(name, value string) SessionClient
+}
+
+type client struct {
+        baseURL       string
+        httpClient    *http.Client
+        pathParams    Params
+        queryValues   url.Values
+        authenHandler handler
+        debugWriter   io.Writer
+        resourceGroup string
+        contextID     string
+        context       context.Context
+}
+
+// New creates a new instance of a SessionClient
+func New(ctx context.Context, baseURL string, httpClient *http.Client, contextID string, APIVersion string) SessionClient <span class="cov10" title="18">{
+        // Default API version
+        backendAPIVersion := models.APIVersion
+
+        // Overwrite if the version is passed
+        if len(APIVersion) &gt; 0 </span><span class="cov10" title="18">{
+                backendAPIVersion = APIVersion
+        }</span>
+        <span class="cov10" title="18">return &amp;client{
+                baseURL:       baseURL,
+                httpClient:    httpClient,
+                pathParams:    Params{},
+                queryValues:   url.Values{"version": []string{backendAPIVersion}},
+                authenHandler: &amp;authenticationHandler{},
+                contextID:     contextID,
+                context:       ctx,
+        }</span>
+}
+
+// NewRequest creates a request and configures it with the supplied operation
+func (c *client) NewRequest(operation *Operation) *Request <span class="cov10" title="18">{
+        headers := http.Header{}
+        headers.Set("Accept", "application/json")
+        headers.Set("User-Agent", models.UserAgent)
+        if c.contextID != "" </span><span class="cov10" title="18">{
+                headers.Set("X-Request-ID", c.contextID)
+        }</span>
+
+        // Copy the query values to a new map
+        <span class="cov10" title="18">qv := url.Values{}
+        for k, v := range c.queryValues </span><span class="cov10" title="18">{
+                qv[k] = v
+        }</span>
+
+        <span class="cov10" title="18">return &amp;Request{
+                httpClient:    c.httpClient,
+                context:       c.context,
+                baseURL:       c.baseURL,
+                operation:     operation,
+                pathParams:    c.pathParams.Copy(),
+                authenHandler: c.authenHandler,
+                headers:       headers,
+                debugWriter:   c.debugWriter,
+                resourceGroup: c.resourceGroup,
+                queryValues:   qv,
+        }</span>
+}
+
+// WithDebug enables debug for this SessionClient, outputting to the supplied writer
+func (c *client) WithDebug(writer io.Writer) SessionClient <span class="cov8" title="11">{
+        c.debugWriter = writer
+        return c
+}</span>
+
+// WithAuthToken supplies the authentication token to use for all requests made by this session
+func (c *client) WithAuthToken(authToken string) SessionClient <span class="cov8" title="11">{
+        c.authenHandler = &amp;authenticationHandler{
+                authToken: authToken,
+        }
+        return c
+}</span>
+
+// WithPathParameter adds a path parameter to the request
+func (c *client) WithPathParameter(name, value string) SessionClient <span class="cov0" title="0">{
+        c.pathParams[name] = value
+        return c
+}</span>
+
+// WithQueryValue adds a query parameter to the request
+func (c *client) WithQueryValue(name, value string) SessionClient <span class="cov0" title="0">{
+        c.queryValues.Add(name, value)
+        return c
+}</span>
+</pre>
+		
+		<pre class="file" id="file38" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package client
+
+// Params ...
+type Params map[string]string
+
+// Copy performs a shallow copy of a Params object
+func (p Params) Copy() Params <span class="cov10" title="19">{
+        params := Params{}
+        for k, v := range p </span><span class="cov3" title="2">{
+                params[k] = v
+        }</span>
+        <span class="cov10" title="19">return params</span>
+}
+</pre>
+		
+		<pre class="file" id="file39" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package client
+
+import (
+        "context"
+        "fmt"
+        "io"
+        "net/http"
+        "net/http/httputil"
+        "net/url"
+        "reflect"
+        "regexp"
+        "strings"
+        "time"
+
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/payload"
+        "github.com/fatih/structs"
+)
+
+// Operation defines the API operation to be invoked
+type Operation struct {
+        Name        string
+        Method      string
+        PathPattern string
+}
+
+// Request defines the properties of an API request. It can then be invoked to
+// call the underlying API specified by the supplied operation
+type Request struct {
+        httpClient    *http.Client
+        baseURL       string
+        authenHandler handler
+
+        context context.Context
+
+        operation  *Operation
+        pathParams Params
+        headers    http.Header
+
+        debugWriter io.Writer
+
+        queryValues     url.Values
+        bodyProvider    BodyProvider
+        successConsumer ResponseConsumer
+        errorConsumer   ResponseConsumer
+        resourceGroup   string
+}
+
+// BodyProvider declares an interface that describes an HTTP body, for
+// both request and response
+type BodyProvider interface {
+        ContentType() string
+        Body() (io.Reader, error)
+}
+
+// ResponseConsumer ...
+type ResponseConsumer interface {
+        Consume(io.Reader) error
+        Receiver() interface{}
+}
+
+func (r *Request) path() string <span class="cov7" title="17">{
+        path := r.operation.PathPattern
+        for k, v := range r.pathParams </span><span class="cov0" title="0">{
+                path = strings.Replace(path, "{"+k+"}", v, -1)
+        }</span>
+        <span class="cov7" title="17">return path</span>
+}
+
+// URL constructs the full URL for a request
+func (r *Request) URL() string <span class="cov7" title="18">{
+        baseURL, baseErr := url.Parse(r.baseURL)
+        if baseErr != nil </span><span class="cov1" title="1">{
+                return ""
+        }</span>
+        <span class="cov7" title="17">if !strings.HasSuffix(baseURL.Path, "/") </span><span class="cov6" title="16">{
+                baseURL.Path += "/"
+        }</span>
+        <span class="cov7" title="17">pathURL, pathErr := url.Parse(r.path())
+        if pathErr != nil </span><span class="cov1" title="1">{
+                return ""
+        }</span>
+        <span class="cov6" title="16">resolvedURL := baseURL.ResolveReference(pathURL)
+        resolvedURL.RawQuery = r.queryValues.Encode()
+
+        return resolvedURL.String()</span>
+}
+
+// PathParameter sets a path parameter to be resolved on invocation of a request
+func (r *Request) PathParameter(name, value string) *Request <span class="cov0" title="0">{
+        r.pathParams[name] = value
+        return r
+}</span>
+
+// AddQueryValue ...
+func (r *Request) AddQueryValue(key, value string) *Request <span class="cov3" title="3">{
+        if r.queryValues == nil </span><span class="cov0" title="0">{
+                r.queryValues = url.Values{}
+        }</span>
+        <span class="cov3" title="3">r.queryValues.Add(key, value)
+        return r</span>
+}
+
+// JSONBody converts the supplied argument to JSON to use as the body of a request
+func (r *Request) JSONBody(p interface{}) *Request <span class="cov1" title="1">{
+        if r.operation.Method == http.MethodPost &amp;&amp; reflect.ValueOf(p).Kind() == reflect.Struct </span><span class="cov0" title="0">{
+                structs.DefaultTagName = "json"
+                m := structs.Map(p)
+
+                if r.resourceGroup != "" </span><span class="cov0" title="0">{
+                        m["resourceGroup"] = r.resourceGroup
+                }</span>
+
+                <span class="cov0" title="0">r.bodyProvider = payload.NewJSONBodyProvider(m)</span>
+        } else<span class="cov1" title="1"> {
+                r.bodyProvider = payload.NewJSONBodyProvider(p)
+        }</span>
+        <span class="cov1" title="1">return r</span>
+}
+
+// MultipartFileBody configures the POST payload to be sent in multi-part format. The
+// content is read from the supplied Reader.
+func (r *Request) MultipartFileBody(name string, contents io.Reader) *Request <span class="cov1" title="1">{
+        r.bodyProvider = payload.NewMultipartFileBody(name, contents)
+        return r
+}</span>
+
+// JSONSuccess configures the receiver to use to process a JSON response
+// for a successful (2xx) response
+func (r *Request) JSONSuccess(receiver interface{}) *Request <span class="cov3" title="3">{
+        r.successConsumer = payload.NewJSONConsumer(receiver)
+        return r
+}</span>
+
+// JSONError configures the error to populate in the event of an unsuccessful
+// (non-2xx) response
+func (r *Request) JSONError(receiver error) *Request <span class="cov4" title="6">{
+        r.errorConsumer = payload.NewJSONConsumer(receiver)
+        return r
+}</span>
+
+// Invoke performs the request, and populates the response or error as appropriate
+func (r *Request) Invoke() (*http.Response, error) <span class="cov6" title="11">{
+        err := r.authenHandler.Before(r)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov6" title="11">var body io.Reader
+        if r.bodyProvider != nil </span><span class="cov2" title="2">{
+                body, err = r.bodyProvider.Body()
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+
+                <span class="cov2" title="2">if contentType := r.bodyProvider.ContentType(); contentType != "" </span><span class="cov2" title="2">{
+                        r.headers.Set("Content-Type", contentType)
+                }</span>
+        }
+
+        <span class="cov6" title="11">httpRequest, err := http.NewRequest(r.operation.Method, r.URL(), body)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov6" title="11">for k, v := range r.headers </span><span class="cov9" title="46">{
+                httpRequest.Header[k] = v
+        }</span>
+
+        <span class="cov6" title="11">r.debugRequest(httpRequest)
+
+        resp, err := r.httpClient.Do(httpRequest.WithContext(r.context))
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov6" title="11">defer resp.Body.Close()
+
+        r.debugResponse(resp)
+
+        switch </span>{
+        case resp.StatusCode == http.StatusNoContent:<span class="cov0" title="0">
+                break</span>
+
+        case resp.StatusCode &gt;= 200 &amp;&amp; resp.StatusCode &lt;= 299:<span class="cov5" title="9">
+                if r.successConsumer != nil </span><span class="cov1" title="1">{
+                        err = r.successConsumer.Consume(resp.Body)
+                }</span>
+
+        default:<span class="cov2" title="2">
+                if r.errorConsumer != nil </span><span class="cov2" title="2">{
+                        err = r.errorConsumer.Consume(resp.Body)
+                        if err == nil </span><span class="cov2" title="2">{
+                                err = r.errorConsumer.Receiver().(error)
+                        }</span>
+                }
+        }
+
+        <span class="cov6" title="11">return resp, err</span>
+}
+
+func (r *Request) debugRequest(req *http.Request) <span class="cov6" title="11">{
+        if r.debugWriter == nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov6" title="11">multipart := strings.Contains(req.Header.Get("Content-Type"), "multipart/form-data")
+        dumpedRequest, err := httputil.DumpRequest(req, !multipart)
+        if err != nil </span><span class="cov0" title="0">{
+                r.debugf("Error dumping request\n%s\n", err)
+                return
+        }</span>
+
+        <span class="cov6" title="11">r.debugf("\nREQUEST: [%s]\n%s\n", time.Now().Format(time.RFC3339), sanitize(dumpedRequest))
+        if multipart </span><span class="cov1" title="1">{
+                r.debugf("[MULTIPART/FORM-DATA CONTENT HIDDEN]\n")
+        }</span>
+}
+
+func (r *Request) debugResponse(resp *http.Response) <span class="cov6" title="11">{
+        if r.debugWriter == nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        <span class="cov6" title="11">dumpedResponse, err := httputil.DumpResponse(resp, true)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Fprintf(r.debugWriter, "Error dumping response\n%s\n", err)
+                return
+        }</span>
+
+        <span class="cov6" title="11">r.debugf("\nRESPONSE: [%s]\n%s\n", time.Now().Format(time.RFC3339), sanitize(dumpedResponse))</span>
+}
+
+func (r *Request) debugf(format string, args ...interface{}) <span class="cov7" title="23">{
+        fmt.Fprintf(r.debugWriter, format, args...)
+}</span>
+
+// RedactedFillin used as a replacement string in debug logs for sensitive data
+const RedactedFillin = "[REDACTED]"
+
+func sanitize(input []byte) string <span class="cov7" title="22">{
+        sanitized := string(input)
+
+        re := regexp.MustCompile(`(?mi)^Authorization: .*`)
+        sanitized = re.ReplaceAllString(sanitized, "Authorization: "+RedactedFillin)
+
+        re = regexp.MustCompile(`(?mi)^X-Auth-Token: .*`)
+        sanitized = re.ReplaceAllString(sanitized, "X-Auth-Token: "+RedactedFillin)
+
+        re = regexp.MustCompile(`(?mi)^APIKey: .*`)
+        sanitized = re.ReplaceAllString(sanitized, "APIKey: "+RedactedFillin)
+
+        sanitized = sanitizeJSON("key", sanitized)
+        sanitized = sanitizeJSON("password", sanitized)
+        sanitized = sanitizeJSON("passphrase", sanitized)
+
+        return sanitized
+}</span>
+
+func sanitizeJSON(propertySubstring string, json string) string <span class="cov10" title="66">{
+        regex := regexp.MustCompile(fmt.Sprintf(`(?i)"([^"]*%s[^"]*)":\s*"[^\,]*"`, propertySubstring))
+        return regex.ReplaceAllString(json, fmt.Sprintf(`"$1":"%s"`, RedactedFillin))
+}</span>
+</pre>
+		
+		<pre class="file" id="file40" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package riaas
+
+import (
+        "context"
+        "io"
+        "net/http"
+)
+
+// Config for the Session
+type Config struct {
+        BaseURL       string
+        AccountID     string
+        Username      string
+        APIKey        string
+        ResourceGroup string
+        Password      string
+        ContextID     string
+
+        DebugWriter io.Writer
+        HTTPClient  *http.Client
+        Context     context.Context
+        APIVersion  string
+}
+
+func (c Config) httpClient() *http.Client <span class="cov0" title="0">{
+        if c.HTTPClient != nil </span><span class="cov0" title="0">{
+                return c.HTTPClient
+        }</span>
+
+        <span class="cov0" title="0">return http.DefaultClient</span>
+}
+
+func (c Config) baseURL() string <span class="cov0" title="0">{
+        return c.BaseURL
+}</span>
+</pre>
+		
+		<pre class="file" id="file41" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package riaas
+
+import (
+        "context"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/instances"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
+)
+
+// RegionalAPI is the main interface for the RIAAS API client. From here, service
+// objects for the individual parts of the API can be obtained
+//go:generate counterfeiter -o fakes/regional_api.go --fake-name RegionalAPI . RegionalAPI
+type RegionalAPI interface {
+        Login(token string) error
+
+        VolumeService() vpcvolume.VolumeManager
+        VolumeAttachService() instances.VolumeAttachManager
+        SnapshotService() vpcvolume.SnapshotManager
+}
+
+var _ RegionalAPI = &amp;Session{}
+
+// Session is a base implementation of the RegionalAPI interface
+type Session struct {
+        client client.SessionClient
+        config Config
+}
+
+// New creates a new Session volume, using the supplied config
+func New(config Config) (*Session, error) <span class="cov0" title="0">{
+        ctx := config.Context
+        if ctx == nil </span><span class="cov0" title="0">{
+                ctx = context.Background()
+        }</span>
+
+        <span class="cov0" title="0">riaasClient := client.New(ctx, config.baseURL(), config.httpClient(), config.ContextID, config.APIVersion)
+
+        if config.DebugWriter != nil </span><span class="cov0" title="0">{
+                riaasClient.WithDebug(config.DebugWriter)
+        }</span>
+        <span class="cov0" title="0">return &amp;Session{
+                client: riaasClient,
+                config: config,
+        }, nil</span>
+}
+
+// Login configures the session with the supplied Authentication token
+// which is used for all requests to the API
+func (s *Session) Login(token string) error <span class="cov8" title="1">{
+        s.client.WithAuthToken(token)
+        return nil
+}</span>
+
+// VolumeService returns the Volume service for managing volumes
+func (s *Session) VolumeService() vpcvolume.VolumeManager <span class="cov8" title="1">{
+        return vpcvolume.New(s.client)
+}</span>
+
+// VolumeAttachService returns the VolumeMountService for managing volumes
+func (s *Session) VolumeAttachService() instances.VolumeAttachManager <span class="cov0" title="0">{
+        return instances.New(s.client)
+}</span>
+
+// SnapshotService returns the Snapshot service for managing snapshot
+func (s *Session) SnapshotService() vpcvolume.SnapshotManager <span class="cov0" title="0">{
+        return vpcvolume.NewSnapshotManager(s.client)
+}</span>
+
+// RegionalAPIClientProvider declares an interface for a provider that can supply a new
+// RegionalAPI client session
+//go:generate counterfeiter -o fakes/client_provider.go --fake-name RegionalAPIClientProvider . RegionalAPIClientProvider
+type RegionalAPIClientProvider interface {
+        New(config Config) (RegionalAPI, error)
+}
+
+// DefaultRegionalAPIClientProvider declares a basic client provider that delegates to
+// New(). Can be used for dependency injection.
+type DefaultRegionalAPIClientProvider struct {
+}
+
+var _ RegionalAPIClientProvider = DefaultRegionalAPIClientProvider{}
+
+// New creates a new Session volume, using the supplied config
+func (d DefaultRegionalAPIClientProvider) New(config Config) (RegionalAPI, error) <span class="cov0" title="0">{
+        return New(config)
+}</span>
+</pre>
+		
+		<pre class="file" id="file42" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// CheckSnapshotTag checks if the given tag exists on a snapshot
+func (ss *SnapshotService) CheckSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error <span class="cov10" title="4">{
+        ctxLogger.Debug("Entry Backend CreateSnapshotTag")
+        defer ctxLogger.Debug("Exit Backend CreateSnapshotTag")
+
+        defer util.TimeTracker("CheckSnapshotTag", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "CheckSnapshotTag",
+                Method:      "GET",
+                PathPattern: snapshotTagNamePath,
+        }
+
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov10" title="4">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file43" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// CheckVolumeTag checks if the given tag exists on a volume
+func (vs *VolumeService) CheckVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error <span class="cov10" title="5">{
+        ctxLogger.Debug("Entry Backend CheckVolumeTag")
+        defer ctxLogger.Debug("Exit Backend CheckVolumeTag")
+
+        defer util.TimeTracker("CheckVolumeTag", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "CheckVolumeTag",
+                Method:      "GET",
+                PathPattern: volumeTagNamePath,
+        }
+
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov4" title="2">{
+                return err
+        }</span>
+
+        <span class="cov7" title="3">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file44" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// CreateSnapshot POSTs to /volumes
+func (ss *SnapshotService) CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot, ctxLogger *zap.Logger) (*models.Snapshot, error) <span class="cov10" title="3">{
+        ctxLogger.Debug("Entry Backend CreateSpanShot")
+        defer ctxLogger.Debug("Exit Backend CreateSnapshot")
+
+        defer util.TimeTracker("CreateSnapshot", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "CreateSnapshot",
+                Method:      "POST",
+                PathPattern: snapshotsPath,
+        }
+
+        var snapshot models.Snapshot
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", snapshotTemplate), zap.Reflect("Operation", operation))
+
+        _, err := request.PathParameter(volumeIDParam, volumeID).JSONBody(snapshotTemplate).JSONSuccess(&amp;snapshot).JSONError(&amp;apiErr).Invoke()
+        if err != nil </span><span class="cov10" title="3">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;snapshot, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file45" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// CreateVolume POSTs to /volumes
+func (vs *VolumeService) CreateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error) <span class="cov10" title="5">{
+        ctxLogger.Debug("Entry Backend CreateVolume")
+        defer ctxLogger.Debug("Exit Backend CreateVolume")
+
+        defer util.TimeTracker("CreateVolume", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "CreateVolume",
+                Method:      "POST",
+                PathPattern: volumesPath,
+        }
+
+        var volume models.Volume
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeTemplate), zap.Reflect("Operation", operation))
+
+        _, err := request.JSONBody(volumeTemplate).JSONSuccess(&amp;volume).JSONError(&amp;apiErr).Invoke()
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="4">return &amp;volume, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file46" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// DeleteSnapshot DELETEs to /volumes
+func (ss *SnapshotService) DeleteSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) error <span class="cov10" title="3">{
+        ctxLogger.Debug("Entry Backend DeleteSpanshot")
+        defer ctxLogger.Debug("Exit Backend DeleteSnapshot")
+
+        defer util.TimeTracker("DeleteSnapshot", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "DeleteSnapshot",
+                Method:      "DELETE",
+                PathPattern: snapshotIDPath,
+        }
+
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        _, err := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONError(&amp;apiErr).Invoke()
+        if err != nil </span><span class="cov10" title="3">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file47" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// DeleteSnapshotTag deletes tag of a snapshot
+func (ss *SnapshotService) DeleteSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error <span class="cov10" title="3">{
+        ctxLogger.Debug("Entry Backend DeleteSnapshotTag")
+        defer ctxLogger.Debug("Exit Backend DeleteSnapshotTag")
+
+        defer util.TimeTracker("DeleteSnapshotTag", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "DeleteSnapshotTag",
+                Method:      "DELETE",
+                PathPattern: snapshotTagNamePath,
+        }
+
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov10" title="3">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file48" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// DeleteVolume POSTs to /volumes
+func (vs *VolumeService) DeleteVolume(volumeID string, ctxLogger *zap.Logger) error <span class="cov10" title="4">{
+        ctxLogger.Debug("Entry Backend DeleteVolume")
+        defer ctxLogger.Debug("Exit Backend DeleteVolume")
+
+        defer util.TimeTracker("DeleteVolume", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "DeleteVolume",
+                Method:      "DELETE",
+                PathPattern: volumeIDPath,
+        }
+
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        _, err := request.PathParameter(volumeIDParam, volumeID).JSONError(&amp;apiErr).Invoke()
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="3">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file49" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// DeleteVolumeTag deletes tag of a volume
+func (vs *VolumeService) DeleteVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error <span class="cov10" title="5">{
+        ctxLogger.Debug("Entry Backend DeleteVolumeTag")
+        defer ctxLogger.Debug("Exit Backend DeleteVolumeTag")
+
+        defer util.TimeTracker("DeleteVolumeTag", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "DeleteVolumeTag",
+                Method:      "DELETE",
+                PathPattern: volumeTagNamePath,
+        }
+
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="4">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file50" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// GetSnapshot GETs from /volumes
+func (ss *SnapshotService) GetSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*models.Snapshot, error) <span class="cov10" title="3">{
+        ctxLogger.Debug("Entry Backend GetSnapshot")
+        defer ctxLogger.Debug("Exit Backend GetSnapshot")
+
+        defer util.TimeTracker("GetSnapshot", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "GetSnapshot",
+                Method:      "GET",
+                PathPattern: snapshotIDPath,
+        }
+
+        var snapshot models.Snapshot
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID)
+
+        _, err := req.JSONSuccess(&amp;snapshot).JSONError(&amp;apiErr).Invoke()
+        if err != nil </span><span class="cov10" title="3">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;snapshot, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file51" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// GetVolume POSTs to /volumes
+func (vs *VolumeService) GetVolume(volumeID string, ctxLogger *zap.Logger) (*models.Volume, error) <span class="cov10" title="4">{
+        ctxLogger.Debug("Entry Backend GetVolume")
+        defer ctxLogger.Debug("Exit Backend GetVolume")
+
+        defer util.TimeTracker("GetVolume", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "GetVolume",
+                Method:      "GET",
+                PathPattern: volumeIDPath,
+        }
+
+        var volume models.Volume
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID)
+        _, err := req.JSONSuccess(&amp;volume).JSONError(&amp;apiErr).Invoke()
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="3">return &amp;volume, nil</span>
+}
+
+// GetVolumeByName GETs /volumes
+func (vs *VolumeService) GetVolumeByName(volumeName string, ctxLogger *zap.Logger) (*models.Volume, error) <span class="cov10" title="4">{
+        ctxLogger.Debug("Entry Backend GetVolumeByName")
+        defer ctxLogger.Debug("Exit Backend GetVolumeByName")
+
+        defer util.TimeTracker("GetVolumeByName", time.Now())
+
+        // Get the volume details for a single volume, ListVolumeFilters will return only 1 volume in list
+        filters := &amp;models.ListVolumeFilters{VolumeName: volumeName}
+        volumes, err := vs.ListVolumes(1, filters, ctxLogger)
+        if err != nil </span><span class="cov5" title="2">{
+                return nil, err
+        }</span>
+
+        <span class="cov5" title="2">if volumes != nil </span><span class="cov5" title="2">{
+                volumeslist := volumes.Volumes
+                if volumeslist != nil &amp;&amp; len(volumeslist) &gt; 0 </span><span class="cov1" title="1">{
+                        return volumeslist[0], nil
+                }</span>
+        }
+        <span class="cov1" title="1">return nil, err</span>
+}
+</pre>
+		
+		<pre class="file" id="file52" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// ListSnapshotTags GETs /volumes/snapshots/tags
+func (ss *SnapshotService) ListSnapshotTags(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*[]string, error) <span class="cov10" title="3">{
+        ctxLogger.Debug("Entry Backend ListSnapshotTags")
+        defer ctxLogger.Debug("Exit Backend ListSnapshotTags")
+
+        defer util.TimeTracker("ListSnapshotTags", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "ListSnapshotTags",
+                Method:      "GET",
+                PathPattern: snapshotTagsPath,
+        }
+
+        var tags []string
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).JSONSuccess(&amp;tags).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov10" title="3">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;tags, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file53" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// ListSnapshots GETs /volumes/snapshots
+func (ss *SnapshotService) ListSnapshots(volumeID string, ctxLogger *zap.Logger) (*models.SnapshotList, error) <span class="cov10" title="3">{
+        ctxLogger.Debug("Entry Backend ListSnapshots")
+        defer ctxLogger.Debug("Exit Backend ListSnapshots")
+
+        defer util.TimeTracker("ListSnapshots", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "ListSnapshots",
+                Method:      "GET",
+                PathPattern: snapshotsPath,
+        }
+
+        var snapshots models.SnapshotList
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        _, err := request.PathParameter(volumeIDParam, volumeID).JSONSuccess(&amp;snapshots).JSONError(&amp;apiErr).Invoke()
+        if err != nil </span><span class="cov10" title="3">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;snapshots, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file54" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// ListVolumeTags GETs /volumes/tags
+func (vs *VolumeService) ListVolumeTags(volumeID string, ctxLogger *zap.Logger) (*[]string, error) <span class="cov10" title="2">{
+        ctxLogger.Debug("Entry Backend ListVolumeTags")
+        defer ctxLogger.Debug("Exit Backend ListVolumeTags")
+
+        defer util.TimeTracker("ListVolumeTags", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "ListVolumeTags",
+                Method:      "GET",
+                PathPattern: volumeTagsPath,
+        }
+
+        var tags []string
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).JSONSuccess(&amp;tags).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov1" title="1">return &amp;tags, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file55" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "strconv"
+        "time"
+)
+
+// ListVolumes GETs /volumes
+func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error) <span class="cov10" title="11">{
+        ctxLogger.Debug("Entry Backend ListVolumes")
+        defer ctxLogger.Debug("Exit Backend ListVolumes")
+
+        defer util.TimeTracker("ListVolumes", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "ListVolumes",
+                Method:      "GET",
+                PathPattern: volumesPath,
+        }
+
+        var volumes models.VolumeList
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.JSONSuccess(&amp;volumes).JSONError(&amp;apiErr)
+
+        if limit &gt; 0 </span><span class="cov7" title="5">{
+                req.AddQueryValue("limit", strconv.Itoa(limit))
+        }</span>
+
+        <span class="cov10" title="11">if filters != nil </span><span class="cov8" title="8">{
+                if filters.ResourceGroupID != "" </span><span class="cov1" title="1">{
+                        req.AddQueryValue("resource_group.id", filters.ResourceGroupID)
+                }</span>
+                <span class="cov8" title="8">if filters.Tag != "" </span><span class="cov1" title="1">{
+                        req.AddQueryValue("tag", filters.Tag)
+                }</span>
+                <span class="cov8" title="8">if filters.ZoneName != "" </span><span class="cov1" title="1">{
+                        req.AddQueryValue("zone.name", filters.ZoneName)
+                }</span>
+                <span class="cov8" title="8">if filters.VolumeName != "" </span><span class="cov7" title="5">{
+                        req.AddQueryValue("name", filters.VolumeName)
+                }</span>
+        }
+
+        <span class="cov10" title="11">_, err := req.Invoke()
+        if err != nil </span><span class="cov5" title="3">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="8">return &amp;volumes, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file56" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// SetSnapshotTag sets tag for a snapshot
+func (ss *SnapshotService) SetSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error <span class="cov10" title="3">{
+        ctxLogger.Debug("Entry Backend SetVolumeTag")
+        defer ctxLogger.Debug("Exit Backend SetVolumeTag")
+
+        defer util.TimeTracker("SetSnapshotTag", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "SetSnapshotTag",
+                Method:      "PUT",
+                PathPattern: snapshotTagNamePath,
+        }
+
+        var apiErr models.Error
+
+        request := ss.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(snapshotIDParam, snapshotID).PathParameter(snapshotTagParam, tagName).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov10" title="3">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file57" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+        "time"
+)
+
+// SetVolumeTag sets tag for a volume
+func (vs *VolumeService) SetVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error <span class="cov10" title="6">{
+        ctxLogger.Debug("Entry Backend SetVolumeTag")
+        defer ctxLogger.Debug("Exit Backend SetVolumeTag")
+
+        defer util.TimeTracker("SetVolumeTag", time.Now())
+
+        operation := &amp;client.Operation{
+                Name:        "SetVolumeTag",
+                Method:      "PUT",
+                PathPattern: volumeTagNamePath,
+        }
+
+        var apiErr models.Error
+
+        request := vs.client.NewRequest(operation)
+        ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+
+        req := request.PathParameter(volumeIDParam, volumeID).PathParameter(volumeTagParam, tagName).JSONError(&amp;apiErr)
+        _, err := req.Invoke()
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov9" title="5">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file58" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+// SnapshotManager operations
+type SnapshotManager interface {
+        // Create the snapshot on the volume
+        CreateSnapshot(volumeID string, snapshotTemplate *models.Snapshot, ctxLogger *zap.Logger) (*models.Snapshot, error)
+
+        // Delete the snapshot
+        DeleteSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) error
+
+        // Get the snapshot
+        GetSnapshot(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*models.Snapshot, error)
+
+        // List all the  snapshots for a given volume
+        ListSnapshots(volumeID string, ctxLogger *zap.Logger) (*models.SnapshotList, error)
+
+        // Set tag for a snapshot
+        SetSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error
+
+        // Delete tag of a snapshot
+        DeleteSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error
+
+        // List all tags of a snapshot
+        ListSnapshotTags(volumeID string, snapshotID string, ctxLogger *zap.Logger) (*[]string, error)
+
+        // Check if the given tag exists on a snapshot
+        CheckSnapshotTag(volumeID string, snapshotID string, tagName string, ctxLogger *zap.Logger) error
+}
+
+// SnapshotService ...
+type SnapshotService struct {
+        client client.SessionClient
+}
+
+var _ SnapshotManager = &amp;SnapshotService{}
+
+// NewSnapshotManager ...
+func NewSnapshotManager(client client.SessionClient) SnapshotManager <span class="cov10" title="25">{
+        return &amp;SnapshotService{
+                client: client,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file59" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018, 2019 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package vpcvolume
+
+import (
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+        "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+        "go.uber.org/zap"
+)
+
+// VolumeManager operations
+type VolumeManager interface {
+        // Create the volume with authorisation by passing required information in the volume object
+        CreateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error)
+
+        // Delete the volume
+        DeleteVolume(volumeID string, ctxLogger *zap.Logger) error
+
+        // Get the volume by using ID
+        GetVolume(volumeID string, ctxLogger *zap.Logger) (*models.Volume, error)
+
+        // Get the volume by using volume name
+        GetVolumeByName(volumeName string, ctxLogger *zap.Logger) (*models.Volume, error)
+
+        // Others
+        // Get volume lists by using snapshot tags
+        ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error)
+
+        // Set tag for a volume
+        SetVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error
+
+        // Delete tag of a volume
+        DeleteVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error
+
+        // List all tags of a volume
+        ListVolumeTags(volumeID string, ctxLogger *zap.Logger) (*[]string, error)
+
+        // Check if the given tag exists on a volume
+        CheckVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error
+}
+
+// VolumeService ...
+type VolumeService struct {
+        client client.SessionClient
+}
+
+var _ VolumeManager = &amp;VolumeService{}
+
+// New ...
+func New(client client.SessionClient) VolumeManager <span class="cov10" title="42">{
+        return &amp;VolumeService{
+                client: client,
+        }
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
