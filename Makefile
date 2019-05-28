@@ -55,6 +55,10 @@ vet:
 build:
 	go build -gcflags '-N -l' -o libSample samples/main.go
 
+storage-e2e-test:
+	go test ./e2e -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true -timeout 90m
+.PHONY: storage-e2e-test
+
 .PHONY: clean
 clean:
 	rm -rf libSample
