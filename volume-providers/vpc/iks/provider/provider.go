@@ -38,7 +38,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	provider, _ = vpcprovider.NewProvider(conf, logger)
 	iksBlockProvider, _ := provider.(*vpcprovider.VPCBlockProvider)
 	//Overrider Base URL
-	iksBlockProvider.ApiConfig.BaseURL = conf.Bluemix.APIEndpointURL
+	iksBlockProvider.APIConfig.BaseURL = conf.Bluemix.APIEndpointURL
 	// Setup IKS-VPC dual provider
 	iksVpcBlockProvider := &IksVpcBlockProvider{
 		VPCBlockProvider: *vpcBlockProvider,

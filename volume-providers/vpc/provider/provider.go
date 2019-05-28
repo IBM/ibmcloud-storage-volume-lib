@@ -49,7 +49,7 @@ type VPCBlockProvider struct {
 
 	ClientProvider riaas.RegionalAPIClientProvider
 	httpClient     *http.Client
-	ApiConfig      riaas.Config
+	APIConfig      riaas.Config
 }
 
 var _ local.Provider = &VPCBlockProvider{}
@@ -89,7 +89,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		tokenGenerator: &tokenGenerator{config: conf.VPC},
 		contextCF:      contextCF,
 		httpClient:     httpClient,
-		ApiConfig: riaas.Config{
+		APIConfig: riaas.Config{
 			BaseURL:    conf.VPC.EndpointURL,
 			HTTPClient: httpClient,
 			APIVersion: conf.VPC.APIVersion,
@@ -121,15 +121,15 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	}
 
 	if vpcp.serverConfig.DebugTrace {
-		vpcp.ApiConfig.DebugWriter = os.Stdout
+		vpcp.APIConfig.DebugWriter = os.Stdout
 	}
 
 	if vpcp.ClientProvider == nil {
 		vpcp.ClientProvider = riaas.DefaultRegionalAPIClientProvider{}
 	}
-	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", vpcp.ApiConfig.BaseURL))
+	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", vpcp.APIConfig.BaseURL))
 
-	client, err := vpcp.ClientProvider.New(vpcp.ApiConfig)
+	client, err := vpcp.ClientProvider.New(vpcp.APIConfig)
 	if err != nil {
 		return nil, err
 	}
