@@ -10,14 +10,13 @@
 
 package e2e
 
-import (
-	"testing"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+const (
+	vpcZone         = "VPC_ZONE"
+	resourceGroupID = "RESOURCEGROUP"
+	volumeSize      = 10
+	iops            = "0"
+	volumeName      = "e2e-storage-volume"
+	volumeType      = "vpc-block"
+	generation      = "gt"
+	vpcProfile      = "general-purpose"
 )
-
-func TestE2e(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "ibmcloud-storage-volume-lib e2e suite")
-}

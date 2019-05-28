@@ -1,4 +1,14 @@
-package e2e_test
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package e2e
 
 import (
 	"fmt"
@@ -18,23 +28,26 @@ import (
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
-	var err error
-	var sess provider.Session
-	var logger *zap.Logger
-	var ctxLogger *zap.Logger
-	var traceLevel zap.AtomicLevel
-	var requestID string
+	It("Create and delete VPC volume", func() {
+		var sess provider.Session
+		var logger *zap.Logger
+		var ctxLogger *zap.Logger
+		var traceLevel zap.AtomicLevel
+		var requestID string
 
-	BeforeEach(func() {
+		volName := volumeName
+		volSize := volumeSize
+		Iops := iops
+
 		// Setup new style zap logger
 		logger, traceLevel = getContextLogger()
 		defer logger.Sync()
-
 		// Load config file
 		goPath := os.Getenv("GOPATH")
 		conf, err := config.ReadConfig(goPath+"/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/config.toml", logger)
 		if err != nil {
 			logger.Fatal("Error loading configuration")
+			Expect(err).To(HaveOccurred())
 		}
 
 		// Check if debug log level enabled or not
@@ -49,83 +62,59 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			Expect(err).To(HaveOccurred())
 		}
 
-		//dc_name := "mex01"
 		providerName := ""
 		if conf.VPC.Enabled {
 			providerName = conf.VPC.VPCBlockProviderName
 		}
 
-		ctxLogger, _ := getContextLogger()
-		requestID := uid.NewV4().String()
+		ctxLogger, _ = getContextLogger()
+		requestID = uid.NewV4().String()
 		ctxLogger = logger.With(zap.String("RequestID", requestID))
-		sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
+		sess, _, err = provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
 		if err != nil {
 			Expect(err).To(HaveOccurred())
 		}
 		defer sess.Close()
 		defer ctxLogger.Sync()
-	})
-	It("VpcCreateVolumeWithEncryption", func() {
-		fmt.Println("You selected choice to Create VPC volume")
 		volume := &provider.Volume{}
-		volumeName := "e2e-storage-volume-lib"
-		volume.VolumeType = "vpc-block"
 
-		resiurceGType := 0
-		resourceGroup := "default resource group"
-		zone := "us-south-1"
-		volSize := 10
-		Iops := "0"
-
-		volume.Az = zone
-		volume.VPCVolume.Generation = "gt"
+		volume.VolumeType = volumeType
+		volume.VPCVolume.Generation = generation
 
 		volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 
-		profile := "general-purpose"
+		profile := vpcProfile
 		volume.VPCVolume.Profile = &provider.Profile{Name: profile}
 
-		volume.Name = &volumeName
+		volume.Name = &volName
 		volume.Capacity = &volSize
-
-		fmt.Printf("\nPlease enter iops (Only custom profiles require iops): ")
-		_, err = fmt.Scanf("%s", &Iops)
 		volume.Iops = &Iops
+		volume.VPCVolume.ResourceGroup.ID = resourceGroupID
 
-		fmt.Printf("\nPlease enter resource group info type : 1- for ID and 2- for Name: ")
-		_, err = fmt.Scanf("%d", &resiurceGType)
-		if resiurceGType == 1 {
-			fmt.Printf("\nPlease enter resource group ID:")
-			_, err = fmt.Scanf("%s", &resourceGroup)
-			volume.VPCVolume.ResourceGroup.ID = resourceGroup
-		} else if resiurceGType == 2 {
-			fmt.Printf("\nPlease enter resource group Name:")
-			_, err = fmt.Scanf("%s", &resourceGroup)
-			volume.VPCVolume.ResourceGroup.Name = resourceGroup
-		} else {
-			fmt.Printf("\nWrong resource group type\n")
-			Expect(err).To(HaveOccurred())
-		}
+		volume.Az = vpcZone
 
-		fmt.Printf("\nPlease enter zone: ")
-		_, err = fmt.Scanf("%s", &zone)
-		volume.Az = zone
-
-		volume.VPCVolume.VolumeEncryptionKey = &provider.VolumeEncryptionKey{}
-		fmt.Printf("\nPlease enter encryption key CRN:")
-		volumeEncryptionKeyCRN := ""
-		_, err = fmt.Scanf("%s", &volumeEncryptionKeyCRN)
-		volume.VPCVolume.VolumeEncryptionKey.CRN = volumeEncryptionKeyCRN
-
-		volume.SnapshotSpace = &volSize
+		//volume.SnapshotSpace = &volSize
 		volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
 		volumeObj, err := sess.CreateVolume(*volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
-			ctxLogger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
+			ctxLogger.Info("Successfully created volume...", zap.Reflect("volumeObj", volumeObj))
 		} else {
 			err = updateRequestID(err, requestID)
-			ctxLogger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
+			ctxLogger.Info("Failed to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
+			Expect(err).To(HaveOccurred())
+		}
+		fmt.Printf("\n\n")
+
+		volume = &provider.Volume{}
+		volume.VolumeID = volumeObj.VolumeID
+		err = sess.DeleteVolume(volume)
+		if err == nil {
+			Expect(err).NotTo(HaveOccurred())
+			ctxLogger.Info("Successfully deleted volume...", zap.Reflect("volumeObj", volume))
+		} else {
+			err = updateRequestID(err, requestID)
+			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
 		fmt.Printf("\n\n")

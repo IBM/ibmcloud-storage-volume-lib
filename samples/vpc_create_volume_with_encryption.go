@@ -80,7 +80,6 @@ func main() {
 		logger.Fatal("Error configuring providers", local.ZapError(err))
 	}
 
-	//dc_name := "mex01"
 	providerName := ""
 	if conf.VPC.Enabled {
 		providerName = conf.VPC.VPCBlockProviderName
@@ -96,7 +95,7 @@ func main() {
 	}
 	defer sess.Close()
 	defer ctxLogger.Sync()
-	fmt.Println("You selected choice to Create VPC volume")
+
 	volume := &provider.Volume{}
 	volumeName := ""
 	volume.VolumeType = "vpc-block"
