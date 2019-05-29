@@ -83,7 +83,9 @@ func main() {
 
 	//dc_name := "mex01"
 	providerName := conf.Softlayer.SoftlayerBlockProviderName
-	if conf.Softlayer.SoftlayerFileEnabled {
+	if conf.IKS != nil && conf.IKS.Enabled {
+		providerName = conf.IKS.IKSBlockProviderName
+	} else if conf.Softlayer.SoftlayerFileEnabled {
 		providerName = conf.Softlayer.SoftlayerFileProviderName
 	} else if conf.VPC.Enabled {
 		providerName = conf.VPC.VPCBlockProviderName
