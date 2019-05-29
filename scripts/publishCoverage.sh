@@ -43,9 +43,9 @@ if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT" ]; then
 fi
 
 if [ -f "$GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/Passing" ]; then
-	curl https://img.shields.io/badge/e2e-passing-Yellow.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/master/e2e.svg
+	curl https://img.shields.io/badge/e2e-passing-Yellow.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/e2e.svg
 elif [ -f "$GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/Failed" ]; then
-	curl https://img.shields.io/badge/e2e-failed-Yellow.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/master/e2e.svg
+	curl https://img.shields.io/badge/e2e-failed-Yellow.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/e2e.svg
 fi
 
 # Compute overall coverage percentage
