@@ -42,7 +42,7 @@ if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT" ]; then
 	mkdir "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT"
 fi
 
-if [ ! -d "$TRAVIS_BUILD_DIR/Passing" ]; then
+if [ ! -f "$TRAVIS_BUILD_DIR/Passing" ]; then
 	curl https://img.shields.io/badge/e2e-passing-Yellow.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/e2e.svg
 else
 	curl https://img.shields.io/badge/e2e-failed-Yellow.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/e2e.svg
