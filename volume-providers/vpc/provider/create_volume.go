@@ -34,26 +34,26 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	}
 	vpcs.Logger.Info("Successfully validated inputs for CreateVolume request... ")
 
-	var encryptionKeyCRN string
-	if volumeRequest.VPCVolume.VolumeEncryptionKey != nil && len(volumeRequest.VPCVolume.VolumeEncryptionKey.CRN) > 0 {
-		encryptionKeyCRN = volumeRequest.VPCVolume.VolumeEncryptionKey.CRN
-	}
-
 	// Build the template to send to backend
 	volumeTemplate := &models.Volume{
-		Name:                *volumeRequest.Name,
-		Capacity:            int64(*volumeRequest.Capacity),
-		Iops:                iops,
-		Tags:                volumeRequest.VPCVolume.Tags,
-		ResourceGroup:       &resourceGroup,
-		Generation:          models.GenerationType(vpcs.Config.VPCBlockProviderName),
-		VolumeEncryptionKey: &models.VolumeEncryptionKey{CRN: encryptionKeyCRN},
+		Name:          *volumeRequest.Name,
+		Capacity:      int64(*volumeRequest.Capacity),
+		Iops:          iops,
+		Tags:          volumeRequest.VPCVolume.Tags,
+		ResourceGroup: &resourceGroup,
+		Generation:    models.GenerationType(vpcs.Config.VPCBlockProviderName),
 		Profile: &models.Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},
 		Zone: &models.Zone{
 			Name: volumeRequest.Az,
 		},
+	}
+
+	var encryptionKeyCRN string
+	if volumeRequest.VPCVolume.VolumeEncryptionKey != nil && len(volumeRequest.VPCVolume.VolumeEncryptionKey.CRN) > 0 {
+		encryptionKeyCRN = volumeRequest.VPCVolume.VolumeEncryptionKey.CRN
+		volumeTemplate.VolumeEncryptionKey = &models.VolumeEncryptionKey{CRN: encryptionKeyCRN}
 	}
 
 	vpcs.Logger.Info("Calling VPC provider for volume creation...")

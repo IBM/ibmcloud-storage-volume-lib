@@ -1,43 +1,40 @@
 language: go
-
 go:
-  - 1.12.1
-  - tip
-
+- 1.12.1
+- tip
 group: bluezone
-
 matrix:
   fast_finish: true
   allow_failures:
   - go: tip
-  
 cache:
   bundler: true
-
 sudo: true
-
 before_install:
-  - sudo add-apt-repository ppa:masterminds/glide -y && sudo apt-get update -q
-  - sudo apt-get install glide -y
-  - sudo apt-get install bc
-
+- openssl aes-256-cbc -K $encrypted_482da1402185_key -iv $encrypted_482da1402185_iv
+  -in ./e2e/config/secret.txt.enc -out secret.txt -d || true
+- sudo add-apt-repository ppa:masterminds/glide -y && sudo apt-get update -q
+- sudo apt-get install glide -y
+- sudo apt-get install bc
 before_script:
-  - make deps
-  - go get github.com/pierrre/gotestcover
-
+- make deps
+- go get github.com/pierrre/gotestcover
 script:
-  - mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-  - mkdir -p $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
-  - rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
-  - cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
-  - make vet
-  - make fmt
-  - make test
-  - make coverage
-
+- mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+- mkdir -p $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
+- rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
+- cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
+- source secret.txt
+- sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
+- sed -i "s/VPC_ZONE/"$VPC_ZONE"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
+- sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/config.toml
+- make vet
+- make fmt
+- make test
+- make coverage
+- make volume-lib-e2e-test && touch "Passing" || touch "Failed"
 after_success:
-    - ./scripts/calculateCoverage.sh
-    - ./scripts/publishCoverage.sh
-
+- "./scripts/calculateCoverage.sh"
+- "./scripts/publishCoverage.sh"
 after_failure:
-    - ./scripts/handleFailure.sh
+- "./scripts/handleFailure.sh"
