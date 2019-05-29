@@ -49,6 +49,7 @@ type VPCBlockProvider struct {
 
 	ClientProvider riaas.RegionalAPIClientProvider
 	httpClient     *http.Client
+	APIConfig      riaas.Config
 }
 
 var _ local.Provider = &VPCBlockProvider{}
@@ -88,6 +89,11 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		tokenGenerator: &tokenGenerator{config: conf.VPC},
 		contextCF:      contextCF,
 		httpClient:     httpClient,
+		APIConfig: riaas.Config{
+			BaseURL:    conf.VPC.EndpointURL,
+			HTTPClient: httpClient,
+			APIVersion: conf.VPC.APIVersion,
+		},
 	}
 	logger.Info("", zap.Reflect("Provider config", provider.config))
 
@@ -114,22 +120,16 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		return nil, util.NewError("Error Insufficient Authentication", "No authentication credential provided")
 	}
 
-	apiConfig := riaas.Config{
-		BaseURL:    vpcp.config.EndpointURL,
-		HTTPClient: vpcp.httpClient,
-		APIVersion: vpcp.config.APIVersion,
-	}
-
 	if vpcp.serverConfig.DebugTrace {
-		apiConfig.DebugWriter = os.Stdout
+		vpcp.APIConfig.DebugWriter = os.Stdout
 	}
 
 	if vpcp.ClientProvider == nil {
 		vpcp.ClientProvider = riaas.DefaultRegionalAPIClientProvider{}
 	}
-	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", apiConfig.BaseURL))
+	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", vpcp.APIConfig.BaseURL))
 
-	client, err := vpcp.ClientProvider.New(apiConfig)
+	client, err := vpcp.ClientProvider.New(vpcp.APIConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,6 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		Apiclient:          client,
 		Logger:             ctxLogger,
 	}
-
 	return vpcSession, nil
 }
 
