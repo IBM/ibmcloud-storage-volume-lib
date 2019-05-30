@@ -115,7 +115,7 @@ $mkdir -p src/github.com/IBM
 ```
 
 ### Step 2
-Change the directory to `src/github.com/IBM`  nad check out the code
+Change the directory to `src/github.com/IBM` and check out the code
 ```
 git clone https://github.com/IBM/ibmcloud-storage-volume-lib.git
 ```
