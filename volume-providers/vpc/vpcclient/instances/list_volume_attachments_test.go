@@ -49,9 +49,10 @@ func TestListVolumeAttachment(t *testing.T) {
 		}, {
 			name:    "Verify that the volume attachment is done correctly",
 			status:  http.StatusOK,
-			content: "{\"id\":\"volume attachment id\", \"name\":\"volume attachment\",\"volume\": {\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}}",
+			content: "{\"volume_attachments\":[{\"id\":\"volumeattachmentid1\", \"name\":\"volume attachment\",\"volume\": {\"id\":\"volume-id1\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}, \"instance_id\":\"testinstance\"}]}",
 			verify: func(t *testing.T, volumeAttachmentList *models.VolumeAttachmentList, err error) {
 				assert.NotNil(t, volumeAttachmentList)
+				assert.Equal(t, len(volumeAttachmentList.VolumeAttachments), 1)
 			},
 		},
 	}
@@ -67,7 +68,7 @@ func TestListVolumeAttachment(t *testing.T) {
 				Name:       "volume attachment",
 				InstanceID: &instanceID,
 				Volume: &models.Volume{
-					ID:       "volume-id",
+					ID:       "volume-id1",
 					Name:     "volume-name",
 					Capacity: 10,
 					ResourceGroup: &models.ResourceGroup{
@@ -82,14 +83,18 @@ func TestListVolumeAttachment(t *testing.T) {
 
 			volumeAttachService := instances.New(client)
 
-			volumeAttachments, err := volumeAttachService.ListVolumeAttachment(template, logger)
+			volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachment(template, logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())
-				assert.Nil(t, volumeAttachments)
+				assert.Nil(t, volumeAttachmentsList)
 			} else {
 				assert.NoError(t, err)
-				assert.NotNil(t, volumeAttachments)
+				assert.NotNil(t, volumeAttachmentsList)
+			}
+
+			if testcase.verify != nil {
+				testcase.verify(t, volumeAttachmentsList, err)
 			}
 		})
 	}
