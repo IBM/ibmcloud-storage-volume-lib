@@ -11,18 +11,15 @@
 package util
 
 import (
-	"testing"
-
+	"errors"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-func TestSafeStringValue(t *testing.T) {
-	assert.Equal(t, "", SafeStringValue(nil))
-	hello := "hello"
-	assert.Equal(t, "hello", SafeStringValue(&hello))
-}
-
-func TestStringHasValue(t *testing.T) {
-	hello := "hello"
-	assert.True(t, true, StringHasValue(&hello))
+func TestGetErrorType(t *testing.T) {
+	err := errors.New("Infrastructure account is temporarily locked")
+	newErr := NewError("ErrorProviderAccountTemporarilyLocked", "Infrastructure account is temporarily locked", err)
+	assert.NotNil(t, GetErrorType(newErr))
+	newErr = NewError("ProvisioningFailed", "ProvisioningFailed", errors.New("ProvisioningFailed"))
+	assert.NotNil(t, GetErrorType(newErr))
 }
