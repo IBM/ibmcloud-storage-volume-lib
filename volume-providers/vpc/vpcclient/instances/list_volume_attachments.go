@@ -19,7 +19,7 @@ import (
 )
 
 // ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
-func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
+func (vs *VolumeAttachService) ListVolumeAttachment(instanceID string, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
 	defer util.TimeTracker("GetAttachStatus", time.Now())
 
 	operation := &client.Operation{
@@ -32,9 +32,9 @@ func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *mo
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID))
-	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("instanceID", instanceID), zap.Reflect("Operation", operation))
+	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, instanceID))
+	req := request.PathParameter(instanceIDParam, instanceID)
 	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(&apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))

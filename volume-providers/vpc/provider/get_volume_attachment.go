@@ -33,7 +33,7 @@ func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.Vol
 	vpcs.Logger.Info("Getting VolumeAttachmentList from VPC provider...")
 	var volumeAttachmentList *models.VolumeAttachmentList
 	err = retry(vpcs.Logger, func() error {
-		volumeAttachmentList, err = vpcs.Apiclient.VolumeAttachService().ListVolumeAttachment(&volumeAttachment, vpcs.Logger)
+		volumeAttachmentList, err = vpcs.Apiclient.VolumeAttachService().ListVolumeAttachment(volumeAttachment.InstanceID, vpcs.Logger)
 		return err
 	})
 	if err != nil {
