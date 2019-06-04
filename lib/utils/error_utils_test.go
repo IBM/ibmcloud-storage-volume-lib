@@ -109,7 +109,7 @@ func TestNewError(t *testing.T) {
 		).(provider.Error).Wrapped())
 }
 
-func TestNewError_ErrorDeepUnwrapString(t *testing.T) {
+func TestNewErrorUnwrapString(t *testing.T) {
 	assert.Equal(t, []string{},
 		ErrorDeepUnwrapString(errors.New("generic")))
 
