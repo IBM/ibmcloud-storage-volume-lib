@@ -29,7 +29,7 @@ func init() {
 	logger, _ = zap.NewDevelopment()
 }
 
-func Test_ForIaaSAPIKey(t *testing.T) {
+func TestForIaaSAPIKey(t *testing.T) {
 	account := "account1"
 	username := "user1"
 	apiKey := "abcdefg"

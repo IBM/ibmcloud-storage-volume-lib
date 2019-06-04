@@ -11,14 +11,15 @@
 package riaas
 
 import (
-	"testing"
-
+	"bytes"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client/fakes"
 	"github.com/stretchr/testify/assert"
+	"io"
+	"net/http"
+	"testing"
 )
 
 func TestLogin(t *testing.T) {
-
 	client := &fakes.SessionClient{}
 
 	riaas := Session{
@@ -34,9 +35,42 @@ func TestLogin(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestVolume(t *testing.T) {
+func TestNewSession(t *testing.T) {
+	var b bytes.Buffer
+	cfg := Config{
+		BaseURL:       "http://gc",
+		AccountID:     "test account ID",
+		Username:      "tester",
+		APIKey:        "tester",
+		ResourceGroup: "test resource group",
+		Password:      "tester",
+		ContextID:     "tester",
+		APIVersion:    "01-01-2019",
+		HTTPClient:    &http.Client{},
+		DebugWriter:   io.Writer(&b),
+	}
 
-	volume := (&Session{}).VolumeService()
+	session, err := New(cfg)
+	assert.Nil(t, err)
+	assert.NotNil(t, session)
 
-	assert.NotNil(t, volume)
+	d := DefaultRegionalAPIClientProvider{}
+	regionalAPI, err := d.New(cfg)
+	assert.Nil(t, err)
+	assert.NotNil(t, regionalAPI)
+}
+
+func TestVolumeService(t *testing.T) {
+	volumeManager := (&Session{}).VolumeService()
+	assert.NotNil(t, volumeManager)
+}
+
+func TestSnapshotService(t *testing.T) {
+	snapshotManager := (&Session{}).SnapshotService()
+	assert.NotNil(t, snapshotManager)
+}
+
+func TestVolumeAttachService(t *testing.T) {
+	volumeAttachService := (&Session{}).VolumeAttachService()
+	assert.NotNil(t, volumeAttachService)
 }
