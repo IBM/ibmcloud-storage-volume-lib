@@ -23,7 +23,7 @@ type VolumeAttachManager interface {
 	AttachVolume(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
 
 	// GetAttachStatus retrives the VolumeAttachment of  given request
-	ListVolumeAttachment(string, *zap.Logger) (*models.VolumeAttachmentList, error)
+	ListVolumeAttachment(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachmentList, error)
 
 	// Delete the volume
 	DetachVolume(*models.VolumeAttachment, *zap.Logger) (*http.Response, error)

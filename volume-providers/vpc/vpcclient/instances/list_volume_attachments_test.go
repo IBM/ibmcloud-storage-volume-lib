@@ -63,11 +63,26 @@ func TestListVolumeAttachment(t *testing.T) {
 
 			defer teardown()
 
+			template := &models.VolumeAttachment{
+				Name:       "volume attachment",
+				InstanceID: &instanceID,
+				Volume: &models.Volume{
+					ID:       "volume-id",
+					Name:     "volume-name",
+					Capacity: 10,
+					ResourceGroup: &models.ResourceGroup{
+						ID: "rg1",
+					},
+					Generation: models.GenerationType("gc"),
+					Zone:       &models.Zone{Name: "test-1"},
+				},
+			}
+
 			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
 
 			volumeAttachService := instances.New(client)
 
-			volumeAttachments, err := volumeAttachService.ListVolumeAttachment(instanceID, logger)
+			volumeAttachments, err := volumeAttachService.ListVolumeAttachment(template, logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())
