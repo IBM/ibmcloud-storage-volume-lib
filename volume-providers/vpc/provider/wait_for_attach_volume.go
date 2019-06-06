@@ -39,7 +39,8 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 		} else if errAPI != nil {
 			// do not retry if there is error
 			vpcs.Logger.Error("Error occured while finding volume attachment", zap.Error(errAPI))
-			return nil, errAPI
+			userErr := userError.GetUserError(string(userError.VolumeAttachFailed), errAPI, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
+			return nil, userErr
 		}
 		// retry if attach status is not "attached"
 		retryCount = retryCount + 1

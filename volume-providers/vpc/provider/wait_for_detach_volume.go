@@ -42,7 +42,8 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 				}
 				// do not retry if there is another error
 				vpcs.Logger.Error("Error occured while finding volume attachment", zap.Error(errAPI))
-				return errAPI
+				userErr := userError.GetUserError(string(userError.VolumeDetachFailed), errAPI, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
+				return userErr
 			}
 		}
 		// retry when volume attachment is still there
