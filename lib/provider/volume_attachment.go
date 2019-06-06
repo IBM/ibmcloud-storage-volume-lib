@@ -34,11 +34,11 @@ type VolumeAttachManager interface {
 	DetachVolume(detachRequest VolumeAttachmentRequest) (*http.Response, error)
 
 	//WaitForAttachVolume waits for the volume to be attached to the host
-	// Retunn error if wait is timed out OR there is other error
+	//Return error if wait is timed out OR there is other error
 	WaitForAttachVolume(attachRequest VolumeAttachmentRequest) (*VolumeAttachmentResponse, error)
 
 	//WaitForDetachVolume waits for the volume to be detached from the host
-	// Retunn error if wait is timed out OR there is other error
+	//Return error if wait is timed out OR there is other error
 	WaitForDetachVolume(detachRequest VolumeAttachmentRequest) error
 
 	//GetAttachAttachment retirves the current status of given volume attach request

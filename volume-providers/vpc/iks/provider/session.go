@@ -26,7 +26,7 @@ var _ provider.Session = &IksVpcSession{}
 
 const (
 	// Provider storage provider
-	Provider = provider.VolumeProvider("VPC-IKS")
+	Provider = provider.VolumeProvider("IKS-VPC-BLOCK")
 	// VolumeType ...
 	VolumeType = provider.VolumeType("vpc-block")
 )

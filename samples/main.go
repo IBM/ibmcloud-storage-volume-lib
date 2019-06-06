@@ -113,6 +113,7 @@ func main() {
 			ctxLogger.Error("Failed to get session", zap.Reflect("Error", err))
 			continue
 		}
+		volumeAttachmentManager := NewVolumeAttachmentManager(sess, ctxLogger, requestID)
 		defer sess.Close()
 		defer ctxLogger.Sync()
 		if choiceN == 1 {
@@ -415,59 +416,9 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 15 {
-			fmt.Println("Enter the volume id to attach")
-			_, er11 = fmt.Scanf("%s", &volumeID)
-			volume := &provider.Volume{}
-			volume.VolumeID = volumeID
-			var instanceID string
-			fmt.Println("Enter the instance id to attach")
-			_, er11 = fmt.Scanf("%s", &instanceID)
-			volumeAttachmentReq := provider.VolumeAttachmentRequest{
-				VolumeID:   volumeID,
-				InstanceID: instanceID,
-				VPCVolumeAttachment: &provider.VolumeAttachment{
-					DeleteVolumeOnInstanceDelete: false,
-				},
-			}
-			response, err := sess.AttachVolume(volumeAttachmentReq)
-			if err != nil {
-				updateRequestID(err, requestID)
-				ctxLogger.Error("Failed to attach the volume", zap.Error(err))
-				return
-			}
-			volumeAttachmentReq.VPCVolumeAttachment = &provider.VolumeAttachment{
-				ID: response.VPCVolumeAttachment.ID,
-			}
-			response, err = sess.WaitForAttachVolume(volumeAttachmentReq)
-			if err != nil {
-				updateRequestID(err, requestID)
-				ctxLogger.Error("Failed to complete volume attach", zap.Error(err))
-			}
-			fmt.Println("Volume attachment", response, err)
+			volumeAttachmentManager.AttachVolume()
 		} else if choiceN == 16 {
-			fmt.Println("Enter the volume id to detach")
-			_, er11 = fmt.Scanf("%s", &volumeID)
-			volume := &provider.Volume{}
-			volume.VolumeID = volumeID
-			var instanceID string
-			fmt.Println("Enter the instance id to detach")
-			_, er11 = fmt.Scanf("%s", &instanceID)
-			volumeDetachmentReq := provider.VolumeAttachmentRequest{
-				VolumeID:   volumeID,
-				InstanceID: instanceID,
-			}
-			response, err := sess.DetachVolume(volumeDetachmentReq)
-			if err != nil {
-				updateRequestID(err, requestID)
-				ctxLogger.Error("Failed to detach the volume", zap.Error(err))
-				return
-			}
-			err = sess.WaitForDetachVolume(volumeDetachmentReq)
-			if err != nil {
-				updateRequestID(err, requestID)
-				ctxLogger.Error("Failed to complete volume detach", zap.Error(err))
-			}
-			fmt.Println("Volume detach", response, err)
+			volumeAttachmentManager.DetachVolume()
 		} else if choiceN == 17 {
 			fmt.Println("You selected get VPC volume by name")
 			volumeName := ""
