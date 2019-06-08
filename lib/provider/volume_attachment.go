@@ -59,4 +59,6 @@ type VolumeAttachmentRequest struct {
 	InstanceID string `json:"instanceID"`
 	// Only for VPC provider
 	VPCVolumeAttachment *VolumeAttachment `json:"vpcVolumeAttachment"`
+	// Only IKS provider
+	IKSVolumeAttachment *IKSVolumeAttachment `json:"iksVolumeAttachment"`
 }

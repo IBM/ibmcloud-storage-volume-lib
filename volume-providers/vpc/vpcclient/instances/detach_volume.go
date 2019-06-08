@@ -26,7 +26,7 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 	operation := &client.Operation{
 		Name:        "DetachVolume",
 		Method:      "DELETE",
-		PathPattern: instanceIDattachmentIDPath,
+		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
 	var apiErr models.Error

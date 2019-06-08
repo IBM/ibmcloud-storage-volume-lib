@@ -13,20 +13,22 @@ package provider
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/instances"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
 	"go.uber.org/zap"
 )
 
 // VPCSession implements lib.Session
 type VPCSession struct {
-	VPCAccountID       string
-	Config             *config.VPCProviderConfig
-	ContextCredentials provider.ContextCredentials
-	VolumeType         provider.VolumeType
-	Provider           provider.VolumeProvider
-	Apiclient          riaas.RegionalAPI
-	APIVersion         string
-	Logger             *zap.Logger
+	VPCAccountID          string
+	Config                *config.VPCProviderConfig
+	ContextCredentials    provider.ContextCredentials
+	VolumeType            provider.VolumeType
+	Provider              provider.VolumeProvider
+	Apiclient             riaas.RegionalAPI
+	APIClientVolAttachMgr instances.VolumeAttachManager
+	APIVersion            string
+	Logger                *zap.Logger
 }
 
 const (

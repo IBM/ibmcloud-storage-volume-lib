@@ -49,7 +49,9 @@ func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) {
 	}
 
 	// Parse config file
-	var conf Config
+	conf := Config{
+		IKS: &IKSConfig{}, // IKS block may not be populated in secrete toml. Make sure its not nil
+	}
 	logger.Info("parsing conf file", zap.String("confpath", confPath))
 	err := ParseConfig(confPath, &conf, logger)
 	return &conf, err
@@ -129,11 +131,14 @@ type Gen2Config struct {
 type VPCProviderConfig struct {
 	Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
 	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
-	EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
+	EndpointURL          string `toml:"gc_riaas_endpoint_url"`
+	TokenExchangeURL     string `toml:"gc_token_exchange_endpoint_url"`
+	APIKey               string `toml:"gc_api_key"`
+	ResourceGroupID      string `toml:"gc_resource_group_id"`
 	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
 	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
-	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"RETRY_INTERVAL"`
-	APIVersion           string `toml:"api_version"`
+	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"VPC_RETRY_INTERVAL"`
+	APIVersion           string `toml:"api_version" envconfig:"VPC_API_VERSION"`
 }
 
 //IKSConfig config

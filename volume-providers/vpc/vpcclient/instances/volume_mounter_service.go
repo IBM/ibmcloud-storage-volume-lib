@@ -17,6 +17,13 @@ import (
 	"net/http"
 )
 
+const (
+	//VpcPathPrefix  VPC URL path prefix
+	VpcPathPrefix = "instances"
+	//IksPathPrefix  IKS URL path prefix
+	IksPathPrefix = "v2/storage/workers"
+)
+
 // VolumeAttachManager operations
 //go:generate counterfeiter -o fakes/volume_atacher_service.go --fake-name VolumeAttachManager . VolumeAttachManager
 type VolumeAttachManager interface {
@@ -32,7 +39,8 @@ type VolumeAttachManager interface {
 
 // VolumeAttachService ...
 type VolumeAttachService struct {
-	client client.SessionClient
+	client     client.SessionClient
+	pathPrefix string
 }
 
 var _ VolumeAttachManager = &VolumeAttachService{}
@@ -40,6 +48,24 @@ var _ VolumeAttachManager = &VolumeAttachService{}
 // New ...
 func New(client client.SessionClient) VolumeAttachManager {
 	return &VolumeAttachService{
-		client: client,
+		client:     client,
+		pathPrefix: VpcPathPrefix,
+	}
+}
+
+// IKSVolumeAttachService ...
+type IKSVolumeAttachService struct {
+	VolumeAttachService
+}
+
+var _ VolumeAttachManager = &IKSVolumeAttachService{}
+
+// NewIKSVolumeAttachmentManager ...
+func NewIKSVolumeAttachmentManager(client client.SessionClient) VolumeAttachManager {
+	return &IKSVolumeAttachService{
+		VolumeAttachService{
+			client:     client,
+			pathPrefix: IksPathPrefix,
+		},
 	}
 }

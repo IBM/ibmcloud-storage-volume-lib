@@ -59,3 +59,8 @@ type VolumeAttachment struct {
 type VolumeEncryptionKey struct {
 	CRN string `json:"crn,omitempty"`
 }
+
+//IKSVolumeAttachment  encapulates IKS related attachment parameters
+type IKSVolumeAttachment struct {
+	ClusterID *string `json:"clusterID,omitempty"`
+}

@@ -49,7 +49,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.V
 	var err error
 	var volumeAttachmentResult *models.VolumeAttachment
 	err = retry(vpcs.Logger, func() error {
-		volumeAttachmentResult, err = vpcs.Apiclient.VolumeAttachService().GetVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
+		volumeAttachmentResult, err = vpcs.APIClientVolAttachMgr.GetVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
 		return err
 	})
 	if err != nil {
@@ -69,7 +69,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 	var volumeAttachmentList *models.VolumeAttachmentList
 	var err error
 	err = retry(vpcs.Logger, func() error {
-		volumeAttachmentList, err = vpcs.Apiclient.VolumeAttachService().ListVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
+		volumeAttachmentList, err = vpcs.APIClientVolAttachMgr.ListVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
 		return err
 	})
 	if err != nil {

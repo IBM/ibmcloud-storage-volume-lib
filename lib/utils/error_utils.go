@@ -17,6 +17,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"reflect"
+	"time"
 )
 
 // NewError returns an error that is implemented by provider.Error.
@@ -123,4 +124,43 @@ func ZapError(err error) zapcore.Field {
 	}
 
 	return zap.Error(err)
+}
+
+//ErrorRetrier retry the fucntion
+type ErrorRetrier struct {
+	MaxAttempts   int
+	RetryInterval time.Duration
+	Logger        *zap.Logger
+}
+
+//NewErrorRetrier return new ErrorRetrier
+func NewErrorRetrier(maxAttempt int, retryInterval time.Duration, logger *zap.Logger) *ErrorRetrier {
+	return &ErrorRetrier{
+		MaxAttempts:   maxAttempt,
+		RetryInterval: retryInterval,
+		Logger:        logger,
+	}
+}
+
+//ErrorRetry path for retry logic with logger passed in
+func (er *ErrorRetrier) ErrorRetry(funcToRetry func() (error, bool)) error {
+	var err error
+	var shouldStop bool
+	for i := 0; ; i++ {
+		err, shouldStop = funcToRetry()
+		if shouldStop {
+			break
+		}
+		if err == nil {
+			return err
+		}
+		//Stop if out of retries
+		if i >= (er.MaxAttempts - 1) {
+			break
+		}
+		time.Sleep(er.RetryInterval)
+		er.Logger.Warn("retrying after Error:", zap.Error(err))
+	}
+	//error set by name above so no need to explicitly return it
+	return err
 }

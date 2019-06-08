@@ -25,7 +25,7 @@ func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *mod
 	operation := &client.Operation{
 		Name:        "GetVolumeAttachment",
 		Method:      "GET",
-		PathPattern: instanceIDattachmentIDPath,
+		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
 	var apiErr models.Error

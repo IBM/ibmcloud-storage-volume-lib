@@ -16,6 +16,14 @@ import (
 
 // messagesEn ...
 var messagesEn = map[string]util.Message{
+
+	AuthenticationFailed: util.Message{
+		Code:        AuthenticationFailed,
+		Description: "Failed to authenticate the user",
+		Type:        util.Unauthenticated,
+		RC:          400,
+		Action:      "Either authentication service is not working properly OR user credentials are not corret. You many need to verify by using 'ibmcloud iam' cli.",
+	},
 	"ErrorRequiredFieldMissing": util.Message{
 		Code:        "ErrorRequiredFieldMissing",
 		Description: "[%s] is required to complete the operation",
