@@ -66,6 +66,15 @@ func GetConfPath() string {
 	return GetDefaultConfPath()
 }
 
+// GetConfPathDir get configuration  dir path
+func GetConfPathDir() string {
+	if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" {
+		return confPath
+	}
+	//Get default conf path
+	return GetEtcPath()
+}
+
 // GetDefaultConfPath get default config file path
 func GetDefaultConfPath() string {
 	return filepath.Join(GetEtcPath(), "libconfig.toml")
