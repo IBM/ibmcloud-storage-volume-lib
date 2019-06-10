@@ -47,4 +47,7 @@ type VolumeManager interface {
 
 	//AuthorizeVolume allows aceess to volume  based on given authorization
 	AuthorizeVolume(volumeAuthorization VolumeAuthorization) error
+
+	//DeauthorizeVolume allows aceess to volume  based on given authorization
+	DeauthorizeVolume(volumeAuthorization VolumeAuthorization) error
 }
