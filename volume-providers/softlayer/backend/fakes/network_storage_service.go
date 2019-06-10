@@ -9,6 +9,8 @@ import (
 )
 
 type NetworkStorageService struct {
+	RemoveAccessFromIPAddressListStub       func([]datatypes.Network_Subnet_IpAddress) (bool, error)
+	RemoveAccessFromSubnetListStub          func([]datatypes.Network_Subnet) (bool, error)
 	AllowAccessFromIPAddressListStub        func([]datatypes.Network_Subnet_IpAddress) (bool, error)
 	allowAccessFromIPAddressListMutex       sync.RWMutex
 	allowAccessFromIPAddressListArgsForCall []struct {
@@ -132,6 +134,14 @@ type NetworkStorageService struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *NetworkStorageService) RemoveAccessFromSubnetList(arg1 []datatypes.Network_Subnet_IpAddress) (bool, error) {
+	return true, nil
+}
+
+func (fake *NetworkStorageService) RemoveAccessFromIPAddressList(arg1 []datatypes.Network_Subnet_IpAddress) (bool, error) {
+	return true, nil
 }
 
 func (fake *NetworkStorageService) AllowAccessFromIPAddressList(arg1 []datatypes.Network_Subnet_IpAddress) (bool, error) {
