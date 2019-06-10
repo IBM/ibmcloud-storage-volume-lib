@@ -127,7 +127,7 @@ func (ns *NetworkStorageServiceSL) AllowAccessFromIPAddressList(ipAddressObjectT
 	return dtStatus, dtError
 }
 
-//RemoveAccessFromSubnetList allows access from subnet List
+//RemoveAccessFromSubnetList removes access from subnet List
 func (ns *NetworkStorageServiceSL) RemoveAccessFromSubnetList(subnetObjectTemplates []datatypes.Network_Subnet) (bool, error) {
 	var bStatus bool
 	var dtError error
@@ -138,7 +138,7 @@ func (ns *NetworkStorageServiceSL) RemoveAccessFromSubnetList(subnetObjectTempla
 	return bStatus, dtError
 }
 
-//RemoveAccessFromIpAddressList allows access from Host IP address
+//RemoveAccessFromIpAddressList removes access from Host IP address
 func (ns *NetworkStorageServiceSL) RemoveAccessFromIPAddressList(ipAddressObjectTemplates []datatypes.Network_Subnet_IpAddress) (bool, error) {
 	var dtError error
 	var dtStatus bool
