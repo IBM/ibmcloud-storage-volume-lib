@@ -19,7 +19,7 @@ import (
 
 const (
 	//VpcPathPrefix  VPC URL path prefix
-	VpcPathPrefix = "instances"
+	VpcPathPrefix = "v1/instances"
 	//IksPathPrefix  IKS URL path prefix
 	IksPathPrefix = "v2/storage/workers"
 )

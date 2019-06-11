@@ -11,7 +11,7 @@
 package vpcvolume
 
 const (
-	volumesPath   = "volumes"
+	volumesPath   = "v1/volumes"
 	volumeIDParam = "volume-id"
 	volumeIDPath  = volumesPath + "/{" + volumeIDParam + "}"
 

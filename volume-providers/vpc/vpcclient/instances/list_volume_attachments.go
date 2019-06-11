@@ -37,7 +37,7 @@ func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *mo
 	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
 	if volumeAttachmentTemplate.ClusterID != nil {
 		// IKS case - requires ClusterID in  the request
-		req = req.AddQueryValue("ClusterID", *volumeAttachmentTemplate.ClusterID)
+		req = req.AddQueryValue("clusterID", *volumeAttachmentTemplate.ClusterID)
 	}
 	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(&apiErr).Invoke()
 	if err != nil {
