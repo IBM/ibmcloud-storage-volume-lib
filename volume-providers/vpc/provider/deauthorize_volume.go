@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap"
 )
 
-//AuthorizeVolume allows aceess to volume  based on given authorization
+//DeauthorizeVolume allows aceess to volume  based on given authorization
 func (vpcs *VPCSession) DeauthorizeVolume(volumeAuthorization provider.VolumeAuthorization) error {
 	vpcs.Logger.Info("Entry DeauthorizeVolume", zap.Reflect("volumeDeauthorization", volumeAuthorization))
 	defer vpcs.Logger.Info("Exit DeauthorizeVolume", zap.Reflect("volumeDeauthorization", volumeAuthorization))
