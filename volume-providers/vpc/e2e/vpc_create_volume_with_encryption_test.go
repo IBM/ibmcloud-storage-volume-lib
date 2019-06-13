@@ -44,7 +44,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		defer logger.Sync()
 		// Load config file
 		goPath := os.Getenv("GOPATH")
-		conf, err := config.ReadConfig(goPath+"/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/config.toml", logger)
+		conf, err := config.ReadConfig(goPath+"/src/github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/e2e/config/config.toml", logger)
 		if err != nil {
 			logger.Fatal("Error loading configuration")
 			Expect(err).To(HaveOccurred())
