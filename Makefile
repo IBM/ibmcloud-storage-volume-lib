@@ -56,7 +56,7 @@ build:
 	go build -gcflags '-N -l' -o libSample samples/main.go
 
 volume-lib-e2e-test:
-	go test ./e2e -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true -timeout 90m
+	go test ./volume-providers/vpc/e2e -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true -timeout 90m
 .PHONY: volume-lib-e2e-test
 
 .PHONY: clean
