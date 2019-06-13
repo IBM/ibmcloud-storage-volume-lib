@@ -22,7 +22,7 @@ var messagesEn = map[string]util.Message{
 		Description: "Failed to authenticate the user",
 		Type:        util.Unauthenticated,
 		RC:          400,
-		Action:      "Either authentication service is not working properly OR user credentials are not corret. You many need to verify by using 'ibmcloud iam' cli.",
+		Action:      "Either authentication service is not working properly OR user credentials are not correct. You many need to verify by using 'ibmcloud iam' cli.",
 	},
 	"ErrorRequiredFieldMissing": util.Message{
 		Code:        "ErrorRequiredFieldMissing",

@@ -62,7 +62,7 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 	}()
 	ctxLogger.Info("Opening VPC block session")
 	ccf, _ := iksp.vpcBlockProvider.ContextCredentialsFactory(nil)
-	ctxLogger.Info("Its ISK dual session. Getttng IAM token for  VPC block session")
+	ctxLogger.Info("Its IKS dual session. Getttng IAM token for  VPC block session")
 	vpcContextCredentials, err := ccf.ForIAMAccessToken(iksp.globalConfig.VPC.APIKey, ctxLogger)
 	if err != nil {
 		ctxLogger.Error("Error occured while generating IAM token for VPC", zap.Error(err))
