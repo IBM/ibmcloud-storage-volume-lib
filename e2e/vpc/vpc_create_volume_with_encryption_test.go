@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package e2e
+package vpc
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ import (
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
-	It("Create and delete VPC volume", func() {
+	It("VPC: Create and delete VPC volume", func() {
 		var sess provider.Session
 		var logger *zap.Logger
 		var ctxLogger *zap.Logger
@@ -44,7 +44,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		defer logger.Sync()
 		// Load config file
 		goPath := os.Getenv("GOPATH")
-		conf, err := config.ReadConfig(goPath+"/src/github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/e2e/config/config.toml", logger)
+		conf, err := config.ReadConfig(goPath+vpcConfigFilePath, logger)
 		if err != nil {
 			logger.Fatal("Error loading configuration")
 			Expect(err).To(HaveOccurred())
