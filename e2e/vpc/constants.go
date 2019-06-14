@@ -8,16 +8,16 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package e2e
+package vpc
 
-import (
-	"testing"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+const (
+	vpcZone         = "us-south-1"
+	resourceGroupID = "e58f514e9d7948fdabc04370d2039611"
+	volumeSize      = 10
+	iops            = "0"
+	volumeName      = "e2e-storage-volume"
+	volumeType      = "vpc-block"
+	generation      = "gt"
+	vpcProfile      = "general-purpose"
+	vpcConfigFilePath = "/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml"
 )
-
-func TestE2e(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "ibmcloud-storage-volume-lib e2e suite")
-}
