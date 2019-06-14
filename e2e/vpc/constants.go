@@ -8,7 +8,7 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package e2e
+package vpc
 
 const (
 	vpcZone           = "VPC_ZONE"
