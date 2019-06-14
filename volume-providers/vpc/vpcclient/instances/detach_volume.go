@@ -36,6 +36,10 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
 	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
 	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	if volumeAttachmentTemplate.ClusterID != nil {
+		// IKS case - requires ClusterID in  the request
+		req = req.AddQueryValue("clusterID", *volumeAttachmentTemplate.ClusterID)
+	}
 	resp, err := req.JSONError(&apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attahment", zap.Error(err))
