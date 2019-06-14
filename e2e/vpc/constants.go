@@ -8,16 +8,16 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package vpc
+package e2e
 
 const (
-	vpcZone         = "us-south-1"
-	resourceGroupID = "e58f514e9d7948fdabc04370d2039611"
-	volumeSize      = 10
-	iops            = "0"
-	volumeName      = "e2e-storage-volume"
-	volumeType      = "vpc-block"
-	generation      = "gt"
-	vpcProfile      = "general-purpose"
+	vpcZone           = "VPC_ZONE"
+	resourceGroupID   = "RESOURCEGROUP"
+	volumeSize        = 10
+	iops              = "0"
+	volumeName        = "e2e-storage-volume"
+	volumeType        = "vpc-block"
+	generation        = "gt"
+	vpcProfile        = "general-purpose"
 	vpcConfigFilePath = "/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml"
 )
