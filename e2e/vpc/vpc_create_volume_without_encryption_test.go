@@ -23,7 +23,7 @@ import (
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
-	It("VPC: Create and delete VPC volume[with encryption]", func() {
+	It("VPC: Create and delete VPC volume[without encryption]", func() {
 		volName := volumeName
 		volSize := volumeSize
 		Iops := iops
@@ -40,8 +40,6 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume.Iops = &Iops
 		volume.VPCVolume.ResourceGroup.ID = resourceGroupID
 		volume.Az = vpcZone
-		volume.VPCVolume.VolumeEncryptionKey = &provider.VolumeEncryptionKey{}
-		volume.VPCVolume.VolumeEncryptionKey.CRN = volumeEncryptionKeyCRN
 
 		volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
 		volumeObj, err := sess.CreateVolume(*volume)

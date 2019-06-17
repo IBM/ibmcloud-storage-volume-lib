@@ -15,9 +15,67 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"os"
+
+	"github.com/IBM/ibmcloud-storage-volume-lib/config"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
+	uid "github.com/satori/go.uuid"
+	"go.uber.org/zap"
 )
+
+var sess provider.Session
+var logger *zap.Logger
+var ctxLogger *zap.Logger
+var traceLevel zap.AtomicLevel
+var requestID string
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "ibmcloud-storage-volume-lib VPC e2e test suite")
 }
+
+var _ = BeforeSuite(func() {
+	// Setup new style zap logger
+	logger, traceLevel = getContextLogger()
+	defer logger.Sync()
+	// Load config file
+	goPath := os.Getenv("GOPATH")
+	conf, err := config.ReadConfig(goPath+vpcConfigFilePath, logger)
+	if err != nil {
+		logger.Fatal("Error loading configuration")
+		Expect(err).To(HaveOccurred())
+	}
+
+	// Check if debug log level enabled or not
+	if conf.Server != nil && conf.Server.DebugTrace {
+		traceLevel.SetLevel(zap.DebugLevel)
+	}
+
+	// Prepare provider registry
+	providerRegistry, err := provider_util.InitProviders(conf, logger)
+	if err != nil {
+		logger.Fatal("Error configuring providers", local.ZapError(err))
+		Expect(err).To(HaveOccurred())
+	}
+
+	providerName := ""
+	if conf.VPC.Enabled {
+		providerName = conf.VPC.VPCBlockProviderName
+	}
+
+	ctxLogger, _ = getContextLogger()
+	requestID = uid.NewV4().String()
+	ctxLogger = logger.With(zap.String("RequestID", requestID))
+	sess, _, err = provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
+	if err != nil {
+		Expect(err).To(HaveOccurred())
+	}
+
+})
+
+var _ = AfterSuite(func() {
+	defer sess.Close()
+	defer ctxLogger.Sync()
+})
