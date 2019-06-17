@@ -5,7 +5,7 @@ debug_trace = false
 iam_url = "https://iam.bluemix.net"
 iam_client_id = "bx"
 iam_client_secret = "bx"
-iam_api_key = "IAM_API_KEY"
+iam_api_key = "53GL6CsuRLWnK95MOCxcYiItl5v0NctLpa7CL_D6ideP"
 refresh_token = ""
 
 

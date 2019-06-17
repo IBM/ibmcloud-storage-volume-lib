@@ -20,8 +20,8 @@ import (
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
-	It("VPC: Create and delete VPC volume[without encryption]", func() {
-		volName := volumeName + "no_encryption"
+	It("VPC: Create and delete VPC volume[profile: 5iops-tier]", func() {
+		volName := volumeName + "5iops"
 		volSize := volumeSize
 		Iops := iops
 
@@ -30,8 +30,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume.VolumeType = volumeType
 		volume.VPCVolume.Generation = generation
 		volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
-		profile := vpcProfile
-		volume.VPCVolume.Profile = &provider.Profile{Name: profile}
+		volume.VPCVolume.Profile = &provider.Profile{Name: "5iops-tier"}
 		volume.Name = &volName
 		volume.Capacity = &volSize
 		volume.Iops = &Iops
