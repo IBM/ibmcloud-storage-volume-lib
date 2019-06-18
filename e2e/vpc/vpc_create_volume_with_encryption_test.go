@@ -43,7 +43,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume.VPCVolume.VolumeEncryptionKey = &provider.VolumeEncryptionKey{}
 		volume.VPCVolume.VolumeEncryptionKey.CRN = volumeEncryptionKeyCRN
 
-		volume.VPCVolume.Tags = []string{"Testing VPC Volume"}
+		volume.VPCVolume.Tags = []string{"Testing VPC volume from library with encryption"}
 		volumeObj, err := sess.CreateVolume(*volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
