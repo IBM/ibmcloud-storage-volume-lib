@@ -118,7 +118,7 @@ func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) {
 	var err error
 	err = r.errorRetrier.ErrorRetry(func() (error, bool) {
 		iamResp, err = r.sendTokenExchangeRequest()
-		return err, isConnectionError(err)
+		return err, !isConnectionError(err) // Skip rettry if its not connection error
 	})
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) {
 	var err error
 	err = r.errorRetrier.ErrorRetry(func() (error, bool) {
 		iamResp, err = r.sendTokenExchangeRequest()
-		return err, isConnectionError(err)
+		return err, !isConnectionError(err)
 	})
 
 	if err != nil {

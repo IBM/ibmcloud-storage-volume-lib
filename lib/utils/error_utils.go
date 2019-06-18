@@ -148,6 +148,7 @@ func (er *ErrorRetrier) ErrorRetry(funcToRetry func() (error, bool)) error {
 	var shouldStop bool
 	for i := 0; ; i++ {
 		err, shouldStop = funcToRetry()
+		er.Logger.Debug("Retry Function Result", zap.Error(err), zap.Bool("shouldStop", shouldStop))
 		if shouldStop {
 			break
 		}
