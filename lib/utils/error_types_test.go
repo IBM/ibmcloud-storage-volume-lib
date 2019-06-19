@@ -8,16 +8,18 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package e2e
+package util
 
 import (
+	"errors"
+	"github.com/stretchr/testify/assert"
 	"testing"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 )
 
-func TestE2e(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "ibmcloud-storage-volume-lib e2e suite")
+func TestGetErrorType(t *testing.T) {
+	err := errors.New("Infrastructure account is temporarily locked")
+	newErr := NewError("ErrorProviderAccountTemporarilyLocked", "Infrastructure account is temporarily locked", err)
+	assert.NotNil(t, GetErrorType(newErr))
+	newErr = NewError("ProvisioningFailed", "ProvisioningFailed", errors.New("ProvisioningFailed"))
+	assert.NotNil(t, GetErrorType(newErr))
 }

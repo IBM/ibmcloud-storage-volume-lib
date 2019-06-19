@@ -8,21 +8,16 @@
  * the U.S. Copyright Office.
  ******************************************************************************/
 
-package util
+package vpc
 
-import (
-	"testing"
-
-	"github.com/stretchr/testify/assert"
+const (
+	vpcZone           = "VPC_ZONE"
+	resourceGroupID   = "RESOURCEGROUP"
+	volumeSize        = 10
+	iops              = "0"
+	volumeName        = "e2e-storage-volume"
+	volumeType        = "vpc-block"
+	generation        = "gt"
+	vpcProfile        = "general-purpose"
+	vpcConfigFilePath = "/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml"
 )
-
-func TestSafeStringValue(t *testing.T) {
-	assert.Equal(t, "", SafeStringValue(nil))
-	hello := "hello"
-	assert.Equal(t, "hello", SafeStringValue(&hello))
-}
-
-func TestStringHasValue(t *testing.T) {
-	hello := "hello"
-	assert.True(t, true, StringHasValue(&hello))
-}
