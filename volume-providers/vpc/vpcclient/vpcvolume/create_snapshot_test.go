@@ -53,19 +53,18 @@ func TestCreateSnapshot(t *testing.T) {
 		}, {
 			name:    "Verify that the snapshot is parsed correctly",
 			status:  http.StatusOK,
-			url:     "/volumes/volume-id/snapshots",
+			url:     vpcvolume.Version + "/volumes/volume-id/snapshots",
 			content: "{\"id\":\"snapshot1\",\"status\":\"pending\"}",
 			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.Equal(t, "snapshot1", snapshot.ID)
-				}
+				assert.NotNil(t, snapshot)
 			},
 		}, {
-			name:   "Verify that the snapshot is parsed correctly",
-			status: http.StatusOK,
-			url:    vpcvolume.Version + "/volumes/volume-id/snapshots",
+			name:    "Verify that the snapshot is parsed correctly",
+			status:  http.StatusOK,
+			content: "{\"id\":\"snapshot1\",\"status\":\"pending\"}",
+			url:     vpcvolume.Version + "/volumes/volume-id/snapshots",
 			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				assert.Nil(t, snapshot)
+				assert.NotNil(t, snapshot)
 			},
 		},
 	}
@@ -94,7 +93,9 @@ func TestCreateSnapshot(t *testing.T) {
 			logger.Info("Snapshot", zap.Reflect("snapshot", snapshot))
 
 			// vpc snapshot functionality is not yet ready. It would return error for now
-			assert.Error(t, err)
+			if testcase.verify != nil {
+				testcase.verify(t, snapshot, err)
+			}
 		})
 	}
 }
