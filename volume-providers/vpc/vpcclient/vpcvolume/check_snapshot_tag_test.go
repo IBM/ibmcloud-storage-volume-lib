@@ -28,6 +28,9 @@ func TestCheckSnapshotTag(t *testing.T) {
 	testCases := []struct {
 		name string
 
+		// backend url
+		url string
+
 		// Response
 		status  int
 		content string
@@ -39,25 +42,28 @@ func TestCheckSnapshotTag(t *testing.T) {
 		{
 			name:   "Verify that the correct endpoint is invoked",
 			status: http.StatusNoContent,
+			url:    vpcvolume.Version + "/volumes/volume1/snapshots/snapshot1/tags/test-tag",
 		}, {
 			name:      "Verify that a 404 is returned to the caller",
 			status:    http.StatusNotFound,
+			url:       vpcvolume.Version + "/volumes/volume1/snapshots/snapshot1/tags/test-tag",
 			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:    "Verify that the snapshot is parsed correctly",
 			status:  http.StatusNotFound,
+			url:     vpcvolume.Version + "/volumes/volume1/snapshots/snapshot1/tags/test-tag",
 			content: "{\"id\":\"snapshot1\",\"name\":\"snapshot1\",\"status\":\"pending\"}",
 			verify: func(t *testing.T, err error) {
 				assert.NotNil(t, err)
-
 			},
 		}, {
 			name:    "Verify that the snapshot tag exists",
 			status:  http.StatusOK,
+			url:     vpcvolume.Version + "/volumes/volume1/snapshots/snapshot1/tags/test-tag",
 			content: "{\"id\":\"snapshot1\",\"name\":\"snapshot1\",\"status\":\"pending\", \"tags\":[\"test-tag\"]}",
 			verify: func(t *testing.T, err error) {
-				assert.NotNil(t, err)
+				assert.Nil(t, err)
 			},
 		},
 	}
@@ -66,7 +72,7 @@ func TestCheckSnapshotTag(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			emptyString := ""
-			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes/volume1/snapshots/snapshot1/tags/test-tag", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, testcase.url, http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
 
 			defer teardown()
 

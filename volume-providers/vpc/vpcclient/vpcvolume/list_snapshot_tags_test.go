@@ -11,7 +11,6 @@
 package vpcvolume_test
 
 import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas/test"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
 	"github.com/stretchr/testify/assert"
@@ -28,30 +27,36 @@ func TestListSnapshotTags(t *testing.T) {
 	testCases := []struct {
 		name string
 
+		// backend url
+		url string
+
+		tags *[]string
+
 		// Response
 		status  int
 		content string
 
 		// Expected return
 		expectErr string
-		verify    func(*testing.T, *models.Snapshot, error)
+		verify    func(*testing.T, *[]string, error)
 	}{
 		{
 			name:   "Verify that the correct endpoint is invoked",
 			status: http.StatusNoContent,
+			url:    vpcvolume.Version + "/volumes/volume-id/snapshots/snapshot-id/tags",
 		}, {
 			name:      "Verify that a 404 is returned to the caller",
 			status:    http.StatusNotFound,
 			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
+			url:       "/volumes/volume-id/snapshots/snapshot-id/tags",
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:    "Verify that the snapshot is parsed correctly",
 			status:  http.StatusOK,
-			content: "{\"id\":\"snapshot1\",\"status\":\"pending\"}",
-			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.Equal(t, "snapshot1", snapshot.ID)
-				}
+			content: "[\"tag1\"]",
+			url:     vpcvolume.Version + "/volumes/volume-id/snapshots/snapshot-id/tags",
+			verify: func(t *testing.T, tags *[]string, err error) {
+				assert.NotNil(t, tags)
 			},
 		},
 	}
@@ -60,7 +65,7 @@ func TestListSnapshotTags(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			requestBody := ""
-			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes/volume-id/snapshots/snapshot-id/tags", http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, testcase.url, http.MethodGet, &requestBody, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -72,7 +77,9 @@ func TestListSnapshotTags(t *testing.T) {
 			logger.Info("Tags", zap.Reflect("tags", tags))
 
 			// vpc snapshot functionality is not yet ready. It would return error for now
-			assert.Error(t, err)
+			if testcase.verify != nil {
+				testcase.verify(t, tags, err)
+			}
 		})
 	}
 }
