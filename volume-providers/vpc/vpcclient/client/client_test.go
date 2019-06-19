@@ -316,3 +316,25 @@ func TestOperationURLProcessing(t *testing.T) {
 		})
 	}
 }
+
+func TestWithPathParameter(t *testing.T) {
+	mux := http.NewServeMux()
+	s := httptest.NewServer(mux)
+
+	log := &bytes.Buffer{}
+
+	riaas := client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token").WithPathParameter("test", "test")
+	assert.NotNil(t, riaas)
+	defer s.Close()
+}
+
+func TestWithQueryValue(t *testing.T) {
+	mux := http.NewServeMux()
+	s := httptest.NewServer(mux)
+
+	log := &bytes.Buffer{}
+
+	riaas := client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token").WithQueryValue("test", "test")
+	assert.NotNil(t, riaas)
+	defer s.Close()
+}

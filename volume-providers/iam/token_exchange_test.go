@@ -16,6 +16,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/softlayer/softlayer-go/sl"
 	"github.com/stretchr/testify/assert"
@@ -219,6 +220,49 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedRequesting_empty_body(t *test
 		assert.Equal(t, []string{"empty response body"},
 			util.ErrorDeepUnwrapString(err))
 	}
+}
+
+func TestNewTokenExchangeServiceWithClient(t *testing.T) {
+	bluemixConf := config.BluemixConfig{
+		IamURL:          server.URL,
+		IamClientID:     "test",
+		IamClientSecret: "secret",
+	}
+
+	newClient := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	tes, err := NewTokenExchangeServiceWithClient(&bluemixConf, newClient)
+	assert.NoError(t, err)
+	assert.NotNil(t, tes)
+}
+
+func TestExchangeIAMAPIKeyForIMSToken(t *testing.T) {
+	logger := zap.New(
+		zapcore.NewCore(zapcore.NewJSONEncoder(zap.NewDevelopmentEncoderConfig()), consoleDebugging, lowPriority),
+		zap.AddCaller(),
+	)
+
+	httpSetup()
+
+	mux.HandleFunc("/oidc/token",
+		func(w http.ResponseWriter, r *http.Request) {
+			// Leave response empty
+		},
+	)
+
+	bluemixConf := config.BluemixConfig{
+		IamURL:          server.URL,
+		IamClientID:     "test",
+		IamClientSecret: "secret",
+	}
+
+	tes, err := NewTokenExchangeService(&bluemixConf)
+	assert.NoError(t, err)
+
+	ims, err := tes.ExchangeIAMAPIKeyForIMSToken("badrefreshtoken", logger)
+	assert.Nil(t, ims)
+	assert.Error(t, err)
 }
 
 func Test_ExchangeAccessTokenForIMSToken_Success(t *testing.T) {

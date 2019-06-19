@@ -63,7 +63,7 @@ spec:
           secretName: volume-lib-secret
 ```
 #### IAM secrets:
-If you want to use your IAM credentials , please make sure following properties are set in configuration file `ibmcloud-storage-volume-lib/etc/libconfig.toml`.  Replace value for `iam_api_key` and keep blank for `softlayer_username` and `softlayer_api_key`
+If you want to use your IAM credentials, please make sure the following properties are set in configuration file `ibmcloud-storage-volume-lib/etc/libconfig.toml`.  Replace value for `iam_api_key` and keep blank for `softlayer_username` and `softlayer_api_key`
 
 ```
 [bluemix]
@@ -89,7 +89,7 @@ softlayer_api_timeout = "20s"
 
 
 ### Step 3
-From the implementation file which uses use this library, user need to initilaze the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
+From the implementation file which uses use this library, user need to initialize the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
 
 `github.com/IBM/ibmcloud-storage-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
 
@@ -102,26 +102,26 @@ sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, conf.S
 ```
 
 `OpenProviderSession` call will be required for all enabled provider.
-Once session is ready the user can all any method/interface which are part of `ibmcloud-storage-volume-lib/lib/provider/*_manager.go`. Sample code can be found `ibmcloud-storage-volume-lib/main.go`
+Once session is ready the user can call any method/interface which are part of `ibmcloud-storage-volume-lib/lib/provider/*_manager.go`. Sample code can be found `ibmcloud-storage-volume-lib/main.go`
 
 ## How to build the sample code
-To build the sample code, just need to follow following commands
+To build the sample code, just need to follow the following commands
 
 ### Step 1
-Set the GOPATH as per your system and directory lets say `/home/user/test`   and create a sub directory under this by using following command
+Set the GOPATH as per your system and directory lets say `/home/user/test` and create a sub directory under this by using the following command
 
 ```
 $mkdir -p src/github.com/IBM
 ```
 
-### Step 2
-Change the directory to `src/github.com/IBM`  nad check out the code
+Change the directory to `src/github.com/IBM` and check out the code
+
 ```
 git clone https://github.com/IBM/ibmcloud-storage-volume-lib.git
 ```
 
 ### Step 3
-Change the directory `$cd ibmcloud-storage-volume-lib`  and run the following command to build the sample code
+Change the directory `$cd ibmcloud-storage-volume-lib` and run the following command to build the sample code
 
 ```
 $make deps
