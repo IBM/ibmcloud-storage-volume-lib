@@ -59,7 +59,7 @@ func TestGetSnapshot(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			emptyString := ""
-			test.SetupMuxResponse(t, mux, "volumes/volume1/snapshots/snapshot1", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes/volume1/snapshots/snapshot1", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
 
 			defer teardown()
 

@@ -40,28 +40,28 @@ func TestCheckVolumeTag(t *testing.T) {
 	}{
 		{
 			name:   "Verify that the correct endpoint is invoked",
-			url:    "/volumes/volume-id/tags/tag-name",
+			url:    "/v1/volumes/volume-id/tags/tag-name",
 			status: http.StatusNoContent,
 		}, {
 			name:      "Verify that a 404 is returned to the caller",
-			url:       "/volumes/volume-id/tags/tag-name",
+			url:       "/v1/volumes/volume-id/tags/tag-name",
 			status:    http.StatusNotFound,
 			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:    "Verify that the volume is parsed correctly and has correct tag name",
-			url:     "/volumes/volume-id/tags/tag-name",
+			url:     "/v1/volumes/volume-id/tags/tag-name",
 			status:  http.StatusOK,
 			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\", \"tags\":[\"tag-name\"]}",
 		}, {
 			name:      "False positive: What if the volume ID is not matched",
-			url:       "/volumes/wrong-volume-id/tags/tag-name",
+			url:       "/v1/volumes/wrong-volume-id/tags/tag-name",
 			status:    http.StatusNotFound,
 			content:   "{\"id\":\"wrong-vol\",\"name\":\"wrong-vol\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:wrong-vol\", \"tags\":[\"Wrong Tag\"]}",
 			expectErr: "json: cannot unmarshal number into Go value of type models.Error",
 		}, {
 			name:    "False positive: What if the tag name is not matched",
-			url:     "/volumes/volume-id/tags/tag-name",
+			url:     "/v1/volumes/volume-id/tags/tag-name",
 			status:  http.StatusOK,
 			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\", \"tags\":[\"Test Tag\"]}",
 		},

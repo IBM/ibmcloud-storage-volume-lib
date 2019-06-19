@@ -70,7 +70,7 @@ func TestCreateSnapshot(t *testing.T) {
         			"Tags":["Test"]]
       			}`
 			requestBody = strings.Join(strings.Fields(requestBody), "") + "\n"
-			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots", http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes/volume-id/snapshots", http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
 
 			defer teardown()
 

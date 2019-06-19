@@ -60,7 +60,7 @@ func TestListSnapshotTags(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			requestBody := ""
-			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots/snapshot-id/tags", http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes/volume-id/snapshots/snapshot-id/tags", http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
