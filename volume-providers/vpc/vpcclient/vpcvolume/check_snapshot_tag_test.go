@@ -58,10 +58,9 @@ func TestCheckSnapshotTag(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			name:    "Verify that the snapshot tag exists",
-			status:  http.StatusOK,
-			url:     vpcvolume.Version + "/volumes/volume1/snapshots/snapshot1/tags/test-tag",
-			content: "{\"id\":\"snapshot1\",\"name\":\"snapshot1\",\"status\":\"pending\", \"tags\":[\"test-tag\"]}",
+			name:   "Verify that the snapshot tag exists",
+			status: http.StatusOK,
+			url:    vpcvolume.Version + "/volumes/volume1/snapshots/snapshot1/tags/test-tag",
 			verify: func(t *testing.T, err error) {
 				assert.Nil(t, err)
 			},
@@ -82,10 +81,10 @@ func TestCheckSnapshotTag(t *testing.T) {
 
 			err := snapshotService.CheckSnapshotTag("volume1", "snapshot1", "test-tag", logger)
 
+			// vpc snapshot functionality is not yet ready. It would return error for now
 			if testcase.verify != nil {
 				testcase.verify(t, err)
 			}
-			// vpc snapshot functionality is not yet ready. It would return error for now
 		})
 	}
 }
