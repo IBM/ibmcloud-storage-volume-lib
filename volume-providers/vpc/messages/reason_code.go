@@ -10,8 +10,9 @@
 
 package messages
 
-// Attach / Detach problems
 const (
+	//AuthenticationFailed indicate authentication to IAM endpoint failed. e,g IAM_TOKEN refresh
+	AuthenticationFailed = "AuthenticationFailed"
 	//VolumeAttachFailed indicates if volume attach to instance is failed
 	VolumeAttachFailed = "VolumeAttachFailed"
 	//VolumeDetachFailed indicates if volume detach from instance is failed

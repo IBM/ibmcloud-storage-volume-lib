@@ -66,7 +66,7 @@ func TestSetVolumeTag(t *testing.T) {
 	for _, testcase := range testCases {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/volumes/volume-id/tags/tag-name", http.MethodPut, nil, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, "/v1/volumes/volumeid/tags/tagname", http.MethodPut, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -74,7 +74,7 @@ func TestSetVolumeTag(t *testing.T) {
 
 			volumeService := vpcvolume.New(client)
 
-			err := volumeService.SetVolumeTag("volume-id", "tag-name", logger)
+			err := volumeService.SetVolumeTag("volumeid", "tagname", logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())

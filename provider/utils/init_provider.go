@@ -13,8 +13,6 @@ package utils
 import (
 	"errors"
 	"go.uber.org/zap"
-	"strings"
-	"time"
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
 	softlayer_file "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/file"
@@ -118,29 +116,15 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 		fatal = true
 		return
 	}
-	currentRetryAttempt := 0
-	var contextCredentials provider.ContextCredentials
-	for currentRetryAttempt < maxRetryAttempts {
-		// Here, we connect to authentication endpoint to generate the credentials for the session e.g IAM_TOKEN
-		// There might be unstable network  and should be retried again
-		contextCredentials, err = GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
-		if err != nil && strings.Contains(err.Error(), "connection") {
-			// Retry for the error --> read: connection reset by peer OR connection closed"
-			currentRetryAttempt = currentRetryAttempt + 1
-			ctxLogger.Warn("Unable to generate ContextCredentialsFactory. Retrying...", zap.Int("currentRetryAttempt", currentRetryAttempt), zap.Int("maxRetryAttempts", maxRetryAttempts), zap.Error(err))
-			time.Sleep(retryInterval * time.Second)
-			continue
-		} else if err != nil { // If err is other than connection error return immediately
-			fatal = true
-			ctxLogger.Error("Failed to open provider session", local.ZapError(err), zap.Bool("Fatal", fatal))
-			return
-		}
-		// break loop if there is no error
-		break
+	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
+	if err == nil {
+		session, err = prov.OpenSession(nil, contextCredentials, ctxLogger)
 	}
-	// open the session if there is no error in getting credential / IAM_TOKEN
-	session, err = prov.OpenSession(nil, contextCredentials, ctxLogger)
 
+	if err != nil {
+		fatal = true
+		ctxLogger.Error("Failed to open provider session", local.ZapError(err), zap.Bool("Fatal", fatal))
+	}
 	return
 }
 
@@ -152,19 +136,22 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 	slUser := conf.Softlayer.SoftlayerUsername
 	slAPIKey := conf.Softlayer.SoftlayerAPIKey
 	iamAPIKey := conf.Bluemix.IamAPIKey
+	vpcIamAPIKey := conf.VPC.APIKey
 
 	// Select appropriate authentication strategy
+	isSLProvider := providerID == conf.Softlayer.SoftlayerBlockProviderName || providerID == conf.Softlayer.SoftlayerFileProviderName
 	switch {
-	case (providerID == conf.Softlayer.SoftlayerBlockProviderName || providerID == conf.Softlayer.SoftlayerFileProviderName) &&
-		!isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
+	case isSLProvider && !isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
 		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, ctxLogger)
 
-	case (providerID == conf.VPC.VPCBlockProviderName || providerID == conf.IKS.IKSBlockProviderName):
-		return contextCredentialsFactory.ForIAMAccessToken(iamAPIKey, ctxLogger)
+	case (providerID == conf.VPC.VPCBlockProviderName):
+		return contextCredentialsFactory.ForIAMAccessToken(vpcIamAPIKey, ctxLogger)
 
-	case (!isEmptyStringValue(&iamAPIKey) && (providerID != conf.VPC.VPCBlockProviderName)):
+	case isSLProvider && !isEmptyStringValue(&iamAPIKey):
 		return contextCredentialsFactory.ForIAMAPIKey(AccountID, iamAPIKey, ctxLogger)
 
+	case (providerID == conf.IKS.IKSBlockProviderName):
+		return provider.ContextCredentials{}, nil // Get credentials  in OpenSession method
 	default:
 		return provider.ContextCredentials{}, util.NewError("ErrorInsufficientAuthentication",
 			"Insufficient authentication credentials")

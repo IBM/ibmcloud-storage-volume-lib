@@ -10,6 +10,16 @@ import (
 )
 
 type RegionalAPI struct {
+	IKSVolumeAttachServiceStub        func() instances.VolumeAttachManager
+	iKSVolumeAttachServiceMutex       sync.RWMutex
+	iKSVolumeAttachServiceArgsForCall []struct {
+	}
+	iKSVolumeAttachServiceReturns struct {
+		result1 instances.VolumeAttachManager
+	}
+	iKSVolumeAttachServiceReturnsOnCall map[int]struct {
+		result1 instances.VolumeAttachManager
+	}
 	LoginStub        func(string) error
 	loginMutex       sync.RWMutex
 	loginArgsForCall []struct {
@@ -53,6 +63,58 @@ type RegionalAPI struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *RegionalAPI) IKSVolumeAttachService() instances.VolumeAttachManager {
+	fake.iKSVolumeAttachServiceMutex.Lock()
+	ret, specificReturn := fake.iKSVolumeAttachServiceReturnsOnCall[len(fake.iKSVolumeAttachServiceArgsForCall)]
+	fake.iKSVolumeAttachServiceArgsForCall = append(fake.iKSVolumeAttachServiceArgsForCall, struct {
+	}{})
+	fake.recordInvocation("IKSVolumeAttachService", []interface{}{})
+	fake.iKSVolumeAttachServiceMutex.Unlock()
+	if fake.IKSVolumeAttachServiceStub != nil {
+		return fake.IKSVolumeAttachServiceStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.iKSVolumeAttachServiceReturns
+	return fakeReturns.result1
+}
+
+func (fake *RegionalAPI) IKSVolumeAttachServiceCallCount() int {
+	fake.iKSVolumeAttachServiceMutex.RLock()
+	defer fake.iKSVolumeAttachServiceMutex.RUnlock()
+	return len(fake.iKSVolumeAttachServiceArgsForCall)
+}
+
+func (fake *RegionalAPI) IKSVolumeAttachServiceCalls(stub func() instances.VolumeAttachManager) {
+	fake.iKSVolumeAttachServiceMutex.Lock()
+	defer fake.iKSVolumeAttachServiceMutex.Unlock()
+	fake.IKSVolumeAttachServiceStub = stub
+}
+
+func (fake *RegionalAPI) IKSVolumeAttachServiceReturns(result1 instances.VolumeAttachManager) {
+	fake.iKSVolumeAttachServiceMutex.Lock()
+	defer fake.iKSVolumeAttachServiceMutex.Unlock()
+	fake.IKSVolumeAttachServiceStub = nil
+	fake.iKSVolumeAttachServiceReturns = struct {
+		result1 instances.VolumeAttachManager
+	}{result1}
+}
+
+func (fake *RegionalAPI) IKSVolumeAttachServiceReturnsOnCall(i int, result1 instances.VolumeAttachManager) {
+	fake.iKSVolumeAttachServiceMutex.Lock()
+	defer fake.iKSVolumeAttachServiceMutex.Unlock()
+	fake.IKSVolumeAttachServiceStub = nil
+	if fake.iKSVolumeAttachServiceReturnsOnCall == nil {
+		fake.iKSVolumeAttachServiceReturnsOnCall = make(map[int]struct {
+			result1 instances.VolumeAttachManager
+		})
+	}
+	fake.iKSVolumeAttachServiceReturnsOnCall[i] = struct {
+		result1 instances.VolumeAttachManager
+	}{result1}
 }
 
 func (fake *RegionalAPI) Login(arg1 string) error {
@@ -274,6 +336,8 @@ func (fake *RegionalAPI) VolumeServiceReturnsOnCall(i int, result1 vpcvolume.Vol
 func (fake *RegionalAPI) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
+	fake.iKSVolumeAttachServiceMutex.RLock()
+	defer fake.iKSVolumeAttachServiceMutex.RUnlock()
 	fake.loginMutex.RLock()
 	defer fake.loginMutex.RUnlock()
 	fake.snapshotServiceMutex.RLock()
