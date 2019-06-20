@@ -13,9 +13,12 @@ package utils
 import (
 	"errors"
 	"go.uber.org/zap"
+	"strings"
+	"time"
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
 	softlayer_file "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/file"
+	iks_vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/iks/provider"
 	vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
@@ -24,6 +27,10 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/registry"
 )
+
+const maxTimeout = 300  //secondsPerDay
+const retryInterval = 5 //seconds
+const maxRetryAttempts = maxTimeout / retryInterval
 
 // InitProviders initialization for all providers as per configurations
 func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers, error) {
@@ -72,6 +79,18 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 		haveProviders = true
 	}
 
+	// IKS provider registration
+	if conf.IKS != nil && conf.IKS.Enabled {
+		logger.Info("Configuring IKS-VPC Block Provider")
+		prov, err := iks_vpc_provider.NewProvider(conf, logger)
+		if err != nil {
+			logger.Info("VPC block provider error!")
+			return nil, err
+		}
+		providerRegistry.Register(conf.IKS.IKSBlockProviderName, prov)
+		haveProviders = true
+	}
+
 	if haveProviders {
 		logger.Info("Provider registration done!!!")
 		return providerRegistry, nil
@@ -99,16 +118,29 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 		fatal = true
 		return
 	}
-
-	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
-	if err == nil {
-		session, err = prov.OpenSession(nil, contextCredentials, ctxLogger)
+	currentRetryAttempt := 0
+	var contextCredentials provider.ContextCredentials
+	for currentRetryAttempt < maxRetryAttempts {
+		// Here, we connect to authentication endpoint to generate the credentials for the session e.g IAM_TOKEN
+		// There might be unstable network  and should be retried again
+		contextCredentials, err = GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
+		if err != nil && strings.Contains(err.Error(), "connection") {
+			// Retry for the error --> read: connection reset by peer OR connection closed"
+			currentRetryAttempt = currentRetryAttempt + 1
+			ctxLogger.Warn("Unable to generate ContextCredentialsFactory. Retrying...", zap.Int("currentRetryAttempt", currentRetryAttempt), zap.Int("maxRetryAttempts", maxRetryAttempts), zap.Error(err))
+			time.Sleep(retryInterval * time.Second)
+			continue
+		} else if err != nil { // If err is other than connection error return immediately
+			fatal = true
+			ctxLogger.Error("Failed to open provider session", local.ZapError(err), zap.Bool("Fatal", fatal))
+			return
+		}
+		// break loop if there is no error
+		break
 	}
+	// open the session if there is no error in getting credential / IAM_TOKEN
+	session, err = prov.OpenSession(nil, contextCredentials, ctxLogger)
 
-	if err != nil {
-		fatal = true
-		ctxLogger.Error("Failed to open provider session", local.ZapError(err), zap.Bool("Fatal", fatal))
-	}
 	return
 }
 
@@ -127,7 +159,7 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 		!isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
 		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, ctxLogger)
 
-	case (providerID == conf.VPC.VPCBlockProviderName):
+	case (providerID == conf.VPC.VPCBlockProviderName || providerID == conf.IKS.IKSBlockProviderName):
 		return contextCredentialsFactory.ForIAMAccessToken(iamAPIKey, ctxLogger)
 
 	case (!isEmptyStringValue(&iamAPIKey) && (providerID != conf.VPC.VPCBlockProviderName)):

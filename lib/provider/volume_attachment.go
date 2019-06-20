@@ -27,19 +27,19 @@ const (
 // VolumeAttachManager ...
 type VolumeAttachManager interface {
 	//Attach method attaches a volume/ fileset to a server
+	//Its non bloking call and does not wait to complete the attachment
 	AttachVolume(attachRequest VolumeAttachmentRequest) (*VolumeAttachmentResponse, error)
 	//Detach detaches the volume/ fileset from the server
+	//Its non bloking call and does not wait to complete the detachment
 	DetachVolume(detachRequest VolumeAttachmentRequest) (*http.Response, error)
 
-	/*
-	     Below method will be uncommented when there is support
+	//WaitForAttachVolume waits for the volume to be attached to the host
+	//Return error if wait is timed out OR there is other error
+	WaitForAttachVolume(attachRequest VolumeAttachmentRequest) (*VolumeAttachmentResponse, error)
 
-	   	//Wait for the volume to be attached on the node
-	   	WaitForAttach(devicePath string, opts map[string]string) VolumeResponse
-
-	   	//Wait for the volume to be detached on the node
-	   	WaitForDetach(devicePath string) VolumeResponse
-	*/
+	//WaitForDetachVolume waits for the volume to be detached from the host
+	//Return error if wait is timed out OR there is other error
+	WaitForDetachVolume(detachRequest VolumeAttachmentRequest) error
 
 	//GetAttachAttachment retirves the current status of given volume attach request
 	GetVolumeAttachment(attachRequest VolumeAttachmentRequest) (*VolumeAttachmentResponse, error)

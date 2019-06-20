@@ -18,27 +18,28 @@ import (
 	"time"
 )
 
-// ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
-func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
-	defer util.TimeTracker("GetAttachStatus", time.Now())
+// GetVolumeAttachment retrives the volume attach status with given volume attachment details
+func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
+	defer util.TimeTracker("DetachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:        "ListVolumeAttachment",
+		Name:        "GetVolumeAttachment",
 		Method:      "GET",
-		PathPattern: instanceIDvolumeAttachmentPath,
+		PathPattern: instanceIDattachmentIDPath,
 	}
 
-	var volumeAttachmentList models.VolumeAttachmentList
 	var apiErr models.Error
-
+	var volumeAttachment models.VolumeAttachment
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID))
+	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
 	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
-	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(&apiErr).Invoke()
+	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	_, err := req.JSONSuccess(&volumeAttachment).JSONError(&apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))
 		return nil, err
 	}
-	return &volumeAttachmentList, nil
+	ctxLogger.Info("Successfuly retrieved the volume attachment", zap.Reflect("volumeAttachment", volumeAttachment))
+	return &volumeAttachment, err
 }

@@ -45,6 +45,7 @@ func NewVolumeAttachment(volumeAttachmentRequest provider.VolumeAttachmentReques
 		},
 	}
 	if volumeAttachmentRequest.VPCVolumeAttachment != nil {
+		va.ID = volumeAttachmentRequest.VPCVolumeAttachment.ID
 		va.Href = volumeAttachmentRequest.VPCVolumeAttachment.Href
 		va.Name = volumeAttachmentRequest.VPCVolumeAttachment.Name
 		va.DeleteVolumeOnInstanceDelete = volumeAttachmentRequest.VPCVolumeAttachment.DeleteVolumeOnInstanceDelete
