@@ -25,6 +25,7 @@ type RegionalAPI interface {
 
 	VolumeService() vpcvolume.VolumeManager
 	VolumeAttachService() instances.VolumeAttachManager
+	IKSVolumeAttachService() instances.VolumeAttachManager
 	SnapshotService() vpcvolume.SnapshotManager
 }
 
@@ -66,9 +67,14 @@ func (s *Session) VolumeService() vpcvolume.VolumeManager {
 	return vpcvolume.New(s.client)
 }
 
-// VolumeAttachService returns the VolumeMountService for managing volumes
+// VolumeAttachService returns the VolumeAttachService for managing volumes
 func (s *Session) VolumeAttachService() instances.VolumeAttachManager {
 	return instances.New(s.client)
+}
+
+// IKSVolumeAttachService returns the VolumeAttachService for managing volumes through IKS
+func (s *Session) IKSVolumeAttachService() instances.VolumeAttachManager {
+	return instances.NewIKSVolumeAttachmentManager(s.client)
 }
 
 // SnapshotService returns the Snapshot service for managing snapshot

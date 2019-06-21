@@ -20,6 +20,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/backend"
 
+	"errors"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/utils"
@@ -401,6 +402,16 @@ func (sls *SLSession) GetVolumeAttachment(detachRequest provider.VolumeAttachmen
 		Status: provider.NOTSUPPORTED,
 	}
 	return volResponse, nil
+}
+
+//WaitForAttachVolume ...
+func (sls *SLSession) WaitForAttachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
+	return nil, errors.New("Unsupported")
+}
+
+//WaitForDetachVolume ...
+func (sls *SLSession) WaitForDetachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) error {
+	return errors.New("Unsupported")
 }
 
 //GetVolumeByName ...

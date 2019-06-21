@@ -25,6 +25,7 @@ type VolumeAttachment struct {
 	Type   string `json:"type,omitempty"` //boot, data
 	// InstanceID this volume is attached to
 	InstanceID *string    `json:"instance_id,omitempty"`
+	ClusterID  *string    `json:"clusterID,omitempty"`
 	Volume     *Volume    `json:"volume,omitempty"`
 	CreatedAt  *time.Time `json:"created_at,omitempty"`
 	// If set to true, when deleting the instance the volume will also be deleted
@@ -45,10 +46,14 @@ func NewVolumeAttachment(volumeAttachmentRequest provider.VolumeAttachmentReques
 		},
 	}
 	if volumeAttachmentRequest.VPCVolumeAttachment != nil {
+		va.ID = volumeAttachmentRequest.VPCVolumeAttachment.ID
 		va.Href = volumeAttachmentRequest.VPCVolumeAttachment.Href
 		va.Name = volumeAttachmentRequest.VPCVolumeAttachment.Name
 		va.DeleteVolumeOnInstanceDelete = volumeAttachmentRequest.VPCVolumeAttachment.DeleteVolumeOnInstanceDelete
 
+	}
+	if volumeAttachmentRequest.IKSVolumeAttachment != nil {
+		va.ClusterID = volumeAttachmentRequest.IKSVolumeAttachment.ClusterID
 	}
 	return va
 }

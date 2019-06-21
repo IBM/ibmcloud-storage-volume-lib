@@ -74,7 +74,7 @@ func TestSetVolumeTag(t *testing.T) {
 
 			volumeService := vpcvolume.New(client)
 
-			err := volumeService.SetVolumeTag("volume-id", "tag-name", logger)
+			err := volumeService.SetVolumeTag("volumeid", "tagname", logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())

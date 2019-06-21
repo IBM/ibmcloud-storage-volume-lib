@@ -15,6 +15,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"go.uber.org/zap"
 
@@ -54,10 +56,11 @@ func NewTokenExchangeService(bluemixConf *config.BluemixConfig) (TokenExchangeSe
 
 // tokenExchangeRequest ...
 type tokenExchangeRequest struct {
-	tes     *tokenExchangeService
-	request *rest.Request
-	client  *rest.Client
-	logger  *zap.Logger
+	tes          *tokenExchangeService
+	request      *rest.Request
+	client       *rest.Client
+	logger       *zap.Logger
+	errorRetrier *util.ErrorRetrier
 }
 
 // tokenExchangeResponse ...
@@ -111,7 +114,12 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey strin
 
 // exchangeForAccessToken ...
 func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) {
-	iamResp, err := r.sendTokenExchangeRequest()
+	var iamResp *tokenExchangeResponse
+	var err error
+	err = r.errorRetrier.ErrorRetry(func() (error, bool) {
+		iamResp, err = r.sendTokenExchangeRequest()
+		return err, !isConnectionError(err) // Skip rettry if its not connection error
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +128,13 @@ func (r *tokenExchangeRequest) exchangeForAccessToken() (*AccessToken, error) {
 
 // exchangeForIMSToken ...
 func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) {
-	iamResp, err := r.sendTokenExchangeRequest()
+	var iamResp *tokenExchangeResponse
+	var err error
+	err = r.errorRetrier.ErrorRetry(func() (error, bool) {
+		iamResp, err = r.sendTokenExchangeRequest()
+		return err, !isConnectionError(err)
+	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -134,12 +148,13 @@ func (r *tokenExchangeRequest) exchangeForIMSToken() (*IMSToken, error) {
 func (tes *tokenExchangeService) newTokenExchangeRequest(logger *zap.Logger) *tokenExchangeRequest {
 	client := rest.NewClient()
 	client.HTTPClient = tes.httpClient
-
+	retyrInterval, _ := time.ParseDuration("3s")
 	return &tokenExchangeRequest{
-		tes:     tes,
-		request: rest.PostRequest(fmt.Sprintf("%s/oidc/token", tes.bluemixConf.IamURL)),
-		client:  client,
-		logger:  logger,
+		tes:          tes,
+		request:      rest.PostRequest(fmt.Sprintf("%s/oidc/token", tes.bluemixConf.IamURL)),
+		client:       client,
+		logger:       logger,
+		errorRetrier: util.NewErrorRetrier(40, retyrInterval, logger),
 	}
 }
 
@@ -207,4 +222,8 @@ func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeRespons
 	return nil,
 		util.NewError("ErrorUnclassified",
 			"Unexpected IAM token exchange response")
+}
+
+func isConnectionError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "connection")
 }
