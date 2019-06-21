@@ -88,7 +88,7 @@ func TestCreateVolume(t *testing.T) {
 			}
 
 			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/volumes", http.MethodPost, nil, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes", http.MethodPost, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
