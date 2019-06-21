@@ -12,6 +12,7 @@ package config
 
 import (
 	"github.com/BurntSushi/toml"
+	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 	"os"
 	"path/filepath"
@@ -49,7 +50,9 @@ func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) {
 	}
 
 	// Parse config file
-	var conf Config
+	conf := Config{
+		IKS: &IKSConfig{}, // IKS block may not be populated in secrete toml. Make sure its not nil
+	}
 	logger.Info("parsing conf file", zap.String("confpath", confPath))
 	err := ParseConfig(confPath, &conf, logger)
 	return &conf, err
@@ -64,6 +67,15 @@ func GetConfPath() string {
 	return GetDefaultConfPath()
 }
 
+// GetConfPathDir get configuration  dir path
+func GetConfPathDir() string {
+	if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" {
+		return confPath
+	}
+	//Get default conf path
+	return GetEtcPath()
+}
+
 // GetDefaultConfPath get default config file path
 func GetDefaultConfPath() string {
 	return filepath.Join(GetEtcPath(), "libconfig.toml")
@@ -74,6 +86,11 @@ func ParseConfig(filePath string, conf interface{}, logger *zap.Logger) error {
 	_, err := toml.DecodeFile(filePath, conf)
 	if err != nil {
 		logger.Error("Failed to parse config file", zap.Error(err))
+	}
+	// Read environment variables
+	err = envconfig.Process("", conf)
+	if err != nil {
+		logger.Error("Failed to gather environment config variable", zap.Error(err))
 	}
 	return err
 }
@@ -92,6 +109,7 @@ type BluemixConfig struct {
 	IamAPIKey       string `toml:"iam_api_key" json:"-"`
 	RefreshToken    string `toml:"refresh_token" json:"-"`
 	APIEndpointURL  string `toml:"containers_api_route"`
+	Encryption      bool   `toml:"encryption"`
 }
 
 // SoftlayerConfig ...
@@ -129,11 +147,15 @@ type Gen2Config struct {
 type VPCProviderConfig struct {
 	Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
 	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
-	EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
+	EndpointURL          string `toml:"gc_riaas_endpoint_url"`
+	TokenExchangeURL     string `toml:"gc_token_exchange_endpoint_url"`
+	APIKey               string `toml:"gc_api_key" json:"-"`
+	Encryption           bool   `toml:"encryption"`
+	ResourceGroupID      string `toml:"gc_resource_group_id"`
 	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
 	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
-	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"RETRY_INTERVAL"`
-	APIVersion           string `toml:"api_version"`
+	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"VPC_RETRY_INTERVAL"`
+	APIVersion           string `toml:"api_version" envconfig:"VPC_API_VERSION"`
 }
 
 //IKSConfig config

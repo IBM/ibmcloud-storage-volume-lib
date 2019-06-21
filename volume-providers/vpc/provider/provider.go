@@ -61,8 +61,14 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	if conf.Bluemix == nil || conf.VPC == nil {
 		return nil, errors.New("Incomplete config for VPCBlockProvider")
 	}
-
-	contextCF, err := auth.NewContextCredentialsFactory(conf.Bluemix, nil, conf.VPC)
+	// VPC provider use differnt APIkey and Auth Endpoint
+	authConfig := &config.BluemixConfig{
+		IamURL:          conf.VPC.TokenExchangeURL,
+		IamAPIKey:       conf.VPC.APIKey,
+		IamClientID:     conf.Bluemix.IamClientID,
+		IamClientSecret: conf.Bluemix.IamClientSecret,
+	}
+	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
 	if err != nil {
 		return nil, err
 	}
@@ -157,13 +163,14 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	}
 
 	vpcSession := &VPCSession{
-		VPCAccountID:       contextCredentials.IAMAccountID,
-		Config:             vpcp.config,
-		ContextCredentials: contextCredentials,
-		VolumeType:         "vpc-block",
-		Provider:           VPC,
-		Apiclient:          client,
-		Logger:             ctxLogger,
+		VPCAccountID:          contextCredentials.IAMAccountID,
+		Config:                vpcp.config,
+		ContextCredentials:    contextCredentials,
+		VolumeType:            "vpc-block",
+		Provider:              VPC,
+		Apiclient:             client,
+		APIClientVolAttachMgr: client.VolumeAttachService(),
+		Logger:                ctxLogger,
 	}
 	return vpcSession, nil
 }

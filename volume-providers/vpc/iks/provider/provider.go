@@ -15,6 +15,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	vpcprovider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 	"go.uber.org/zap"
 )
@@ -60,19 +61,35 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 		ctxLogger.Debug("Exiting IksVpcBlockProvider.OpenSession")
 	}()
 	ctxLogger.Info("Opening VPC block session")
-	session, err := iksp.vpcBlockProvider.OpenSession(ctx, contextCredentials, ctxLogger)
+	ccf, _ := iksp.vpcBlockProvider.ContextCredentialsFactory(nil)
+	ctxLogger.Info("Its IKS dual session. Getttng IAM token for  VPC block session")
+	vpcContextCredentials, err := ccf.ForIAMAccessToken(iksp.globalConfig.VPC.APIKey, ctxLogger)
+	if err != nil {
+		ctxLogger.Error("Error occured while generating IAM token for VPC", zap.Error(err))
+		userErr := userError.GetUserError(string(userError.AuthenticationFailed), err)
+		return nil, userErr
+	}
+	session, err := iksp.vpcBlockProvider.OpenSession(ctx, vpcContextCredentials, ctxLogger)
 	if err != nil {
 		ctxLogger.Error("Error occured while opening VPCSession", zap.Error(err))
 		return nil, err
 	}
 	vpcSession, _ := session.(*vpcprovider.VPCSession)
 	ctxLogger.Info("Opening IKS block session")
-	session, err = iksp.iksBlockProvider.OpenSession(ctx, contextCredentials, ctxLogger)
+	ccf, _ = iksp.vpcBlockProvider.ContextCredentialsFactory(nil)
+	ctxLogger.Info("Its ISK dual session. Getttng IAM token for  IKS block session")
+	iksContextCredentials, err := ccf.ForIAMAccessToken(iksp.globalConfig.VPC.APIKey, ctxLogger)
 	if err != nil {
-		ctxLogger.Error("Error occured while opening IKSSession", zap.Error(err))
-		return nil, err
+		ctxLogger.Warn("Error occured while generating IAM token for IKS. But continue with VPC session alone. \n Volume Mount operation will fail but volume provisioning will work", zap.Error(err))
+		session = &vpcprovider.VPCSession{} // Empty session to avoid Nil references.
+	} else {
+		session, err = iksp.iksBlockProvider.OpenSession(ctx, iksContextCredentials, ctxLogger)
+		if err != nil {
+			ctxLogger.Error("Error occured while opening IKSSession", zap.Error(err))
+		}
 	}
 	iksSession, _ := session.(*vpcprovider.VPCSession)
+	iksSession.APIClientVolAttachMgr = iksSession.Apiclient.IKSVolumeAttachService()
 	// Setup Dual Session that handles for VPC and IKS connections
 	vpcIksSession := IksVpcSession{
 		VPCSession: *vpcSession,

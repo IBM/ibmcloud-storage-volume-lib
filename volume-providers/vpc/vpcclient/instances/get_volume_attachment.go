@@ -25,7 +25,7 @@ func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *mod
 	operation := &client.Operation{
 		Name:        "GetVolumeAttachment",
 		Method:      "GET",
-		PathPattern: instanceIDattachmentIDPath,
+		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
 	var apiErr models.Error
@@ -35,6 +35,10 @@ func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *mod
 	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
 	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
 	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	if volumeAttachmentTemplate.ClusterID != nil {
+		// IKS case - requires ClusterID in  the request
+		req = req.AddQueryValue("clusterID", *volumeAttachmentTemplate.ClusterID)
+	}
 	_, err := req.JSONSuccess(&volumeAttachment).JSONError(&apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))
