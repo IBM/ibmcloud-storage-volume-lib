@@ -29,6 +29,7 @@ func TestSetSnapshotTag(t *testing.T) {
 
 		// backend url
 		url string
+
 		// Response
 		status  int
 		content string
