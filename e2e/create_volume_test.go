@@ -32,7 +32,7 @@ func (vpc *VpcClassicE2E) GetVolumeRequests() []VolumeRequest {
 	volume.VPCVolume.ResourceGroup.ID = resourceGroupID
 	volume.Az = vpcZone
 
-	volume.VPCVolume.Tags = []string{"Testing VPC volume from library with 10iops-tier profile"}
+	volume.VPCVolume.Tags = []string{"Testing VPC volume  with 10iops-tier profile"}
 
 	volumeRequest := VolumeRequest{}
 	volumeRequest.Volume = *volume
@@ -51,8 +51,11 @@ func (vpc *VpcClassicE2E) GetVolumeRequests() []VolumeRequest {
 
 	}
 	requestList = append(requestList, volumeRequest)
-	volumeRequest1 := VolumeRequest{}
-	copy(volumeRequest1, volumeRequest)
+	volumeRequest1 := volumeRequest.Clone()
+	volumeRequest1.TestName = "10-iops-tier with explicit iops"
+	iops := "100"
+	volumeRequest1.Volume.Iops = &iops
+
 	return requestList
 
 }

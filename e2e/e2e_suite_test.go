@@ -40,6 +40,15 @@ func TestVPCE2e(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
+	//initSuite()
+})
+
+var _ = AfterSuite(func() {
+	//defer sess.Close()
+	//defer ctxLogger.Sync()
+})
+
+func initSuite() {
 	// Setup new style zap logger
 	logger, traceLevel = getContextLogger()
 	defer logger.Sync()
@@ -54,6 +63,7 @@ var _ = BeforeSuite(func() {
 	if conf.Server != nil && conf.Server.DebugTrace {
 		traceLevel.SetLevel(zap.DebugLevel)
 	}
+	logger.Info("Config", zap.Reflect("Config", conf))
 
 	// Prepare provider registry
 	providerRegistry, err = provider_util.InitProviders(conf, logger)
@@ -63,13 +73,9 @@ var _ = BeforeSuite(func() {
 	}
 
 	populateE2EProviders(conf)
+	logger.Info("No. of providers enabled", zap.Int("No.of Providers", len(providers)))
 
-})
-
-var _ = AfterSuite(func() {
-	defer sess.Close()
-	defer ctxLogger.Sync()
-})
+}
 
 func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	consoleDebugging := zapcore.Lock(os.Stdout)

@@ -37,7 +37,10 @@ func (volReq *VolumeRequest) Clone() VolumeRequest {
 		VPCVolume:   volReq.Volume.VPCVolume,
 	}
 	newVolReq := VolumeRequest{
-		Volume: newVol,
+		Volume:       newVol,
+		TestName:     volReq.TestName,
+		AssertError:  volReq.AssertError,
+		AssertResult: volReq.AssertResult,
 	}
 	return newVolReq
 }
@@ -167,13 +170,14 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
 		volumes []provider.Volume
 	)
-
-	Describe("All providers", func() {
-
-		fmt.Printf("All pro %d", len(providers))
-		for _, providere2e := range providers {
-			Context(providere2e.GetName(), func() {
-				fmt.Printf("Provider Name : %s", providere2e.GetName())
+	BeforeEach(func() {
+		//initSuite()
+		fmt.Printf("Before each All pro %d", len(providers))
+	})
+	Describe("Initialising the provider e2e", func() {
+		initSuite()
+		Context("When initialization is successfull", func() {
+			for _, providere2e := range providers {
 				volumeRequests := providere2e.GetVolumeRequests()
 				It("Create Volume", func() {
 					volumes = providere2e.TestCreateVolume(volumeRequests)
@@ -188,9 +192,9 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 				It("Delete Volume", func() {
 					providere2e.TestDeleteVolume(volumes)
 				})
-			})
+			}
 
-		}
+		})
+
 	})
-
 })
