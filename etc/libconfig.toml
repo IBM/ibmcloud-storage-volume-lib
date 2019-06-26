@@ -7,7 +7,7 @@ iam_client_id = "bx"
 iam_client_secret = "bx"
 iam_api_key = ""
 refresh_token = ""
-
+containers_api_route = "https://us-south.containers.bluemix.net"
 
 [softlayer]
 softlayer_block_enabled = false
@@ -34,8 +34,11 @@ vpc_enabled = true
 vpc_block_provider_name = "vpc-classic"
 vpc_username = ""# keep blank for IAM auth
 vpc_api_key = "" # keep blank for IAM auth
-vpc_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443/v1"
+vpc_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443"
 vpc_timeout = "120s"
 max_retry_attempt  = 5
 max_retry_gap =  30
 api_version = "2019-01-01"
+[iks]
+iks_enabled = true
+iks_block_provider_name = "iks-vpc-classic"

@@ -28,6 +28,9 @@ func TestSetVolumeTag(t *testing.T) {
 	testCases := []struct {
 		name string
 
+		// backend url
+		url string
+
 		// Response
 		status  int
 		content string
@@ -39,34 +42,40 @@ func TestSetVolumeTag(t *testing.T) {
 		{
 			name:   "Verify that the correct endpoint is invoked",
 			status: http.StatusNoContent,
+			url:    vpcvolume.Version + "/volumes/volumeid/tags/tagname",
 		}, {
 			name:      "Verify that a 404 is returned to the caller",
 			status:    http.StatusNotFound,
+			url:       vpcvolume.Version + "/volumes/volumeid/tags/tagname",
 			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:    "Verify that the volume is parsed correctly",
 			status:  http.StatusOK,
-			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}",
+			url:     vpcvolume.Version + "/volumes/volumeid/tags/tagname",
+			content: "{\"id\":\"volumeid\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}",
 		}, {
 			name:    "False positive: What if the volume ID is not matched",
 			status:  http.StatusOK,
+			url:     vpcvolume.Version + "/volumes/volumeid/tags/tagname",
 			content: "{\"id\":\"wrong-vol\",\"name\":\"wrong-vol\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:wrong-vol\", \"tags\":[\"Wrong Tag\"]}",
 		}, {
 			name:    "False positive: What if the tag name is not matched",
 			status:  http.StatusOK,
-			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\", \"tags\":[\"Test Tag\"]}",
+			url:     vpcvolume.Version + "/volumes/volumeid/tags/tagname",
+			content: "{\"id\":\"volumeid\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\", \"tags\":[\"Test Tag\"]}",
 		}, {
 			name:    "False positive: What if the tag name is already set",
 			status:  http.StatusOK,
-			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\", \"tags\":[\"tag-name\"]}",
+			url:     vpcvolume.Version + "/volumes/volumeid/tags/tagname",
+			content: "{\"id\":\"volumeid\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\", \"tags\":[\"tagname\"]}",
 		},
 	}
 
 	for _, testcase := range testCases {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/volumes/volume-id/tags/tag-name", http.MethodPut, nil, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, testcase.url, http.MethodPut, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -74,7 +83,7 @@ func TestSetVolumeTag(t *testing.T) {
 
 			volumeService := vpcvolume.New(client)
 
-			err := volumeService.SetVolumeTag("volume-id", "tag-name", logger)
+			err := volumeService.SetVolumeTag("volumeid", "tagname", logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())

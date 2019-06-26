@@ -25,7 +25,7 @@ func (vs *VolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.Vol
 	operation := &client.Operation{
 		Name:        "AttachVolume",
 		Method:      "POST",
-		PathPattern: instanceIDvolumeAttachmentPath,
+		PathPattern: vs.pathPrefix + instanceIDvolumeAttachmentPath,
 	}
 
 	var volumeAttachment models.VolumeAttachment
