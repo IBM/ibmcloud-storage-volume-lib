@@ -152,10 +152,10 @@ type VPCProviderConfig struct {
 	APIKey               string `toml:"gc_api_key" json:"-"`
 	Encryption           bool   `toml:"encryption"`
 	ResourceGroupID      string `toml:"gc_resource_group_id"`
-	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
-	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
-	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"VPC_RETRY_INTERVAL"`
-	APIVersion           string `toml:"api_version" envconfig:"VPC_API_VERSION"`
+	Timeout              string `toml:"vpc_timeout,omitempty" envconfig:"VPC_TIMEOUT"`
+	MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty"`
+	MaxRetryGap          int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
+	APIVersion           string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
 }
 
 //IKSConfig config

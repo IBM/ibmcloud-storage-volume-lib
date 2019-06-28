@@ -152,6 +152,7 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 
 	case (providerID == conf.IKS.IKSBlockProviderName):
 		return provider.ContextCredentials{}, nil // Get credentials  in OpenSession method
+
 	default:
 		return provider.ContextCredentials{}, util.NewError("ErrorInsufficientAuthentication",
 			"Insufficient authentication credentials")

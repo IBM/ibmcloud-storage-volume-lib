@@ -13,18 +13,15 @@ package provider
 import (
 	"crypto/rsa"
 	"errors"
+	"github.com/dgrijalva/jwt-go"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"path/filepath"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
-	"go.uber.org/zap"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-
+	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 )
 
