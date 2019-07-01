@@ -225,5 +225,15 @@ func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeRespons
 }
 
 func isConnectionError(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "connection")
+	if err != nil {
+		wrappedErrors := util.ErrorDeepUnwrapString(err)
+		// wrapped error contains actual backend error
+		for _, werr := range wrappedErrors {
+			if strings.Contains(werr, "tcp") {
+				// if  error contains "tcp" string, its connection error
+				return true
+			}
+		}
+	}
+	return false
 }
