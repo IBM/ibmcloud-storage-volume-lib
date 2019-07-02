@@ -1,5 +1,6 @@
 package e2e
 
+// TODO copied form vpc .. Needs to be cleaned up
 const (
 	vpcZone                = "us-east-1"
 	resourceGroupID        = "f2075e07c1a362e26bdfc856771798a7"

@@ -52,6 +52,7 @@ func (vpc *VpcClassicE2E) GetVolumeRequests() []VolumeRequest {
 
 	}
 	requestList = append(requestList, volumeRequest)
+	// Check if volume create fails with invalid iops
 	volumeRequest1 := volumeRequest.Clone()
 	volumeRequest1.TestName = "10-iops-tier with explicit iops"
 	iops := "100"
@@ -75,6 +76,7 @@ func (vpc *SLBlockE2E) GetVolumeRequests() []VolumeRequest {
 	tier := "0.25"
 	Iops := iops
 	volume := &provider.Volume{}
+	// Create volume with endurance
 	volume.VolumeType = "block"
 	volume.ProviderType = provider.VolumeProviderType("endurance")
 	volume.Tier = &tier
@@ -98,6 +100,7 @@ func (vpc *SLBlockE2E) GetVolumeRequests() []VolumeRequest {
 
 	}
 	requestList = append(requestList, volumeRequest)
+	// Create volume with performance
 	volumeRequest1 := volumeRequest.Clone()
 	volumeRequest1.Volume.ProviderType = provider.VolumeProviderType("performance")
 	requestList = append(requestList, volumeRequest)
