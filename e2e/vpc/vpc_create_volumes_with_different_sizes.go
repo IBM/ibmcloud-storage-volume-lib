@@ -50,18 +50,22 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		}
 		fmt.Printf("\n\n")
 
-		volume = &provider.Volume{}
-		volume.VolumeID = volumeObj.VolumeID
-		err = sess.DeleteVolume(volume)
+		volumeDelete := &provider.Volume{}
+		volumeDelete.VolumeID = volumeObj.VolumeID
+		err = sess.DeleteVolume(volumeDelete)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
 			ctxLogger.Info("Successfully deleted volume...", zap.Reflect("volumeObj", volume))
 		} else {
 			err = updateRequestID(err, requestID)
-			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
+			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volumeDelete.VolumeID), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
 
+		volSize = volumeSize + 50
+		ctxLogger.Info("Increasing volume size", zap.Reflect("volumeSize", volumeSize))
+		volume.Capacity = &volSize
+		volume.Name = &volName
 		volumeObj, err = sess.CreateVolume(*volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
@@ -73,43 +77,15 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		}
 		fmt.Printf("\n\n")
 
-		volSize = volumeSize + 50
-		ctxLogger.Info("Increasing volume size", zap.Reflect("volumeSize", volumeSize))
-		volume.Capacity = &volSize
-		volume.VolumeID = volumeObj.VolumeID
-		err = sess.DeleteVolume(volume)
+		volumeDelete = &provider.Volume{}
+		volumeDelete.VolumeID = volumeObj.VolumeID
+		err = sess.DeleteVolume(volumeDelete)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
 			ctxLogger.Info("Successfully deleted volume...", zap.Reflect("volumeObj", volume))
 		} else {
 			err = updateRequestID(err, requestID)
-			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
-			Expect(err).To(HaveOccurred())
-		}
-		fmt.Printf("\n\n")
-
-		volumeObj, err = sess.CreateVolume(*volume)
-		if err == nil {
-			Expect(err).NotTo(HaveOccurred())
-			ctxLogger.Info("Successfully created volume...", zap.Reflect("volumeObj", volumeObj))
-		} else {
-			err = updateRequestID(err, requestID)
-			ctxLogger.Info("Failed to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
-			Expect(err).To(HaveOccurred())
-		}
-		fmt.Printf("\n\n")
-
-		volSize = volumeSize + 50
-		ctxLogger.Info("Increasing volume size", zap.Reflect("volumeSize", volumeSize))
-		volume.Capacity = &volSize
-		volume.VolumeID = volumeObj.VolumeID
-		err = sess.DeleteVolume(volume)
-		if err == nil {
-			Expect(err).NotTo(HaveOccurred())
-			ctxLogger.Info("Successfully deleted volume...", zap.Reflect("volumeObj", volume))
-		} else {
-			err = updateRequestID(err, requestID)
-			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
+			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volumeDelete.VolumeID), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
 		fmt.Printf("\n\n")
