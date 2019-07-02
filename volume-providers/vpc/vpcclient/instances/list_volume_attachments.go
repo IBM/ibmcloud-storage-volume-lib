@@ -34,11 +34,7 @@ func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *mo
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
 	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID))
-	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
-	if volumeAttachmentTemplate.ClusterID != nil {
-		// IKS case - requires ClusterID in  the request
-		req = req.AddQueryValue("clusterID", *volumeAttachmentTemplate.ClusterID)
-	}
+	req := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
 	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(&apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))

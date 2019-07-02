@@ -21,7 +21,7 @@ const (
 	//VpcPathPrefix  VPC URL path prefix
 	VpcPathPrefix = "v1/instances"
 	//IksPathPrefix  IKS URL path prefix
-	IksPathPrefix = "v2/storage/workers"
+	IksPathPrefix = "v2/storage/clusters/{cluster-id}/workers"
 )
 
 // VolumeAttachManager operations
@@ -41,6 +41,17 @@ type VolumeAttachManager interface {
 type VolumeAttachService struct {
 	client     client.SessionClient
 	pathPrefix string
+}
+
+func (vs *VolumeAttachService) populatePathPrefixParameters(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
+	request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+	return request
+}
+
+func (vs *IKSVolumeAttachService) populatePathPrefixParameters(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
+	request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+	request.PathParameter(clusterIDParam, *volumeAttachmentTemplate.ClusterID)
+	return request
 }
 
 var _ VolumeAttachManager = &VolumeAttachService{}
