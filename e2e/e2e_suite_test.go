@@ -98,12 +98,12 @@ func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
 }
 
 func populateE2EProviders(conf *config.Config) {
-	providerName := ""
 	ctxLogger, _ = getContextLogger()
 	requestID = uid.NewV4().String()
 	ctxLogger = logger.With(zap.String("RequestID", requestID))
+
 	if conf.VPC.Enabled {
-		providerName = conf.VPC.VPCBlockProviderName
+		providerName := conf.VPC.VPCBlockProviderName
 		sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
 		if err != nil {
 			Expect(err).To(HaveOccurred())
@@ -118,18 +118,18 @@ func populateE2EProviders(conf *config.Config) {
 	}
 
 	if conf.Softlayer.SoftlayerBlockEnabled {
-		providerName = conf.Softlayer.SoftlayerBlockProviderName
+		providerName := conf.Softlayer.SoftlayerBlockProviderName
 		sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
 		if err != nil {
 			Expect(err).To(HaveOccurred())
 		}
-		e2eProvider := &SLBlockE2E{
+		e2eProvider1 := &SLBlockE2E{
 			BaseE2ETest{
 				session: sess,
 				Name:    providerName,
 			},
 		}
-		providers = append(providers, e2eProvider)
+		providers = append(providers, e2eProvider1)
 	}
 
 }

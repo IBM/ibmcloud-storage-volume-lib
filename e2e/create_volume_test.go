@@ -11,6 +11,7 @@
 package e2e
 
 import (
+	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	. "github.com/onsi/gomega"
 )
@@ -42,12 +43,12 @@ func (vpc *VpcClassicE2E) GetVolumeRequests() []VolumeRequest {
 
 	}
 	volumeRequest.AssertResult = func(volume *provider.Volume) {
-		Expect(volume.Name).To(Equal(volumeRequest.Volume.Name))
-		Expect(volume.Iops).To(Equal(volumeRequest.Volume.Iops))
-		Expect(volume.Az).To(Equal(volumeRequest.Volume.Az))
-		Expect(volume.Capacity).To(Equal(volumeRequest.Volume.Capacity))
-		Expect(volume.VPCVolume.Generation).To(Equal(volumeRequest.Volume.VPCVolume.Generation))
-		Expect(volume.VPCVolume.Profile).To(Equal(volumeRequest.Volume.VPCVolume.Profile))
+		//Expect(volume.Name).To(Equal(volumeRequest.Volume.Name))
+		Expect("3000").To(Equal(*volume.Iops))
+		//Expect(volumeRequest.Volume.Az).To(Equal(volume.Az))
+		Expect(volumeRequest.Volume.Capacity).To(Equal(volume.Capacity))
+		//Expect(volumeRequest.Volume.VPCVolume.Generation).To(Equal(volume.VPCVolume.Generation))
+		//Expect(volumeRequest.Volume.VPCVolume.Profile.Name).To(Equal(volume.VPCVolume.Profile.Name))
 
 	}
 	requestList = append(requestList, volumeRequest)
@@ -55,7 +56,50 @@ func (vpc *VpcClassicE2E) GetVolumeRequests() []VolumeRequest {
 	volumeRequest1.TestName = "10-iops-tier with explicit iops"
 	iops := "100"
 	volumeRequest1.Volume.Iops = &iops
+	volumeRequest1.AssertResult = func(volume *provider.Volume) {
+		Expect(volume).Should(BeNil())
+	}
+	volumeRequest1.AssertError = func(err error) {
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).Should(ContainSubstring("VolumeProfileIopsInvalid"))
+	}
+	requestList = append(requestList, volumeRequest1)
 
 	return requestList
 
+}
+
+func (vpc *SLBlockE2E) GetVolumeRequests() []VolumeRequest {
+	requestList := []VolumeRequest{}
+	volSize := 20
+	tier := "0.25"
+	Iops := iops
+	volume := &provider.Volume{}
+	volume.VolumeType = "block"
+	volume.ProviderType = provider.VolumeProviderType("endurance")
+	volume.Tier = &tier
+	volume.Capacity = &volSize
+	volume.Iops = &Iops
+	volume.Az = "dal10"
+
+	volume.VolumeNotes = map[string]string{"note": "ibm-volume-lib-test"}
+	volumeRequest := VolumeRequest{}
+	testName := fmt.Sprintf("%s_%s_%d", volume.ProviderType, tier, volume.Capacity)
+	volumeRequest.Volume = *volume
+	volumeRequest.TestName = testName
+
+	volumeRequest.AssertError = func(err error) {
+		Expect(err).NotTo(HaveOccurred())
+
+	}
+	volumeRequest.AssertResult = func(volume *provider.Volume) {
+		Expect("0.25").To(Equal(*volume.Iops))
+		Expect(volumeRequest.Volume.Capacity).To(Equal(volume.Capacity))
+
+	}
+	requestList = append(requestList, volumeRequest)
+	volumeRequest1 := volumeRequest.Clone()
+	volumeRequest1.Volume.ProviderType = provider.VolumeProviderType("performance")
+	requestList = append(requestList, volumeRequest)
+	return requestList
 }
