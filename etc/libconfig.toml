@@ -1,15 +1,14 @@
-[Server]
+[server]
   debug_trace = false
 
-[Bluemix]
+[bluemix]
   iam_url = "https://iam.bluemix.net"
   iam_client_id = "bx"
   iam_client_secret = "bx"
-  iam_api_key = ""
+  iam_api_key = "XXX"
   refresh_token = ""
-  containers_api_route = "https://us-south.containers.bluemix.net"
 
-[Softlayer]
+[softlayer]
   softlayer_block_enabled = false
   softlayer_block_provider_name = "SOFTLAYER-BLOCK"
   softlayer_file_enabled = false
@@ -23,20 +22,20 @@
   softlayer_vol_provision_timeout = "30m"
   softlayer_api_retry_interval = "5s"
 
-[Genesis]
+[genesis]
   genesis_provider_enabled = false
   genesis_user_name = ""
   genesis_api_key = ""
   genesis_url = ""
 
-[VPC]
+[vpc]
   vpc_enabled = true
   vpc_block_provider_name = "vpc-classic"
-  gc_token_exchange_endpoint_url = "https://iam.stage1.bluemix.net"
-  gc_riaas_endpoint_url = "https://us-east-stage02.iaasdev.cloud.ibm.com"
-  gc_resource_group_id = "XXXX"
-  gc_api_key = "XXXX"
-  encryption = true
+  gc_token_exchange_endpoint_url = "https://iam.bluemix.net"
+  gc_riaas_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443"
+  gc_resource_group_id = "XXX"
+  gc_api_key = "XXX"
+  encryption = false
   vpc_timeout = "120s"
   max_retry_attempt  = 5
   max_retry_gap =  30
