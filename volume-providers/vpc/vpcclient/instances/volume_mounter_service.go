@@ -39,28 +39,25 @@ type VolumeAttachManager interface {
 
 // VolumeAttachService ...
 type VolumeAttachService struct {
-	client     client.SessionClient
-	pathPrefix string
-}
-
-func (vs *VolumeAttachService) populatePathPrefixParameters(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
-	request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
-	return request
-}
-
-func (vs *IKSVolumeAttachService) populatePathPrefixParameters(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
-	request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
-	request.PathParameter(clusterIDParam, *volumeAttachmentTemplate.ClusterID)
-	return request
+	client                       client.SessionClient
+	pathPrefix                   string
+	receiverError                error
+	populatePathPrefixParameters func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request
 }
 
 var _ VolumeAttachManager = &VolumeAttachService{}
 
 // New ...
-func New(client client.SessionClient) VolumeAttachManager {
+func New(clientIn client.SessionClient) VolumeAttachManager {
+	err := models.Error{}
 	return &VolumeAttachService{
-		client:     client,
-		pathPrefix: VpcPathPrefix,
+		client:        clientIn,
+		pathPrefix:    VpcPathPrefix,
+		receiverError: &err,
+		populatePathPrefixParameters: func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
+			request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+			return request
+		},
 	}
 }
 
@@ -72,11 +69,18 @@ type IKSVolumeAttachService struct {
 var _ VolumeAttachManager = &IKSVolumeAttachService{}
 
 // NewIKSVolumeAttachmentManager ...
-func NewIKSVolumeAttachmentManager(client client.SessionClient) VolumeAttachManager {
+func NewIKSVolumeAttachmentManager(clientIn client.SessionClient) VolumeAttachManager {
+	err := models.IksError{}
 	return &IKSVolumeAttachService{
 		VolumeAttachService{
-			client:     client,
-			pathPrefix: IksPathPrefix,
+			client:        clientIn,
+			pathPrefix:    IksPathPrefix,
+			receiverError: &err,
+			populatePathPrefixParameters: func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
+				request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+				request.PathParameter(clusterIDParam, *volumeAttachmentTemplate.ClusterID)
+				return request
+			},
 		},
 	}
 }
