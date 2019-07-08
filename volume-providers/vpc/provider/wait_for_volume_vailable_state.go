@@ -25,20 +25,13 @@ func (vpcs *VPCSession) WaitForVolumeAvailableState(volumeID string) (err error)
 	vpcs.Logger.Debug("Entry of WaitForVolumeAvailableState method...")
 	defer vpcs.Logger.Debug("Exit from WaitForVolumeAvailableState method...")
 
-	vpcs.Logger.Info("Basic validation for volume ID...", zap.Reflect("VolumeID", volumeID))
-	// validating volume ID
-	err = validateVolumeID(volumeID)
-	if err != nil {
-		return err
-	}
-
 	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", volumeID))
 
 	var volume *models.Volume
 	err = retry(vpcs.Logger, func() error {
 		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
 		vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("volume", volume))
-		if volume.Status == validVolumeStatus {
+		if volume != nil && volume.Status == validVolumeStatus {
 			vpcs.Logger.Info("Volume got available state", zap.Reflect("VolumeDetails", volume))
 			return nil
 		}

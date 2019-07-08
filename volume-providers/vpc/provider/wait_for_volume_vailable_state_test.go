@@ -58,16 +58,20 @@ func TestWaitForVolumeAvailableState(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			testCaseName: "Wrong volume ID",
-			volumeID:     "Wrong volume name",
+			testCaseName: "Invalid volume state",
+			volumeID:     "16f293bf-test-4bff-816f-e199c0c65db5",
 			baseVolume: &models.Volume{
-				ID:       "wrong-wrong-id",
+				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     "test-volume-name",
-				Status:   models.StatusType("available"),
+				Status:   models.StatusType("pending"),
 				Capacity: int64(10),
 				Iops:     int64(1000),
+				Zone:     &models.Zone{Name: "test-zone"},
 			},
-			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description:'Wrong volume ID' volume ID is not valid. Please check https://cloud.ibm.com/docs/infrastructure/vpc?topic=vpc-rias-error-messages#volume_id_invalid, BackendError:, RC:400}",
+		}, {
+			testCaseName:       "Volume without zone",
+			volumeID:           "16f293bf-test-4bff-816f-e199c0c65db5",
+			expectedErr:        "{Code:ErrorUnclassified, Type:RetrivalFailed, Description:Failed to find '16f293bf-test-4bff-816f-e199c0c65db5' volume ID., BackendError:StorageFindFailedWithVolumeId, RC:404}",
 			expectedReasonCode: "ErrorUnclassified",
 			verify: func(t *testing.T, err error) {
 				assert.NotNil(t, err)

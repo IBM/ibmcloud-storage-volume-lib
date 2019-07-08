@@ -216,6 +216,32 @@ func TestCreateVolume(t *testing.T) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
 			},
+		}, {
+			testCaseName: "Volume name is nil",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			testCaseName: "Volume name is empty",
+			baseVolume: &models.Volume{
+				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
+				Status: models.StatusType("OK"),
+				Name:   "",
+				Iops:   int64(1000),
+				Zone:   &models.Zone{Name: "test-zone"},
+			},
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String(""),
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
 		},
 	}
 
