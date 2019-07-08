@@ -65,32 +65,6 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			testCaseName: "Volume name is nil",
-			providerVolume: provider.Volume{
-				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-			},
-			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.Nil(t, volumeResponse)
-				assert.NotNil(t, err)
-			},
-		}, {
-			testCaseName: "Volume name is empty",
-			baseVolume: &models.Volume{
-				ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
-				Status: models.StatusType("OK"),
-				Name:   "",
-				Iops:   int64(1000),
-				Zone:   &models.Zone{Name: "test-zone"},
-			},
-			providerVolume: provider.Volume{
-				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String(""),
-			},
-			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.Nil(t, volumeResponse)
-				assert.NotNil(t, err)
-			},
-		}, {
 			testCaseName: "Volume capacity is zero",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -120,6 +94,14 @@ func TestCreateVolume(t *testing.T) {
 		}, {
 			testCaseName: "Volume with no validation issues",
 			profileName:  "general-purpose",
+			baseVolume: &models.Volume{
+				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     "test-volume-name",
+				Status:   models.StatusType("available"),
+				Capacity: int64(10),
+				Iops:     int64(1000),
+				Zone:     &models.Zone{Name: "test-zone"},
+			},
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
 				Name:     String("test volume name"),
@@ -131,11 +113,11 @@ func TestCreateVolume(t *testing.T) {
 				},
 			},
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, volumeResponse)
 				assert.Nil(t, err)
 			},
 		}, {
-			testCaseName: "Volume creaion failure",
+			testCaseName: "Volume creation failure",
 			profileName:  "general-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -145,6 +127,51 @@ func TestCreateVolume(t *testing.T) {
 				VPCVolume: provider.VPCVolume{
 					Profile:       &provider.Profile{Name: profileName},
 					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
+				},
+			},
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: Volume creation failed. ",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
+		}, {
+			testCaseName: "Volume creation with encryption",
+			profileName:  "general-purpose",
+			baseVolume: &models.Volume{
+				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     "test-volume-name",
+				Status:   models.StatusType("available"),
+				Capacity: int64(10),
+				Iops:     int64(1000),
+				Zone:     &models.Zone{Name: "test-zone"},
+			},
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("test volume name"),
+				Capacity: Int(10),
+				Iops:     String("0"),
+				VPCVolume: provider.VPCVolume{
+					Profile:             &provider.Profile{Name: profileName},
+					ResourceGroup:       &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
+					VolumeEncryptionKey: &provider.VolumeEncryptionKey{CRN: "crn:v1:bluemix:public:kms:us-south:a/abcd32a619db2b564b82a816400bcd12:t36097fd-5051-4582-a641-8f51b5334cfa:key:abc05f428-5fb7-4546-958b-0f4e65266d5c"},
+				},
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.NotNil(t, volumeResponse)
+				assert.Nil(t, err)
+			},
+		}, {
+			testCaseName: "Volume creation with resource group ID and Name empty",
+			profileName:  "general-purpose",
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("test volume name"),
+				Capacity: Int(10),
+				Iops:     String("0"),
+				VPCVolume: provider.VPCVolume{
+					Profile:       &provider.Profile{Name: profileName},
+					ResourceGroup: &provider.ResourceGroup{},
 				},
 			},
 			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: Volume creation failed. ",
@@ -171,7 +198,7 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			testCaseName: "Volume creaion with resource group ID and Name empty",
+			testCaseName: "Volume creaion failure",
 			profileName:  "general-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -180,7 +207,7 @@ func TestCreateVolume(t *testing.T) {
 				Iops:     String("0"),
 				VPCVolume: provider.VPCVolume{
 					Profile:       &provider.Profile{Name: profileName},
-					ResourceGroup: &provider.ResourceGroup{},
+					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
 				},
 			},
 			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: Volume creation failed. ",
@@ -188,24 +215,6 @@ func TestCreateVolume(t *testing.T) {
 			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
-			},
-		}, {
-			testCaseName: "Volume creation with encryption",
-			profileName:  "general-purpose",
-			providerVolume: provider.Volume{
-				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
-				Name:     String("test volume name"),
-				Capacity: Int(10),
-				Iops:     String("0"),
-				VPCVolume: provider.VPCVolume{
-					Profile:             &provider.Profile{Name: profileName},
-					ResourceGroup:       &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
-					VolumeEncryptionKey: &provider.VolumeEncryptionKey{CRN: "crn:v1:bluemix:public:kms:us-south:a/abcd32a619db2b564b82a816400bcd12:t36097fd-5051-4582-a641-8f51b5334cfa:key:abc05f428-5fb7-4546-958b-0f4e65266d5c"},
-				},
-			},
-			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
-				assert.Nil(t, volumeResponse)
-				assert.Nil(t, err)
 			},
 		},
 	}
@@ -224,8 +233,10 @@ func TestCreateVolume(t *testing.T) {
 
 			if testcase.expectedErr != "" {
 				volumeService.CreateVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
+				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
 			} else {
 				volumeService.CreateVolumeReturns(testcase.baseVolume, nil)
+				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
 			}
 			volume, err := vpcs.CreateVolume(testcase.providerVolume)
 			logger.Info("Volume details", zap.Reflect("volume", volume))
