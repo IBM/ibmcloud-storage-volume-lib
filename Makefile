@@ -53,7 +53,7 @@ vet:
 
 .PHONY: build
 build:
-	go build -gcflags '-N -l' -o libSample samples/main.go
+	go build -gcflags '-N -l' -o libSample samples/main.go samples/attach_detach.go
 
 volume-lib-e2e-test:
 	go test ./e2e/... -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true -timeout 90m
