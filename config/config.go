@@ -153,7 +153,7 @@ type VPCProviderConfig struct {
 	Encryption           bool   `toml:"encryption"`
 	ResourceGroupID      string `toml:"gc_resource_group_id"`
 	Timeout              string `toml:"vpc_timeout,omitempty" envconfig:"VPC_TIMEOUT"`
-	MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty"`
+	MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty" envconfig:"VPC_RETRY_ATTEMPT"`
 	MaxRetryGap          int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
 	APIVersion           string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
 }
@@ -172,9 +172,9 @@ func GetEtcPath() string {
 	return filepath.Join(goPath, srcPath, "etc")
 }
 
-//GetTimeOutParameters retrives the parameteer to implement retry logic
+// GetTimeOutParameters retrives the parameteer to implement retry logic
 // maxTimeout - Maximum time out for the operations
-//retryGapDuration - The time interval for next attempt
+// retryGapDuration - The time interval for next attempt
 // maxRetryAttempt - maxmum retry attempts derived based on  maxTimeout and retryGapDuration
 func (config *VPCProviderConfig) GetTimeOutParameters() (int, int, time.Duration) {
 	maxTimeoutConfig, _ := time.ParseDuration(config.Timeout)

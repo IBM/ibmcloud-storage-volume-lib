@@ -14,6 +14,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -41,9 +42,19 @@ var skipErrorCodes = map[string]bool{
 	"invalid_route":                    false,
 }
 
+func getEnv(key string) string {
+	return os.Getenv(strings.ToUpper(key))
+}
+
 // retry ...
 func retry(logger *zap.Logger, retryfunc func() error) error {
 	var err error
+	if vpcRetryInterval := getEnv("VPC_RETRY_INTERVAL"); vpcRetryInterval != "" {
+		maxRetryGap, _ = strconv.Atoi(vpcRetryInterval)
+	}
+	if vpcRetryAttempt := getEnv("VPC_RETRY_ATTEMPT"); vpcRetryAttempt != "" {
+		maxRetryAttempt, _ = strconv.Atoi(vpcRetryAttempt)
+	}
 	for i := 0; i < maxRetryAttempt; i++ {
 		if i > 0 {
 			time.Sleep(time.Duration(retryGap) * time.Second)

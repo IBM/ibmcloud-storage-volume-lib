@@ -46,6 +46,8 @@ func GetTestContextLogger() (*zap.Logger, zap.AtomicLevel) {
 func TestRetry(t *testing.T) {
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
+	os.Setenv("VPC_RETRY_INTERVAL", "20")
+	os.Setenv("VPC_RETRY_ATTEMPT", "4")
 	var err error
 	var attempt int
 	err = retry(logger, func() error {

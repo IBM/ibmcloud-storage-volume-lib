@@ -197,3 +197,23 @@ func TestGetDefaultConfPath(t *testing.T) {
 
 	assert.Equal(t, expectedEtcPath, defaultEtcPath)
 }
+
+func TestGetConfPathDir(t *testing.T) {
+	t.Log("Testing GetConfPathDir")
+
+	configPath := "test.toml"
+	conf, _ := ReadConfig(configPath, testLogger)
+
+	maxTimeout, _, _ := conf.VPC.GetTimeOutParameters()
+	assert.Equal(t, maxTimeout, 120)
+}
+
+func TestGetTimeOutParameters(t *testing.T) {
+	t.Log("Testing GetTimeOutParameters")
+
+	configPath := "test.toml"
+	conf, _ := ReadConfig(configPath, testLogger)
+
+	maxTimeout, _, _ := conf.VPC.GetTimeOutParameters()
+	assert.Equal(t, maxTimeout, 120)
+}
