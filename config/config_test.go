@@ -208,6 +208,7 @@ func TestGetConfPathDir(t *testing.T) {
 	os.Unsetenv("SECRET_CONFIG_PATH")
 	os.Unsetenv("GOPATH")
 	confPath = GetConfPathDir()
+	expectedEtcPath = "src/github.com/IBM/ibmcloud-storage-volume-lib/etc"
 	assert.Equal(t, confPath, expectedEtcPath)
 }
 

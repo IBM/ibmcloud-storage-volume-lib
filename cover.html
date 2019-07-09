@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/IBM/ibmcloud-storage-volume-lib/config/config.go (28.1%)</option>
+				
+				<option value="file1">github.com/IBM/ibmcloud-storage-volume-lib/config/tls.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package config
+
+import (
+        "github.com/BurntSushi/toml"
+        "github.com/kelseyhightower/envconfig"
+        "go.uber.org/zap"
+        "os"
+        "path/filepath"
+        "strings"
+        "time"
+)
+
+func getEnv(key string) string <span class="cov8" title="1">{
+        return os.Getenv(strings.ToUpper(key))
+}</span>
+
+// GetGoPath inspects the environment for the GOPATH variable
+func GetGoPath() string <span class="cov8" title="1">{
+        if goPath := getEnv("GOPATH"); goPath != "" </span><span class="cov0" title="0">{
+                return goPath
+        }</span>
+        <span class="cov8" title="1">return ""</span>
+}
+
+// Config is the parent struct for all the configuration information for -cluster
+type Config struct {
+        Server    *ServerConfig  `required:"true"`
+        Bluemix   *BluemixConfig //`required:"true"`
+        Softlayer *SoftlayerConfig
+        Gen2      *Gen2Config
+        VPC       *VPCProviderConfig
+        IKS       *IKSConfig
+}
+
+//ReadConfig loads the config from file
+func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) <span class="cov0" title="0">{
+        // load the default config, if confPath not provided
+        if confPath == "" </span><span class="cov0" title="0">{
+                confPath = GetDefaultConfPath()
+        }</span>
+
+        // Parse config file
+        <span class="cov0" title="0">conf := Config{
+                IKS: &amp;IKSConfig{}, // IKS block may not be populated in secrete toml. Make sure its not nil
+        }
+        logger.Info("parsing conf file", zap.String("confpath", confPath))
+        err := ParseConfig(confPath, &amp;conf, logger)
+        return &amp;conf, err</span>
+}
+
+// GetConfPath get configuration file path
+func GetConfPath() string <span class="cov0" title="0">{
+        if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" </span><span class="cov0" title="0">{
+                return filepath.Join(confPath, "libconfig.toml")
+        }</span>
+        //Get default conf path
+        <span class="cov0" title="0">return GetDefaultConfPath()</span>
+}
+
+// GetConfPathDir get configuration  dir path
+func GetConfPathDir() string <span class="cov8" title="1">{
+        if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" </span><span class="cov8" title="1">{
+                return confPath
+        }</span>
+        //Get default conf path
+        <span class="cov8" title="1">return GetEtcPath()</span>
+}
+
+// GetDefaultConfPath get default config file path
+func GetDefaultConfPath() string <span class="cov0" title="0">{
+        return filepath.Join(GetEtcPath(), "libconfig.toml")
+}</span>
+
+// ParseConfig ...
+func ParseConfig(filePath string, conf interface{}, logger *zap.Logger) error <span class="cov0" title="0">{
+        _, err := toml.DecodeFile(filePath, conf)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Failed to parse config file", zap.Error(err))
+        }</span>
+        // Read environment variables
+        <span class="cov0" title="0">err = envconfig.Process("", conf)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Failed to gather environment config variable", zap.Error(err))
+        }</span>
+        <span class="cov0" title="0">return err</span>
+}
+
+// ServerConfig configuration options for the provider server itself
+type ServerConfig struct {
+        // DebugTrace is a flag to enable the debug level trace within the provider code.
+        DebugTrace bool `toml:"debug_trace" envconfig:"DEBUG_TRACE"`
+}
+
+// BluemixConfig ...
+type BluemixConfig struct {
+        IamURL          string `toml:"iam_url"`
+        IamClientID     string `toml:"iam_client_id"`
+        IamClientSecret string `toml:"iam_client_secret" json:"-"`
+        IamAPIKey       string `toml:"iam_api_key" json:"-"`
+        RefreshToken    string `toml:"refresh_token" json:"-"`
+        APIEndpointURL  string `toml:"containers_api_route"`
+        Encryption      bool   `toml:"encryption"`
+}
+
+// SoftlayerConfig ...
+type SoftlayerConfig struct {
+        SoftlayerBlockEnabled        bool   `toml:"softlayer_block_enabled" envconfig:"SOFTLAYER_BLOCK_ENABLED"`
+        SoftlayerBlockProviderName   string `toml:"softlayer_block_provider_name" envconfig:"SOFTLAYER_BLOCK_PROVIDER_NAME"`
+        SoftlayerFileEnabled         bool   `toml:"softlayer_file_enabled" envconfig:"SOFTLAYER_FILE_ENABLED"`
+        SoftlayerFileProviderName    string `toml:"softlayer_file_provider_name" envconfig:"SOFTLAYER_FILE_PROVIDER_NAME"`
+        SoftlayerUsername            string `toml:"softlayer_username" json:"-"`
+        SoftlayerAPIKey              string `toml:"softlayer_api_key" json:"-"`
+        SoftlayerEndpointURL         string `toml:"softlayer_endpoint_url"`
+        SoftlayerDataCenter          string `toml:"softlayer_datacenter"`
+        SoftlayerTimeout             string `toml:"softlayer_api_timeout" envconfig:"SOFTLAYER_API_TIMEOUT"`
+        SoftlayerVolProvisionTimeout string `toml:"softlayer_vol_provision_timeout" envconfig:"SOFTLAYER_VOL_PROVISION_TIMEOUT"`
+        SoftlayerRetryInterval       string `toml:"softlayer_api_retry_interval" envconfig:"SOFTLAYER_API_RETRY_INTERVAL"`
+
+        //Configuration values for JWT tokens
+        SoftlayerJWTKID       string `toml:"softlayer_jwt_kid"`
+        SoftlayerJWTTTL       int    `toml:"softlayer_jwt_ttl"`
+        SoftlayerJWTValidFrom int    `toml:"softlayer_jwt_valid"`
+
+        SoftlayerIMSEndpointURL string `toml:"softlayer_iam_endpoint_url"`
+        SoftlayerAPIDebug       bool
+}
+
+// Gen2Config ...
+type Gen2Config struct {
+        Gen2ProviderEnabled bool   `toml:"genesis_provider_enabled"`
+        Gen2Username        string `toml:"genesis_user_name"`
+        Gen2APIKey          string `toml:"genesis_api_key"`
+        Gen2URL             string `toml:"genesis_url"`
+}
+
+// VPCProviderConfig configures a specific instance of a VPC provider (e.g. GT/GC/Z)
+type VPCProviderConfig struct {
+        Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
+        VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
+        EndpointURL          string `toml:"gc_riaas_endpoint_url"`
+        TokenExchangeURL     string `toml:"gc_token_exchange_endpoint_url"`
+        APIKey               string `toml:"gc_api_key" json:"-"`
+        Encryption           bool   `toml:"encryption"`
+        ResourceGroupID      string `toml:"gc_resource_group_id"`
+        Timeout              string `toml:"vpc_timeout,omitempty" envconfig:"VPC_TIMEOUT"`
+        MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty" envconfig:"VPC_RETRY_ATTEMPT"`
+        MaxRetryGap          int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
+        APIVersion           string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
+}
+
+//IKSConfig config
+type IKSConfig struct {
+        Enabled              bool   `toml:"iks_enabled" envconfig:"IKS_ENABLED"`
+        IKSBlockProviderName string `toml:"iks_block_provider_name" envconfig:"IKS_BLOCK_PROVIDER_NAME"`
+}
+
+// GetEtcPath returns the path to the etc directory
+func GetEtcPath() string <span class="cov8" title="1">{
+        goPath := GetGoPath()
+        srcPath := filepath.Join("src", "github.com", "IBM",
+                "ibmcloud-storage-volume-lib")
+        return filepath.Join(goPath, srcPath, "etc")
+}</span>
+
+// GetTimeOutParameters retrives the parameteer to implement retry logic
+// maxTimeout - Maximum time out for the operations
+// retryGapDuration - The time interval for next attempt
+// maxRetryAttempt - maxmum retry attempts derived based on  maxTimeout and retryGapDuration
+func (config *VPCProviderConfig) GetTimeOutParameters() (int, int, time.Duration) <span class="cov0" title="0">{
+        maxTimeoutConfig, _ := time.ParseDuration(config.Timeout)
+        maxTimeout := int(maxTimeoutConfig.Seconds())
+        maxRetryAttempt := maxTimeout / config.MaxRetryGap
+        retryGapDuration := time.Duration(config.MaxRetryGap) * time.Second
+        return maxTimeout, maxRetryAttempt, retryGapDuration
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Container Service, 5737-D43
+ * (C) Copyright IBM Corp. 2018 All Rights Reserved.
+ * The source code for this program is not  published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+package config
+
+import (
+        "crypto/tls"
+        "net/http"
+        "time"
+)
+
+// GeneralCAHttpClient returns an http.Client configured for general use
+func GeneralCAHttpClient() (*http.Client, error) <span class="cov0" title="0">{
+
+        httpClient := &amp;http.Client{
+
+                Transport: &amp;http.Transport{
+                        TLSClientConfig: &amp;tls.Config{
+                                MinVersion: tls.VersionTLS12, // Require TLS 1.2 or higher
+                        },
+                },
+
+                // softlayer.go has been overriding http.DefaultClient and forcing 120s
+                // timeout on us, so we'll continue to force it on ourselves in case
+                // we've accidentally become acustomed to it.
+                Timeout: time.Second * 120,
+        }
+
+        return httpClient, nil
+}</span>
+
+// GeneralCAHttpClientWithTimeout returns an http.Client configured for general use
+func GeneralCAHttpClientWithTimeout(timeout time.Duration) (*http.Client, error) <span class="cov0" title="0">{
+
+        httpClient := &amp;http.Client{
+
+                Transport: &amp;http.Transport{
+                        TLSClientConfig: &amp;tls.Config{
+                                MinVersion: tls.VersionTLS12, // Require TLS 1.2 or higher
+                        },
+                },
+
+                Timeout: timeout,
+        }
+
+        return httpClient, nil
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
