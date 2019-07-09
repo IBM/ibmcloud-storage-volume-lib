@@ -200,12 +200,15 @@ func TestGetDefaultConfPath(t *testing.T) {
 
 func TestGetConfPathDir(t *testing.T) {
 	t.Log("Testing GetConfPathDir")
+	os.Setenv("SECRET_CONFIG_PATH", "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml")
+	expectedEtcPath := "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml"
+	confPath := GetConfPathDir()
+	assert.Equal(t, confPath, expectedEtcPath)
 
-	configPath := "test.toml"
-	conf, _ := ReadConfig(configPath, testLogger)
-
-	maxTimeout, _, _ := conf.VPC.GetTimeOutParameters()
-	assert.Equal(t, maxTimeout, 120)
+	os.Unsetenv("SECRET_CONFIG_PATH")
+	os.Unsetenv("GOPATH")
+	confPath = GetConfPathDir()
+	assert.Equal(t, confPath, expectedEtcPath)
 }
 
 func TestGetTimeOutParameters(t *testing.T) {
