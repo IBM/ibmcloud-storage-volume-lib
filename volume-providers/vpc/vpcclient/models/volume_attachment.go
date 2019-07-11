@@ -15,6 +15,11 @@ import (
 	"time"
 )
 
+// Device ...
+type Device struct {
+	ID string `json:"id"`
+}
+
 // VolumeAttachment for riaas client
 type VolumeAttachment struct {
 	ID   string `json:"id"`
@@ -26,6 +31,7 @@ type VolumeAttachment struct {
 	// InstanceID this volume is attached to
 	InstanceID *string    `json:"instance_id,omitempty"`
 	ClusterID  *string    `json:"clusterID,omitempty"`
+	Device     *Device    `json:"device,omitempty"`
 	Volume     *Volume    `json:"volume,omitempty"`
 	CreatedAt  *time.Time `json:"created_at,omitempty"`
 	// If set to true, when deleting the instance the volume will also be deleted
@@ -76,6 +82,9 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 	}
 	if va.InstanceID != nil {
 		varp.InstanceID = *va.InstanceID
+	}
+	if va.Device != nil {
+		varp.VolumeAttachmentRequest.VPCVolumeAttachment.Device = &provider.Device{ID: va.Device.ID}
 	}
 	return varp
 }

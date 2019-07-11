@@ -42,6 +42,11 @@ type Profile struct {
 	CRN  string `json:"crn,omitempty"`
 }
 
+// Device ...
+type Device struct {
+	ID string `json:"id"`
+}
+
 // VolumeAttachment ...
 type VolumeAttachment struct {
 	Href string `json:"href,omitempty"`
@@ -53,6 +58,8 @@ type VolumeAttachment struct {
 	Type string `json:"type,omitempty"`
 	// If set to true, when deleting the instance the volume will also be deleted
 	DeleteVolumeOnInstanceDelete bool `json:"delete_volume_on_instance_delete,omitempty"`
+	// Attached device
+	Device *Device `json:"volume,omitempty"`
 }
 
 // VolumeEncryptionKey ...

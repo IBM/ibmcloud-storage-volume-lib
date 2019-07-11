@@ -51,10 +51,11 @@ func TestAttachVolume(t *testing.T) {
 		}, {
 			name:    "Verify that the volume attachment is done correctly",
 			status:  http.StatusOK,
-			content: "{\"id\":\"volume attachment id\", \"name\":\"volume attachment\",\"volume\": {\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}}",
+			content: "{\"id\":\"volume attachment id\", \"name\":\"volume attachment\", \"device\": {\"id\":\"device-id\"}, \"volume\": {\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}}",
 			verify: func(t *testing.T, volumeAttachment *models.VolumeAttachment, err error) {
 				if assert.NotNil(t, volumeAttachment) {
 					assert.Equal(t, "volume attachment id", volumeAttachment.ID)
+					assert.Equal(t, "device-id", volumeAttachment.Device.ID)
 				}
 			},
 		},
