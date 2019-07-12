@@ -20,13 +20,13 @@ import (
 )
 
 // maxRetryAttempt ...
-var maxRetryAttempt = 5
+var maxRetryAttempt = 10
 
 // maxRetryGap ...
-var maxRetryGap = 30
+var maxRetryGap = 60
 
 // retryGap ...
-var retryGap = 5
+var retryGap = 10
 
 var volumeIDPartsCount = 5
 
