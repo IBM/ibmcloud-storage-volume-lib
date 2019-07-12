@@ -108,6 +108,9 @@ func TestSkipRetry(t *testing.T) {
 }
 
 func TestRetryWithError(t *testing.T) {
+	maxRetryAttempt = 2
+	maxRetryGap = 20
+
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
 	var err error
