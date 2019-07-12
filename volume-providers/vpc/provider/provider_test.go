@@ -239,7 +239,7 @@ func TestOpenSession(t *testing.T) {
 	return
 }
 
-func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn provider.Session, uc, sc *fakes.RegionalAPI, err error) {
+func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn *VPCSession, uc, sc *fakes.RegionalAPI, err error) {
 	vpcp, err := GetTestProvider(t, logger)
 
 	m := http.NewServeMux()

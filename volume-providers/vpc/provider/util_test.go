@@ -46,6 +46,8 @@ func GetTestContextLogger() (*zap.Logger, zap.AtomicLevel) {
 func TestRetry(t *testing.T) {
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
+	os.Setenv("VPC_RETRY_INTERVAL", "30")
+	os.Setenv("VPC_RETRY_ATTEMPT", "5")
 	var err error
 	var attempt int
 	err = retry(logger, func() error {
@@ -106,6 +108,9 @@ func TestSkipRetry(t *testing.T) {
 }
 
 func TestRetryWithError(t *testing.T) {
+	maxRetryAttempt = 2
+	maxRetryGap = 20
+
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
 	var err error
@@ -154,4 +159,10 @@ func TestIsValidVolumeIDFormat(t *testing.T) {
 	assert.Equal(t, returnValue, false)
 	returnValue = IsValidVolumeIDFormat("34c3ad36-34d9-4d3a-8463-5a176c75801c")
 	assert.Equal(t, returnValue, true)
+}
+
+func TestSetRetryParameters(t *testing.T) {
+	SetRetryParameters(200, 50)
+	assert.Equal(t, maxRetryAttempt, 200)
+	assert.Equal(t, maxRetryGap, 50)
 }
