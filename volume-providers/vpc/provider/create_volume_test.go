@@ -198,7 +198,7 @@ func TestCreateVolume(t *testing.T) {
 				assert.NotNil(t, err)
 			},
 		}, {
-			testCaseName: "Volume creaion failure",
+			testCaseName: "Volume creation failure",
 			profileName:  "general-purpose",
 			providerVolume: provider.Volume{
 				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
