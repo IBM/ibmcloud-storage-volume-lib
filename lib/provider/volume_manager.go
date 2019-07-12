@@ -47,7 +47,4 @@ type VolumeManager interface {
 
 	//AuthorizeVolume allows aceess to volume  based on given authorization
 	AuthorizeVolume(volumeAuthorization VolumeAuthorization) error
-
-	// WaitForVolumeAvailableState checks the volume for valid status
-	WaitForVolumeAvailableState(volumeID string) error
 }

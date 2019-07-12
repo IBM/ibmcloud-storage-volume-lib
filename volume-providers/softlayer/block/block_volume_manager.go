@@ -372,9 +372,3 @@ func (sls *SLBlockSession) ListVolumes(tags map[string]string) ([]*provider.Volu
 	//! TODO: we may implement
 	return nil, nil
 }
-
-// WaitForVolumeAvailableState checks the volume for valid status
-func (sls *SLBlockSession) WaitForVolumeAvailableState(volumeID string) (err error) {
-	//! TODO: we may implement
-	return nil
-}

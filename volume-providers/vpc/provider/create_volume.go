@@ -70,12 +70,12 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 
 	vpcs.Logger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
 
-	vpcs.Logger.Info("Waiting for volume to enter available state", zap.Reflect("VolumeDetails", volume))
-	err = vpcs.WaitForVolumeAvailableState(volume.ID)
+	vpcs.Logger.Info("Waiting for volume to be in valid (available) state", zap.Reflect("VolumeDetails", volume))
+	err = WaitForValidVolumeState(vpcs, volume.ID)
 	if err != nil {
-		return nil, userError.GetUserError("StorageFindFailedWithVolumeId", err, volume.ID)
+		return nil, userError.GetUserError("VolumeNotInValidState", err, volume.ID)
 	}
-	vpcs.Logger.Info("Volume got valid available state", zap.Reflect("VolumeDetails", volume))
+	vpcs.Logger.Info("Volume got valid (available) state", zap.Reflect("VolumeDetails", volume))
 
 	// Converting volume to lib volume type
 	volumeResponse = FromProviderToLibVolume(volume, vpcs.Logger)

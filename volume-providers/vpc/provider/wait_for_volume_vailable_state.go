@@ -20,10 +20,10 @@ const (
 	validVolumeStatus = "available"
 )
 
-// WaitForVolumeAvailableState checks the volume for valid status
-func (vpcs *VPCSession) WaitForVolumeAvailableState(volumeID string) (err error) {
-	vpcs.Logger.Debug("Entry of WaitForVolumeAvailableState method...")
-	defer vpcs.Logger.Debug("Exit from WaitForVolumeAvailableState method...")
+// WaitForValidVolumeState checks the volume for valid status
+func WaitForValidVolumeState(vpcs *VPCSession, volumeID string) (err error) {
+	vpcs.Logger.Debug("Entry of WaitForValidVolumeState method...")
+	defer vpcs.Logger.Debug("Exit from WaitForValidVolumeState method...")
 
 	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", volumeID))
 
@@ -32,15 +32,15 @@ func (vpcs *VPCSession) WaitForVolumeAvailableState(volumeID string) (err error)
 		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
 		vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("volume", volume))
 		if volume != nil && volume.Status == validVolumeStatus {
-			vpcs.Logger.Info("Volume got available state", zap.Reflect("VolumeDetails", volume))
+			vpcs.Logger.Info("Volume got valid (available) state", zap.Reflect("VolumeDetails", volume))
 			return nil
 		}
 		return err
 	})
 
 	if err != nil {
-		vpcs.Logger.Info("Volume could not get available state", zap.Reflect("VolumeDetails", volume))
-		return userError.GetUserError("StorageFindFailedWithVolumeId", err, volumeID)
+		vpcs.Logger.Info("Volume could not get valid (available) state", zap.Reflect("VolumeDetails", volume))
+		return userError.GetUserError("VolumeNotInValidState", err, volumeID)
 	}
 
 	return nil

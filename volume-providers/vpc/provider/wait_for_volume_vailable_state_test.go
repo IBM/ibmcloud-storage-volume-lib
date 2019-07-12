@@ -21,7 +21,7 @@ import (
 	"testing"
 )
 
-func TestWaitForVolumeAvailableState(t *testing.T) {
+func TestWaitForValidVolumeState(t *testing.T) {
 	//var err error
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
@@ -96,7 +96,7 @@ func TestWaitForVolumeAvailableState(t *testing.T) {
 			} else {
 				volumeService.GetVolumeReturns(testcase.baseVolume, nil)
 			}
-			err = vpcs.WaitForVolumeAvailableState(testcase.volumeID)
+			err = WaitForValidVolumeState(vpcs, testcase.volumeID)
 
 			if testcase.expectedErr != "" {
 				assert.NotNil(t, err)
