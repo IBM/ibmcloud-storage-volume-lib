@@ -108,6 +108,8 @@ func TestSkipRetry(t *testing.T) {
 }
 
 func TestRetryWithError(t *testing.T) {
+	os.Setenv("VPC_RETRY_INTERVAL", "30")
+	os.Setenv("VPC_RETRY_ATTEMPT", "5")
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
 	var err error
