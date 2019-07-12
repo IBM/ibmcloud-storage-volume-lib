@@ -20,10 +20,10 @@ import (
 )
 
 // maxRetryAttempt ...
-var maxRetryAttempt = 10
+var maxRetryAttempt = 5
 
 // maxRetryGap ...
-var maxRetryGap = 60
+var maxRetryGap = 30
 
 // retryGap ...
 var retryGap = 10
