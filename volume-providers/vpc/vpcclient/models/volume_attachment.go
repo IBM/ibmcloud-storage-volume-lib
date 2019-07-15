@@ -12,6 +12,7 @@ package models
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"strings"
 	"time"
 )
 
@@ -83,8 +84,20 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 	if va.InstanceID != nil {
 		varp.InstanceID = *va.InstanceID
 	}
+
+	//Set DevicePath
 	if va.Device != nil {
-		varp.VolumeAttachmentRequest.VPCVolumeAttachment.Device = &provider.Device{ID: va.Device.ID}
+		devicepath := va.Device.ID
+		generation := "gc" //default
+		if va.Volume != nil && va.Volume.Generation != "" {
+			generation = va.Volume.Generation.String()
+		}
+
+		//prepend "/dev/" for generation=1 (gc)
+		if generation == "gc" && !strings.HasPrefix(devicepath, "/dev/") {
+			devicepath = "/dev/" + va.Device.ID
+		}
+		varp.VolumeAttachmentRequest.VPCVolumeAttachment.Device = &provider.Device{ID: devicepath}
 	}
 	return varp
 }

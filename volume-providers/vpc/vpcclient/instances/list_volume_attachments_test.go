@@ -49,7 +49,7 @@ func TestListVolumeAttachment(t *testing.T) {
 		}, {
 			name:    "Verify that the volume attachment is done correctly",
 			status:  http.StatusOK,
-			content: "{\"volume_attachments\":[{\"id\":\"volumeattachmentid1\", \"name\":\"volume attachment\", \"device\": {\"id\":\"device-id\"}, \"volume\": {\"id\":\"volume-id1\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}, \"instance_id\":\"testinstance\"}]}",
+			content: "{\"volume_attachments\":[{\"id\":\"volumeattachmentid1\", \"name\":\"volume attachment\", \"device\": {\"id\":\"/dev/xvdc\"}, \"volume\": {\"id\":\"volume-id1\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}, \"instance_id\":\"testinstance\"}]}",
 			verify: func(t *testing.T, volumeAttachmentList *models.VolumeAttachmentList, err error) {
 				assert.NotNil(t, volumeAttachmentList)
 				assert.Equal(t, len(volumeAttachmentList.VolumeAttachments), 1)
