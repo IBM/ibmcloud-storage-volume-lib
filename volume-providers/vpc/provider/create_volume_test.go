@@ -242,6 +242,31 @@ func TestCreateVolume(t *testing.T) {
 				assert.Nil(t, volumeResponse)
 				assert.NotNil(t, err)
 			},
+		}, {
+			testCaseName: "Volume in pending state",
+			profileName:  "general-purpose",
+			baseVolume: &models.Volume{
+				ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     "test-volume-name",
+				Status:   models.StatusType("pending"),
+				Capacity: int64(10),
+				Iops:     int64(1000),
+				Zone:     &models.Zone{Name: "test-zone"},
+			},
+			providerVolume: provider.Volume{
+				VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+				Name:     String("test volume name"),
+				Capacity: Int(10),
+				Iops:     String("0"),
+				VPCVolume: provider.VPCVolume{
+					Profile:       &provider.Profile{Name: profileName},
+					ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
+				},
+			},
+			verify: func(t *testing.T, volumeResponse *provider.Volume, err error) {
+				assert.Nil(t, volumeResponse)
+				assert.NotNil(t, err)
+			},
 		},
 	}
 
@@ -262,7 +287,7 @@ func TestCreateVolume(t *testing.T) {
 				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
 			} else {
 				volumeService.CreateVolumeReturns(testcase.baseVolume, nil)
-				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
+				volumeService.GetVolumeReturns(testcase.baseVolume, nil)
 			}
 			volume, err := vpcs.CreateVolume(testcase.providerVolume)
 			logger.Info("Volume details", zap.Reflect("volume", volume))

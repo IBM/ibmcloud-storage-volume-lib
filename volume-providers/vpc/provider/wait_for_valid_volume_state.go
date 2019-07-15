@@ -30,12 +30,15 @@ func WaitForValidVolumeState(vpcs *VPCSession, volumeID string) (err error) {
 	var volume *models.Volume
 	err = retry(vpcs.Logger, func() error {
 		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
+		if err != nil {
+			return err
+		}
 		vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("volume", volume))
 		if volume != nil && volume.Status == validVolumeStatus {
 			vpcs.Logger.Info("Volume got valid (available) state", zap.Reflect("VolumeDetails", volume))
 			return nil
 		}
-		return err
+		return userError.GetUserError("VolumeNotInValidState", err, volumeID)
 	})
 
 	if err != nil {

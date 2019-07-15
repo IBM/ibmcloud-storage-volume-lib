@@ -79,6 +79,8 @@ func TestWaitForValidVolumeState(t *testing.T) {
 		},
 	}
 
+	SetRetryParameters(2, 10)
+
 	for _, testcase := range testCases {
 		t.Run(testcase.testCaseName, func(t *testing.T) {
 			vpcs, uc, sc, err := GetTestOpenSession(t, logger)

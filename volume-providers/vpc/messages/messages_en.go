@@ -166,7 +166,7 @@ var messagesEn = map[string]util.Message{
 	},
 	"VolumeNotInValidState": util.Message{
 		Code:        "VolumeNotInValidState",
-		Description: "Volume did not get valid (available) status within timeout period.",
+		Description: "Volume %s did not get valid (available) status within timeout period.",
 		Type:        util.ProvisioningFailed,
 		RC:          500,
 		Action:      "Please check your input",
