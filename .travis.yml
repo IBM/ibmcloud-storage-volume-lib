@@ -34,7 +34,7 @@ script:
 - make fmt
 - make test
 - make coverage
-- make volume-lib-e2e-test && touch "Passing" || touch "Failed"
+- travis_wait make volume-lib-e2e-test && touch "Passing" || touch "Failed"
 after_success:
 - "./scripts/calculateCoverage.sh"
 - "./scripts/publishCoverage.sh"
