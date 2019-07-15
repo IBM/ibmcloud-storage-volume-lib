@@ -88,6 +88,9 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		return nil, err
 	}
 
+	// SetRetryParameters sets the retry logic parameters
+	SetRetryParameters(conf.VPC.MaxRetryAttempt, conf.VPC.MaxRetryGap)
+
 	provider := &VPCBlockProvider{
 		timeout:        timeout,
 		serverConfig:   conf.Server,
