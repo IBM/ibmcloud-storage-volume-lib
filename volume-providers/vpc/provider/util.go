@@ -20,13 +20,13 @@ import (
 )
 
 // maxRetryAttempt ...
-var maxRetryAttempt = 5
+var maxRetryAttempt = 10
 
 // maxRetryGap ...
-var maxRetryGap = 30
+var maxRetryGap = 60
 
 // retryGap ...
-var retryGap = 5
+var retryGap = 10
 
 var volumeIDPartsCount = 5
 
@@ -36,6 +36,7 @@ var skipErrorCodes = map[string]bool{
 	"volume_id_invalid":                true,
 	"volume_profile_iops_invalid":      true,
 	"volume_capacity_zero_or_negative": true,
+	"not_found":                        true,
 	"internal_error":                   false,
 	"invalid_route":                    false,
 }
@@ -43,6 +44,7 @@ var skipErrorCodes = map[string]bool{
 // retry ...
 func retry(logger *zap.Logger, retryfunc func() error) error {
 	var err error
+
 	for i := 0; i < maxRetryAttempt; i++ {
 		if i > 0 {
 			time.Sleep(time.Duration(retryGap) * time.Second)
@@ -147,4 +149,15 @@ func IsValidVolumeIDFormat(volID string) bool {
 		return false
 	}
 	return true
+}
+
+// SetRetryParameters sets the retry logic parameters
+func SetRetryParameters(maxAttempts int, maxGap int) {
+	if maxAttempts > 0 {
+		maxRetryAttempt = maxAttempts
+	}
+
+	if maxGap > 0 {
+		maxRetryGap = maxGap
+	}
 }

@@ -12,10 +12,12 @@ package config
 
 import (
 	"github.com/BurntSushi/toml"
+	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 func getEnv(key string) string {
@@ -37,6 +39,7 @@ type Config struct {
 	Softlayer *SoftlayerConfig
 	Gen2      *Gen2Config
 	VPC       *VPCProviderConfig
+	IKS       *IKSConfig
 }
 
 //ReadConfig loads the config from file
@@ -47,7 +50,9 @@ func ReadConfig(confPath string, logger *zap.Logger) (*Config, error) {
 	}
 
 	// Parse config file
-	var conf Config
+	conf := Config{
+		IKS: &IKSConfig{}, // IKS block may not be populated in secrete toml. Make sure its not nil
+	}
 	logger.Info("parsing conf file", zap.String("confpath", confPath))
 	err := ParseConfig(confPath, &conf, logger)
 	return &conf, err
@@ -62,6 +67,15 @@ func GetConfPath() string {
 	return GetDefaultConfPath()
 }
 
+// GetConfPathDir get configuration  dir path
+func GetConfPathDir() string {
+	if confPath := getEnv("SECRET_CONFIG_PATH"); confPath != "" {
+		return confPath
+	}
+	//Get default conf path
+	return GetEtcPath()
+}
+
 // GetDefaultConfPath get default config file path
 func GetDefaultConfPath() string {
 	return filepath.Join(GetEtcPath(), "libconfig.toml")
@@ -72,6 +86,11 @@ func ParseConfig(filePath string, conf interface{}, logger *zap.Logger) error {
 	_, err := toml.DecodeFile(filePath, conf)
 	if err != nil {
 		logger.Error("Failed to parse config file", zap.Error(err))
+	}
+	// Read environment variables
+	err = envconfig.Process("", conf)
+	if err != nil {
+		logger.Error("Failed to gather environment config variable", zap.Error(err))
 	}
 	return err
 }
@@ -89,6 +108,8 @@ type BluemixConfig struct {
 	IamClientSecret string `toml:"iam_client_secret" json:"-"`
 	IamAPIKey       string `toml:"iam_api_key" json:"-"`
 	RefreshToken    string `toml:"refresh_token" json:"-"`
+	APIEndpointURL  string `toml:"containers_api_route"`
+	Encryption      bool   `toml:"encryption"`
 }
 
 // SoftlayerConfig ...
@@ -126,11 +147,21 @@ type Gen2Config struct {
 type VPCProviderConfig struct {
 	Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
 	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
-	EndpointURL          string `toml:"vpc_endpoint_url" envconfig:"VPC_ENDPOINT_URL"`
-	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
-	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
-	MaxRetryGap          int    `toml:"max_retry_gap"`
-	APIVersion           string `toml:"api_version"`
+	EndpointURL          string `toml:"gc_riaas_endpoint_url"`
+	TokenExchangeURL     string `toml:"gc_token_exchange_endpoint_url"`
+	APIKey               string `toml:"gc_api_key" json:"-"`
+	Encryption           bool   `toml:"encryption"`
+	ResourceGroupID      string `toml:"gc_resource_group_id"`
+	Timeout              string `toml:"vpc_timeout,omitempty" envconfig:"VPC_TIMEOUT"`
+	MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty" envconfig:"VPC_RETRY_ATTEMPT"`
+	MaxRetryGap          int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
+	APIVersion           string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
+}
+
+//IKSConfig config
+type IKSConfig struct {
+	Enabled              bool   `toml:"iks_enabled" envconfig:"IKS_ENABLED"`
+	IKSBlockProviderName string `toml:"iks_block_provider_name" envconfig:"IKS_BLOCK_PROVIDER_NAME"`
 }
 
 // GetEtcPath returns the path to the etc directory
@@ -139,4 +170,16 @@ func GetEtcPath() string {
 	srcPath := filepath.Join("src", "github.com", "IBM",
 		"ibmcloud-storage-volume-lib")
 	return filepath.Join(goPath, srcPath, "etc")
+}
+
+// GetTimeOutParameters retrives the parameteer to implement retry logic
+// maxTimeout - Maximum time out for the operations
+// retryGapDuration - The time interval for next attempt
+// maxRetryAttempt - maxmum retry attempts derived based on  maxTimeout and retryGapDuration
+func (config *VPCProviderConfig) GetTimeOutParameters() (int, int, time.Duration) {
+	maxTimeoutConfig, _ := time.ParseDuration(config.Timeout)
+	maxTimeout := int(maxTimeoutConfig.Seconds())
+	maxRetryAttempt := maxTimeout / config.MaxRetryGap
+	retryGapDuration := time.Duration(config.MaxRetryGap) * time.Second
+	return maxTimeout, maxRetryAttempt, retryGapDuration
 }

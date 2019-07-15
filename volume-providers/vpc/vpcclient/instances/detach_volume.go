@@ -26,17 +26,17 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 	operation := &client.Operation{
 		Name:        "DetachVolume",
 		Method:      "DELETE",
-		PathPattern: instanceIDattachmentIDPath,
+		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
-	var apiErr models.Error
+	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
 	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
-	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+	req := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
 	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
-	resp, err := req.JSONError(&apiErr).Invoke()
+	resp, err := req.JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attahment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {

@@ -131,6 +131,9 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 	var cp *fakes.RegionalAPIClientProvider
 	var uc, sc *fakes.RegionalAPI
 
+	// SetRetryParameters sets the retry logic parameters
+	SetRetryParameters(2, 5)
+
 	logger.Info("Getting New test Provider")
 	conf := &config.Config{
 		Server: &config.ServerConfig{
@@ -239,7 +242,7 @@ func TestOpenSession(t *testing.T) {
 	return
 }
 
-func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn provider.Session, uc, sc *fakes.RegionalAPI, err error) {
+func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn *VPCSession, uc, sc *fakes.RegionalAPI, err error) {
 	vpcp, err := GetTestProvider(t, logger)
 
 	m := http.NewServeMux()

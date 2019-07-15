@@ -11,7 +11,9 @@
 package vpcvolume
 
 const (
-	volumesPath   = "volumes"
+	// Version of the VPC backend service
+	Version       = "/v1"
+	volumesPath   = Version + "/volumes"
 	volumeIDParam = "volume-id"
 	volumeIDPath  = volumesPath + "/{" + volumeIDParam + "}"
 

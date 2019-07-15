@@ -17,28 +17,70 @@ import (
 	"net/http"
 )
 
+const (
+	//VpcPathPrefix  VPC URL path prefix
+	VpcPathPrefix = "v1/instances"
+	//IksPathPrefix  IKS URL path prefix
+	IksPathPrefix = "v2/storage/clusters/{cluster-id}/workers"
+)
+
 // VolumeAttachManager operations
+//go:generate counterfeiter -o fakes/volume_attach_service.go --fake-name VolumeAttachService . VolumeAttachManager
 type VolumeAttachManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
 	AttachVolume(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
-
-	// GetAttachStatus retrives the VolumeAttachment of  given request
+	// GetVolumeAttachment retrives the single VolumeAttachment based on the instance ID and attachmentID
+	GetVolumeAttachment(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
+	// ListVolumeAttachment retrives the VolumeAttachment list for given server
 	ListVolumeAttachment(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachmentList, error)
-
 	// Delete the volume
 	DetachVolume(*models.VolumeAttachment, *zap.Logger) (*http.Response, error)
 }
 
 // VolumeAttachService ...
 type VolumeAttachService struct {
-	client client.SessionClient
+	client                       client.SessionClient
+	pathPrefix                   string
+	receiverError                error
+	populatePathPrefixParameters func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request
 }
 
 var _ VolumeAttachManager = &VolumeAttachService{}
 
 // New ...
-func New(client client.SessionClient) VolumeAttachManager {
+func New(clientIn client.SessionClient) VolumeAttachManager {
+	err := models.Error{}
 	return &VolumeAttachService{
-		client: client,
+		client:        clientIn,
+		pathPrefix:    VpcPathPrefix,
+		receiverError: &err,
+		populatePathPrefixParameters: func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
+			request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+			return request
+		},
+	}
+}
+
+// IKSVolumeAttachService ...
+type IKSVolumeAttachService struct {
+	VolumeAttachService
+}
+
+var _ VolumeAttachManager = &IKSVolumeAttachService{}
+
+// NewIKSVolumeAttachmentManager ...
+func NewIKSVolumeAttachmentManager(clientIn client.SessionClient) VolumeAttachManager {
+	err := models.IksError{}
+	return &IKSVolumeAttachService{
+		VolumeAttachService{
+			client:        clientIn,
+			pathPrefix:    IksPathPrefix,
+			receiverError: &err,
+			populatePathPrefixParameters: func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
+				request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+				request.PathParameter(clusterIDParam, *volumeAttachmentTemplate.ClusterID)
+				return request
+			},
+		},
 	}
 }

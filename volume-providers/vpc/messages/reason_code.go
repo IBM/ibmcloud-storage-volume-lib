@@ -10,12 +10,17 @@
 
 package messages
 
-// Attach / Detach problems
 const (
+	//AuthenticationFailed indicate authentication to IAM endpoint failed. e,g IAM_TOKEN refresh
+	AuthenticationFailed = "AuthenticationFailed"
 	//VolumeAttachFailed indicates if volume attach to instance is failed
 	VolumeAttachFailed = "VolumeAttachFailed"
 	//VolumeDetachFailed indicates if volume detach from instance is failed
 	VolumeDetachFailed = "VolumeDetachFailed"
 	//VolumeAttachFindFailed indicates if the volume attachment is not found with given request
 	VolumeAttachFindFailed = "VolumeAttachFindFailed"
+	//VolumeAttachTimedOut indicates the volume attach is not completed within the specified time out
+	VolumeAttachTimedOut = "VolumeAttachTimedOut"
+	//VolumeDetachTimedOut indicates the volume detach is not completed within the specified time out
+	VolumeDetachTimedOut = "VolumeDetachTimedOut"
 )

@@ -23,6 +23,12 @@ import (
 
 var logger *zap.Logger
 
+func TestSetRetryParameters(t *testing.T) {
+	SetRetryParameters(2, 5)
+	assert.Equal(t, maxRetryAttempt, 2)
+	assert.Equal(t, maxRetryGap, 5)
+}
+
 func GetTestContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	consoleDebugging := zapcore.Lock(os.Stdout)
 	consoleErrors := zapcore.Lock(os.Stderr)
@@ -46,6 +52,7 @@ func GetTestContextLogger() (*zap.Logger, zap.AtomicLevel) {
 func TestRetry(t *testing.T) {
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
+	SetRetryParameters(2, 5)
 	var err error
 	var attempt int
 	err = retry(logger, func() error {
@@ -106,6 +113,9 @@ func TestSkipRetry(t *testing.T) {
 }
 
 func TestRetryWithError(t *testing.T) {
+	maxRetryAttempt = 2
+	maxRetryGap = 20
+
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
 	var err error

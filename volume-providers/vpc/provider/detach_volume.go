@@ -41,7 +41,7 @@ func (vpcs *VPCSession) DetachVolume(volumeAttachmentTemplate provider.VolumeAtt
 		volumeAttachment.ID = currentVolAttachment.VPCVolumeAttachment.ID
 		vpcs.Logger.Info("Detaching volume from VPC provider...")
 		err = retry(vpcs.Logger, func() error {
-			response, err = vpcs.Apiclient.VolumeAttachService().DetachVolume(&volumeAttachment, vpcs.Logger)
+			response, err = vpcs.APIClientVolAttachMgr.DetachVolume(&volumeAttachment, vpcs.Logger)
 			return err
 		})
 		if err != nil {
@@ -51,12 +51,9 @@ func (vpcs *VPCSession) DetachVolume(volumeAttachmentTemplate provider.VolumeAtt
 		}
 		vpcs.Logger.Info("Successfully detached volume from VPC provider", zap.Reflect("resp", response))
 		return response, nil
-	} else if err != nil {
-		vpcs.Logger.Error("Error ocucred while finding volume attachment", zap.Error(err))
-		return nil, err
 	}
-	vpcs.Logger.Info("No volume attachment found for", zap.Reflect("currentVolAttachment", currentVolAttachment))
-	// consider volume detach success if its  already  in Detaching
+	vpcs.Logger.Info("No volume attachment found for", zap.Reflect("currentVolAttachment", currentVolAttachment), zap.Error(err))
+	// consider volume detach success if its  already  in Detaching or VolumeAttachment is not found
 	response = &http.Response{
 		StatusCode: http.StatusOK,
 	}
