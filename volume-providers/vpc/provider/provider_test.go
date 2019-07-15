@@ -130,7 +130,10 @@ func TestNewProvider(t *testing.T) {
 func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error) {
 	var cp *fakes.RegionalAPIClientProvider
 	var uc, sc *fakes.RegionalAPI
-
+	
+	// SetRetryParameters sets the retry logic parameters
+	SetRetryParameters(2, 5)
+	
 	logger.Info("Getting New test Provider")
 	conf := &config.Config{
 		Server: &config.ServerConfig{
