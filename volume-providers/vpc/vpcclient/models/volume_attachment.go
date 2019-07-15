@@ -86,7 +86,7 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 	}
 
 	//Set DevicePath
-	if va.Device != nil {
+	if va.Device != nil && va.Device.ID != "" {
 		devicepath := va.Device.ID
 		generation := "gc" //default
 		if va.Volume != nil && va.Volume.Generation != "" {
