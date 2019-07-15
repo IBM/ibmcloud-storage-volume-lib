@@ -37,6 +37,6 @@
   gc_api_key = "IAM_API_KEY"
   encryption = false
   vpc_timeout = "120s"
-  max_retry_attempt  = 10
-  max_retry_gap =  60
+  max_retry_attempt  = 2
+  max_retry_gap =  5
   api_version = "2019-01-01"
