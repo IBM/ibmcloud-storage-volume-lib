@@ -16,7 +16,7 @@ import (
 
 // GetUserErr ...
 func GetUserErr(code string, err error, args ...interface{}) error {
-	//Incase of no error message, dont construct the Error Object
+	// Incase of no error message, dont construct the Error Object
 	if err == nil {
 		return nil
 	}
