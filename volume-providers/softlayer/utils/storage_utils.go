@@ -480,6 +480,18 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 		volumeAttribs["fileNetworkMountAddress"] = *storage.FileNetworkMountAddress
 	}
 
+	if storage.AllowedIpAddresses != nil && len(storage.AllowedIpAddresses) > 0 {
+		volumeAttribs["username"] = *storage.AllowedIpAddresses[0].AllowedHost.Credential.Username
+		volumeAttribs["password"] = *storage.AllowedIpAddresses[0].AllowedHost.Credential.Password
+		volumeAttribs["initiatorName"] = *storage.AllowedIpAddresses[0].AllowedHost.Name
+		volumeAttribs["authIP"] = *storage.AllowedIpAddresses[0].IpAddress
+	} else if storage.Credentials != nil && len(storage.Credentials) > 0 {
+		volumeAttribs["username"] = *storage.Credentials[0].Username
+		volumeAttribs["password"] = *storage.Credentials[0].Password
+		volumeAttribs["initiatorName"] = *storage.AllowedIpAddresses[0].AllowedHost.Name
+		volumeAttribs["authIP"] = *storage.AllowedIpAddresses[0].IpAddress
+	}
+
 	volume.VolumeNotes = newnotes
 	volume.Attributes = volumeAttribs
 	return
