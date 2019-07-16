@@ -88,14 +88,14 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 	//Set DevicePath
 	if va.Device != nil && va.Device.ID != "" {
 		devicepath := va.Device.ID
-		generation := "gc" //default
+		generation := GTypeClassic //default
 		if va.Volume != nil && va.Volume.Generation != "" {
 			generation = va.Volume.Generation.String()
 		}
 
 		//prepend "/dev/" for generation=1 (gc)
-		if generation == "gc" && !strings.HasPrefix(devicepath, "/dev/") {
-			devicepath = "/dev/" + va.Device.ID
+		if generation == GTypeClassic && !strings.HasPrefix(devicepath, GTypeClassicDevicePrefix) {
+			devicepath = GTypeClassicDevicePrefix + va.Device.ID
 		}
 		varp.VolumeAttachmentRequest.VPCVolumeAttachment.Device = &provider.Device{ID: devicepath}
 	}
