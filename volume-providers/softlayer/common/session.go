@@ -119,7 +119,18 @@ func (sls *SLSession) DeleteVolume(vol *provider.Volume) error {
 	if volumeID == 0 {
 		return messages.GetUserError("E0035", nil)
 	}
-
+	//! Step 2- Deauthorize on delete
+	if vol.Attributes["authIP"] != "" {
+		volumeAuthorization := provider.VolumeAuthorization{
+			Volume:  *vol,
+			Subnets: "",
+			HostIPs: vol.Attributes["authIP"],
+		}
+		err := sls.DeauthorizeVolume(volumeAuthorization)
+		if err != nil {
+			return err
+		}
+	}
 	return sls.deleteStorage(volumeID)
 }
 
