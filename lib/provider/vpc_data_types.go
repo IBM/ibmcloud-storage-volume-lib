@@ -59,7 +59,7 @@ type VolumeAttachment struct {
 	// If set to true, when deleting the instance the volume will also be deleted
 	DeleteVolumeOnInstanceDelete bool `json:"delete_volume_on_instance_delete,omitempty"`
 	// Attached device
-	Device *Device `json:"volume,omitempty"`
+	Device *Device `json:"device,omitempty"`
 }
 
 // VolumeEncryptionKey ...
