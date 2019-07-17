@@ -44,7 +44,7 @@ type Profile struct {
 
 // Device ...
 type Device struct {
-	ID string `json:"id"`
+	Path string `json:"path"`
 }
 
 // VolumeAttachment ...
