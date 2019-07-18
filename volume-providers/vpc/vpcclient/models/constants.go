@@ -16,4 +16,10 @@ const (
 
 	// UserAgent identifies IKS to the RIaaS API
 	UserAgent = "IBM-Kubernetes-Service"
+
+	// GTypeClassic ...
+	GTypeClassic = "gc"
+
+	// GTypeClassicDevicePrefix ...
+	GTypeClassicDevicePrefix = "/dev/"
 )

@@ -12,8 +12,14 @@ package models
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"strings"
 	"time"
 )
+
+// Device ...
+type Device struct {
+	ID string `json:"id"`
+}
 
 // VolumeAttachment for riaas client
 type VolumeAttachment struct {
@@ -26,6 +32,7 @@ type VolumeAttachment struct {
 	// InstanceID this volume is attached to
 	InstanceID *string    `json:"instance_id,omitempty"`
 	ClusterID  *string    `json:"clusterID,omitempty"`
+	Device     *Device    `json:"device,omitempty"`
 	Volume     *Volume    `json:"volume,omitempty"`
 	CreatedAt  *time.Time `json:"created_at,omitempty"`
 	// If set to true, when deleting the instance the volume will also be deleted
@@ -76,6 +83,21 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 	}
 	if va.InstanceID != nil {
 		varp.InstanceID = *va.InstanceID
+	}
+
+	//Set DevicePath
+	if va.Device != nil && va.Device.ID != "" {
+		devicepath := va.Device.ID
+		generation := GTypeClassic //default
+		if va.Volume != nil && va.Volume.Generation != "" {
+			generation = va.Volume.Generation.String()
+		}
+
+		//prepend "/dev/" for generation=1 (gc)
+		if generation == GTypeClassic && !strings.HasPrefix(devicepath, GTypeClassicDevicePrefix) {
+			devicepath = GTypeClassicDevicePrefix + va.Device.ID
+		}
+		varp.VolumeAttachmentRequest.VPCVolumeAttachment.Device = &provider.Device{Path: devicepath}
 	}
 	return varp
 }
