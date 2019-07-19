@@ -97,7 +97,7 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 		if generation == GTypeClassic && !strings.HasPrefix(devicepath, GTypeClassicDevicePrefix) {
 			devicepath = GTypeClassicDevicePrefix + va.Device.ID
 		}
-		varp.VolumeAttachmentRequest.VPCVolumeAttachment.Device = &provider.Device{Path: devicepath}
+		varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = devicepath
 	}
 	return varp
 }
