@@ -86,6 +86,40 @@ func skipRetry(err *models.Error) bool {
 	return false
 }
 
+// FlexyRetry ...
+func FlexyRetry(logger *zap.Logger, retryfunc func() (interface{}, error), skipRetryFunc func(interface{}, *models.Error) bool) error {
+	var err error
+
+	for i := 0; i < maxRetryAttempt; i++ {
+		if i > 0 {
+			time.Sleep(time.Duration(retryGap) * time.Second)
+		}
+		obj, err := retryfunc()
+		if err != nil {
+			//Skip retry for the below type of Errors
+			modelError, ok := err.(*models.Error)
+			if !ok {
+				continue
+			}
+			if skipRetryFunc(obj, modelError) {
+				break
+			}
+			if i >= 1 {
+				retryGap = 2 * retryGap
+				if retryGap > maxRetryGap {
+					retryGap = maxRetryGap
+				}
+			}
+			if (i + 1) < maxRetryAttempt {
+				logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryGap), zap.Error(err))
+			}
+			continue
+		}
+		return err
+	}
+	return err
+}
+
 // ToInt ...
 func ToInt(valueInInt string) int {
 	value, err := strconv.Atoi(valueInInt)

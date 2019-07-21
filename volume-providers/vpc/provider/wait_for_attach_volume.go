@@ -14,8 +14,9 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
-	"time"
+	//"time"
 )
 
 // WaitForAttachVolume waits for volume to be attached to node. e.g waits till status becomes attached
@@ -27,7 +28,26 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 	if err != nil {
 		return nil, err
 	}
-	maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
+	err = FlexyRetry(vpcs.Logger, func() (interface{}, error) {
+		currentVolAttachment, errAPI := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
+		return currentVolAttachment, errAPI
+	}, func(intf interface{}, err *models.Error) bool {
+		if err != nil {
+			for _, errorItem := range err.Errors {
+				skipStatus, ok := skipErrorCodes[string(errorItem.Code)]
+				if ok {
+					return skipStatus
+				}
+			}
+			return false
+		}
+
+		if intf.(*provider.VolumeAttachmentResponse).Status == StatusAttached {
+			return false
+		}
+		return true
+	})
+	/*maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
 	retryCount := 0
 	vpcs.Logger.Info("Waiting for volume to be attached", zap.Int("maxTimeout", maxTimeout))
 	for retryCount < maxRetryAttempt {
@@ -46,7 +66,7 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 		retryCount = retryCount + 1
 		vpcs.Logger.Info("Volume is still attaching. Retry..", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
 		time.Sleep(retryGapDuration)
-	}
+	}*/
 	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
 	vpcs.Logger.Info("Wait for attach timed out", zap.Error(userErr))
 
