@@ -143,8 +143,6 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		// set ContextID only of speicifed in the context
 		vpcp.APIConfig.ContextID = fmt.Sprintf("%v", ctx.Value(provider.RequestID))
 		ctxLogger.Info("", zap.Reflect("apiConfig.ContextID", vpcp.APIConfig.ContextID))
-	} else {
-		ctxLogger.Info("No context provoded", zap.Reflect("context", ctx))
 	}
 	client, err := vpcp.ClientProvider.New(vpcp.APIConfig)
 	if err != nil {
