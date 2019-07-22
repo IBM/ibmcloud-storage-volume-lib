@@ -17,6 +17,7 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"golang.org/x/net/context"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
@@ -108,7 +109,8 @@ func main() {
 		ctxLogger, _ := getContextLogger()
 		requestID := uid.NewV4().String()
 		ctxLogger = ctxLogger.With(zap.String("RequestID", requestID))
-		sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
+		ctx := context.WithValue(nil, provider.RequestID, requestID)
+		sess, _, err := provider_util.OpenProviderSessionWithContext(ctx, conf, providerRegistry, providerName, ctxLogger)
 		if err != nil {
 			ctxLogger.Error("Failed to get session", zap.Reflect("Error", err))
 			continue

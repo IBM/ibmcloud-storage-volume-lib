@@ -13,6 +13,7 @@ package utils
 import (
 	"errors"
 	"go.uber.org/zap"
+	"golang.org/x/net/context"
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
 	softlayer_file "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/file"
@@ -104,6 +105,11 @@ func isEmptyStringValue(value *string) bool {
 
 // OpenProviderSession ...
 func OpenProviderSession(conf *config.Config, providers registry.Providers, providerID string, ctxLogger *zap.Logger) (session provider.Session, fatal bool, err error) {
+	return OpenProviderSessionWithContext(nil, conf, providers, providerID, ctxLogger)
+}
+
+// OpenProviderSessionWithContext ...
+func OpenProviderSessionWithContext(ctx context.Context, conf *config.Config, providers registry.Providers, providerID string, ctxLogger *zap.Logger) (session provider.Session, fatal bool, err error) {
 	prov, err := providers.Get(providerID)
 	if err != nil {
 		ctxLogger.Error("Not able to get the said provider, might be its not registered", local.ZapError(err))
@@ -118,7 +124,7 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 	}
 	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
 	if err == nil {
-		session, err = prov.OpenSession(nil, contextCredentials, ctxLogger)
+		session, err = prov.OpenSession(ctx, contextCredentials, ctxLogger)
 	}
 
 	if err != nil {
