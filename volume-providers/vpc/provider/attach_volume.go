@@ -52,18 +52,16 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		return err
 	})*/
-
-	err = FlexyRetry(vpcs.Logger, func() (interface{}, error) {
+	fobj := NewFlexyRetryDefault()
+	err = fobj.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
 		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		return volumeAttachResult, err
 	}, func(intf interface{}, err *models.Error) bool {
-		for _, errorItem := range err.Errors {
-			skipStatus, ok := skipErrorCodes[string(errorItem.Code)]
-			if ok {
-				return skipStatus
-			}
+		if err != nil {
+			return skipRetry(err)
 		}
-		return false
+		// Default is true as there is no error so no need to re-try
+		return true
 	})
 
 	if err != nil {
