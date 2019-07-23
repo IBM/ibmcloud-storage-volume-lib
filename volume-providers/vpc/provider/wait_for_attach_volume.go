@@ -28,8 +28,8 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 	if err != nil {
 		return nil, err
 	}
-	fobj := NewFlexyRetryDefault()
-	err = fobj.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
+
+	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
 		currentVolAttachment, errAPI := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
 		return currentVolAttachment, errAPI
 	}, func(intf interface{}, err *models.Error) bool {

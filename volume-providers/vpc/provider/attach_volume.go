@@ -52,8 +52,8 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		return err
 	})*/
-	fobj := NewFlexyRetryDefault()
-	err = fobj.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
+
+	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
 		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		return volumeAttachResult, err
 	}, func(intf interface{}, err *models.Error) bool {
