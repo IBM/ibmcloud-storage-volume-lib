@@ -40,10 +40,19 @@ func (vpcs *VPCSession) DetachVolume(volumeAttachmentTemplate provider.VolumeAtt
 		volumeAttachment := models.NewVolumeAttachment(volumeAttachmentTemplate)
 		volumeAttachment.ID = currentVolAttachment.VPCVolumeAttachment.ID
 		vpcs.Logger.Info("Detaching volume from VPC provider...")
-		err = retry(vpcs.Logger, func() error {
+
+		err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
 			response, err = vpcs.APIClientVolAttachMgr.DetachVolume(&volumeAttachment, vpcs.Logger)
-			return err
+			return response, err
+		}, func(intf interface{}, err *models.Error) bool {
+			// Skip retry as per common errors
+			if err != nil {
+				return skipRetry(err)
+			}
+			// stop retry, as there is no error
+			return true
 		})
+
 		if err != nil {
 			userErr := userError.GetUserError(string(userError.VolumeDetachFailed), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, volumeAttachment.ID)
 			vpcs.Logger.Error("Volume detach failed with error", zap.Error(err))

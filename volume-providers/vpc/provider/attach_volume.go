@@ -48,19 +48,16 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 	//Try attaching volume if it's not already attached or there is error in getting current volume attachment
 	vpcs.Logger.Info("Attaching volume from VPC provider...")
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
-	/*err = retry(vpcs.Logger, func() error {
-		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
-		return err
-	})*/
 
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
 		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		return volumeAttachResult, err
 	}, func(intf interface{}, err *models.Error) bool {
+		// Skip retry as per common errors
 		if err != nil {
 			return skipRetry(err)
 		}
-		// Default is true as there is no error so no need to re-try
+		// stop retry, as there is no error
 		return true
 	})
 
