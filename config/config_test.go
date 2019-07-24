@@ -211,13 +211,3 @@ func TestGetConfPathDir(t *testing.T) {
 	expectedEtcPath = "src/github.com/IBM/ibmcloud-storage-volume-lib/etc"
 	assert.Equal(t, confPath, expectedEtcPath)
 }
-
-func TestGetTimeOutParameters(t *testing.T) {
-	t.Log("Testing GetTimeOutParameters")
-
-	configPath := "test.toml"
-	conf, _ := ReadConfig(configPath, testLogger)
-
-	maxTimeout, _, _ := conf.VPC.GetTimeOutParameters()
-	assert.Equal(t, maxTimeout, 120)
-}

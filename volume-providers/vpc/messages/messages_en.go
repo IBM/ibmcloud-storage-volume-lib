@@ -89,7 +89,7 @@ var messagesEn = map[string]util.Message{
 	},
 	VolumeAttachTimedOut: util.Message{
 		Code:        VolumeAttachTimedOut,
-		Description: "The volume ID '%s' could not be attached to the instance ID '%s' in %s. ",
+		Description: "The volume ID '%s' could not be attached to the instance ID '%s'",
 		Type:        "AttachFailed",
 		RC:          500,
 		Action:      "Verify that the volume ID and instance ID exist. Run 'ibmcloud is volumes' to list available volumes, and 'ibmcloud is instances' to list available instances in your account.",
@@ -103,7 +103,7 @@ var messagesEn = map[string]util.Message{
 	},
 	VolumeDetachTimedOut: util.Message{
 		Code:        VolumeDetachTimedOut,
-		Description: "The volume ID '%s' could not be detached from the instance ID '%s' in %s.",
+		Description: "The volume ID '%s' could not be detached from the instance ID '%s'",
 		Type:        "DetachFailed",
 		RC:          500,
 		Action:      "Verify that the specified instance ID has active volume attachments. Run 'ibmcloud is in-vols INSTANCE_ID' to list active volume attachments for your instance ID.",

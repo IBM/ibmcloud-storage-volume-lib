@@ -12,10 +12,9 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
-	"time"
 )
 
 // WaitForDetachVolume waits for volume to be detached from node. e.g waits till no volume attachment is found
@@ -28,30 +27,35 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 	if err != nil {
 		return err
 	}
-	maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
-	retryCount := 0
-	vpcs.Logger.Info("Waiting for volume to be detached", zap.Int("maxTimeout", maxTimeout))
-	for retryCount < maxRetryAttempt {
-		currentVolAttachment, errAPI := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
-		if errAPI != nil {
-			if errMsg, ok := errAPI.(util.Message); ok {
-				if errMsg.Code == userError.VolumeAttachFindFailed {
-					// Consider volume detachment is complete if  error code is VolumeAttachFindFailed
-					vpcs.Logger.Info("Volume detachment is complete", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt))
-					return nil
-				}
-				// do not retry if there is another error
-				vpcs.Logger.Error("Error occured while finding volume attachment", zap.Error(errAPI))
-				userErr := userError.GetUserError(string(userError.VolumeDetachFailed), errAPI, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
-				return userErr
+
+	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
+		currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
+		return currentVolAttachment, err
+	}, func(intf interface{}, err *models.Error) bool {
+		// Skip API retry logic, if there is any error keep retry as per configuration
+		if err != nil {
+			// stop re-try, as attchment find failed, because volume is already detached
+			if err.Errors[0].Code == userError.VolumeAttachFindFailed {
+				return true
+			}
+			// keep re-try for all other errors
+			return false
+		}
+		return false // Keep retry until timeout
+	})
+
+	// Return nil in case of successfully volume detached after re-try
+	if err != nil {
+		if errMsg, ok := err.(*models.Error); ok {
+			if errMsg.Errors[0].Code == userError.VolumeAttachFindFailed {
+				// Consider volume detachment is complete if  error code is VolumeAttachFindFailed
+				vpcs.Logger.Info("Volume detachment is complete")
+				return nil
 			}
 		}
-		// retry when volume attachment is still there
-		retryCount = retryCount + 1
-		vpcs.Logger.Info("Volume is still detaching. Retry..", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
-		time.Sleep(retryGapDuration)
 	}
-	userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
+
+	userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
 	vpcs.Logger.Info("Wait for detach timed out", zap.Error(userErr))
 	return userErr
 }

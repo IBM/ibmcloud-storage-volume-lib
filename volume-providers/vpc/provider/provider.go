@@ -72,7 +72,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	if err != nil {
 		return nil, err
 	}
-	timeoutString := conf.VPC.Timeout
+	timeoutString := conf.VPC.VPCTimeout
 	if timeoutString == "" || timeoutString == "0s" {
 		logger.Info("Using VPC default timeout")
 		timeoutString = "120s"
@@ -90,7 +90,6 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 
 	// SetRetryParameters sets the retry logic parameters
 	SetRetryParameters(conf.VPC.MaxRetryAttempt, conf.VPC.MaxRetryGap)
-
 	provider := &VPCBlockProvider{
 		timeout:        timeout,
 		serverConfig:   conf.Server,
@@ -174,6 +173,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		Apiclient:             client,
 		APIClientVolAttachMgr: client.VolumeAttachService(),
 		Logger:                ctxLogger,
+		APIRetry:              NewFlexyRetryDefault(),
 	}
 	return vpcSession, nil
 }

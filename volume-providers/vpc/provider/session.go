@@ -29,6 +29,7 @@ type VPCSession struct {
 	APIClientVolAttachMgr instances.VolumeAttachManager
 	APIVersion            string
 	Logger                *zap.Logger
+	APIRetry              FlexyRetry
 }
 
 const (

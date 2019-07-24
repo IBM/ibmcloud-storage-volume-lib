@@ -14,8 +14,8 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
-	"time"
 )
 
 // WaitForAttachVolume waits for volume to be attached to node. e.g waits till status becomes attached
@@ -27,27 +27,19 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 	if err != nil {
 		return nil, err
 	}
-	maxTimeout, maxRetryAttempt, retryGapDuration := vpcs.Config.GetTimeOutParameters()
-	retryCount := 0
-	vpcs.Logger.Info("Waiting for volume to be attached", zap.Int("maxTimeout", maxTimeout))
-	for retryCount < maxRetryAttempt {
+
+	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
 		currentVolAttachment, errAPI := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
-		if errAPI == nil && currentVolAttachment.Status == StatusAttached {
-			// volume is attached return no error
-			vpcs.Logger.Info("Volume attachment is complete", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
-			return currentVolAttachment, nil
-		} else if errAPI != nil {
-			// do not retry if there is error
-			vpcs.Logger.Error("Error occured while finding volume attachment", zap.Error(errAPI))
-			userErr := userError.GetUserError(string(userError.VolumeAttachFailed), errAPI, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
-			return nil, userErr
+		return currentVolAttachment, errAPI
+	}, func(intf interface{}, err *models.Error) bool {
+		// Skip API retry logic, if there is any error keep retry as per configuration
+		if err != nil {
+			return skipRetry(err)
 		}
-		// retry if attach status is not "attached"
-		retryCount = retryCount + 1
-		vpcs.Logger.Info("Volume is still attaching. Retry..", zap.Int("retry attempt", retryCount), zap.Int("max retry attepmts", maxRetryAttempt), zap.Reflect("currentVolAttachment", currentVolAttachment))
-		time.Sleep(retryGapDuration)
-	}
-	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
+		// return true in case of volume in attached status else false for retry
+		return intf.(*provider.VolumeAttachmentResponse).Status == StatusAttached
+	})
+	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
 	vpcs.Logger.Info("Wait for attach timed out", zap.Error(userErr))
 
 	return nil, userErr
