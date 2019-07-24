@@ -39,7 +39,7 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 		// return true in case of volume in attached status else false for retry
 		return intf.(*provider.VolumeAttachmentResponse).Status == StatusAttached
 	})
-	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
+	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
 	vpcs.Logger.Info("Wait for attach timed out", zap.Error(userErr))
 
 	return nil, userErr

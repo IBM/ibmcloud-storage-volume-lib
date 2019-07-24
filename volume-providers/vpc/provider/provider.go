@@ -72,7 +72,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	if err != nil {
 		return nil, err
 	}
-	timeoutString := conf.VPC.Timeout
+	timeoutString := conf.VPC.VPCTimeout
 	if timeoutString == "" || timeoutString == "0s" {
 		logger.Info("Using VPC default timeout")
 		timeoutString = "120s"

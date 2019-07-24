@@ -36,10 +36,10 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 		if err != nil {
 			// stop re-try, as attchment find failed, because volume is already detached
 			if err.Errors[0].Code == userError.VolumeAttachFindFailed {
-				return false
+				return true
 			}
 			// keep re-try for all other errors
-			return true
+			return false
 		}
 		return false // Keep retry until timeout
 	})
@@ -55,7 +55,7 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 		}
 	}
 
-	userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID, vpcs.Config.Timeout)
+	userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
 	vpcs.Logger.Info("Wait for detach timed out", zap.Error(userErr))
 	return userErr
 }

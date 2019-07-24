@@ -88,7 +88,7 @@ func TestNewProvider(t *testing.T) {
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
 			EndpointURL: TestEndpointURL,
-			Timeout:     "30s",
+			VPCTimeout:  "30s",
 		},
 	}
 	logger, teardown := GetTestLogger(t)
@@ -112,7 +112,7 @@ func TestNewProvider(t *testing.T) {
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
 			EndpointURL: TestEndpointURL,
-			Timeout:     "",
+			VPCTimeout:  "",
 		},
 	}
 
@@ -149,7 +149,7 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 		VPC: &config.VPCProviderConfig{
 			Enabled:         true,
 			EndpointURL:     TestEndpointURL,
-			Timeout:         "30s",
+			VPCTimeout:      "30s",
 			MaxRetryAttempt: 5,
 			MaxRetryGap:     10,
 			APIVersion:      TestAPIVersion,
@@ -160,7 +160,7 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 	assert.NotNil(t, p)
 	assert.Nil(t, err)
 
-	timeout, _ := time.ParseDuration(conf.VPC.Timeout)
+	timeout, _ := time.ParseDuration(conf.VPC.VPCTimeout)
 
 	// Inject a fake RIAAS API client
 	cp = &fakes.RegionalAPIClientProvider{}
