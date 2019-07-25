@@ -13,6 +13,7 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
@@ -137,6 +138,11 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	}
 	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", vpcp.APIConfig.BaseURL))
 
+	if ctx != nil && ctx.Value(provider.RequestID) != nil {
+		// set ContextID only of speicifed in the context
+		vpcp.APIConfig.ContextID = fmt.Sprintf("%v", ctx.Value(provider.RequestID))
+		ctxLogger.Info("", zap.Reflect("apiConfig.ContextID", vpcp.APIConfig.ContextID))
+	}
 	client, err := vpcp.ClientProvider.New(vpcp.APIConfig)
 	if err != nil {
 		return nil, err
