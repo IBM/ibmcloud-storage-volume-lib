@@ -54,14 +54,6 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 		// Keep retry, until we get the proper volumeAttachResult object
 		return err, err == nil && volumeAttachResult != nil //Retry required in case of all errors
 	})
-	/*, func(intf interface{}, err *models.Error) bool {
-		// Skip retry as per common errors
-		if err != nil {
-			return skipRetry(err)
-		}
-		// stop retry, as there is no error
-		return true
-	})*/
 
 	if err != nil {
 		userErr := userError.GetUserError(string(userError.VolumeAttachFailed), err, volumeAttachmentRequest.VolumeID, volumeAttachmentRequest.InstanceID)

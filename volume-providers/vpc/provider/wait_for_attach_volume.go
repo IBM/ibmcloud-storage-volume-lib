@@ -13,8 +13,6 @@ package provider
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
-
-	//"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
 
@@ -43,15 +41,7 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 	if err == nil && (currentVolAttachment != nil && currentVolAttachment.Status == StatusAttached) {
 		return currentVolAttachment, nil
 	}
-	/*
-		}, func(intf interface{}, err *models.Error) bool {
-			// Skip API retry logic, if there is any error keep retry as per configuration
-			if err != nil {
-				return skipRetry(err)
-			}
-			// return true in case of volume in attached status else false for retry
-			return intf.(*provider.VolumeAttachmentResponse).Status == StatusAttached
-		})*/
+
 	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
 	vpcs.Logger.Info("Wait for attach timed out", zap.Error(userErr))
 

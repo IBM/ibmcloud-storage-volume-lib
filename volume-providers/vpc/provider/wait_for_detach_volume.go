@@ -14,8 +14,6 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
-	//"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
-	//providerError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"go.uber.org/zap"
 )
 
@@ -51,30 +49,6 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 			}
 		}
 	}
-	/*
-		}, func(intf interface{}, err *models.Error) bool {
-			// Skip API retry logic, if there is any error keep retry as per configuration
-			if err != nil {
-				// stop re-try, as attchment find failed, because volume is already detached
-				if err.Errors[0].Code == userError.VolumeAttachFindFailed {
-					return true
-				}
-				// keep re-try for all other errors
-				return false
-			}
-			return false // Keep retry until timeout
-		})
-
-		// Return nil in case of successfully volume detached after re-try
-		if err != nil {
-			if errMsg, ok := err.(*models.Error); ok {
-				if errMsg.Errors[0].Code == userError.VolumeAttachFindFailed {
-					// Consider volume detachment is complete if  error code is VolumeAttachFindFailed
-					vpcs.Logger.Info("Volume detachment is complete")
-					return nil
-				}
-			}
-		}*/
 
 	userErr := userError.GetUserError(string(userError.VolumeDetachTimedOut), err, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
 	vpcs.Logger.Info("Wait for detach timed out", zap.Error(userErr))
