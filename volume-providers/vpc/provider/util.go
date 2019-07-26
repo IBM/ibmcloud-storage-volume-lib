@@ -110,43 +110,29 @@ func NewFlexyRetry(maxRtyAtmpt int, maxrRtyGap int) FlexyRetry {
 }
 
 // FlexyRetry ...
-func (fRetry *FlexyRetry) FlexyRetry(logger *zap.Logger, retryfunc func() (interface{}, error), skipRetryFunc func(interface{}, *models.Error) bool) error {
+func (fRetry *FlexyRetry) FlexyRetry(logger *zap.Logger, funcToRetry func() (error, bool)) error {
 	var err error
-
+	var stopRetry bool
 	for i := 0; i < fRetry.maxRetryAttempt; i++ {
 		if i > 0 {
 			time.Sleep(time.Duration(retryGap) * time.Second)
 		}
-		obj, err := retryfunc()
-		if err != nil {
-			//Skip retry for the below type of Errors
-			modelError, ok := err.(*models.Error)
-			if !ok {
-				continue
-			}
-			//! check if any custom skip needs to be done
-			if skipRetryFunc != nil {
-				if skipRetryFunc(obj, modelError) {
-					break
-				}
-			} else {
-				// Default as per provider
-				if skipRetry(modelError) {
-					break
-				}
-			}
-			if i >= 1 {
-				retryGap = 2 * retryGap
-				if retryGap > fRetry.maxRetryGap {
-					retryGap = fRetry.maxRetryGap
-				}
-			}
-			if (i + 1) < fRetry.maxRetryAttempt {
-				logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryGap), zap.Error(err))
-			}
-			continue
+		// Call function which required retry, retry is decided by funtion itself
+		err, stopRetry = funcToRetry()
+		if stopRetry {
+			break
 		}
-		return err
+
+		// Update retry gap as per exponentioal
+		if i >= 1 {
+			retryGap = 2 * retryGap
+			if retryGap > fRetry.maxRetryGap {
+				retryGap = fRetry.maxRetryGap
+			}
+		}
+		if (i + 1) < fRetry.maxRetryAttempt {
+			logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", fRetry.maxRetryAttempt), zap.Error(err))
+		}
 	}
 	return err
 }
