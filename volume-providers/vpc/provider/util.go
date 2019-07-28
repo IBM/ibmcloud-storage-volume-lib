@@ -39,6 +39,10 @@ var skipErrorCodes = map[string]bool{
 	"not_found":                        true,
 	"internal_error":                   false,
 	"invalid_route":                    false,
+
+	// IKS ms error code for skip re-try
+	"ST0008": true, //resources not found
+	"ST0005": true, //worker node could not be found
 }
 
 // retry ...
@@ -82,6 +86,33 @@ func skipRetry(err *models.Error) bool {
 		if ok {
 			return skipStatus
 		}
+	}
+	return false
+}
+
+// skipRetryForIKS skip retry as per listed error codes
+func skipRetryForIKS(err *models.IksError) bool {
+	skipStatus, ok := skipErrorCodes[string(err.Code)]
+	if ok {
+		return skipStatus
+	}
+	return false
+}
+
+// skipRetryForAttach skip retry as per listed error codes
+func skipRetryForAttach(err error, isIKS bool) bool {
+	// Only for storage-api ms related calls error
+	if isIKS {
+		iksError, ok := err.(*models.IksError)
+		if ok {
+			return skipRetryForIKS(iksError)
+		}
+		return false
+	}
+	// Only for RIaaS attachment related calls error
+	riaasError, ok := err.(*models.Error)
+	if ok {
+		return skipRetry(riaasError)
 	}
 	return false
 }
@@ -131,7 +162,9 @@ func (fRetry *FlexyRetry) FlexyRetry(logger *zap.Logger, funcToRetry func() (err
 			}
 		}
 		if (i + 1) < fRetry.maxRetryAttempt {
-			logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", fRetry.maxRetryAttempt), zap.Error(err))
+			logger.Info("UNEXPECTED RESULT, Re-attempting execution ..", zap.Int("attempt..", i+2),
+				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", fRetry.maxRetryAttempt),
+				zap.Bool("stopRetry", stopRetry), zap.Error(err))
 		}
 	}
 	return err

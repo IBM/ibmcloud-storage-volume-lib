@@ -37,7 +37,7 @@ func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *mod
 	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
 	_, err := req.JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
-		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))
+		ctxLogger.Error("Error occured while getting volume attachment", zap.Error(err))
 		return nil, err
 	}
 	ctxLogger.Info("Successfuly retrieved the volume attachment", zap.Reflect("volumeAttachment", volumeAttachment))

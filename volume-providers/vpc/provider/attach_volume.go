@@ -46,13 +46,16 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 		return currentVolAttachment, nil
 	}
 	//Try attaching volume if it's not already attached or there is error in getting current volume attachment
-	vpcs.Logger.Info("Attaching volume from VPC provider...")
+	vpcs.Logger.Info("Attaching volume from VPC provider...", zap.Bool("IKSEnabled?", vpcs.Config.IsIKS))
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
 
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
 		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		// Keep retry, until we get the proper volumeAttachResult object
-		return err, err == nil && volumeAttachResult != nil //Retry required in case of all errors
+		if err != nil {
+			return err, skipRetryForAttach(err, vpcs.Config.IsIKS)
+		}
+		return err, true // stop retry as no error
 	})
 
 	if err != nil {

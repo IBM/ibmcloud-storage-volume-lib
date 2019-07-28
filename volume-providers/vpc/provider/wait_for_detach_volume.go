@@ -29,11 +29,10 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 	}
 
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
-		currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
-		vpcs.Logger.Info("Info", zap.Reflect("VolAtt", currentVolAttachment))
+		_, err := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
 		// In case of error we should not retry as there are two conditions for error
 		// 1- some issues at endpoint side --> Which is already covered in vpcs.GetVolumeAttachment
-		// 2- Attachment not found --> in this case we should not re-try as it has been deleted
+		// 2- Attachment not found i.e err != nil --> in this case we should not re-try as it has been deleted
 		if err != nil {
 			return err, true
 		}

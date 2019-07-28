@@ -37,7 +37,7 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 		// Stop retry in case of volume is attached
 		return err, currentVolAttachment != nil && currentVolAttachment.Status == StatusAttached
 	})
-	// Success case
+	// Success case, checks are required in case of timeout happened and volume is still not attached state
 	if err == nil && (currentVolAttachment != nil && currentVolAttachment.Status == StatusAttached) {
 		return currentVolAttachment, nil
 	}

@@ -75,11 +75,11 @@ func (vam *VolumeAttachmentManager) DetachVolume() {
 }
 
 func (vam *VolumeAttachmentManager) setupVolumeAttachmentRequest() {
-	fmt.Println("Enter the volume id ")
+	fmt.Printf("Enter the volume id: ")
 	_, _ = fmt.Scanf("%s", &volumeID)
-	fmt.Println("Enter the instance id ")
+	fmt.Printf("Enter the instance id: ")
 	_, _ = fmt.Scanf("%s", &instanceID)
-	fmt.Println("Enter the cluster id ")
+	fmt.Printf("Enter the cluster id: ")
 	_, _ = fmt.Scanf("%s", &clusterID)
 	volumeAttachmentReq = provider.VolumeAttachmentRequest{
 		VolumeID:   volumeID,

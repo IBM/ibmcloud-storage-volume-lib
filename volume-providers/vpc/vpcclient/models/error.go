@@ -75,7 +75,7 @@ type ErrorTarget struct {
 // IksError ...
 type IksError struct {
 	ReqID       string    `json:"incidentID" binding:"required"`
-	ID          string    `json:"code" binding:"required"`
+	Code        string    `json:"code" binding:"required"`
 	Err         string    `json:"description" binding:"required"`
 	Type        ErrorType `json:"type" binding:"required"`
 	RecoveryCLI string    `json:"recoveryCLI,omitempty"`
@@ -85,5 +85,5 @@ type IksError struct {
 
 // Error ...
 func (ikserr IksError) Error() string {
-	return fmt.Sprintf("%s: %s", ikserr.ID, ikserr.Err)
+	return fmt.Sprintf("%s: %s", ikserr.Code, ikserr.Err)
 }

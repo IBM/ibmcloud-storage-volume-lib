@@ -48,10 +48,20 @@ func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.V
 	vpcs.Logger.Info("Getting VolumeAttachment from VPC provider...")
 	var err error
 	var volumeAttachmentResult *models.VolumeAttachment
-	err = retry(vpcs.Logger, func() error {
+	/*err = retry(vpcs.Logger, func() error {
 		volumeAttachmentResult, err = vpcs.APIClientVolAttachMgr.GetVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
 		return err
+	})*/
+
+	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
+		volumeAttachmentResult, err = vpcs.APIClientVolAttachMgr.GetVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
+		// Keep retry, until we get the proper volumeAttachmentRequest object
+		if err != nil {
+			return err, skipRetryForAttach(err, vpcs.Config.IsIKS)
+		}
+		return err, true // stop retry as no error
 	})
+
 	if err != nil {
 		// API call is failed
 		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
@@ -68,10 +78,15 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 	vpcs.Logger.Info("Getting VolumeAttachmentList from VPC provider...")
 	var volumeAttachmentList *models.VolumeAttachmentList
 	var err error
-	err = retry(vpcs.Logger, func() error {
+	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
 		volumeAttachmentList, err = vpcs.APIClientVolAttachMgr.ListVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
-		return err
+		// Keep retry, until we get the proper volumeAttachmentRequest object
+		if err != nil {
+			return err, skipRetryForAttach(err, vpcs.Config.IsIKS)
+		}
+		return err, true // stop retry as no error
 	})
+
 	if err != nil {
 		// API call is failed
 		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
