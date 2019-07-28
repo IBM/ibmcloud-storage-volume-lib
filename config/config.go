@@ -161,7 +161,7 @@ type VPCProviderConfig struct {
 	IsVPCAPIExpoRetry   bool `toml:"is_vpc_api_expo_retry,omitempty" envconfig:"IS_VPC_API_EXPO_RETRY"`
 
 	APIVersion string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
-	IsIKS      bool   `toml:"is_iks"`
+	IsIKS      bool   `toml:"is_iks,omitempty"`
 }
 
 //IKSConfig config

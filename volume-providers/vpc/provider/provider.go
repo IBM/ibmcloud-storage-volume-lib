@@ -105,7 +105,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		},
 	}
 	// Update VPC config for IKS deployment
-	provider.config.IsIKS = conf.IKS.Enabled
+	provider.config.IsIKS = conf.IKS != nil && conf.IKS.Enabled
 
 	logger.Info("", zap.Reflect("Provider config", provider.config))
 

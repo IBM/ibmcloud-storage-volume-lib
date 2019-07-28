@@ -109,6 +109,7 @@ func skipRetryForAttach(err error, isIKS bool) bool {
 		}
 		return false
 	}
+
 	// Only for RIaaS attachment related calls error
 	riaasError, ok := err.(*models.Error)
 	if ok {
@@ -164,6 +165,31 @@ func (fRetry *FlexyRetry) FlexyRetry(logger *zap.Logger, funcToRetry func() (err
 		if (i + 1) < fRetry.maxRetryAttempt {
 			logger.Info("UNEXPECTED RESULT, Re-attempting execution ..", zap.Int("attempt..", i+2),
 				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", fRetry.maxRetryAttempt),
+				zap.Bool("stopRetry", stopRetry), zap.Error(err))
+		}
+	}
+	return err
+}
+
+// FlexyRetryWithConstGap ...
+func (fRetry *FlexyRetry) FlexyRetryWithConstGap(logger *zap.Logger, funcToRetry func() (error, bool)) error {
+	var err error
+	var stopRetry bool
+	// lets have more number of try for wait for attach and detach specially
+	totalAttempt := fRetry.maxRetryAttempt * 4 // 40 time as per default values i.e 400 seconds
+	for i := 0; i < totalAttempt; i++ {
+		if i > 0 {
+			time.Sleep(time.Duration(retryGap) * time.Second)
+		}
+		// Call function which required retry, retry is decided by funtion itself
+		err, stopRetry = funcToRetry()
+		if stopRetry {
+			break
+		}
+
+		if (i + 1) < totalAttempt {
+			logger.Info("UNEXPECTED RESULT from FlexyRetryWithConstGap, Re-attempting execution ..", zap.Int("attempt..", i+2),
+				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", totalAttempt),
 				zap.Bool("stopRetry", stopRetry), zap.Error(err))
 		}
 	}
