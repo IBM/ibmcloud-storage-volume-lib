@@ -12,8 +12,8 @@ package provider
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
 
@@ -28,27 +28,21 @@ func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Vo
 		return err
 	}
 
-	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
-		currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
-		return currentVolAttachment, err
-	}, func(intf interface{}, err *models.Error) bool {
-		// Skip API retry logic, if there is any error keep retry as per configuration
+	err = vpcs.APIRetry.FlexyRetryWithConstGap(vpcs.Logger, func() (error, bool) {
+		_, err := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
+		// In case of error we should not retry as there are two conditions for error
+		// 1- some issues at endpoint side --> Which is already covered in vpcs.GetVolumeAttachment
+		// 2- Attachment not found i.e err != nil --> in this case we should not re-try as it has been deleted
 		if err != nil {
-			// stop re-try, as attchment find failed, because volume is already detached
-			if err.Errors[0].Code == userError.VolumeAttachFindFailed {
-				return true
-			}
-			// keep re-try for all other errors
-			return false
+			return err, true
 		}
-		return false // Keep retry until timeout
+		return err, false
 	})
 
-	// Return nil in case of successfully volume detached after re-try
+	// Could be a success case
 	if err != nil {
-		if errMsg, ok := err.(*models.Error); ok {
-			if errMsg.Errors[0].Code == userError.VolumeAttachFindFailed {
-				// Consider volume detachment is complete if  error code is VolumeAttachFindFailed
+		if errMsg, ok := err.(util.Message); ok {
+			if errMsg.Code == userError.VolumeAttachFindFailed {
 				vpcs.Logger.Info("Volume detachment is complete")
 				return nil
 			}

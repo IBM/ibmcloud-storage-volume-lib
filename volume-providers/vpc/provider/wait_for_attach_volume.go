@@ -13,8 +13,6 @@ package provider
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
-
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
 
@@ -28,17 +26,22 @@ func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.Vo
 		return nil, err
 	}
 
-	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (interface{}, error) {
-		currentVolAttachment, errAPI := vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
-		return currentVolAttachment, errAPI
-	}, func(intf interface{}, err *models.Error) bool {
-		// Skip API retry logic, if there is any error keep retry as per configuration
+	var currentVolAttachment *provider.VolumeAttachmentResponse
+	err = vpcs.APIRetry.FlexyRetryWithConstGap(vpcs.Logger, func() (error, bool) {
+		currentVolAttachment, err = vpcs.GetVolumeAttachment(volumeAttachmentTemplate)
 		if err != nil {
-			return skipRetry(err)
+			// Need to stop retry as there is an error while getting attachment
+			// considering that vpcs.GetVolumeAttachment already re-tried
+			return err, true
 		}
-		// return true in case of volume in attached status else false for retry
-		return intf.(*provider.VolumeAttachmentResponse).Status == StatusAttached
+		// Stop retry in case of volume is attached
+		return err, currentVolAttachment != nil && currentVolAttachment.Status == StatusAttached
 	})
+	// Success case, checks are required in case of timeout happened and volume is still not attached state
+	if err == nil && (currentVolAttachment != nil && currentVolAttachment.Status == StatusAttached) {
+		return currentVolAttachment, nil
+	}
+
 	userErr := userError.GetUserError(string(userError.VolumeAttachTimedOut), nil, volumeAttachmentTemplate.VolumeID, volumeAttachmentTemplate.InstanceID)
 	vpcs.Logger.Info("Wait for attach timed out", zap.Error(userErr))
 

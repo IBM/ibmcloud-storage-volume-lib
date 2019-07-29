@@ -39,6 +39,10 @@ var skipErrorCodes = map[string]bool{
 	"not_found":                        true,
 	"internal_error":                   false,
 	"invalid_route":                    false,
+
+	// IKS ms error code for skip re-try
+	"ST0008": true, //resources not found
+	"ST0005": true, //worker node could not be found
 }
 
 // retry ...
@@ -86,6 +90,34 @@ func skipRetry(err *models.Error) bool {
 	return false
 }
 
+// skipRetryForIKS skip retry as per listed error codes
+func skipRetryForIKS(err *models.IksError) bool {
+	skipStatus, ok := skipErrorCodes[string(err.Code)]
+	if ok {
+		return skipStatus
+	}
+	return false
+}
+
+// skipRetryForAttach skip retry as per listed error codes
+func skipRetryForAttach(err error, isIKS bool) bool {
+	// Only for storage-api ms related calls error
+	if isIKS {
+		iksError, ok := err.(*models.IksError)
+		if ok {
+			return skipRetryForIKS(iksError)
+		}
+		return false
+	}
+
+	// Only for RIaaS attachment related calls error
+	riaasError, ok := err.(*models.Error)
+	if ok {
+		return skipRetry(riaasError)
+	}
+	return false
+}
+
 // FlexyRetry ...
 type FlexyRetry struct {
 	maxRetryAttempt int
@@ -110,43 +142,56 @@ func NewFlexyRetry(maxRtyAtmpt int, maxrRtyGap int) FlexyRetry {
 }
 
 // FlexyRetry ...
-func (fRetry *FlexyRetry) FlexyRetry(logger *zap.Logger, retryfunc func() (interface{}, error), skipRetryFunc func(interface{}, *models.Error) bool) error {
+func (fRetry *FlexyRetry) FlexyRetry(logger *zap.Logger, funcToRetry func() (error, bool)) error {
 	var err error
-
+	var stopRetry bool
 	for i := 0; i < fRetry.maxRetryAttempt; i++ {
 		if i > 0 {
 			time.Sleep(time.Duration(retryGap) * time.Second)
 		}
-		obj, err := retryfunc()
-		if err != nil {
-			//Skip retry for the below type of Errors
-			modelError, ok := err.(*models.Error)
-			if !ok {
-				continue
-			}
-			//! check if any custom skip needs to be done
-			if skipRetryFunc != nil {
-				if skipRetryFunc(obj, modelError) {
-					break
-				}
-			} else {
-				// Default as per provider
-				if skipRetry(modelError) {
-					break
-				}
-			}
-			if i >= 1 {
-				retryGap = 2 * retryGap
-				if retryGap > fRetry.maxRetryGap {
-					retryGap = fRetry.maxRetryGap
-				}
-			}
-			if (i + 1) < fRetry.maxRetryAttempt {
-				logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryGap), zap.Error(err))
-			}
-			continue
+		// Call function which required retry, retry is decided by funtion itself
+		err, stopRetry = funcToRetry()
+		if stopRetry {
+			break
 		}
-		return err
+
+		// Update retry gap as per exponentioal
+		if i >= 1 {
+			retryGap = 2 * retryGap
+			if retryGap > fRetry.maxRetryGap {
+				retryGap = fRetry.maxRetryGap
+			}
+		}
+		if (i + 1) < fRetry.maxRetryAttempt {
+			logger.Info("UNEXPECTED RESULT, Re-attempting execution ..", zap.Int("attempt..", i+2),
+				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", fRetry.maxRetryAttempt),
+				zap.Bool("stopRetry", stopRetry), zap.Error(err))
+		}
+	}
+	return err
+}
+
+// FlexyRetryWithConstGap ...
+func (fRetry *FlexyRetry) FlexyRetryWithConstGap(logger *zap.Logger, funcToRetry func() (error, bool)) error {
+	var err error
+	var stopRetry bool
+	// lets have more number of try for wait for attach and detach specially
+	totalAttempt := fRetry.maxRetryAttempt * 4 // 40 time as per default values i.e 400 seconds
+	for i := 0; i < totalAttempt; i++ {
+		if i > 0 {
+			time.Sleep(time.Duration(retryGap) * time.Second)
+		}
+		// Call function which required retry, retry is decided by funtion itself
+		err, stopRetry = funcToRetry()
+		if stopRetry {
+			break
+		}
+
+		if (i + 1) < totalAttempt {
+			logger.Info("UNEXPECTED RESULT from FlexyRetryWithConstGap, Re-attempting execution ..", zap.Int("attempt..", i+2),
+				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", totalAttempt),
+				zap.Bool("stopRetry", stopRetry), zap.Error(err))
+		}
 	}
 	return err
 }

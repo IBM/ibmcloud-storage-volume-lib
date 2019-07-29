@@ -38,7 +38,7 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
 	resp, err := req.JSONError(apiErr).Invoke()
 	if err != nil {
-		ctxLogger.Error("Error occured while deleting volume attahment", zap.Error(err))
+		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			// volume Attachment is deleted. So do not want to retry
 			return resp, apiErr

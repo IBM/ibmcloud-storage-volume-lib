@@ -37,7 +37,7 @@ func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *mo
 
 	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {
-		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))
+		ctxLogger.Error("Error occured while getting volume attachment", zap.Error(err))
 		return nil, err
 	}
 	return &volumeAttachmentList, nil
