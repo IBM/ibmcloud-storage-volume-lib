@@ -352,7 +352,6 @@ func (sls *SLSession) DeauthorizeVolume(volumeAuthorization provider.VolumeAutho
 	}
 	sls.Logger.Info("Exit DeauthorizeVolume ", zap.Error(err))
 	return err
-
 }
 
 // AuthorizeVolume based on given volumeAuthorization
@@ -368,7 +367,6 @@ func (sls *SLSession) AuthorizeVolume(volumeAuthorization provider.VolumeAuthori
 	}
 	sls.Logger.Info("Exit AuthorizeVolume ", zap.Error(err))
 	return err
-
 }
 
 func (sls *SLSession) deauthorizeVolumeFromSubnets(volumeID int, subnetIDs []string) error {
@@ -416,30 +414,6 @@ func (sls *SLSession) authorizeVolumeFromHostIPs(volumeID int, hostIPList []stri
 		result, err = storageService.AllowAccessFromIPAddressList(subnetIPAddressList)
 	}
 	sls.Logger.Info("Exit authorizeVolumeFromHostIPs ", zap.Reflect("result", result), zap.Error(err))
-	return err
-}
-
-func (sls *SLSession) deauthorizeVolumeFromSubnets(volumeID int, subnetIDs []string) error {
-	sls.Logger.Info("Entry deauthorizeVolumeFromSubnets", zap.Reflect("subnetIDs", subnetIDs))
-	result := false
-	subnetList, err := utils.GetSubnetListFromIDs(sls.Logger, sls.Backend, subnetIDs)
-	if err == nil {
-		storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
-		result, err = storageService.RemoveAccessFromSubnetList(subnetList)
-	}
-	sls.Logger.Info("Exit deauthorizeVolumeFromSubnets ", zap.Bool("result", result), zap.Error(err))
-	return err
-}
-
-func (sls *SLSession) deauthorizeVolumeFromHostIPs(volumeID int, hostIPList []string) error {
-	sls.Logger.Info("Entry deauthorizeVolumeFromHostIPs", zap.Reflect("hostIPList", hostIPList))
-	result := false
-	subnetIPAddressList, err := utils.GetSubnetIPAddressListFromIPs(sls.Logger, sls.Backend, hostIPList)
-	if err == nil {
-		storageService := sls.Backend.GetNetworkStorageService().ID(volumeID)
-		result, err = storageService.RemoveAccessFromIPAddressList(subnetIPAddressList)
-	}
-	sls.Logger.Info("Exit deauthorizeVolumeFromHostIPs ", zap.Reflect("result", result), zap.Error(err))
 	return err
 }
 
