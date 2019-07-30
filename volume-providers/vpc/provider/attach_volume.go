@@ -23,7 +23,6 @@ import (
 const (
 	VpcVolumeAttachment = "vpcVolumeAttachment"
 	StatusAttached      = "attached"
-	StatusDetached      = "detached"
 	StatusAttaching     = "attaching"
 	StatusDetaching     = "detaching"
 )
@@ -50,7 +49,7 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 	vpcs.Logger.Info("Attaching volume from VPC provider...")
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
 	err = retry(vpcs.Logger, func() error {
-		volumeAttachResult, err = vpcs.Apiclient.VolumeAttachService().AttachVolume(&volumeAttachment, vpcs.Logger)
+		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		return err
 	})
 	if err != nil {

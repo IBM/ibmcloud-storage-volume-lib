@@ -28,30 +28,34 @@ func TestListSnapshots(t *testing.T) {
 	testCases := []struct {
 		name string
 
+		// backend url
+		url string
+
 		// Response
 		status  int
 		content string
 
 		// Expected return
 		expectErr string
-		verify    func(*testing.T, *models.Snapshot, error)
+		verify    func(*testing.T, *models.SnapshotList, error)
 	}{
 		{
 			name:   "Verify that the correct endpoint is invoked",
 			status: http.StatusNoContent,
+			url:    vpcvolume.Version + "/volumes/volume-id/snapshots",
 		}, {
 			name:      "Verify that a 404 is returned to the caller",
 			status:    http.StatusNotFound,
+			url:       vpcvolume.Version + "/volumes/volume-id/snapshots",
 			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:    "Verify that the snapshot is parsed correctly",
 			status:  http.StatusOK,
+			url:     vpcvolume.Version + "/volumes/volume-id/snapshots",
 			content: "{\"snapshots\":[{\"id\":\"snapshot1\",\"status\":\"pending\"},{\"id\":\"snapshot2\",\"status\":\"pending\"}]}",
-			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.Equal(t, "snapshot1", snapshot.ID)
-				}
+			verify: func(t *testing.T, snapshots *models.SnapshotList, err error) {
+				assert.NotNil(t, snapshots)
 			},
 		},
 	}
@@ -60,7 +64,7 @@ func TestListSnapshots(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			emptyString := ""
-			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots", http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, testcase.url, http.MethodGet, &emptyString, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -72,7 +76,9 @@ func TestListSnapshots(t *testing.T) {
 			logger.Info("Snapshots", zap.Reflect("snapshots", snapshots))
 
 			// vpc snapshot functionality is not yet ready. It would return error for now
-			assert.Error(t, err)
+			if testcase.verify != nil {
+				testcase.verify(t, snapshots, err)
+			}
 		})
 	}
 }

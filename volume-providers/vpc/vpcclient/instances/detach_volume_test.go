@@ -77,7 +77,7 @@ func TestDetachVolume(t *testing.T) {
 			}
 
 			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/instances/testinstance/volume_attachments/volumeattachmentid", http.MethodDelete, nil, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, "/v1/instances/testinstance/volume_attachments/volumeattachmentid", http.MethodDelete, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 

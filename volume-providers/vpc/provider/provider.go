@@ -49,6 +49,7 @@ type VPCBlockProvider struct {
 
 	ClientProvider riaas.RegionalAPIClientProvider
 	httpClient     *http.Client
+	APIConfig      riaas.Config
 }
 
 var _ local.Provider = &VPCBlockProvider{}
@@ -60,8 +61,14 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	if conf.Bluemix == nil || conf.VPC == nil {
 		return nil, errors.New("Incomplete config for VPCBlockProvider")
 	}
-
-	contextCF, err := auth.NewContextCredentialsFactory(conf.Bluemix, nil, conf.VPC)
+	// VPC provider use differnt APIkey and Auth Endpoint
+	authConfig := &config.BluemixConfig{
+		IamURL:          conf.VPC.TokenExchangeURL,
+		IamAPIKey:       conf.VPC.APIKey,
+		IamClientID:     conf.Bluemix.IamClientID,
+		IamClientSecret: conf.Bluemix.IamClientSecret,
+	}
+	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
 	if err != nil {
 		return nil, err
 	}
@@ -81,6 +88,9 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		return nil, err
 	}
 
+	// SetRetryParameters sets the retry logic parameters
+	SetRetryParameters(conf.VPC.MaxRetryAttempt, conf.VPC.MaxRetryGap)
+
 	provider := &VPCBlockProvider{
 		timeout:        timeout,
 		serverConfig:   conf.Server,
@@ -88,6 +98,11 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		tokenGenerator: &tokenGenerator{config: conf.VPC},
 		contextCF:      contextCF,
 		httpClient:     httpClient,
+		APIConfig: riaas.Config{
+			BaseURL:    conf.VPC.EndpointURL,
+			HTTPClient: httpClient,
+			APIVersion: conf.VPC.APIVersion,
+		},
 	}
 	logger.Info("", zap.Reflect("Provider config", provider.config))
 
@@ -114,22 +129,16 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 		return nil, util.NewError("Error Insufficient Authentication", "No authentication credential provided")
 	}
 
-	apiConfig := riaas.Config{
-		BaseURL:    vpcp.config.EndpointURL,
-		HTTPClient: vpcp.httpClient,
-		APIVersion: vpcp.config.APIVersion,
-	}
-
 	if vpcp.serverConfig.DebugTrace {
-		apiConfig.DebugWriter = os.Stdout
+		vpcp.APIConfig.DebugWriter = os.Stdout
 	}
 
 	if vpcp.ClientProvider == nil {
 		vpcp.ClientProvider = riaas.DefaultRegionalAPIClientProvider{}
 	}
-	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", apiConfig.BaseURL))
+	ctxLogger.Debug("", zap.Reflect("apiConfig.BaseURL", vpcp.APIConfig.BaseURL))
 
-	client, err := vpcp.ClientProvider.New(apiConfig)
+	client, err := vpcp.ClientProvider.New(vpcp.APIConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -157,15 +166,15 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	}
 
 	vpcSession := &VPCSession{
-		VPCAccountID:       contextCredentials.IAMAccountID,
-		Config:             vpcp.config,
-		ContextCredentials: contextCredentials,
-		VolumeType:         "vpc-block",
-		Provider:           VPC,
-		Apiclient:          client,
-		Logger:             ctxLogger,
+		VPCAccountID:          contextCredentials.IAMAccountID,
+		Config:                vpcp.config,
+		ContextCredentials:    contextCredentials,
+		VolumeType:            "vpc-block",
+		Provider:              VPC,
+		Apiclient:             client,
+		APIClientVolAttachMgr: client.VolumeAttachService(),
+		Logger:                ctxLogger,
 	}
-
 	return vpcSession, nil
 }
 

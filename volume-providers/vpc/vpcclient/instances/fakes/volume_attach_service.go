@@ -2,12 +2,12 @@
 package fakes
 
 import (
-	"net/http"
-	"sync"
+	http "net/http"
+	sync "sync"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/instances"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
-	"go.uber.org/zap"
+	instances "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/instances"
+	models "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	zap "go.uber.org/zap"
 )
 
 type VolumeAttachService struct {
@@ -37,6 +37,20 @@ type VolumeAttachService struct {
 	}
 	detachVolumeReturnsOnCall map[int]struct {
 		result1 *http.Response
+		result2 error
+	}
+	GetVolumeAttachmentStub        func(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
+	getVolumeAttachmentMutex       sync.RWMutex
+	getVolumeAttachmentArgsForCall []struct {
+		arg1 *models.VolumeAttachment
+		arg2 *zap.Logger
+	}
+	getVolumeAttachmentReturns struct {
+		result1 *models.VolumeAttachment
+		result2 error
+	}
+	getVolumeAttachmentReturnsOnCall map[int]struct {
+		result1 *models.VolumeAttachment
 		result2 error
 	}
 	ListVolumeAttachmentStub        func(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachmentList, error)
@@ -185,6 +199,70 @@ func (fake *VolumeAttachService) DetachVolumeReturnsOnCall(i int, result1 *http.
 	}{result1, result2}
 }
 
+func (fake *VolumeAttachService) GetVolumeAttachment(arg1 *models.VolumeAttachment, arg2 *zap.Logger) (*models.VolumeAttachment, error) {
+	fake.getVolumeAttachmentMutex.Lock()
+	ret, specificReturn := fake.getVolumeAttachmentReturnsOnCall[len(fake.getVolumeAttachmentArgsForCall)]
+	fake.getVolumeAttachmentArgsForCall = append(fake.getVolumeAttachmentArgsForCall, struct {
+		arg1 *models.VolumeAttachment
+		arg2 *zap.Logger
+	}{arg1, arg2})
+	fake.recordInvocation("GetVolumeAttachment", []interface{}{arg1, arg2})
+	fake.getVolumeAttachmentMutex.Unlock()
+	if fake.GetVolumeAttachmentStub != nil {
+		return fake.GetVolumeAttachmentStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.getVolumeAttachmentReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *VolumeAttachService) GetVolumeAttachmentCallCount() int {
+	fake.getVolumeAttachmentMutex.RLock()
+	defer fake.getVolumeAttachmentMutex.RUnlock()
+	return len(fake.getVolumeAttachmentArgsForCall)
+}
+
+func (fake *VolumeAttachService) GetVolumeAttachmentCalls(stub func(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)) {
+	fake.getVolumeAttachmentMutex.Lock()
+	defer fake.getVolumeAttachmentMutex.Unlock()
+	fake.GetVolumeAttachmentStub = stub
+}
+
+func (fake *VolumeAttachService) GetVolumeAttachmentArgsForCall(i int) (*models.VolumeAttachment, *zap.Logger) {
+	fake.getVolumeAttachmentMutex.RLock()
+	defer fake.getVolumeAttachmentMutex.RUnlock()
+	argsForCall := fake.getVolumeAttachmentArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *VolumeAttachService) GetVolumeAttachmentReturns(result1 *models.VolumeAttachment, result2 error) {
+	fake.getVolumeAttachmentMutex.Lock()
+	defer fake.getVolumeAttachmentMutex.Unlock()
+	fake.GetVolumeAttachmentStub = nil
+	fake.getVolumeAttachmentReturns = struct {
+		result1 *models.VolumeAttachment
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *VolumeAttachService) GetVolumeAttachmentReturnsOnCall(i int, result1 *models.VolumeAttachment, result2 error) {
+	fake.getVolumeAttachmentMutex.Lock()
+	defer fake.getVolumeAttachmentMutex.Unlock()
+	fake.GetVolumeAttachmentStub = nil
+	if fake.getVolumeAttachmentReturnsOnCall == nil {
+		fake.getVolumeAttachmentReturnsOnCall = make(map[int]struct {
+			result1 *models.VolumeAttachment
+			result2 error
+		})
+	}
+	fake.getVolumeAttachmentReturnsOnCall[i] = struct {
+		result1 *models.VolumeAttachment
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *VolumeAttachService) ListVolumeAttachment(arg1 *models.VolumeAttachment, arg2 *zap.Logger) (*models.VolumeAttachmentList, error) {
 	fake.listVolumeAttachmentMutex.Lock()
 	ret, specificReturn := fake.listVolumeAttachmentReturnsOnCall[len(fake.listVolumeAttachmentArgsForCall)]
@@ -256,6 +334,8 @@ func (fake *VolumeAttachService) Invocations() map[string][][]interface{} {
 	defer fake.attachVolumeMutex.RUnlock()
 	fake.detachVolumeMutex.RLock()
 	defer fake.detachVolumeMutex.RUnlock()
+	fake.getVolumeAttachmentMutex.RLock()
+	defer fake.getVolumeAttachmentMutex.RUnlock()
 	fake.listVolumeAttachmentMutex.RLock()
 	defer fake.listVolumeAttachmentMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

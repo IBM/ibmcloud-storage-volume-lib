@@ -11,7 +11,7 @@ cache:
   bundler: true
 sudo: true
 before_install:
-- openssl aes-256-cbc -K $encrypted_482da1402185_key -iv $encrypted_482da1402185_iv
+- openssl aes-256-cbc -K $encrypted_7937b810c182_key -iv $encrypted_7937b810c182_iv
   -in ./e2e/config/secret.txt.enc -out secret.txt -d || true
 - sudo add-apt-repository ppa:masterminds/glide -y && sudo apt-get update -q
 - sudo apt-get install glide -y
@@ -25,14 +25,16 @@ script:
 - rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
 - cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
 - source secret.txt
-- sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
-- sed -i "s/VPC_ZONE/"$VPC_ZONE"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/constants.go
-- sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/config.toml
+- sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
+- sed -i "s/VPC_ZONE/"$VPC_ZONE"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
+- sed -i 's|ENCRYPTION_KEY_CRN|'"$ENCRYPTION_KEY_CRN"'|g' $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
+- sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
+- sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - make vet
 - make fmt
 - make test
 - make coverage
-- make volume-lib-e2e-test && touch "Passing" || touch "Failed"
+- travis_wait make volume-lib-e2e-test && touch "Passing" || touch "Failed"
 after_success:
 - "./scripts/calculateCoverage.sh"
 - "./scripts/publishCoverage.sh"

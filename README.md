@@ -4,7 +4,7 @@
 [![Coverage](https://ibm.github.io/ibmcloud-storage-volume-lib/coverage/master/badge.svg)](https://ibm.github.io/ibmcloud-storage-volume-lib/coverage/master/cover.html)
 [![e2e](https://ibm.github.io/ibmcloud-storage-volume-lib/coverage/master/e2e.svg)](https://travis-ci.com/IBM/ibmcloud-storage-volume-lib)
 
-This library is for volume and snapshot management(create, delete, modify etc).
+This library is for volume and snapshot management (create, delete, modify etc).
 As of now this only have block snapshot and volume creation functionalities but going forward it will have more functionalities.
 
 # Purpose
@@ -16,7 +16,7 @@ To use this library user need to check what all capabilities are supported in th
 ## Steps to use
 Following steps has to followed by user to use this library
 ### Step 1
-Update the glide.yaml to get the source code of this library, also only export the following packages to their application
+Update the `glide.yaml` to get the source code of this library, also only export the following packages to their application
 
 ```
 "github.com/IBM/ibmcloud-storage-volume-lib/config"
@@ -25,7 +25,7 @@ Update the glide.yaml to get the source code of this library, also only export t
 provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
 ```
 
-User can see the refrence from `ibmcloud-storage-volume-lib/samples`.
+User can see the reference from `ibmcloud-storage-volume-lib/samples`.
 
 ### Step 2
 How to provide configuration
@@ -89,7 +89,7 @@ softlayer_api_timeout = "20s"
 
 
 ### Step 3
-From the implementation file which uses use this library, user need to initialize the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
+From the implementation file which uses this library, user need to initialize the providers and open the sessions to backend IAaS provider and to do that user just need to call the following method from there
 
 `github.com/IBM/ibmcloud-storage-volume-lib/provider/utils` utility packages, reference code can be found `ibmcloud-storage-volume-lib/main.go`
 

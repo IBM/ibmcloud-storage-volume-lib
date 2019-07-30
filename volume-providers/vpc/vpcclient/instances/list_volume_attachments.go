@@ -23,19 +23,19 @@ func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *mo
 	defer util.TimeTracker("GetAttachStatus", time.Now())
 
 	operation := &client.Operation{
-		Name:        "GetAttachStatus",
+		Name:        "ListVolumeAttachment",
 		Method:      "GET",
-		PathPattern: instanceIDvolumeAttachmentPath,
+		PathPattern: vs.pathPrefix + instanceIDvolumeAttachmentPath,
 	}
 
 	var volumeAttachmentList models.VolumeAttachmentList
-	var apiErr models.Error
+	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID))
-	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
-	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(&apiErr).Invoke()
+	req := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
+
+	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attahment", zap.Error(err))
 		return nil, err

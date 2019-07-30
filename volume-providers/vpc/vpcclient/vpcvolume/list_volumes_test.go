@@ -108,7 +108,7 @@ func TestListVolumes(t *testing.T) {
 	for _, testcase := range testCases {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/volumes", http.MethodGet, nil, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes", http.MethodGet, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 

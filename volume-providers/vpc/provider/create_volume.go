@@ -41,7 +41,7 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 		Iops:          iops,
 		Tags:          volumeRequest.VPCVolume.Tags,
 		ResourceGroup: &resourceGroup,
-		Generation:    models.GenerationType(vpcs.Config.VPCBlockProviderName),
+		Generation:    models.GenerationType(volumeRequest.Generation),
 		Profile: &models.Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},
@@ -69,6 +69,13 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	}
 
 	vpcs.Logger.Info("Successfully created volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
+
+	vpcs.Logger.Info("Waiting for volume to be in valid (available) state", zap.Reflect("VolumeDetails", volume))
+	err = WaitForValidVolumeState(vpcs, volume.ID)
+	if err != nil {
+		return nil, userError.GetUserError("VolumeNotInValidState", err, volume.ID)
+	}
+	vpcs.Logger.Info("Volume got valid (available) state", zap.Reflect("VolumeDetails", volume))
 
 	// Converting volume to lib volume type
 	volumeResponse = FromProviderToLibVolume(volume, vpcs.Logger)

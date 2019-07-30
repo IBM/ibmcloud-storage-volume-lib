@@ -29,6 +29,9 @@ func TestCreateSnapshot(t *testing.T) {
 	testCases := []struct {
 		name string
 
+		// backend url
+		url string
+
 		// Response
 		status  int
 		content string
@@ -40,19 +43,28 @@ func TestCreateSnapshot(t *testing.T) {
 		{
 			name:   "Verify that the correct endpoint is invoked",
 			status: http.StatusNoContent,
+			url:    "/volumes/volume-id/snapshots",
 		}, {
 			name:      "Verify that a 404 is returned to the caller",
 			status:    http.StatusNotFound,
+			url:       vpcvolume.Version + "/volumes/volume-id/snapshots",
 			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:    "Verify that the snapshot is parsed correctly",
 			status:  http.StatusOK,
+			url:     vpcvolume.Version + "/volumes/volume-id/snapshots",
 			content: "{\"id\":\"snapshot1\",\"status\":\"pending\"}",
 			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
-				if assert.NotNil(t, snapshot) {
-					assert.Equal(t, "snapshot1", snapshot.ID)
-				}
+				assert.NotNil(t, snapshot)
+			},
+		}, {
+			name:    "Verify that the snapshot is parsed correctly",
+			status:  http.StatusOK,
+			content: "{\"id\":\"snapshot1\",\"status\":\"pending\"}",
+			url:     vpcvolume.Version + "/volumes/volume-id/snapshots",
+			verify: func(t *testing.T, snapshot *models.Snapshot, err error) {
+				assert.NotNil(t, snapshot)
 			},
 		},
 	}
@@ -66,11 +78,10 @@ func TestCreateSnapshot(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
 			requestBody := `{
         			"id":"snapshot-id",
-  			        "name":"snapshot-name",
-        			"Tags":["Test"]]
+  			        "name":"snapshot-name"
       			}`
 			requestBody = strings.Join(strings.Fields(requestBody), "") + "\n"
-			test.SetupMuxResponse(t, mux, "volumes/volume-id/snapshots", http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, testcase.url, http.MethodPost, &requestBody, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -82,7 +93,9 @@ func TestCreateSnapshot(t *testing.T) {
 			logger.Info("Snapshot", zap.Reflect("snapshot", snapshot))
 
 			// vpc snapshot functionality is not yet ready. It would return error for now
-			assert.Error(t, err)
+			if testcase.verify != nil {
+				testcase.verify(t, snapshot, err)
+			}
 		})
 	}
 }

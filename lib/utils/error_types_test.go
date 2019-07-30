@@ -22,4 +22,6 @@ func TestGetErrorType(t *testing.T) {
 	assert.NotNil(t, GetErrorType(newErr))
 	newErr = NewError("ProvisioningFailed", "ProvisioningFailed", errors.New("ProvisioningFailed"))
 	assert.NotNil(t, GetErrorType(newErr))
+	newErr = NewErrorWithProperties("ProvisioningFailed", "", map[string]string{"properties": "properties"}, errors.New("ProvisioningFailed"))
+	assert.NotNil(t, GetErrorType(newErr))
 }

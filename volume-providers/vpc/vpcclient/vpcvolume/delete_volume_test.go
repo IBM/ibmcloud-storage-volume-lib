@@ -58,7 +58,7 @@ func TestDeleteVolume(t *testing.T) {
 	for _, testcase := range testCases {
 		t.Run(testcase.name, func(t *testing.T) {
 			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/volumes/volume-id", http.MethodDelete, nil, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, vpcvolume.Version+"/volumes/volume-id", http.MethodDelete, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 

@@ -16,6 +16,7 @@ import (
 
 	softlayer_block "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/block"
 	softlayer_file "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/softlayer/file"
+	iks_vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/iks/provider"
 	vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
@@ -24,6 +25,10 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/registry"
 )
+
+const maxTimeout = 300  //secondsPerDay
+const retryInterval = 5 //seconds
+const maxRetryAttempts = maxTimeout / retryInterval
 
 // InitProviders initialization for all providers as per configurations
 func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers, error) {
@@ -72,6 +77,18 @@ func InitProviders(conf *config.Config, logger *zap.Logger) (registry.Providers,
 		haveProviders = true
 	}
 
+	// IKS provider registration
+	if conf.IKS != nil && conf.IKS.Enabled {
+		logger.Info("Configuring IKS-VPC Block Provider")
+		prov, err := iks_vpc_provider.NewProvider(conf, logger)
+		if err != nil {
+			logger.Info("VPC block provider error!")
+			return nil, err
+		}
+		providerRegistry.Register(conf.IKS.IKSBlockProviderName, prov)
+		haveProviders = true
+	}
+
 	if haveProviders {
 		logger.Info("Provider registration done!!!")
 		return providerRegistry, nil
@@ -99,7 +116,6 @@ func OpenProviderSession(conf *config.Config, providers registry.Providers, prov
 		fatal = true
 		return
 	}
-
 	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
 	if err == nil {
 		session, err = prov.OpenSession(nil, contextCredentials, ctxLogger)
@@ -120,18 +136,22 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 	slUser := conf.Softlayer.SoftlayerUsername
 	slAPIKey := conf.Softlayer.SoftlayerAPIKey
 	iamAPIKey := conf.Bluemix.IamAPIKey
+	vpcIamAPIKey := conf.VPC.APIKey
 
 	// Select appropriate authentication strategy
+	isSLProvider := providerID == conf.Softlayer.SoftlayerBlockProviderName || providerID == conf.Softlayer.SoftlayerFileProviderName
 	switch {
-	case (providerID == conf.Softlayer.SoftlayerBlockProviderName || providerID == conf.Softlayer.SoftlayerFileProviderName) &&
-		!isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
+	case isSLProvider && !isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
 		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, ctxLogger)
 
 	case (providerID == conf.VPC.VPCBlockProviderName):
-		return contextCredentialsFactory.ForIAMAccessToken(iamAPIKey, ctxLogger)
+		return contextCredentialsFactory.ForIAMAccessToken(vpcIamAPIKey, ctxLogger)
 
-	case (!isEmptyStringValue(&iamAPIKey) && (providerID != conf.VPC.VPCBlockProviderName)):
+	case isSLProvider && !isEmptyStringValue(&iamAPIKey):
 		return contextCredentialsFactory.ForIAMAPIKey(AccountID, iamAPIKey, ctxLogger)
+
+	case (providerID == conf.IKS.IKSBlockProviderName):
+		return provider.ContextCredentials{}, nil // Get credentials  in OpenSession method
 
 	default:
 		return provider.ContextCredentials{}, util.NewError("ErrorInsufficientAuthentication",
