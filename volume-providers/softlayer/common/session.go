@@ -123,8 +123,8 @@ func (sls *SLSession) DeleteVolume(vol *provider.Volume) error {
 	if vol.Attributes["authIP"] != "" {
 		volumeAuthorization := provider.VolumeAuthorization{
 			Volume:  *vol,
-			Subnets: "",
-			HostIPs: vol.Attributes["authIP"],
+			Subnets: nil,
+			HostIPs: []string{vol.Attributes["authIP"]},
 		}
 		err := sls.DeauthorizeVolume(volumeAuthorization)
 		if err != nil {
