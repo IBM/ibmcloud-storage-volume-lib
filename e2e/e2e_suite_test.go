@@ -31,32 +31,39 @@ var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
 var requestID string
+var resourceGroupID string
 var providerRegistry registry.Providers
 var providers []ProviderE2ETest
 
-func TestVPCE2e(t *testing.T) {
+func TestVPCE2E(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "ibmcloud-storage-volume-lib VPC e2e test suite")
 }
 
 var _ = BeforeSuite(func() {
-	//initSuite()
+	initSuite()
 })
 
 var _ = AfterSuite(func() {
-	//defer sess.Close()
-	//defer ctxLogger.Sync()
+	defer logger.Sync()
+	defer ctxLogger.Sync()
 })
 
 func initSuite() {
 	// Setup new style zap logger
 	logger, traceLevel = getContextLogger()
-	defer logger.Sync()
+
 	// Load config file
-	conf, err := config.ReadConfig("", logger)
+	goPath := os.Getenv("GOPATH")
+	conf, err := config.ReadConfig(goPath+vpcConfigFilePath, logger)
 	if err != nil {
 		logger.Fatal("Error loading configuration")
 		Expect(err).To(HaveOccurred())
+	}
+
+	// Check if debug log level enabled or not
+	if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
+		resourceGroupID = conf.VPC.ResourceGroupID
 	}
 
 	// Check if debug log level enabled or not
@@ -73,8 +80,7 @@ func initSuite() {
 	}
 
 	populateE2EProviders(conf)
-	logger.Info("No. of providers enabled", zap.Int("No.of Providers", len(providers)))
-
+	logger.Info("Number of providers enabled", zap.Int("Number of providers", len(providers)))
 }
 
 func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
@@ -105,31 +111,15 @@ func populateE2EProviders(conf *config.Config) {
 	if conf.VPC.Enabled {
 		providerName := conf.VPC.VPCBlockProviderName
 		sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
-		if err != nil {
-			Expect(err).To(HaveOccurred())
-		}
-		e2eProvider := &VpcClassicE2E{
+		defer sess.Close()
+		Expect(err).NotTo(HaveOccurred())
+		Expect(sess).ShouldNot(BeNil())
+		e2eVPCProvider := &VPCClassicE2E{
 			BaseE2ETest{
 				session: sess,
 				Name:    providerName,
 			},
 		}
-		providers = append(providers, e2eProvider)
+		providers = append(providers, e2eVPCProvider)
 	}
-
-	if conf.Softlayer.SoftlayerBlockEnabled {
-		providerName := conf.Softlayer.SoftlayerBlockProviderName
-		sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
-		if err != nil {
-			Expect(err).To(HaveOccurred())
-		}
-		e2eProvider1 := &SLBlockE2E{
-			BaseE2ETest{
-				session: sess,
-				Name:    providerName,
-			},
-		}
-		providers = append(providers, e2eProvider1)
-	}
-
 }
