@@ -21,7 +21,7 @@ import (
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	It("VPC: Create and delete VPC volume[profile: 10iops-tier]", func() {
-		volName := volumeName + "10iops"
+		volName := volumeName + "-10iops"
 		volSize := volumeSize
 		Iops := iops
 
@@ -38,6 +38,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume.Az = vpcZone
 
 		volume.VPCVolume.Tags = []string{"Testing VPC volume from library with 10iops-tier profile"}
+		By("Test Create Volume")
 		volumeObj, err := sess.CreateVolume(*volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
@@ -51,6 +52,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 
 		volume = &provider.Volume{}
 		volume.VolumeID = volumeObj.VolumeID
+		By("Test Delete Volume")
 		err = sess.DeleteVolume(volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
