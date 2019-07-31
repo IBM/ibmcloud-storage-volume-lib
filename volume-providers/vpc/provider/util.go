@@ -20,13 +20,13 @@ import (
 )
 
 // maxRetryAttempt ...
-var maxRetryAttempt = 5
+var maxRetryAttempt = 10
 
 // maxRetryGap ...
-var maxRetryGap = 30
+var maxRetryGap = 60
 
 // retryGap ...
-var retryGap = 5
+var retryGap = 10
 
 var volumeIDPartsCount = 5
 
@@ -37,13 +37,19 @@ var skipErrorCodes = map[string]bool{
 	"volume_profile_iops_invalid":      true,
 	"volume_capacity_zero_or_negative": true,
 	"not_found":                        true,
+	"volume_name_not_found":            true,
 	"internal_error":                   false,
 	"invalid_route":                    false,
+
+	// IKS ms error code for skip re-try
+	"ST0008": true, //resources not found
+	"ST0005": true, //worker node could not be found
 }
 
 // retry ...
 func retry(logger *zap.Logger, retryfunc func() error) error {
 	var err error
+
 	for i := 0; i < maxRetryAttempt; i++ {
 		if i > 0 {
 			time.Sleep(time.Duration(retryGap) * time.Second)
@@ -83,6 +89,112 @@ func skipRetry(err *models.Error) bool {
 		}
 	}
 	return false
+}
+
+// skipRetryForIKS skip retry as per listed error codes
+func skipRetryForIKS(err *models.IksError) bool {
+	skipStatus, ok := skipErrorCodes[string(err.Code)]
+	if ok {
+		return skipStatus
+	}
+	return false
+}
+
+// skipRetryForAttach skip retry as per listed error codes
+func skipRetryForAttach(err error, isIKS bool) bool {
+	// Only for storage-api ms related calls error
+	if isIKS {
+		iksError, ok := err.(*models.IksError)
+		if ok {
+			return skipRetryForIKS(iksError)
+		}
+		return false
+	}
+
+	// Only for RIaaS attachment related calls error
+	riaasError, ok := err.(*models.Error)
+	if ok {
+		return skipRetry(riaasError)
+	}
+	return false
+}
+
+// FlexyRetry ...
+type FlexyRetry struct {
+	maxRetryAttempt int
+	maxRetryGap     int
+}
+
+// NewFlexyRetryDefault ...
+func NewFlexyRetryDefault() FlexyRetry {
+	return FlexyRetry{
+		// Default values as we configuration
+		maxRetryAttempt: maxRetryAttempt,
+		maxRetryGap:     maxRetryGap,
+	}
+}
+
+// NewFlexyRetry ...
+func NewFlexyRetry(maxRtyAtmpt int, maxrRtyGap int) FlexyRetry {
+	return FlexyRetry{
+		maxRetryAttempt: maxRtyAtmpt,
+		maxRetryGap:     maxrRtyGap,
+	}
+}
+
+// FlexyRetry ...
+func (fRetry *FlexyRetry) FlexyRetry(logger *zap.Logger, funcToRetry func() (error, bool)) error {
+	var err error
+	var stopRetry bool
+	for i := 0; i < fRetry.maxRetryAttempt; i++ {
+		if i > 0 {
+			time.Sleep(time.Duration(retryGap) * time.Second)
+		}
+		// Call function which required retry, retry is decided by funtion itself
+		err, stopRetry = funcToRetry()
+		if stopRetry {
+			break
+		}
+
+		// Update retry gap as per exponentioal
+		if i >= 1 {
+			retryGap = 2 * retryGap
+			if retryGap > fRetry.maxRetryGap {
+				retryGap = fRetry.maxRetryGap
+			}
+		}
+		if (i + 1) < fRetry.maxRetryAttempt {
+			logger.Info("UNEXPECTED RESULT, Re-attempting execution ..", zap.Int("attempt..", i+2),
+				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", fRetry.maxRetryAttempt),
+				zap.Bool("stopRetry", stopRetry), zap.Error(err))
+		}
+	}
+	return err
+}
+
+// FlexyRetryWithConstGap ...
+func (fRetry *FlexyRetry) FlexyRetryWithConstGap(logger *zap.Logger, funcToRetry func() (error, bool)) error {
+	var err error
+	var stopRetry bool
+	// lets have more number of try for wait for attach and detach specially
+	totalAttempt := fRetry.maxRetryAttempt * 4 // 40 time as per default values i.e 400 seconds
+	for i := 0; i < totalAttempt; i++ {
+		if i > 0 {
+			time.Sleep(time.Duration(retryGap) * time.Second)
+		}
+		// Call function which required retry, retry is decided by funtion itself
+		err, stopRetry = funcToRetry()
+		if stopRetry {
+			break
+		}
+
+		if (i + 1) < totalAttempt {
+			logger.Info("UNEXPECTED RESULT from FlexyRetryWithConstGap, Re-attempting execution ..", zap.Int("attempt..", i+2),
+				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", totalAttempt),
+				zap.Bool("stopRetry", stopRetry), zap.Error(err))
+		}
+	}
+	return err
 }
 
 // ToInt ...
@@ -148,4 +260,15 @@ func IsValidVolumeIDFormat(volID string) bool {
 		return false
 	}
 	return true
+}
+
+// SetRetryParameters sets the retry logic parameters
+func SetRetryParameters(maxAttempts int, maxGap int) {
+	if maxAttempts > 0 {
+		maxRetryAttempt = maxAttempts
+	}
+
+	if maxGap > 0 {
+		maxRetryGap = maxGap
+	}
 }

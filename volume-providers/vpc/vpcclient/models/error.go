@@ -10,6 +10,10 @@
 
 package models
 
+import (
+	"fmt"
+)
+
 // ErrorType ...
 type ErrorType string
 
@@ -66,4 +70,20 @@ func (e Error) Error() string {
 type ErrorTarget struct {
 	Name string    `json:"name,omitempty"`
 	Type ErrorType `json:"type,omitempty"`
+}
+
+// IksError ...
+type IksError struct {
+	ReqID       string    `json:"incidentID" binding:"required"`
+	Code        string    `json:"code" binding:"required"`
+	Err         string    `json:"description" binding:"required"`
+	Type        ErrorType `json:"type" binding:"required"`
+	RecoveryCLI string    `json:"recoveryCLI,omitempty"`
+	RecoveryUI  string    `json:"recoveryUI,omitempty"`
+	RC          int       `json:"rc,omitempty"`
+}
+
+// Error ...
+func (ikserr IksError) Error() string {
+	return fmt.Sprintf("%s: %s", ikserr.Code, ikserr.Err)
 }

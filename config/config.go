@@ -17,7 +17,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 func getEnv(key string) string {
@@ -152,10 +151,17 @@ type VPCProviderConfig struct {
 	APIKey               string `toml:"gc_api_key" json:"-"`
 	Encryption           bool   `toml:"encryption"`
 	ResourceGroupID      string `toml:"gc_resource_group_id"`
-	Timeout              string `toml:"vpc_timeout" envconfig:"VPC_TIMEOUT"`
-	MaxRetryAttempt      int    `toml:"max_retry_attempt"`
-	MaxRetryGap          int    `toml:"max_retry_gap" envconfig:"VPC_RETRY_INTERVAL"`
-	APIVersion           string `toml:"api_version" envconfig:"VPC_API_VERSION"`
+	VPCTimeout           string `toml:"vpc_api_timeout,omitempty" envconfig:"VPC_API_TIMEOUT"`
+	MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty" envconfig:"VPC_RETRY_ATTEMPT"`
+	MaxRetryGap          int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
+
+	// This is in seconds
+	VPCAPIRetryAttempt  int  `toml:"vpc_api_retry_attempt,omitempty" envconfig:"VPC_API_RETRY_ATTEMPT"`
+	VPCAPIRetryInterval int  `toml:"vpc_api_retry_interval,omitempty" envconfig:"VPC_API_RETRY_INTERVAL"`
+	IsVPCAPIExpoRetry   bool `toml:"is_vpc_api_expo_retry,omitempty" envconfig:"IS_VPC_API_EXPO_RETRY"`
+
+	APIVersion string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
+	IsIKS      bool   `toml:"is_iks,omitempty"`
 }
 
 //IKSConfig config
@@ -170,16 +176,4 @@ func GetEtcPath() string {
 	srcPath := filepath.Join("src", "github.com", "IBM",
 		"ibmcloud-storage-volume-lib")
 	return filepath.Join(goPath, srcPath, "etc")
-}
-
-//GetTimeOutParameters retrives the parameteer to implement retry logic
-// maxTimeout - Maximum time out for the operations
-//retryGapDuration - The time interval for next attempt
-// maxRetryAttempt - maxmum retry attempts derived based on  maxTimeout and retryGapDuration
-func (config *VPCProviderConfig) GetTimeOutParameters() (int, int, time.Duration) {
-	maxTimeoutConfig, _ := time.ParseDuration(config.Timeout)
-	maxTimeout := int(maxTimeoutConfig.Seconds())
-	maxRetryAttempt := maxTimeout / config.MaxRetryGap
-	retryGapDuration := time.Duration(config.MaxRetryGap) * time.Second
-	return maxTimeout, maxRetryAttempt, retryGapDuration
 }

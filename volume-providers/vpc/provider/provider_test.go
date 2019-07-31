@@ -88,7 +88,7 @@ func TestNewProvider(t *testing.T) {
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
 			EndpointURL: TestEndpointURL,
-			Timeout:     "30s",
+			VPCTimeout:  "30s",
 		},
 	}
 	logger, teardown := GetTestLogger(t)
@@ -112,7 +112,7 @@ func TestNewProvider(t *testing.T) {
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
 			EndpointURL: TestEndpointURL,
-			Timeout:     "",
+			VPCTimeout:  "",
 		},
 	}
 
@@ -131,6 +131,9 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 	var cp *fakes.RegionalAPIClientProvider
 	var uc, sc *fakes.RegionalAPI
 
+	// SetRetryParameters sets the retry logic parameters
+	SetRetryParameters(2, 5)
+
 	logger.Info("Getting New test Provider")
 	conf := &config.Config{
 		Server: &config.ServerConfig{
@@ -146,7 +149,7 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 		VPC: &config.VPCProviderConfig{
 			Enabled:         true,
 			EndpointURL:     TestEndpointURL,
-			Timeout:         "30s",
+			VPCTimeout:      "30s",
 			MaxRetryAttempt: 5,
 			MaxRetryGap:     10,
 			APIVersion:      TestAPIVersion,
@@ -157,7 +160,7 @@ func GetTestProvider(t *testing.T, logger *zap.Logger) (*VPCBlockProvider, error
 	assert.NotNil(t, p)
 	assert.Nil(t, err)
 
-	timeout, _ := time.ParseDuration(conf.VPC.Timeout)
+	timeout, _ := time.ParseDuration(conf.VPC.VPCTimeout)
 
 	// Inject a fake RIAAS API client
 	cp = &fakes.RegionalAPIClientProvider{}
@@ -239,7 +242,7 @@ func TestOpenSession(t *testing.T) {
 	return
 }
 
-func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn provider.Session, uc, sc *fakes.RegionalAPI, err error) {
+func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn *VPCSession, uc, sc *fakes.RegionalAPI, err error) {
 	vpcp, err := GetTestProvider(t, logger)
 
 	m := http.NewServeMux()

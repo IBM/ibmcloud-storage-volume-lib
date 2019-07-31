@@ -28,12 +28,13 @@ script:
 - sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
 - sed -i "s/VPC_ZONE/"$VPC_ZONE"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
 - sed -i 's|ENCRYPTION_KEY_CRN|'"$ENCRYPTION_KEY_CRN"'|g' $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
+- sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - make vet
 - make fmt
 - make test
 - make coverage
-- make volume-lib-e2e-test && touch "Passing" || touch "Failed"
+- travis_wait make volume-lib-e2e-test && touch "Passing" || touch "Failed"
 after_success:
 - "./scripts/calculateCoverage.sh"
 - "./scripts/publishCoverage.sh"

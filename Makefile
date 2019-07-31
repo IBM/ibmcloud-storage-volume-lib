@@ -37,10 +37,10 @@ makefmt:
 test:
 ifeq ($(ARCH), ppc64le)
 	# POWER
-	$(GOPATH)/bin/gotestcover -v -coverprofile=cover.out ${GOPACKAGES}
+	$(GOPATH)/bin/gotestcover -v -coverprofile=cover.out ${GOPACKAGES} -timeout 90m
 else
 	# x86_64
-	$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES}
+	$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES} -timeout 90m
 endif
 
 .PHONY: coverage
@@ -53,11 +53,11 @@ vet:
 
 .PHONY: build
 build:
-	go build -gcflags '-N -l' -o libSample samples/main.go
+	go build -gcflags '-N -l' -o libSample samples/main.go samples/attach_detach.go
 
+.PHONY: volume-lib-e2e-test
 volume-lib-e2e-test:
 	go test ./e2e/... -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true -timeout 90m
-.PHONY: volume-lib-e2e-test
 
 .PHONY: clean
 clean:

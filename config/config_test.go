@@ -197,3 +197,17 @@ func TestGetDefaultConfPath(t *testing.T) {
 
 	assert.Equal(t, expectedEtcPath, defaultEtcPath)
 }
+
+func TestGetConfPathDir(t *testing.T) {
+	t.Log("Testing GetConfPathDir")
+	os.Setenv("SECRET_CONFIG_PATH", "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml")
+	expectedEtcPath := "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml"
+	confPath := GetConfPathDir()
+	assert.Equal(t, confPath, expectedEtcPath)
+
+	os.Unsetenv("SECRET_CONFIG_PATH")
+	os.Unsetenv("GOPATH")
+	confPath = GetConfPathDir()
+	expectedEtcPath = "src/github.com/IBM/ibmcloud-storage-volume-lib/etc"
+	assert.Equal(t, confPath, expectedEtcPath)
+}

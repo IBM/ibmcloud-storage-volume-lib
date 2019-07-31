@@ -29,20 +29,16 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
-	var apiErr models.Error
+	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
 	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
-	req := request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
+	req := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
 	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
-	if volumeAttachmentTemplate.ClusterID != nil {
-		// IKS case - requires ClusterID in  the request
-		req = req.AddQueryValue("clusterID", *volumeAttachmentTemplate.ClusterID)
-	}
-	resp, err := req.JSONError(&apiErr).Invoke()
+	resp, err := req.JSONError(apiErr).Invoke()
 	if err != nil {
-		ctxLogger.Error("Error occured while deleting volume attahment", zap.Error(err))
+		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			// volume Attachment is deleted. So do not want to retry
 			return resp, apiErr

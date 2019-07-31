@@ -72,6 +72,7 @@ func (c *client) NewRequest(operation *Operation) *Request {
 	headers.Set("User-Agent", models.UserAgent)
 	if c.contextID != "" {
 		headers.Set("X-Request-ID", c.contextID)
+		headers.Set("X-Transaction-ID", c.contextID) // To avoid IKS cloudflare overriding X-Request-ID
 	}
 
 	// Copy the query values to a new map
