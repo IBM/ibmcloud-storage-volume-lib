@@ -19,5 +19,5 @@ const (
 	generation             = "gt"
 	vpcProfile             = "general-purpose"
 	vpcConfigFilePath      = "/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml"
-	volumeEncryptionKeyCRN = "crn:v1:bluemix:public:kms:us-south:a/3198c72555b38a6bce0f48460003676d:b04bda72-e50c-481a-a689-35f6d2dd2cfd:key:28b772ef-5d00-40eb-b597-47973ccab82b"
+	volumeEncryptionKeyCRN = "ENCRYPTION_KEY_CRN"
 )
