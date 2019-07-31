@@ -30,6 +30,9 @@ var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
 var requestID string
+var resourceGroupID string
+var vpcZone string
+var volumeEncryptionKeyCRN string
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -49,9 +52,20 @@ var _ = BeforeSuite(func() {
 	}
 
 	// Check if debug log level enabled or not
+	if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
+		resourceGroupID = conf.VPC.ResourceGroupID
+	}
+
+	// Check if debug log level enabled or not
 	if conf.Server != nil && conf.Server.DebugTrace {
 		traceLevel.SetLevel(zap.DebugLevel)
 	}
+
+	// Load zone info
+	vpcZone = os.Getenv("VPC_ZONE")
+
+	// Load EncryptionKeyCRN info
+	volumeEncryptionKeyCRN = os.Getenv("ENCRYPTION_KEY_CRN")
 
 	// Prepare provider registry
 	providerRegistry, err := provider_util.InitProviders(conf, logger)

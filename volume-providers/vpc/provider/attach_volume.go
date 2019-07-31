@@ -42,7 +42,7 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 	vpcs.Logger.Info("Checking if volume is already attached ")
 	currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentRequest)
 	if err == nil && currentVolAttachment != nil && currentVolAttachment.Status != StatusDetaching {
-		vpcs.Logger.Info("volume is already attached", zap.Reflect("currentVolAttachment", currentVolAttachment))
+		vpcs.Logger.Info("Volume is already attached", zap.Reflect("currentVolAttachment", currentVolAttachment))
 		return currentVolAttachment, nil
 	}
 	//Try attaching volume if it's not already attached or there is error in getting current volume attachment
