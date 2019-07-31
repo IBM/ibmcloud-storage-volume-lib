@@ -25,9 +25,7 @@ script:
 - rsync -az . $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
 - cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
 - source secret.txt
-- sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
-- sed -i "s/VPC_ZONE/"$VPC_ZONE"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
-- sed -i 's|ENCRYPTION_KEY_CRN|'"$ENCRYPTION_KEY_CRN"'|g' $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/constants.go
+- sed -i "s/RIAAS_ENDPOINT_URL/"$RIAAS_ENDPOINT_URL"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - sed -i "s/RESOURCEGROUP/"$RESOURCEGROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - make vet
