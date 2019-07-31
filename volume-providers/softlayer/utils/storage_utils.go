@@ -485,7 +485,7 @@ func ConvertToVolumeType(storage datatypes.Network_Storage, logger *zap.Logger, 
 		volumeAttribs["password"] = *storage.AllowedIpAddresses[0].AllowedHost.Credential.Password
 		volumeAttribs["initiatorName"] = *storage.AllowedIpAddresses[0].AllowedHost.Name
 		volumeAttribs["authIP"] = *storage.AllowedIpAddresses[0].IpAddress
-	} else if storage.Credentials != nil && len(storage.Credentials) > 0 {
+	} else if storage.Credentials != nil && len(storage.Credentials) > 0 && storage.AllowedIpAddresses != nil {
 		volumeAttribs["username"] = *storage.Credentials[0].Username
 		volumeAttribs["password"] = *storage.Credentials[0].Password
 		volumeAttribs["initiatorName"] = *storage.AllowedIpAddresses[0].AllowedHost.Name
