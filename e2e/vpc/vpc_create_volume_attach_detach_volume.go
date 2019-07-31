@@ -64,6 +64,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		httpResponse, err := sess.AttachVolume(*volumeAttachRequest)
 		Expect(err).NotTo(HaveOccurred())
 		ctxLogger.Info("Successfully detached the volume.", zap.Reflect("httpResponse", httpResponse))
+		sess.WaitForDetachVolume(*volumeAttachRequest)
 
 		volume = &provider.Volume{}
 		volume.VolumeID = volumeObj.VolumeID
