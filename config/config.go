@@ -154,11 +154,7 @@ type VPCProviderConfig struct {
 	VPCTimeout           string `toml:"vpc_api_timeout,omitempty" envconfig:"VPC_API_TIMEOUT"`
 	MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty" envconfig:"VPC_RETRY_ATTEMPT"`
 	MaxRetryGap          int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
-
-	// This is in seconds
-	VPCAPIRetryAttempt  int  `toml:"vpc_api_retry_attempt,omitempty" envconfig:"VPC_API_RETRY_ATTEMPT"`
-	VPCAPIRetryInterval int  `toml:"vpc_api_retry_interval,omitempty" envconfig:"VPC_API_RETRY_INTERVAL"`
-	IsVPCAPIExpoRetry   bool `toml:"is_vpc_api_expo_retry,omitempty" envconfig:"IS_VPC_API_EXPO_RETRY"`
+	VPCAPIGeneration     int    `toml:"vpc_api_generation" envconfig:"VPC_API_GENERATION"`
 
 	APIVersion string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
 	IsIKS      bool   `toml:"is_iks,omitempty"`

@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -193,7 +194,7 @@ func TestDebugMode(t *testing.T) {
 			operation: getOperation,
 			verify: func(t *testing.T) {
 				assert.Contains(t, log.String(), "REQUEST:")
-				assert.Contains(t, log.String(), "GET /resource?version="+models.APIVersion+" HTTP/1.1")
+				assert.Contains(t, log.String(), "GET /resource?version=2019-01-01 HTTP/1.1")
 			},
 		}, {
 			name:      "records the request body",
@@ -227,6 +228,10 @@ func TestDebugMode(t *testing.T) {
 		},
 	}
 
+	queryValues := map[string][]string{
+		"version": []string{"2019-01-01"},
+	}
+
 	for _, testcase := range testcases {
 
 		t.Run(testcase.name, func(t *testing.T) {
@@ -236,7 +241,7 @@ func TestDebugMode(t *testing.T) {
 
 			log = &bytes.Buffer{}
 
-			riaas = client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token")
+			riaas = client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
 
 			defer s.Close()
 
@@ -273,27 +278,27 @@ func TestOperationURLProcessing(t *testing.T) {
 			"absolute path",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "/absolute/path"},
-			"http://127.0.0.1/absolute/path?version=" + models.APIVersion,
+			"http://127.0.0.1/absolute/path?generation=" + strconv.Itoa(models.APIGeneration) + "&version=" + models.APIVersion,
 		}, {
 			"relative path base does not end with slash",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "relative/path"},
-			"http://127.0.0.1/v2/relative/path?version=" + models.APIVersion,
+			"http://127.0.0.1/v2/relative/path?generation=" + strconv.Itoa(models.APIGeneration) + "&version=" + models.APIVersion,
 		}, {
 			"relative path when base ends with slash",
 			"http://127.0.0.1/v2/",
 			&client.Operation{PathPattern: "relative/path"},
-			"http://127.0.0.1/v2/relative/path?version=" + models.APIVersion,
+			"http://127.0.0.1/v2/relative/path?generation=" + strconv.Itoa(models.APIGeneration) + "&version=" + models.APIVersion,
 		}, {
 			"relative path parent",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "../path"},
-			"http://127.0.0.1/path?version=" + models.APIVersion,
+			"http://127.0.0.1/path?generation=" + strconv.Itoa(models.APIGeneration) + "&version=" + models.APIVersion,
 		}, {
 			"relative path with .. beyond root",
 			"http://127.0.0.1/v2",
 			&client.Operation{PathPattern: "../../../../path"},
-			"http://127.0.0.1/path?version=" + models.APIVersion,
+			"http://127.0.0.1/path?generation=" + strconv.Itoa(models.APIGeneration) + "&version=" + models.APIVersion,
 		}, {
 			"broken base URL",
 			"://127.0.0.1/v2",
@@ -307,10 +312,15 @@ func TestOperationURLProcessing(t *testing.T) {
 		},
 	}
 
+	queryValues := map[string][]string{
+		"generation": []string{strconv.Itoa(models.APIGeneration)},
+		"version":    []string{models.APIVersion},
+	}
+
 	for _, testcase := range testcases {
 
 		t.Run(testcase.name, func(t *testing.T) {
-			c := client.New(context.Background(), testcase.baseURL, http.DefaultClient, "test-context", "2019-01-01")
+			c := client.New(context.Background(), testcase.baseURL, queryValues, http.DefaultClient, "test-context")
 			actualURL := c.NewRequest(testcase.operation).URL()
 			assert.Equal(t, testcase.expectedURL, actualURL)
 		})
@@ -323,7 +333,12 @@ func TestWithPathParameter(t *testing.T) {
 
 	log := &bytes.Buffer{}
 
-	riaas := client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token").WithPathParameter("test", "test")
+	queryValues := map[string][]string{
+		"version":    []string{models.APIVersion},
+		"generation": []string{strconv.Itoa(models.APIGeneration)},
+	}
+
+	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token").WithPathParameter("test", "test")
 	assert.NotNil(t, riaas)
 	defer s.Close()
 }
@@ -334,7 +349,12 @@ func TestWithQueryValue(t *testing.T) {
 
 	log := &bytes.Buffer{}
 
-	riaas := client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token").WithQueryValue("test", "test")
+	queryValues := map[string][]string{
+		"version":    []string{models.APIVersion},
+		"generation": []string{strconv.Itoa(models.APIGeneration)},
+	}
+
+	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token").WithQueryValue("test", "test")
 	assert.NotNil(t, riaas)
 	defer s.Close()
 }

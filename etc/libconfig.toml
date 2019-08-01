@@ -7,7 +7,7 @@
   iam_client_secret = "bx"
   iam_api_key = "XXX"
   refresh_token = ""
-  containers_api_route = "https://containers.dev.cloud.ibm.com"
+  containers_api_route = "https://containers.test.cloud.ibm.com"
 
 [softlayer]
   softlayer_block_enabled = false
@@ -40,7 +40,8 @@
   vpc_api_timeout = "120s"
   max_retry_attempt  = 10 # 10 times with exponential re-try with max gap max_retry_gap
   max_retry_gap =  120 # 2 minutes
-  api_version = "2019-01-01"
+  api_version = "2019-07-02"
+  vpc_api_generation = 1
 
 [IKS]
   iks_enabled = true

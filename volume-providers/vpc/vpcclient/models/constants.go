@@ -12,7 +12,10 @@ package models
 
 const (
 	// APIVersion is the target RIaaS API spec version
-	APIVersion = "2019-01-01"
+	APIVersion = "2019-07-02"
+
+	// APIGeneration ...
+	APIGeneration = 1
 
 	// UserAgent identifies IKS to the RIaaS API
 	UserAgent = "IBM-Kubernetes-Service"

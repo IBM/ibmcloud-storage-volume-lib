@@ -14,7 +14,10 @@ import (
 	"context"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/instances"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
+	"net/url"
+	"strconv"
 )
 
 // RegionalAPI is the main interface for the RIAAS API client. From here, service
@@ -44,7 +47,26 @@ func New(config Config) (*Session, error) {
 		ctx = context.Background()
 	}
 
-	riaasClient := client.New(ctx, config.baseURL(), config.httpClient(), config.ContextID, config.APIVersion)
+	// Default API version
+	backendAPIVersion := models.APIVersion
+
+	// Overwrite if the version is passed
+	if len(config.APIVersion) > 0 {
+		backendAPIVersion = config.APIVersion
+	}
+
+	// Overwrite if the generation is passed
+	apiGen := models.APIGeneration
+	if config.APIGeneration > 0 {
+		apiGen = config.APIGeneration
+	}
+
+	queryValues := url.Values{
+		"version":    []string{backendAPIVersion},
+		"generation": []string{strconv.Itoa(apiGen)},
+	}
+
+	riaasClient := client.New(ctx, config.baseURL(), queryValues, config.httpClient(), config.ContextID)
 
 	if config.DebugWriter != nil {
 		riaasClient.WithDebug(config.DebugWriter)

@@ -26,10 +26,11 @@ type Config struct {
 	Password      string
 	ContextID     string
 
-	DebugWriter io.Writer
-	HTTPClient  *http.Client
-	Context     context.Context
-	APIVersion  string
+	DebugWriter   io.Writer
+	HTTPClient    *http.Client
+	Context       context.Context
+	APIVersion    string
+	APIGeneration int
 }
 
 func (c Config) httpClient() *http.Client {
