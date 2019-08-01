@@ -99,9 +99,10 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		contextCF:      contextCF,
 		httpClient:     httpClient,
 		APIConfig: riaas.Config{
-			BaseURL:    conf.VPC.EndpointURL,
-			HTTPClient: httpClient,
-			APIVersion: conf.VPC.APIVersion,
+			BaseURL:       conf.VPC.EndpointURL,
+			HTTPClient:    httpClient,
+			APIVersion:    conf.VPC.APIVersion,
+			APIGeneration: conf.VPC.VPCAPIGeneration,
 		},
 	}
 	// Update VPC config for IKS deployment

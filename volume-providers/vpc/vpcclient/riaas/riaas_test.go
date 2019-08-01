@@ -45,7 +45,8 @@ func TestNewSession(t *testing.T) {
 		ResourceGroup: "test resource group",
 		Password:      "tester",
 		ContextID:     "tester",
-		APIVersion:    "01-01-2019",
+		APIVersion:    "2019-06-05",
+		APIGeneration: 2,
 		HTTPClient:    &http.Client{},
 		DebugWriter:   io.Writer(&b),
 	}
@@ -58,6 +59,21 @@ func TestNewSession(t *testing.T) {
 	regionalAPI, err := d.New(cfg)
 	assert.Nil(t, err)
 	assert.NotNil(t, regionalAPI)
+
+	noAPIVerAndGen := Config{
+		BaseURL:       "http://gc",
+		AccountID:     "test account ID",
+		Username:      "tester",
+		APIKey:        "tester",
+		ResourceGroup: "test resource group",
+		Password:      "tester",
+		ContextID:     "tester",
+		HTTPClient:    &http.Client{},
+		DebugWriter:   io.Writer(&b),
+	}
+	sessionAPI, err := New(noAPIVerAndGen)
+	assert.Nil(t, err)
+	assert.NotNil(t, sessionAPI)
 }
 
 func TestVolumeService(t *testing.T) {

@@ -17,9 +17,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +33,9 @@ func SetupServer(t *testing.T) (m *http.ServeMux, c client.SessionClient, teardo
 
 	log := new(bytes.Buffer)
 
-	c = client.New(context.Background(), s.URL, http.DefaultClient, "test-context", "2019-01-01").WithDebug(log).WithAuthToken("auth-token")
+	queryValues := url.Values{"version": []string{models.APIVersion}}
+
+	c = client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
 
 	teardown = func() {
 		s.Close()

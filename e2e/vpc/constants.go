@@ -11,11 +11,11 @@
 package vpc
 
 const (
-	volumeSize             = 10
-	iops                   = "0"
-	volumeName             = "e2e-storage-volume"
-	volumeType             = "vpc-block"
-	generation             = "gt"
-	vpcProfile             = "general-purpose"
-	vpcConfigFilePath      = "/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml"
+	volumeSize        = 10
+	iops              = "0"
+	volumeName        = "e2e-storage-volume"
+	volumeType        = "vpc-block"
+	generation        = "gt"
+	vpcProfile        = "general-purpose"
+	vpcConfigFilePath = "/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml"
 )
