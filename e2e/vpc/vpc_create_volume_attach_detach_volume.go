@@ -12,10 +12,10 @@ package vpc
 
 import (
 	"fmt"
-	"os"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"go.uber.org/zap"
+	"os"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
