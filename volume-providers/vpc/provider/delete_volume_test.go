@@ -57,7 +57,7 @@ func TestDeleteVolume(t *testing.T) {
 				},
 			},
 			verify: func(t *testing.T, err error) {
-				assert.Nil(t, err)
+				assert.NotNil(t, err)
 			},
 		}, {
 			testCaseName:       "False positive: No volume being sent",
@@ -117,9 +117,12 @@ func TestDeleteVolume(t *testing.T) {
 
 			if testcase.expectedErr != "" {
 				volumeService.DeleteVolumeReturns(errors.New(testcase.expectedReasonCode))
+				volumeService.GetVolumeReturns(testcase.baseVolume, errors.New(testcase.expectedReasonCode))
 			} else {
 				volumeService.DeleteVolumeReturns(nil)
+				volumeService.GetVolumeReturns(testcase.baseVolume, nil)
 			}
+
 			err = vpcs.DeleteVolume(testcase.providerVolume)
 
 			if testcase.expectedErr != "" {
@@ -134,4 +137,58 @@ func TestDeleteVolume(t *testing.T) {
 
 		})
 	}
+}
+
+func TestDeleteVolumeTwo(t *testing.T) {
+	//var err error
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	var (
+		volumeService *serviceFakes.VolumeService
+	)
+
+	var baseVolume *models.Volume
+	var providerVolume *provider.Volume
+
+	baseVolume = &models.Volume{
+		ID:     "16f293bf-test-4bff-816f-e199c0c65db5",
+		Name:   "test volume name",
+		Status: models.StatusType("OK"),
+		Iops:   int64(1000),
+		Zone:   &models.Zone{Name: "test-zone"},
+	}
+
+	providerVolume = &provider.Volume{
+		VolumeID: "16f293bf-test-4bff-816f-e199c0c65db5",
+		Name:     String("Test volume"),
+		Capacity: Int(10),
+		Iops:     String("1000"),
+		VPCVolume: provider.VPCVolume{
+			Profile:       &provider.Profile{Name: "general-purpose"},
+			ResourceGroup: &provider.ResourceGroup{ID: "default resource group id", Name: "default resource group"},
+		},
+	}
+
+	vpcs, uc, sc, err := GetTestOpenSession(t, logger)
+	assert.NotNil(t, vpcs)
+	assert.NotNil(t, uc)
+	assert.NotNil(t, sc)
+	assert.Nil(t, err)
+
+	volumeService = &serviceFakes.VolumeService{}
+	assert.NotNil(t, volumeService)
+	uc.VolumeServiceReturns(volumeService)
+
+	volumeService.DeleteVolumeReturns(nil)
+	volumeService.GetVolumeReturns(nil, errors.New("ErrorUnclassified"))
+
+	err = vpcs.DeleteVolume(providerVolume)
+	assert.Nil(t, err)
+
+	volumeService.DeleteVolumeReturns(errors.New("FailedToDeleteVolume"))
+	volumeService.GetVolumeReturns(baseVolume, nil)
+
+	err = vpcs.DeleteVolume(providerVolume)
+	assert.NotNil(t, err)
 }
