@@ -69,6 +69,7 @@ func WaitForVolumeDeletion(vpcs *VPCSession, volumeID string) (err error) {
 
 	var volume *models.Volume
 	err = retry(vpcs.Logger, func() error {
+		vpcs.Logger.Info("Waiting for volume to get deleted.", zap.Reflect("VolumeID", volumeID))
 		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
 		if err != nil && volume == nil {
 			return nil
