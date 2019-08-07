@@ -57,7 +57,7 @@ func TestDeleteVolume(t *testing.T) {
 				},
 			},
 			verify: func(t *testing.T, err error) {
-				assert.NotNil(t, err)
+				assert.Nil(t, err)
 			},
 		}, {
 			testCaseName:       "False positive: No volume being sent",
@@ -180,14 +180,20 @@ func TestDeleteVolumeTwo(t *testing.T) {
 	assert.NotNil(t, volumeService)
 	uc.VolumeServiceReturns(volumeService)
 
-	volumeService.DeleteVolumeReturns(nil)
-	volumeService.GetVolumeReturns(nil, errors.New("ErrorUnclassified"))
+	volumeService.DeleteVolumeReturns(errors.New("not_found"))
+	volumeService.GetVolumeReturns(nil, errors.New("not_found"))
 
 	err = vpcs.DeleteVolume(providerVolume)
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 
 	volumeService.DeleteVolumeReturns(errors.New("FailedToDeleteVolume"))
 	volumeService.GetVolumeReturns(baseVolume, nil)
+
+	err = vpcs.DeleteVolume(providerVolume)
+	assert.NotNil(t, err)
+
+	volumeService.DeleteVolumeReturns(errors.New("FailedToDeleteVolume"))
+	volumeService.GetVolumeReturns(nil, errors.New("wrong code"))
 
 	err = vpcs.DeleteVolume(providerVolume)
 	assert.NotNil(t, err)

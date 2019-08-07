@@ -13,7 +13,6 @@ package provider
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
-	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
 
@@ -67,15 +66,15 @@ func WaitForVolumeDeletion(vpcs *VPCSession, volumeID string) (err error) {
 
 	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", volumeID))
 
-	var volume *models.Volume
-	err = retry(vpcs.Logger, func() error {
-		vpcs.Logger.Info("Waiting for volume to get deleted.", zap.Reflect("VolumeID", volumeID))
-		volume, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
-		if err != nil && volume == nil {
-			return nil
+	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
+		_, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
+		// Keep retry, until GetVolume returns volume not found
+		if err != nil {
+			return err, skipRetryForDeleteVolume(err)
 		}
-		return userError.GetUserError("VolumeDeletionInProgress", err, volumeID)
+		return err, false // continue retry as we are not seeing error which means volume is available
 	})
+
 	if err == nil {
 		vpcs.Logger.Info("Volume got deleted.", zap.Reflect("volumeID", volumeID))
 	}
