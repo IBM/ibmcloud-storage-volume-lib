@@ -13,6 +13,7 @@ package provider
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 )
 
@@ -70,7 +71,7 @@ func WaitForVolumeDeletion(vpcs *VPCSession, volumeID string) (err error) {
 		_, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
 		// Keep retry, until GetVolume returns volume not found
 		if err != nil {
-			return err, skipRetryForDeleteVolume(err)
+			return err, skipRetry(err.(*models.Error))
 		}
 		return err, false // continue retry as we are not seeing error which means volume is available
 	})

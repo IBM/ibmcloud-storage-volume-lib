@@ -91,21 +91,6 @@ func skipRetry(err *models.Error) bool {
 	return false
 }
 
-// skipRetry skip retry as per listed error codes
-func skipRetryForDeleteVolume(err error) bool {
-	modelError, ok := err.(*models.Error)
-	if !ok {
-		return false
-	}
-	for _, errorItem := range modelError.Errors {
-		skipStatus, ok := skipErrorCodes[string(errorItem.Code)]
-		if ok {
-			return skipStatus
-		}
-	}
-	return false
-}
-
 // skipRetryForIKS skip retry as per listed error codes
 func skipRetryForIKS(err *models.IksError) bool {
 	skipStatus, ok := skipErrorCodes[string(err.Code)]
