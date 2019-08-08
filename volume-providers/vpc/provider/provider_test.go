@@ -271,6 +271,7 @@ func GetTestOpenSession(t *testing.T, logger *zap.Logger) (sessn *VPCSession, uc
 		Provider:   VPC,
 		Apiclient:  uc,
 		Logger:     logger,
+		APIRetry:   NewFlexyRetryDefault(),
 	}
 
 	return
