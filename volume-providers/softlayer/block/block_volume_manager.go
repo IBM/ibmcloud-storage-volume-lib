@@ -355,7 +355,7 @@ func (sls *SLBlockSession) GetVolume(id string) (*provider.Volume, error) {
 	}
 
 	// Step 2: Get volume details from SL
-	mask := "id,username,serviceResourceBackendIpAddress,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes,iscsiTargetIpAddresses"
+	mask := "id,username,serviceResourceBackendIpAddress,capacityGb,createDate,snapshotCapacityGb,parentVolume[snapshotSizeBytes],storageType[keyName],serviceResource[datacenter[name]],provisionedIops,lunId,originalVolumeName,storageTierLevel,notes,iscsiTargetIpAddresses,credentials,allowedIpAddresses.allowedHost.credential.username,allowedIpAddresses.allowedHost.credential.password,allowedIpAddresses.allowedHost.credential.id"
 	storageObj := sls.Backend.GetNetworkStorageIscsiService()
 	storage, err := storageObj.ID(volumeID).Mask(mask).GetObject()
 	if err != nil {
