@@ -64,19 +64,21 @@ func validateVolume(volume *provider.Volume) (err error) {
 func WaitForVolumeDeletion(vpcs *VPCSession, volumeID string) (err error) {
 	vpcs.Logger.Debug("Entry of WaitForVolumeDeletion method...")
 	defer vpcs.Logger.Debug("Exit from WaitForVolumeDeletion method...")
+	var skip = false
 
 	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", volumeID))
 
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
 		_, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
 		// Keep retry, until GetVolume returns volume not found
+		skip = skipRetry(err.(*models.Error))
 		if err != nil {
-			return err, skipRetry(err.(*models.Error))
+			return nil, skip
 		}
 		return err, false // continue retry as we are not seeing error which means volume is available
 	})
 
-	if err == nil {
+	if err == nil && skip {
 		vpcs.Logger.Info("Volume got deleted.", zap.Reflect("volumeID", volumeID))
 	}
 	return err
