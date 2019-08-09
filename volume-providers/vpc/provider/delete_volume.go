@@ -64,7 +64,7 @@ func validateVolume(volume *provider.Volume) (err error) {
 func WaitForVolumeDeletion(vpcs *VPCSession, volumeID string) (err error) {
 	vpcs.Logger.Debug("Entry of WaitForVolumeDeletion method...")
 	defer vpcs.Logger.Debug("Exit from WaitForVolumeDeletion method...")
-	var skip bool = false
+	var skip = false
 
 	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", volumeID))
 
