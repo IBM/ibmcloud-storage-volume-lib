@@ -71,8 +71,8 @@ func WaitForVolumeDeletion(vpcs *VPCSession, volumeID string) (err error) {
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
 		_, err = vpcs.Apiclient.VolumeService().GetVolume(volumeID, vpcs.Logger)
 		// Keep retry, until GetVolume returns volume not found
-		skip = skipRetry(err.(*models.Error))
 		if err != nil {
+			skip = skipRetry(err.(*models.Error))
 			return nil, skip
 		}
 		return err, false // continue retry as we are not seeing error which means volume is available
