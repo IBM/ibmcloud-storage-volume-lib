@@ -28,6 +28,11 @@ var maxRetryGap = 60
 // retryGap ...
 var retryGap = 10
 
+//ConstantRetryGap ...
+const (
+	ConstantRetryGap = 10 // seconds
+)
+
 var volumeIDPartsCount = 5
 
 var skipErrorCodes = map[string]bool{
@@ -181,7 +186,7 @@ func (fRetry *FlexyRetry) FlexyRetryWithConstGap(logger *zap.Logger, funcToRetry
 	totalAttempt := fRetry.maxRetryAttempt * 4 // 40 time as per default values i.e 400 seconds
 	for i := 0; i < totalAttempt; i++ {
 		if i > 0 {
-			time.Sleep(time.Duration(retryGap) * time.Second)
+			time.Sleep(time.Duration(ConstantRetryGap) * time.Second)
 		}
 		// Call function which required retry, retry is decided by funtion itself
 		err, stopRetry = funcToRetry()
@@ -191,7 +196,7 @@ func (fRetry *FlexyRetry) FlexyRetryWithConstGap(logger *zap.Logger, funcToRetry
 
 		if (i + 1) < totalAttempt {
 			logger.Info("UNEXPECTED RESULT from FlexyRetryWithConstGap, Re-attempting execution ..", zap.Int("attempt..", i+2),
-				zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", totalAttempt),
+				zap.Int("retry-gap", ConstantRetryGap), zap.Int("max-retry-Attempts", totalAttempt),
 				zap.Bool("stopRetry", stopRetry), zap.Error(err))
 		}
 	}
