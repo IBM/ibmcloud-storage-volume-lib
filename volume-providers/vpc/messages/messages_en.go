@@ -171,6 +171,13 @@ var messagesEn = map[string]util.Message{
 		RC:          500,
 		Action:      "Please check your input",
 	},
+	"VolumeDeletionInProgress": util.Message{
+		Code:        "VolumeDeletionInProgress",
+		Description: "Volume %s deletion in progress.",
+		Type:        util.ProvisioningFailed,
+		RC:          500,
+		Action:      "Wait for volume deletion",
+	},
 }
 
 // InitMessages ...

@@ -57,6 +57,8 @@ type VolumeAttachmentResponse struct {
 type VolumeAttachmentRequest struct {
 	VolumeID   string `json:"volumeID"`
 	InstanceID string `json:"instanceID"`
+	// Only for SL provider
+	SoftlayerOptions map[string]string `json:"softlayerOptions,omitempty"`
 	// Only for VPC provider
 	VPCVolumeAttachment *VolumeAttachment `json:"vpcVolumeAttachment"`
 	// Only IKS provider
