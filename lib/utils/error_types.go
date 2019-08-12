@@ -45,6 +45,7 @@ const (
 
 	// DetachFailed ///
 	DetachFailed = "DetachFailed"
+
 )
 
 // GetErrorType return the user error type provided by volume provider

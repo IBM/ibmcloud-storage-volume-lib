@@ -24,49 +24,49 @@ var messagesEn = map[string]util.Message{
 		RC:          400,
 		Action:      "Verify that you entered the correct IBM Cloud user name and password. If the error persists, the authentication service might be unavailable. Wait a few minutes and try again. ",
 	},
-	"ErrorRequiredFieldMissing": util.Message{
+	ErrorRequiredFieldMissing: util.Message{
 		Code:        "ErrorRequiredFieldMissing",
 		Description: "[%s] is required to complete the operation.",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Review the error that is returned. Provide the missing information in your request and try again. ",
 	},
-	"FailedToPlaceOrder": util.Message{
+	FailedToPlaceOrder: util.Message{
 		Code:        "FailedToPlaceOrder",
 		Description: "Failed to create volume with the storage provider",
 		Type:        util.ProvisioningFailed,
 		RC:          500,
 		Action:      "Review the error that is returned. If the volume creation service is currently unavailable, try to manually create the volume with the 'ibmcloud is volume-create' command.",
 	},
-	"FailedToDeleteVolume": util.Message{
+	FailedToDeleteVolume: util.Message{
 		Code:        "FailedToDeleteVolume",
 		Description: "The volume ID '%d' could not be deleted from your VPC.",
 		Type:        util.DeletionFailed,
 		RC:          500,
 		Action:      "Verify that the volume ID exists. Run 'ibmcloud is volumes' to list available volumes in your account. If the ID is correct, try to delete the volume with the 'ibmcloud is volume-delete' command. ",
 	},
-	"FailedToDeleteSnapshot": util.Message{
+	FailedToDeleteSnapshot: util.Message{
 		Code:        "FailedToDeleteSnapshot",
 		Description: "Failed to delete '%d' snapshot ID",
 		Type:        util.DeletionFailed,
 		RC:          500,
 		Action:      "Check whether the snapshot ID exists. You may need to verify by using 'ibmcloud is' cli",
 	},
-	"StorageFindFailedWithVolumeId": util.Message{
+	StorageFindFailedWithVolumeId: util.Message{
 		Code:        "StorageFindFailedWithVolumeId",
 		Description: "A volume with the specified volume ID '%s' could not be found.",
 		Type:        util.RetrivalFailed,
 		RC:          404,
 		Action:      "Verify that the volume ID exists. Run 'ibmcloud is volumes' to list available volumes in your account.",
 	},
-	"StorageFindFailedWithVolumeName": util.Message{
+	StorageFindFailedWithVolumeName: util.Message{
 		Code:        "StorageFindFailedWithVolumeName",
 		Description: "A volume with the specified volume name '%s' does not exist.",
 		Type:        util.RetrivalFailed,
 		RC:          404,
 		Action:      "Verify that the specified volume exists. Run 'ibmcloud is volumes' to list available volumes in your account.",
 	},
-	"StorageFindFailedWithSnapshotId": util.Message{
+	StorageFindFailedWithSnapshotId: util.Message{
 		Code:        "StorageFindFailedWithSnapshotId",
 		Description: "No volume could be found for the specified snapshot ID '%s'. Description: %s",
 		Type:        util.RetrivalFailed,
@@ -115,63 +115,63 @@ var messagesEn = map[string]util.Message{
 		RC:          400,
 		Action:      "Verify that the volume ID exists. Run 'ibmcloud is volumes' to list available volumes in your account.",
 	},
-	"InvalidVolumeName": util.Message{
+	InvalidVolumeName: util.Message{
 		Code:        "InvalidVolumeName",
 		Description: "The specified volume name '%s' is not valid. ",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Verify that the volume name exists. Run 'ibmcloud is volumes' to list available volumes in your account.",
 	},
-	"VolumeCapacityInvalid": util.Message{
+	VolumeCapacityInvalid: util.Message{
 		Code:        "VolumeCapacityInvalid",
 		Description: "The specified volume capacity '%d' is not valid. ",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Verify the specified volume capacity. The volume capacity must be a positive number between 10 GB and 2000 GB. ",
 	},
-	"IopsInvalid": util.Message{
+	IopsInvalid: util.Message{
 		Code:        "IopsInvalid",
 		Description: "The specified volume IOPS '%s' is not valid for the selected volume profile. ",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Review available volume profiles and IOPS in the IBM Cloud Block Storage for VPC documentation https://cloud.ibm.com/docs/vpc-on-classic-block-storage?topic=vpc-on-classic-block-storage-block-storage-profiles.",
 	},
-	"VolumeProfileIopsInvalid": util.Message{
+	VolumeProfileIopsInvalid: util.Message{
 		Code:        "VolumeProfileIopsInvalid",
 		Description: "The specified IOPS value is not valid for the selected volume profile. ",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Review available volume profiles and IOPS in the IBM Cloud Block Storage for VPC documentation https://cloud.ibm.com/docs/vpc-on-classic-block-storage?topic=vpc-on-classic-block-storage-block-storage-profiles.",
 	},
-	"EmptyResourceGroup": util.Message{
+	EmptyResourceGroup: util.Message{
 		Code:        "EmptyResourceGroup",
 		Description: "Resource group information could not be found.",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Provide the name or ID of the resource group that you want to use for your volume. Run 'ibmcloud resource groups' to list the resource groups that you have access to. ",
 	},
-	"EmptyResourceGroupIDandName": util.Message{
+	EmptyResourceGroupIDandName: util.Message{
 		Code:        "EmptyResourceGroupIDandName",
 		Description: "Resource group ID or name could not be found.",
 		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Provide the name or ID of the resource group that you want to use for your volume. Run 'ibmcloud resource groups' to list the resource groups that you have access to.",
 	},
-	"SnapshotSpaceOrderFailed": util.Message{
+	SnapshotSpaceOrderFailed: util.Message{
 		Code:        "SnapshotSpaceOrderFailed",
 		Description: "Snapshot space order failed for the given volume ID",
 		Type:        util.ProvisioningFailed,
 		RC:          500,
 		Action:      "Please check your input",
 	},
-	"VolumeNotInValidState": util.Message{
+	VolumeNotInValidState: util.Message{
 		Code:        "VolumeNotInValidState",
 		Description: "Volume %s did not get valid (available) status within timeout period.",
 		Type:        util.ProvisioningFailed,
 		RC:          500,
 		Action:      "Please check your input",
 	},
-	"VolumeDeletionInProgress": util.Message{
+	VolumeDeletionInProgress: util.Message{
 		Code:        "VolumeDeletionInProgress",
 		Description: "Volume %s deletion in progress.",
 		Type:        util.ProvisioningFailed,
