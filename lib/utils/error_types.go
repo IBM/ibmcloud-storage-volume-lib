@@ -36,6 +36,15 @@ const (
 
 	// ErrorTypeFailed ...
 	ErrorTypeFailed = "ErrorTypeConversionFailed"
+
+	// VolumeAttachFindFailed ...
+	VolumeAttachFindFailed = "VolumeAttachFindFailed"
+
+	// AttachFailed ...
+	AttachFailed = "AttachFailed"
+
+	// DetachFailed ///
+	DetachFailed = "DetachFailed"
 )
 
 // GetErrorType return the user error type provided by volume provider
