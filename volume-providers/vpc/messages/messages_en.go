@@ -16,7 +16,8 @@ import (
 
 // messagesEn ...
 var messagesEn = map[string]util.Message{
-	"AuthenticationFailed": util.Message{
+
+	AuthenticationFailed: util.Message{
 		Code:        AuthenticationFailed,
 		Description: "Failed to authenticate the user.",
 		Type:        util.Unauthenticated,
@@ -26,7 +27,7 @@ var messagesEn = map[string]util.Message{
 	"ErrorRequiredFieldMissing": util.Message{
 		Code:        "ErrorRequiredFieldMissing",
 		Description: "[%s] is required to complete the operation.",
-		Type:        "InvalidRequest",
+		Type:        util.InvalidRequest,
 		RC:          400,
 		Action:      "Review the error that is returned. Provide the missing information in your request and try again. ",
 	},
@@ -72,38 +73,38 @@ var messagesEn = map[string]util.Message{
 		RC:          400,
 		Action:      "Please check the snapshot ID once, You many need to verify by using 'ibmcloud is' cli.",
 	},
-	"VolumeAttachFindFailed": util.Message{
+	VolumeAttachFindFailed: util.Message{
 		Code:        VolumeAttachFindFailed,
 		Description: "No volume attachment could be found for the specified volume ID '%s' and instance ID '%s'.",
-		Type:        "RetrivalFailed",
+		Type:        util.VolumeAttachFindFailed,
 		RC:          400,
 		Action:      "Verify that a volume attachment for your instance exists. Run 'ibmcloud is in-vols INSTANCE_ID' to list active volume attachments for your instance ID. ",
 	},
-	"VolumeAttachFailed": util.Message{
+	VolumeAttachFailed: util.Message{
 		Code:        VolumeAttachFailed,
 		Description: "The volume ID '%s' could not be attached to the instance ID '%s'.",
-		Type:        "AttachFailed",
+		Type:        util.AttachFailed,
 		RC:          500,
 		Action:      "Verify that the volume ID and instance ID exist. Run 'ibmcloud is volumes' to list available volumes, and 'ibmcloud is instances' to list available instances in your account. ",
 	},
-	"VolumeAttachTimedOut": util.Message{
+	VolumeAttachTimedOut: util.Message{
 		Code:        VolumeAttachTimedOut,
 		Description: "The volume ID '%s' could not be attached to the instance ID '%s'",
-		Type:        "AttachFailed",
+		Type:        util.AttachFailed,
 		RC:          500,
 		Action:      "Verify that the volume ID and instance ID exist. Run 'ibmcloud is volumes' to list available volumes, and 'ibmcloud is instances' to list available instances in your account.",
 	},
-	"VolumeDetachFailed": util.Message{
+	VolumeDetachFailed: util.Message{
 		Code:        VolumeDetachFailed,
 		Description: "The volumd ID '%s' could not be detached from the instance ID '%s'.",
-		Type:        "DetachFailed",
+		Type:        util.DetachFailed,
 		RC:          500,
 		Action:      "Verify that the specified instance ID has active volume attachments. Run 'ibmcloud is in-vols INSTANCE_ID' to list active volume attachments for your instance ID. ",
 	},
-	"VolumeDetachTimedOut": util.Message{
+	VolumeDetachTimedOut: util.Message{
 		Code:        VolumeDetachTimedOut,
 		Description: "The volume ID '%s' could not be detached from the instance ID '%s'",
-		Type:        "DetachFailed",
+		Type:        util.DetachFailed,
 		RC:          500,
 		Action:      "Verify that the specified instance ID has active volume attachments. Run 'ibmcloud is in-vols INSTANCE_ID' to list active volume attachments for your instance ID.",
 	},
