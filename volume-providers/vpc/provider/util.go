@@ -72,7 +72,7 @@ func retry(logger *zap.Logger, retryfunc func() error) error {
 				}
 			}
 			if (i + 1) < maxRetryAttempt {
-				logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryGap), zap.Error(err))
+				logger.Info("Error while executing the function. Re-attempting execution ..", zap.Int("attempt..", i+2), zap.Int("retry-gap", retryGap), zap.Int("max-retry-Attempts", maxRetryAttempt), zap.Error(err))
 			}
 			continue
 		}
