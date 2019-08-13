@@ -41,7 +41,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume.VPCVolume.ResourceGroup.ID = resourceGroupID
 		volume.Az = vpcZone
 		volume.VPCVolume.VolumeEncryptionKey = &provider.VolumeEncryptionKey{}
-		volume.VPCVolume.VolumeEncryptionKey.CRN = volumeEncryptionKeyCRN
+		//	volume.VPCVolume.VolumeEncryptionKey.CRN = volumeEncryptionKeyCRN
 
 		volume.VPCVolume.Tags = []string{"Testing VPC volume from library with encryption"}
 		By("Test Create Volume")
