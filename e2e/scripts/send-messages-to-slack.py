@@ -20,7 +20,7 @@ def send_file (FilePath):
         file=(FilePath, open(PathToFile, 'rb'), 'txt'),
         filename=FilePath,
         username='IBM VPC storage e2e test runs and results',
-        title="VPC storage e2e logs"
+        title="VPC storage e2e test logs"
   )
 
 if __name__ == '__main__':
