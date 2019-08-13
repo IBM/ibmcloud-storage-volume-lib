@@ -26,4 +26,4 @@ def send_file (FilePath):
   )
 
 if __name__ == '__main__':
-   send_file("e2e_logs.txt")
+   send_file(os.environ["FILECONTENT"])
