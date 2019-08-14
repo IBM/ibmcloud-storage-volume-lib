@@ -4,7 +4,7 @@ import os
 import sys
 from slackclient import SlackClient
 
-slack_client = SlackClient('xoxp-156921217056-173695075795-529388950787-80b57907f839628f38348ea69c413455')
+slack_client = SlackClient('SLACK_TOKEN_REPLACE')
 
 def channel_info(channel_id):
     channel_info = slack_client.api_call("channels.info", channel=channel_id)
