@@ -26,9 +26,10 @@ def send_file (FilePath):
     print response["ok"]
 
 def send_message (FilePath):
-    with open(FilePath, 'r') as content_file:
-        content = content_file.read()
+    with open(FilePath, 'r+') as file_content:
+        content = file_content.read()
 
+    content = '```' + content + '```'
     slack_client.api_call(
         "chat.postMessage",
         channel=channelName,
