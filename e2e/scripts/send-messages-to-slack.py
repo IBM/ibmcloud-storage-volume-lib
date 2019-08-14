@@ -13,10 +13,7 @@ def channel_info(channel_id):
     return None
 
 def send_file (FilePath):
-    gopath = os.environ["GOPATH"]
-    PathToFile = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + FilePath
-
-    with open(PathToFile) as file_content:
+    with open(FilePath) as file_content:
         response = slack_client.api_call(
             "files.upload",
             channel=channelName,
@@ -27,20 +24,16 @@ def send_file (FilePath):
         print response
 
 def send_message (FilePath):
-    gopath = os.environ["GOPATH"]
-    PathToFile = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + FilePath
-
-    with open(PathToFile, 'r') as content_file:
-        content = content_file.read()
-
-    slack_client.api_call(
-        "chat.postMessage",
-        channel=channelName,
-        text=content,
-        username='IBM VPC storage common library e2e test results')
+    with open(FilePath) as file_content:
+        slack_client.api_call(
+            "chat.postMessage",
+            channel=channelName,
+            text=file_content,
+            username='IBM VPC storage common library e2e test results')
 
 if __name__ == '__main__':
-    filePath = sys.argv[1]
+    gopath = os.environ["GOPATH"]
+    filePath = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + sys.argv[1]
     isAttachment = sys.argv[2]
     if filePath is None or isAttachment is None:
         print "Please send the variables filePath and isAttachment"
