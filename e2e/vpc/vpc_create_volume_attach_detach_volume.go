@@ -21,12 +21,18 @@ import (
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
+	var (
+		volume *provider.Volume
+	)
+	AfterEach(func() {
+		sess.DeleteVolume(volume)
+	})
 	It("VPC: Create volume, attach volume, detach volume, and delete volume", func() {
 		volName := volumeName + "-attach-detach"
 		volSize := volumeSize
 		Iops := iops
 
-		volume := &provider.Volume{}
+		volume = &provider.Volume{}
 
 		volume.VolumeType = volumeType
 		volume.VPCVolume.Generation = generation

@@ -20,12 +20,18 @@ import (
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
+	var (
+		volume *provider.Volume
+	)
+	AfterEach(func() {
+		sess.DeleteVolume(volume)
+	})
 	It("VPC: Create and delete VPC volume with different sizes", func() {
 		volName := volumeName + "-no-encryption"
 		volSize := volumeSize
 		Iops := iops
 
-		volume := &provider.Volume{}
+		volume = &provider.Volume{}
 
 		volume.VolumeType = volumeType
 		volume.VPCVolume.Generation = generation
@@ -66,8 +72,10 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 
 		volSize = volumeSize + 50
 		ctxLogger.Info("Increasing volume size", zap.Reflect("volumeSize", volumeSize))
+		By("Change Volume Size")
 		volume.Capacity = &volSize
 		volume.Name = &volName
+		By("Test Create Volume")
 		volumeObj, err = sess.CreateVolume(*volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
