@@ -13,23 +13,27 @@ def channel_info(channel_id):
     return None
 
 def send_file (FilePath):
-    with open(FilePath) as file_content:
-        response = slack_client.api_call(
-            "files.upload",
-            channel=channelName,
-            file=file_content,
-            filename="e2e_test_job_logs.txt",
-            username='IBM VPC storage common library e2e test results',
-            title="VPC storage common library e2e test full logs")
-        print response
+    with open(FilePath, 'r') as content_file:
+        content = content_file.read()
+
+    response = slack_client.api_call(
+        "files.upload",
+        channel=channelName,
+        file=file_content,
+        filename="e2e_test_job_logs.txt",
+        username='IBM VPC storage common library e2e test results',
+        title="VPC storage common library e2e test full logs")
+    print response["ok"]
 
 def send_message (FilePath):
-    with open(FilePath) as file_content:
-        slack_client.api_call(
-            "chat.postMessage",
-            channel=channelName,
-            text=file_content,
-            username='IBM VPC storage common library e2e test results')
+    with open(FilePath, 'r') as content_file:
+        content = content_file.read()
+
+    slack_client.api_call(
+        "chat.postMessage",
+        channel=channelName,
+        text=content,
+        username='IBM VPC storage common library e2e test results')
 
 if __name__ == '__main__':
     gopath = os.environ["GOPATH"]
