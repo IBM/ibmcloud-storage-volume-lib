@@ -23,12 +23,18 @@ import (
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
+	var (
+		volume *provider.Volume
+	)
+	AfterEach(func() {
+		sess.DeleteVolume(volume)
+	})
 	It("VPC: Create and delete VPC volume[with encryption]", func() {
 		volName := volumeName + "with-encryption"
 		volSize := volumeSize
 		Iops := iops
 
-		volume := &provider.Volume{}
+		volume = &provider.Volume{}
 
 		volume.VolumeType = volumeType
 		volume.VPCVolume.Generation = generation
