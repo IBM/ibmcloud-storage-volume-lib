@@ -19,7 +19,7 @@ def send_file (FilePath):
     response = slack_client.api_call(
         "files.upload",
         channel=channelName,
-        file=file_content,
+        file=content,
         filename="e2e_test_job_logs.txt",
         username='IBM VPC storage common library e2e test results',
         title="VPC storage common library e2e test full logs")
