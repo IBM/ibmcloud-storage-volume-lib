@@ -15,23 +15,21 @@ def channel_info(channel_id):
 def send_file (FilePath):
     gopath = os.environ["GOPATH"]
     PathToFile = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + FilePath
-    print PathToFile
-    slack_client.api_call(
-        "files.upload",
-        channel=channelName,
-        file=(FilePath, open(PathToFile, 'rb'), 'txt'),
-        filename=FilePath,
-        username='IBM VPC Storage',
-        title="VPC storage common library e2e test full logs")
+
+    with open(PathToFile) as file_content:
+        response = slack_client.api_call(
+            "files.upload",
+            channel=channelName,
+            file=file_content,
+            filename="e2e_test_job_logs.txt",
+            username='IBM VPC storage common library e2e test results',
+            title="VPC storage common library e2e test full logs")
+        print response
 
 def send_message (FilePath):
     gopath = os.environ["GOPATH"]
     PathToFile = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + FilePath
-    if slack_client:
-        print channel_info(channelName)
-        print PathToFile
-    else:
-        print "Client is None"
+
     with open(PathToFile, 'r') as content_file:
         content = content_file.read()
 
