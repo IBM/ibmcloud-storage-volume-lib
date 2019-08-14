@@ -21,7 +21,7 @@ import (
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	It("VPC: Create and delete VPC volume[profile: custom]", func() {
-		volName := volumeName + "-custom"
+		volName := volumeName + "-custom-vol"
 		volSize := volumeSize
 		Iops := iops
 
