@@ -20,8 +20,8 @@ def send_file (FilePath):
         channel="storage-test-runs",
         file=(FilePath, open(PathToFile, 'rb'), 'txt'),
         filename=FilePath,
-        username='IBM VPC storage e2e test runs and results',
-        title="VPC storage e2e test full logs"
+        username='IBM VPC Storage',
+        title="VPC storage common library  e2e test full logs"
   )
 
 def send_message (FilePath):
@@ -33,7 +33,7 @@ def send_message (FilePath):
          "chat.postMessage",
         channel="storage-test-runs",
         text=content,
-        username='IBM VPC storage e2e test runs and results',
+        username='IBM VPC storage common library e2e test runs and results',
   )
 
 if __name__ == '__main__':
