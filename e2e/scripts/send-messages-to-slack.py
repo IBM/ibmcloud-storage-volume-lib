@@ -1,11 +1,10 @@
 #! /usr/bin/env python
 
 import os
+import sys
 from slackclient import SlackClient
 
-
-
-slack_client = SlackClient('SLACK_TOKEN_REPLACE')
+slack_client = SlackClient('xoxp-156921217056-173695075795-529388950787-80b57907f839628f38348ea69c413455')
 
 def channel_info(channel_id):
     channel_info = slack_client.api_call("channels.info", channel=channel_id)
@@ -18,12 +17,34 @@ def send_file (FilePath):
     PathToFile = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + FilePath
     slack_client.api_call(
          "files.upload",
-        channels="storage-test-runs",
+        channel="storage-test-runs",
         file=(FilePath, open(PathToFile, 'rb'), 'txt'),
         filename=FilePath,
         username='IBM VPC storage e2e test runs and results',
-        title="VPC storage e2e test logs"
+        title="VPC storage e2e test full logs"
+  )
+
+def send_message (FilePath):
+    gopath = os.environ["GOPATH"]
+    PathToFile = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + FilePath
+    with open(PathToFile, 'r') as content_file:
+         content = content_file.read()
+    slack_client.api_call(
+         "chat.postMessage",
+        channel="storage-test-runs",
+        text=content,
+        username='IBM VPC storage e2e test runs and results',
   )
 
 if __name__ == '__main__':
-   send_file(os.environ["FILECONTENT"])
+    try:
+        filePath = os.environ["FILEPATH"]
+        isFile = os.environ["ISFILE"]
+    except KeyError:
+        print "Please set the environment variables FILEPATH and ISFILE"
+        sys.exit(1)
+
+    if isFile == "True" or isFile == "true":
+        send_file(os.environ["FILEPATH"])
+    else:
+        send_message(os.environ["FILEPATH"])
