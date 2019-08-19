@@ -27,3 +27,11 @@ function send_messages_to_slack2 {
     while IFS= read LINE; do send_message_to_slack "$LINE"; done < $LOG_FILE
 }
 
+
+function ibmcloud_login {
+    echo 'Logging Into IbmCloud Container Service'
+    ibmcloud --version
+    ibmcloud plugin list
+    ibmcloud login  -r $TEST_REGION -a $IC_API_ENDPOINT -u $IC_USERNAME -p $IC_LOGIN_PASSWORD -c $IC_ACCOUNT -o $IC_ORG -s $IC_SPACE
+    ibmcloud ks init --host $IC_HOST_EP
+}
