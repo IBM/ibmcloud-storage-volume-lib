@@ -35,3 +35,23 @@ function ibmcloud_login {
     ibmcloud login  -r $TEST_REGION -a $IC_API_ENDPOINT -u $IC_USERNAME -p $IC_LOGIN_PASSWORD -c $IC_ACCOUNT -o $IC_ORG -s $IC_SPACE
     ibmcloud ks init --host $IC_HOST_EP
 }
+
+function check_instance_state {
+   attempts=0
+   instance_id=$1
+   while true; do
+      attempts=$((attempts+1))
+      instance_status=$(ibmcloud is in $instance_id)
+      if [   "$instance_status" = "running" ]; then
+         echo "$instance_id is ready."
+         break
+      fi
+      if [[ $attempts -gt 30 ]]; then
+         echo "$instance_id is not ready."
+         ibmcloud is in $instance_id
+         exit 1
+      fi
+      echo "$instance_id state == $instance_status Sleeping 10 seconds"
+      sleep 10
+  done
+}
