@@ -41,7 +41,7 @@ function check_instance_state {
    instance_id=$1
    while true; do
       attempts=$((attempts+1))
-      instance_status=$(ibmcloud is in $instance_id)
+      instance_status=$(ibmcloud is in $instance_id |grep ID | tr -s " " | awk -F ' ' '{print $2}')
       if [   "$instance_status" = "running" ]; then
          echo "$instance_id is ready."
          break
