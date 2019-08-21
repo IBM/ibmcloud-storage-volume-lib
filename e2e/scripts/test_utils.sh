@@ -51,7 +51,7 @@ function check_instance_state {
          ibmcloud is in $instance_id
          exit 1
       fi
-      echo "$instance_id state == $instance_status Sleeping 10 seconds"
+      echo "$instance_id state == $instance_status Sleeping 60 seconds"
       sleep 60
   done
 }
