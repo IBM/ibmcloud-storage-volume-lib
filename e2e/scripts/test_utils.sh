@@ -46,12 +46,12 @@ function check_instance_state {
          echo "$instance_id is ready."
          break
       fi
-      if [[ $attempts -gt 30 ]]; then
+      if [[ $attempts -gt 60 ]]; then
          echo "$instance_id is not ready."
          ibmcloud is in $instance_id
          exit 1
       fi
       echo "$instance_id state == $instance_status Sleeping 10 seconds"
-      sleep 10
+      sleep 60
   done
 }
