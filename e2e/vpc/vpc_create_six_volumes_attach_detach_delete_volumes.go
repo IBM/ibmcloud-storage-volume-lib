@@ -55,7 +55,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		}
 		ctxLogger.Info("Successfully detached the volumes.")
 
-		By("Test Delete Volume")
+		By("Test delete volumes")
 		err = DeleteTestVolumes(volumes)
 		if err == nil {
 			ctxLogger.Info("Successfully deleted all the test volumes.")
