@@ -36,7 +36,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		} else {
 			ctxLogger.Info("Failed to create test volumes.", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 		}
-		ctxLogger.Info("Creating test volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
+		ctxLogger.Info(zap.Reflect("Elasped time:", time.Since(startTime)))
 
 		By("Testing parallel attach volumes")
 		startTime = time.Now()
@@ -47,7 +47,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		if err == nil {
 			ctxLogger.Info("Successfully attached the volumes...")
 		}
-		ctxLogger.Info("Testing parallel attach volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
+		ctxLogger.Info(zap.Reflect("Elasped time:", time.Since(startTime)))
 
 		By("Test parallel detach Volumes")
 		startTime = time.Now()
@@ -60,7 +60,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			sess.WaitForDetachVolume(*attachmentRequests[i])
 		}
 		ctxLogger.Info("Successfully detached the volumes.")
-		ctxLogger.Info("Test parallel detach Volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
+		ctxLogger.Info(zap.Reflect("Elasped time:", time.Since(startTime)))
 
 		By("Test delete volumes")
 		startTime = time.Now()
@@ -70,7 +70,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		} else {
 			ctxLogger.Info("Failed to delete volumes.", zap.Reflect("Error", err))
 		}
-		ctxLogger.Info("Test delete volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
+		ctxLogger.Info(zap.Reflect("Elasped time:", time.Since(startTime)))
 		fmt.Printf("\n\n")
 	})
 })

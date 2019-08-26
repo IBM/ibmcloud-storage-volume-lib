@@ -56,7 +56,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
-		ctxLogger.Info("Test Create Volume elasped time", zap.Reflect("TIME", time.Since(startTime)))
+		ctxLogger.Info(zap.Reflect("Elasped time:", time.Since(startTime)))
 		fmt.Printf("\n\n")
 
 		volume = &provider.Volume{}
@@ -72,7 +72,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
-		ctxLogger.Info("Test Delete Volume elasped time", zap.Reflect("TIME", time.Since(startTime)))
+		ctxLogger.Info(zap.Reflect("Elasped time:", time.Since(startTime)))
 		fmt.Printf("\n\n")
 	})
 })
