@@ -27,7 +27,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	AfterEach(func() {
 		sess.DeleteVolume(volume)
 	})
-	PIt("VPC: Create and delete VPC volume[without encryption]", func() {
+	It("VPC: Create and delete VPC volume[without encryption]", func() {
 		volName := volumeName + "-no-encryption"
 		volSize := volumeSize
 		Iops := iops
