@@ -17,6 +17,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"time"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
@@ -51,6 +52,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 
 		volume.VPCVolume.Tags = []string{"Testing VPC volume from library with encryption"}
 		By("Test Create Volume")
+		startTime = time.Now()
 		volumeObj, err := sess.CreateVolume(*volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
@@ -60,11 +62,13 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
+		ctxLogger.Info("Test Create Volume elasped time", zap.Reflect("TIME", time.Since(startTime)))
 		fmt.Printf("\n\n")
 
 		volume = &provider.Volume{}
 		volume.VolumeID = volumeObj.VolumeID
 		By("Test Delete Volume")
+		startTime = time.Now()
 		err = sess.DeleteVolume(volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
@@ -74,6 +78,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
+		ctxLogger.Info("Test Delete Volume elasped time", zap.Reflect("TIME", time.Since(startTime)))
 		fmt.Printf("\n\n")
 	})
 })

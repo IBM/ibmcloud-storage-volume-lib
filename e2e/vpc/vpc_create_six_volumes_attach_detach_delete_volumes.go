@@ -17,6 +17,7 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
@@ -28,14 +29,17 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	)
 	It("VPC: Parallel volume attachments, detachments [six volume attachments in parallel]", func() {
 		By("Creating test volumes")
+		startTime = time.Now()
 		volumes, err := CreateTestVolumes(numberOfVolumesRequired)
 		if err == nil {
 			ctxLogger.Info("Successfully created the test volumes...")
 		} else {
 			ctxLogger.Info("Failed to create test volumes.", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 		}
+		ctxLogger.Info("Creating test volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
 
 		By("Testing parallel attach volumes")
+		startTime = time.Now()
 		attachmentRequests, attachmentResponses, err := CreateVolumeAttachments(volumes)
 		for i := 0; i < len(attachmentResponses); i++ {
 			sess.WaitForAttachVolume(*attachmentRequests[i])
@@ -43,8 +47,10 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		if err == nil {
 			ctxLogger.Info("Successfully attached the volumes...")
 		}
+		ctxLogger.Info("Testing parallel attach volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
 
 		By("Test parallel detach Volumes")
+		startTime = time.Now()
 		for i := 0; i < len(attachmentResponses); i++ {
 			httpResponse, err := sess.DetachVolume(*attachmentRequests[i])
 			ctxLogger.Info("Successfully detached the volume.", zap.Reflect("httpResponse", httpResponse))
@@ -54,14 +60,17 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			sess.WaitForDetachVolume(*attachmentRequests[i])
 		}
 		ctxLogger.Info("Successfully detached the volumes.")
+		ctxLogger.Info("Test parallel detach Volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
 
 		By("Test delete volumes")
+		startTime = time.Now()
 		err = DeleteTestVolumes(volumes)
 		if err == nil {
 			ctxLogger.Info("Successfully deleted all the test volumes.")
 		} else {
 			ctxLogger.Info("Failed to delete volumes.", zap.Reflect("Error", err))
 		}
+		ctxLogger.Info("Test delete volumes elasped time", zap.Reflect("TIME", time.Since(startTime)))
 		fmt.Printf("\n\n")
 	})
 })

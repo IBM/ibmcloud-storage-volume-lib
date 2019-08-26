@@ -16,6 +16,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"os"
+	"time"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
@@ -33,6 +34,7 @@ var requestID string
 var resourceGroupID string
 var vpcZone string
 var volumeEncryptionKeyCRN string
+var startTime time.Time
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
