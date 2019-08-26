@@ -57,7 +57,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
-		ctxLogger.Info("Test Create Volume", zap.Reflect("Elasped time:", time.Since(startTime)))
+		ctxLogger.Info("Test Create Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
 		fmt.Printf("\n\n")
 
 		By("Test Attach Volume")
@@ -70,7 +70,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		Expect(err).NotTo(HaveOccurred())
 		sess.WaitForAttachVolume(*volumeAttachRequest)
 		ctxLogger.Info("Successfully attached the volume.", zap.Reflect("attachResponse", attachResponse))
-		ctxLogger.Info("Test Attach Volume", zap.Reflect("Elasped time:", time.Since(startTime)))
+		ctxLogger.Info("Test Attach Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
 
 		By("Test Detach Volume")
 		startTime = time.Now()
@@ -78,7 +78,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		Expect(err).NotTo(HaveOccurred())
 		sess.WaitForDetachVolume(*volumeAttachRequest)
 		ctxLogger.Info("Successfully detached the volume.", zap.Reflect("httpResponse", httpResponse))
-		ctxLogger.Info("Test Detach Volume", zap.Reflect("Elasped time:", time.Since(startTime)))
+		ctxLogger.Info("Test Detach Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
 
 		volume = &provider.Volume{}
 		volume.VolumeID = volumeObj.VolumeID
@@ -93,7 +93,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
-		ctxLogger.Info("Test Delete Volume", zap.Reflect("Elasped time:", time.Since(startTime)))
+		ctxLogger.Info("Test Delete Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
 		fmt.Printf("\n\n")
 	})
 })
