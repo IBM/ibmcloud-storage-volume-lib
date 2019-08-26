@@ -1,1 +1,0 @@
-{"level":"info","ts":"2019-08-26T08:12:40.609Z","caller":"vpc/vpc_create_volumes_with_different_sizes.go:98","msg":"Test Create Volume","RequestID":"58315dad-87a8-4805-b842-636296f6842b","Elapsed time:":30478985598}
