@@ -123,6 +123,11 @@ func CreateVolumeAttachments(volumes []*provider.Volume) ([]*provider.VolumeAtta
 		volumeAttachRequests[i] = &provider.VolumeAttachmentRequest{}
 		volumeAttachRequests[i].VolumeID = volumes[i].VolumeID
 		volumeAttachRequests[i].InstanceID = os.Getenv("INSTANCE_ID")
+		volumeAttachRequest.IKSVolumeAttachment = &provider.IKSVolumeAttachment{}
+		clusterID := os.Getenv("CLUSTER_ID")
+		if clusterID != "" {
+			volumeAttachRequest.IKSVolumeAttachment.ClusterID = &clusterID
+		}
 
 		attachResponse, err := sess.AttachVolume(*volumeAttachRequests[i])
 		attachmentResponses[i] = attachResponse

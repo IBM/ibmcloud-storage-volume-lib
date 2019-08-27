@@ -65,6 +65,11 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volumeAttachRequest := &provider.VolumeAttachmentRequest{}
 		volumeAttachRequest.VolumeID = volumeObj.VolumeID
 		volumeAttachRequest.InstanceID = os.Getenv("INSTANCE_ID")
+		volumeAttachRequest.IKSVolumeAttachment = &provider.IKSVolumeAttachment{}
+		clusterID := os.Getenv("CLUSTER_ID")
+		if clusterID != "" {
+			volumeAttachRequest.IKSVolumeAttachment.ClusterID = &clusterID
+		}
 
 		attachResponse, err := sess.AttachVolume(*volumeAttachRequest)
 		Expect(err).NotTo(HaveOccurred())

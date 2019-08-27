@@ -79,6 +79,8 @@ var _ = BeforeSuite(func() {
 	providerName := ""
 	if conf.VPC.Enabled {
 		providerName = conf.VPC.VPCBlockProviderName
+	} else {
+		providerName = conf.IKS.IKSBlockProviderName
 	}
 
 	ctxLogger, _ = getContextLogger()
