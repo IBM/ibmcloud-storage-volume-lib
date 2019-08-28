@@ -76,7 +76,7 @@ function cleanup {
         if [ $attempts -gt 60 ]; then
            echo "$attachmentStatus is still in attached state."
            ibmcloud is in-vol $instanceID $attachmentID
-           exit 1
+           break
         fi
         echo "$attachmentID state == $attachmentStatus Sleeping 60 seconds"
         sleep 30
@@ -102,7 +102,7 @@ function cleanup {
       if [ $attempts -gt 60 ]; then
          echo "$volumeStatus is still available."
          ibmcloud is vol $volumeID
-         exit 1
+         break
       fi
       echo "$volumeID state == $volumeStatus Sleeping 60 seconds"
       sleep 30
