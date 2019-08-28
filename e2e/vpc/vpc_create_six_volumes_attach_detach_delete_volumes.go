@@ -85,7 +85,7 @@ func CreateTestVolumes(numberOfVolumesRequired int) ([]*provider.Volume, error) 
 	)
 	var volumes = make([]*provider.Volume, numberOfVolumesRequired)
 	for i := 0; i < numberOfVolumesRequired; i++ {
-		volName = volumeName + "-attach-detach-" + strconv.Itoa(i+1)
+		volName = volumeName + "-attach-detach-" + os.Getenv("BUILD_NUMBER") + strconv.Itoa(i+1)
 		volSize = volumeSize
 		Iops = iops
 		volume = &provider.Volume{}

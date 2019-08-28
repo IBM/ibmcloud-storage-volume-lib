@@ -29,7 +29,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		sess.DeleteVolume(volume)
 	})
 	It("VPC: Create volume, attach volume, detach volume, and delete volume", func() {
-		volName := volumeName + "-attach-detach"
+		volName := volumeName + "-attach-detach-" + os.Getenv("BUILD_NUMBER") 
 		volSize := volumeSize
 		Iops := iops
 
