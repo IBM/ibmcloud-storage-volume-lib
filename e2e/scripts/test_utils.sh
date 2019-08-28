@@ -58,7 +58,7 @@ function check_instance_state {
 function cleanup {
   attempts=0
   echo "Detaching instance attachments"
-  ibmcloud is instances |grep "e2e-" | awk -F ' ' '{print $1}' |
+  ibmcloud is instances |grep "e2e-common-lib" | awk -F ' ' '{print $1}' |
   while IFS= read -r instanceID
   do
     ibmcloud is in-vols $instanceID | grep -v "boot" | grep "data" | grep "e2e-" | awk -F ' ' '{print $1}' |
