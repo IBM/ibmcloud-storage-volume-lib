@@ -11,15 +11,19 @@
 package provider
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"go.uber.org/zap"
+	"time"
 )
 
 // WaitForAttachVolume waits for volume to be attached to node. e.g waits till status becomes attached
 func (vpcs *VPCSession) WaitForAttachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
 	vpcs.Logger.Debug("Entry of WaitForAttachVolume method...")
 	defer vpcs.Logger.Debug("Exit from WaitForAttachVolume method...")
+	defer metrics.UpdateDurationFromStart(vpcs.Logger, "WaitForAttachVolume", time.Now())
+
 	vpcs.Logger.Info("Validating basic inputs for WaitForAttachVolume method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
 	err := vpcs.validateAttachVolumeRequest(volumeAttachmentTemplate)
 	if err != nil {

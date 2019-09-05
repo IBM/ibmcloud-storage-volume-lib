@@ -11,16 +11,19 @@
 package provider
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"time"
 )
 
 // DeleteVolume deletes the volume
 func (vpcs *VPCSession) DeleteVolume(volume *provider.Volume) (err error) {
 	vpcs.Logger.Debug("Entry of DeleteVolume method...")
 	defer vpcs.Logger.Debug("Exit from DeleteVolume method...")
+	defer metrics.UpdateDurationFromStart(vpcs.Logger, "DeleteVolume", time.Now())
 
 	vpcs.Logger.Info("Validating basic inputs for DeleteVolume method...", zap.Reflect("VolumeDetails", volume))
 	err = validateVolume(volume)

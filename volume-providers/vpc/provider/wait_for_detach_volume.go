@@ -11,16 +11,19 @@
 package provider
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"go.uber.org/zap"
+	"time"
 )
 
 // WaitForDetachVolume waits for volume to be detached from node. e.g waits till no volume attachment is found
 func (vpcs *VPCSession) WaitForDetachVolume(volumeAttachmentTemplate provider.VolumeAttachmentRequest) error {
 	vpcs.Logger.Debug("Entry of WaitForDetachVolume method...")
 	defer vpcs.Logger.Debug("Exit from WaitForDetachVolume method...")
+	defer metrics.UpdateDurationFromStart(vpcs.Logger, "WaitForDetachVolume", time.Now())
 	var err error
 	vpcs.Logger.Info("Validating basic inputs for WaitForDetachVolume method...", zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate))
 	err = vpcs.validateAttachVolumeRequest(volumeAttachmentTemplate)

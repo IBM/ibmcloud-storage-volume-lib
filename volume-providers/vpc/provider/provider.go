@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
@@ -123,7 +124,7 @@ func (vpcp *VPCBlockProvider) ContextCredentialsFactory(zone *string) (local.Con
 // OpenSession opens a session on the provider
 func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredentials provider.ContextCredentials, ctxLogger *zap.Logger) (provider.Session, error) {
 	ctxLogger.Info("Entering OpenSession")
-
+	defer metrics.UpdateDurationFromStart(ctxLogger, "OpenSession", time.Now())
 	defer func() {
 		ctxLogger.Debug("Exiting OpenSession")
 	}()

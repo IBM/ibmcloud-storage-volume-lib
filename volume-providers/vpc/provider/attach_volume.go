@@ -11,10 +11,12 @@
 package provider
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"time"
 
 	"go.uber.org/zap"
 )
@@ -31,6 +33,7 @@ const (
 func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
 	vpcs.Logger.Debug("Entry of AttachVolume method...")
 	defer vpcs.Logger.Debug("Exit from AttachVolume method...")
+	defer metrics.UpdateDurationFromStart(vpcs.Logger, "AttachVolume", time.Now())
 	var err error
 	vpcs.Logger.Info("Validating basic inputs for Attach method...", zap.Reflect("volumeAttachRequest", volumeAttachmentRequest))
 	err = vpcs.validateAttachVolumeRequest(volumeAttachmentRequest)

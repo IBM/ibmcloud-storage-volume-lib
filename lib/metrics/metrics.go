@@ -60,18 +60,18 @@ func RegisterAll() {
 
 // UpdateDurationFromStart records the duration of the step identified by the
 // label using start time
-func UpdateDurationFromStart(logger *zap.Logger, label FunctionLabel, start time.Time) {
+func UpdateDurationFromStart(logger *zap.Logger, label string, start time.Time) {
 	duration := time.Now().Sub(start)
 	logger.Info("Time to complete", zap.Float64(string(label), duration.Seconds()))
 	UpdateDuration(label, duration)
 }
 
 // UpdateDuration records the duration of the step identified by the label
-func UpdateDuration(label FunctionLabel, duration time.Duration) {
-	functionDuration.WithLabelValues(string(label)).Add(duration.Seconds())
+func UpdateDuration(label string, duration time.Duration) {
+	functionDuration.WithLabelValues(label).Set(duration.Seconds())
 }
 
-// RegisterError records any errors for any plugin operation.
+// RegisterError records any errors for any lib operation.
 func RegisterError(errType string, err error) {
 	if err != nil {
 		errType = err.Error() // TODO Get the error code
@@ -79,7 +79,7 @@ func RegisterError(errType string, err error) {
 	errorsCount.WithLabelValues(errType).Add(1.0)
 }
 
-// RegisterFunction records any errors for any plugin operation.
-func RegisterFunction(label FunctionLabel) {
+// RegisterFunction records number of operation.
+func RegisterFunction(label string) {
 	functionCount.WithLabelValues(string(label)).Add(1.0)
 }

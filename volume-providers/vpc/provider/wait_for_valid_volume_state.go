@@ -11,9 +11,11 @@
 package provider
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"time"
 )
 
 const (
@@ -24,6 +26,7 @@ const (
 func WaitForValidVolumeState(vpcs *VPCSession, volumeID string) (err error) {
 	vpcs.Logger.Debug("Entry of WaitForValidVolumeState method...")
 	defer vpcs.Logger.Debug("Exit from WaitForValidVolumeState method...")
+	defer metrics.UpdateDurationFromStart(vpcs.Logger, "WaitForValidVolumeState", time.Now())
 
 	vpcs.Logger.Info("Getting volume details from VPC provider...", zap.Reflect("VolumeID", volumeID))
 

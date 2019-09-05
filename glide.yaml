@@ -15,7 +15,7 @@ import:
 - package: github.com/satori/go.uuid
   version: ~v1.1.0
 - package: github.com/kelseyhightower/envconfig
-  version: v1.4.0  
+  version: v1.4.0
 - package: github.com/stretchr/testify/assert
   version: v1.3.0
 - package: github.com/softlayer/softlayer-go
@@ -27,8 +27,12 @@ import:
   - services
   - session
   - sl
+- package: github.com/onsi/ginkgo
+  version: v1.10.0
+- package: github.com/onsi/gomega
+  version: v1.7.0
 testImport:
 - package: github.com/onsi/ginkgo
-  version: v1.7.0
+  version: v1.10.0
 - package: github.com/onsi/gomega
-  version: v1.4.3
+  version: v1.7.0

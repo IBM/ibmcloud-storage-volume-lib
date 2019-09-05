@@ -11,6 +11,7 @@
 package instances
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
@@ -20,7 +21,9 @@ import (
 
 // AttachVolume attached volume to instances with givne volume attachment details
 func (vs *VolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
-	defer util.TimeTracker("AttachVolume", time.Now())
+	methodName := "VolumeAttachService.AttachVolume"
+	defer util.TimeTracker(methodName, time.Now())
+	defer metrics.UpdateDurationFromStart(ctxLogger, methodName, time.Now())
 
 	operation := &client.Operation{
 		Name:        "AttachVolume",
