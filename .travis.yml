@@ -26,6 +26,7 @@ script:
 - cd $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib
 - source secret.txt
 - sed -i "s/"It\(\"VPC"/"PIt\(\"VPC"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/vpc_create_six_volumes_attach_detach_delete_volumes.go
+- sed -i "s/"It\(\"VPC"/"PIt\(\"VPC"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/vpc/vpc_create_volume_attach_detach_volume.go
 - sed -i "s/RIAAS_ENDPOINT_URL/"$RIAAS_ENDPOINT_URL"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - sed -i "s/RESOURCE_GROUP/"$RESOURCE_GROUP"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
