@@ -142,7 +142,6 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 	slUser := conf.Softlayer.SoftlayerUsername
 	slAPIKey := conf.Softlayer.SoftlayerAPIKey
 	iamAPIKey := conf.Bluemix.IamAPIKey
-	vpcIamAPIKey := conf.VPC.APIKey
 
 	// Select appropriate authentication strategy
 	isSLProvider := providerID == conf.Softlayer.SoftlayerBlockProviderName || providerID == conf.Softlayer.SoftlayerFileProviderName
@@ -150,13 +149,13 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 	case isSLProvider && !isEmptyStringValue(&slUser) && !isEmptyStringValue(&slAPIKey):
 		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, ctxLogger)
 
-	case (providerID == conf.VPC.VPCBlockProviderName):
-		return contextCredentialsFactory.ForIAMAccessToken(vpcIamAPIKey, ctxLogger)
+	case (conf.VPC != nil && providerID == conf.VPC.VPCBlockProviderName):
+		return contextCredentialsFactory.ForIAMAccessToken(conf.VPC.APIKey, ctxLogger)
 
 	case isSLProvider && !isEmptyStringValue(&iamAPIKey):
 		return contextCredentialsFactory.ForIAMAPIKey(AccountID, iamAPIKey, ctxLogger)
 
-	case (providerID == conf.IKS.IKSBlockProviderName):
+	case (conf.IKS != nil && providerID == conf.IKS.IKSBlockProviderName):
 		return provider.ContextCredentials{}, nil // Get credentials  in OpenSession method
 
 	default:
