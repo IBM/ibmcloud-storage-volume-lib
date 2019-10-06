@@ -24,19 +24,31 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 	defer util.TimeTracker("DetachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:        "DetachVolume",
-		Method:      "DELETE",
-		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
+		Name:   "DetachVolume",
+		Method: "DELETE",
+	}
+
+	if vs.isIKSENabled {
+		operation.PathPattern = vs.pathPrefix + "deleteAttachment"
+	} else {
+		operation.PathPattern = vs.pathPrefix + instanceIDattachmentIDPath
 	}
 
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
-	req := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
-	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
-	resp, err := req.JSONError(apiErr).Invoke()
+	if vs.isIKSENabled {
+		ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID))
+		request = request.AddQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
+		request = request.AddQueryValue(clusterIDParam, *volumeAttachmentTemplate.InstanceID)
+		request = request.AddQueryValue(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID)
+	} else {
+		ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
+		request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
+		request = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	}
+	resp, err := request.JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
@@ -44,6 +56,7 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 			return resp, apiErr
 		}
 	}
+
 	ctxLogger.Info("Successfuly deleted the volume attachment")
 	return resp, err
 }

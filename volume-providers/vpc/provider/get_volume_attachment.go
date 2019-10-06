@@ -31,7 +31,7 @@ func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.Vol
 	var volumeAttachmentResponse *provider.VolumeAttachmentResponse
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
 	if len(volumeAttachment.ID) > 0 {
-		//Get volume attachmet by ID if its specified
+		//Get volume attachmet by ID if it is specified
 		volumeAttachmentResponse, err = vpcs.getVolumeAttachmentByID(volumeAttachment)
 	} else {
 		// Get volume attachment by Volume ID. This is inefficient operation which requires iteration over volume attachment list
