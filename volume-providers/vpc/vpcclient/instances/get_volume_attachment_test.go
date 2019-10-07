@@ -20,7 +20,7 @@ import (
 	"testing"
 )
 
-func TestListVolumeAttachment(t *testing.T) {
+func TestGetVolumeAttachment(t *testing.T) {
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
 	defer logger.Sync()
@@ -36,39 +36,29 @@ func TestListVolumeAttachment(t *testing.T) {
 
 		// Expected return
 		expectErr string
-		verify    func(*testing.T, *models.VolumeAttachmentList, error)
+		verify    func(*testing.T, *http.Response, error)
 	}{
 		{
-			name:   "Verify that the correct endpoint is invoked",
-			status: http.StatusNoContent,
-		}, {
-			name:      "Verify that a 404 is returned to the caller",
-			status:    http.StatusNotFound,
-			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
-			expectErr: "Trace Code:, testerr Please check ",
-		}, {
-			name:    "Verify that the volume attachment is done correctly",
+			name:    "Verify that the get volume attachment is done correctly",
 			status:  http.StatusOK,
-			content: "{\"volume_attachments\":[{\"id\":\"volumeattachmentid1\", \"name\":\"volume attachment\", \"device\": {\"id\":\"xvdc\"}, \"volume\": {\"id\":\"volume-id1\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}, \"instance_id\":\"testinstance\"}]}",
-			verify: func(t *testing.T, volumeAttachmentList *models.VolumeAttachmentList, err error) {
-				assert.NotNil(t, volumeAttachmentList)
-				assert.Equal(t, len(volumeAttachmentList.VolumeAttachments), 1)
+			content: "{\"id\":\"volumeattachmentid\", \"name\":\"volume attachment\", \"device\": {\"id\":\"xvdc\"}, \"volume\": {\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}}",
+			verify: func(t *testing.T, httpResponse *http.Response, err error) {
+				if assert.Nil(t, err) {
+					assert.Nil(t, httpResponse)
+				}
 			},
 		},
 	}
 
 	for _, testcase := range testCases {
 		t.Run(testcase.name, func(t *testing.T) {
-			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/v1/instances/testinstance/volume_attachments", http.MethodGet, nil, testcase.status, testcase.content, nil)
-
-			defer teardown()
 
 			template := &models.VolumeAttachment{
-				Name:       "volume attachment",
+				ID:         "volumeattachmentid",
+				Name:       "volumeattachment",
 				InstanceID: &instanceID,
 				Volume: &models.Volume{
-					ID:       "volume-id1",
+					ID:       "volume-id",
 					Name:     "volume-name",
 					Capacity: 10,
 					ResourceGroup: &models.ResourceGroup{
@@ -79,28 +69,29 @@ func TestListVolumeAttachment(t *testing.T) {
 				},
 			}
 
+			mux, client, teardown := test.SetupServer(t)
+			test.SetupMuxResponse(t, mux, "/v1/instances/testinstance/volume_attachments/volumeattachmentid", http.MethodGet, nil, testcase.status, testcase.content, nil)
+
+			defer teardown()
+
 			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
 
 			volumeAttachService := instances.New(client)
 
-			volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachment(template, logger)
+			response, err := volumeAttachService.GetVolumeAttachment(template, logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())
-				assert.Nil(t, volumeAttachmentsList)
+				assert.NotNil(t, response)
 			} else {
 				assert.NoError(t, err)
-				assert.NotNil(t, volumeAttachmentsList)
-			}
-
-			if testcase.verify != nil {
-				testcase.verify(t, volumeAttachmentsList, err)
+				assert.NotNil(t, response)
 			}
 		})
 	}
 }
 
-func TestIKSListVolumeAttachment(t *testing.T) {
+func TestIKSGetVolumeAttachment(t *testing.T) {
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
 	defer logger.Sync()
@@ -109,9 +100,9 @@ func TestIKSListVolumeAttachment(t *testing.T) {
 	clusterID := "testcluster"
 	// IKS tests
 	mux, client, teardown := test.SetupServer(t)
-	content := "{\"volume_attachments\":[{\"id\":\"volumeattachmentid1\", \"name\":\"volume attachment\", \"device\": {\"id\":\"xvdc\"}, \"volume\": {\"id\":\"volume-id1\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}, \"instance_id\":\"testinstance\"}]}"
+	content := "{\"id\":\"volumeattachmentid\", \"name\":\"volume attachment\", \"device\": {\"id\":\"xvdc\"}, \"volume\": {\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}}"
 
-	test.SetupMuxResponse(t, mux, "/v2/storage/getAttachmentslist", http.MethodGet, nil, http.StatusOK, content, nil)
+	test.SetupMuxResponse(t, mux, "/v2/storage/getAttachment", http.MethodGet, nil, http.StatusOK, content, nil)
 	volumeAttachService := instances.NewIKSVolumeAttachmentManager(client)
 
 	template := &models.VolumeAttachment{
@@ -132,8 +123,8 @@ func TestIKSListVolumeAttachment(t *testing.T) {
 	}
 	defer teardown()
 
-	volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachment(template, logger)
+	response, err := volumeAttachService.GetVolumeAttachment(template, logger)
 
 	assert.NoError(t, err)
-	assert.NotNil(t, volumeAttachmentsList)
+	assert.NotNil(t, response)
 }

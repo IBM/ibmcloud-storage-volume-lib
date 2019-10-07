@@ -20,7 +20,7 @@ import (
 
 // GetVolumeAttachment retrives the volume attach status with given volume attachment details
 func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
-	defer util.TimeTracker("DetachVolume", time.Now())
+	defer util.TimeTracker("GetVolumeAttachment", time.Now())
 
 	operation := &client.Operation{
 		Name:        "GetVolumeAttachment",
@@ -28,14 +28,28 @@ func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *mod
 		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
+	if vs.isIKSENabled {
+		operation.PathPattern = vs.pathPrefix + "getAttachment"
+	} else {
+		operation.PathPattern = vs.pathPrefix + instanceIDattachmentIDPath
+	}
+
 	apiErr := vs.receiverError
 	var volumeAttachment models.VolumeAttachment
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
-	req := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
-	req = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
-	_, err := req.JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
+	if vs.isIKSENabled {
+		ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID))
+		request = request.AddQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
+		request = request.AddQueryValue(clusterIDParam, *volumeAttachmentTemplate.InstanceID)
+		request = request.AddQueryValue(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID)
+	} else {
+		ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
+		ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
+		request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
+		request = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	}
+
+	_, err := request.JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attachment", zap.Error(err))
 		return nil, err

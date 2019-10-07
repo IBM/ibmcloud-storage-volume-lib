@@ -19,4 +19,18 @@ const (
 	volumeAttachmentPath           = "volume_attachments"
 	instanceIDvolumeAttachmentPath = instanceIDPath + "/" + volumeAttachmentPath
 	instanceIDattachmentIDPath     = instanceIDvolumeAttachmentPath + "/{" + attachmentIDParam + "}"
+
+	// VpcPathPrefix  VPC URL path prefix
+	VpcPathPrefix = "v1/instances"
+
+	// IksPathPrefix  IKS URL path prefix
+	IksPathPrefix = "v2/storage/"
+	// IksClusterQuery ...
+	IksClusterQuery = "cluster"
+	// IksWorkerQuery ...
+	IksWorkerQuery = "worker"
+	// IksVolumeQuery ...
+	IksVolumeQuery = "volume"
+	// IksVolumeAttachmentIDQuery ...
+	IksVolumeAttachmentIDQuery = "volumeattachmentid"
 )
