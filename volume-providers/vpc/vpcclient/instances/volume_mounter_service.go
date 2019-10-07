@@ -17,13 +17,6 @@ import (
 	"net/http"
 )
 
-const (
-	//VpcPathPrefix  VPC URL path prefix
-	VpcPathPrefix = "v1/instances"
-	//IksPathPrefix  IKS URL path prefix
-	IksPathPrefix = "v2/storage/clusters/{cluster-id}/workers"
-)
-
 // VolumeAttachManager operations
 //go:generate counterfeiter -o fakes/volume_attach_service.go --fake-name VolumeAttachService . VolumeAttachManager
 type VolumeAttachManager interface {
@@ -42,7 +35,9 @@ type VolumeAttachService struct {
 	client                       client.SessionClient
 	pathPrefix                   string
 	receiverError                error
+	isIKSENabled                 bool
 	populatePathPrefixParameters func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request
+	populateQueryParameters      func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request
 }
 
 var _ VolumeAttachManager = &VolumeAttachService{}
@@ -54,6 +49,7 @@ func New(clientIn client.SessionClient) VolumeAttachManager {
 		client:        clientIn,
 		pathPrefix:    VpcPathPrefix,
 		receiverError: &err,
+		isIKSENabled:  false,
 		populatePathPrefixParameters: func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
 			request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
 			return request
@@ -76,11 +72,7 @@ func NewIKSVolumeAttachmentManager(clientIn client.SessionClient) VolumeAttachMa
 			client:        clientIn,
 			pathPrefix:    IksPathPrefix,
 			receiverError: &err,
-			populatePathPrefixParameters: func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
-				request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
-				request.PathParameter(clusterIDParam, *volumeAttachmentTemplate.ClusterID)
-				return request
-			},
+			isIKSENabled:  true,
 		},
 	}
 }
