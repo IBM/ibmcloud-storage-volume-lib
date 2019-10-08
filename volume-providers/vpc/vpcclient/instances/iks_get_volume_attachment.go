@@ -34,7 +34,7 @@ func (vs *IKSVolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *
 	var volumeAttachment models.VolumeAttachment
 	request := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID))
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID))
 	request = request.AddQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
 	request = request.AddQueryValue(clusterIDParam, *volumeAttachmentTemplate.InstanceID)
 	request = request.AddQueryValue(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID)
