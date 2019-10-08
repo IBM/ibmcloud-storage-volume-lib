@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-// ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
+// ListVolumeAttachments retrives the list volume attachments with givne volume attachment details
 func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
 	defer util.TimeTracker("IKS ListVolumeAttachments", time.Now())
 

@@ -79,7 +79,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 	var volumeAttachmentList *models.VolumeAttachmentList
 	var err error
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
-		volumeAttachmentList, err = vpcs.APIClientVolAttachMgr.ListVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
+		volumeAttachmentList, err = vpcs.APIClientVolAttachMgr.ListVolumeAttachments(&volumeAttachmentRequest, vpcs.Logger)
 		// Keep retry, until we get the proper volumeAttachmentRequest object
 		if err != nil {
 			return err, skipRetryForAttach(err, vpcs.Config.IsIKS)
