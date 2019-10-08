@@ -20,7 +20,7 @@ import (
 
 // AttachVolume attached volume to instances with givne volume attachment details
 func (vs *IKSVolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
-	defer util.TimeTracker("AttachVolume", time.Now())
+	defer util.TimeTracker("IKS AttachVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:   "AttachVolume",

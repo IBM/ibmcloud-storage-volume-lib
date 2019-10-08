@@ -21,7 +21,7 @@ import (
 
 // DetachVolume retrives the volume attach status with givne volume attachment details
 func (vs *IKSVolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
-	defer util.TimeTracker("DetachVolume", time.Now())
+	defer util.TimeTracker("IKS DetachVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:   "DetachVolume",
