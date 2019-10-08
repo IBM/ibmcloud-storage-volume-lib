@@ -20,7 +20,7 @@ import (
 
 // GetVolumeAttachment retrives the volume attach status with given volume attachment details
 func (vs *IKSVolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
-	defer util.TimeTracker("GetVolumeAttachment", time.Now())
+	defer util.TimeTracker("IKS GetVolumeAttachment", time.Now())
 
 	operation := &client.Operation{
 		Name:        "GetVolumeAttachment",
