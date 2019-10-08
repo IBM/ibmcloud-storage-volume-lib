@@ -28,14 +28,15 @@ func TestIKSListVolumeAttachment(t *testing.T) {
 	clusterID := "testcluster"
 	// IKS tests
 	mux, client, teardown := test.SetupServer(t)
-	content := "{\"volume_attachments\":[{\"id\":\"volumeattachmentid1\", \"name\":\"volume attachment\", \"device\": {\"id\":\"xvdc\"}, \"volume\": {\"id\":\"volume-id1\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}, \"instance_id\":\"testinstance\"}]}"
 
-	test.SetupMuxResponse(t, mux, "/v2/storage/getAttachmentslist", http.MethodGet, nil, http.StatusOK, content, nil)
+	content := "{\"volume_attachments\":[{\"id\":\"volumeattachmentid\",\"volume\":{\"name\":\"volume-name\",\"id\":\"volume-id\"},\"device\":{\"id\":\"xvda\"},\"name\":\"attachment-volume-id\",\"status\":\"attached\",\"type\":\"boot\"}]}"
+
+	test.SetupMuxResponse(t, mux, "/v2/storage/getAttachmentsList", http.MethodGet, nil, http.StatusOK, content, nil)
 	volumeAttachService := instances.NewIKSVolumeAttachmentManager(client)
 
 	template := &models.VolumeAttachment{
 		ID:         "volumeattachmentid",
-		Name:       "volume attachment",
+		Name:       "attachment-volume-id",
 		ClusterID:  &clusterID,
 		InstanceID: &instanceID,
 		Volume: &models.Volume{
