@@ -110,6 +110,15 @@ func (r *Request) AddQueryValue(key, value string) *Request {
 	return r
 }
 
+// SetQueryValue ...
+func (r *Request) SetQueryValue(key, value string) *Request {
+	if r.queryValues == nil {
+		r.queryValues = url.Values{}
+	}
+	r.queryValues.Set(key, value)
+	return r
+}
+
 // JSONBody converts the supplied argument to JSON to use as the body of a request
 func (r *Request) JSONBody(p interface{}) *Request {
 	if r.operation.Method == http.MethodPost && reflect.ValueOf(p).Kind() == reflect.Struct {
