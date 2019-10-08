@@ -83,7 +83,7 @@ func TestListVolumeAttachment(t *testing.T) {
 
 			volumeAttachService := instances.New(client)
 
-			volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachment(template, logger)
+			volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachments(template, logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())

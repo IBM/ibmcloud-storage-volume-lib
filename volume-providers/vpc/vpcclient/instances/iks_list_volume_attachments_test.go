@@ -51,7 +51,7 @@ func TestIKSListVolumeAttachment(t *testing.T) {
 	}
 	defer teardown()
 
-	volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachment(template, logger)
+	volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachments(template, logger)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, volumeAttachmentsList)

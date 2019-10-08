@@ -19,8 +19,8 @@ import (
 )
 
 // ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
-func (vs *IKSVolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
-	defer util.TimeTracker("IKS ListVolumeAttachment", time.Now())
+func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
+	defer util.TimeTracker("IKS ListVolumeAttachments", time.Now())
 
 	operation := &client.Operation{
 		Name:   "ListVolumeAttachment",
