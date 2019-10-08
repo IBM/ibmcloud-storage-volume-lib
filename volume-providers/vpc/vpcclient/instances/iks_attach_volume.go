@@ -43,5 +43,7 @@ func (vs *IKSVolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.
 		return nil, err
 	}
 
+	ctxLogger.Info("Successfuly attached the volume")
+
 	return &volumeAttachment, nil
 }

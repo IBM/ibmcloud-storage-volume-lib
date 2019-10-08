@@ -38,6 +38,6 @@ func (vs *VolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.Vol
 	if err != nil {
 		return nil, err
 	}
-
+	ctxLogger.Info("Successfuly attached the volume")
 	return &volumeAttachment, nil
 }

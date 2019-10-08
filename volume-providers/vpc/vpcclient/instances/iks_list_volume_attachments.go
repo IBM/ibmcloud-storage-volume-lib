@@ -43,5 +43,6 @@ func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate
 		ctxLogger.Error("Error occured while getting volume attachments list", zap.Error(err))
 		return nil, err
 	}
+	ctxLogger.Info("Successfuly retrieved the volume attachments")
 	return &volumeAttachmentList, nil
 }
