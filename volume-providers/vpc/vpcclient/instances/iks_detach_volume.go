@@ -20,7 +20,7 @@ import (
 )
 
 // DetachVolume retrives the volume attach status with givne volume attachment details
-func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
+func (vs *IKSVolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
 	defer util.TimeTracker("DetachVolume", time.Now())
 
 	operation := &client.Operation{
@@ -28,16 +28,17 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 		Method: "DELETE",
 	}
 
-	operation.PathPattern = vs.pathPrefix + instanceIDattachmentIDPath
+	operation.PathPattern = vs.pathPrefix + "deleteAttachment"
 
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
 	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
 
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
-	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
-	request = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID))
+	request = request.AddQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
+	request = request.AddQueryValue(clusterIDParam, *volumeAttachmentTemplate.InstanceID)
+	request = request.AddQueryValue(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID)
 
 	resp, err := request.JSONError(apiErr).Invoke()
 	if err != nil {

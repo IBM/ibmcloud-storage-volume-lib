@@ -19,7 +19,7 @@ import (
 )
 
 // GetVolumeAttachment retrives the volume attach status with given volume attachment details
-func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
+func (vs *IKSVolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
 	defer util.TimeTracker("GetVolumeAttachment", time.Now())
 
 	operation := &client.Operation{
@@ -28,16 +28,16 @@ func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *mod
 		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
-	operation.PathPattern = vs.pathPrefix + instanceIDattachmentIDPath
+	operation.PathPattern = vs.pathPrefix + "getAttachment"
 
 	apiErr := vs.receiverError
 	var volumeAttachment models.VolumeAttachment
 	request := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
-	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
-	request = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID))
+	request = request.AddQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
+	request = request.AddQueryValue(clusterIDParam, *volumeAttachmentTemplate.InstanceID)
+	request = request.AddQueryValue(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID)
 
 	_, err := request.JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {

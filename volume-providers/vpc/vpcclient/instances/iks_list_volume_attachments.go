@@ -19,7 +19,7 @@ import (
 )
 
 // ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
-func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
+func (vs *IKSVolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
 	defer util.TimeTracker("GetAttachStatus", time.Now())
 
 	operation := &client.Operation{
@@ -27,15 +27,16 @@ func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *mo
 		Method: "GET",
 	}
 
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
+	operation.PathPattern = vs.pathPrefix + "getAttachmentslist"
 
 	var volumeAttachmentList models.VolumeAttachmentList
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID))
+	request = request.AddQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
+	request = request.AddQueryValue(clusterIDParam, *volumeAttachmentTemplate.InstanceID)
 
 	_, err := request.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {

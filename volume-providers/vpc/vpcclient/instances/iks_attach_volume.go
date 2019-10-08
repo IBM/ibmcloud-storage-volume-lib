@@ -19,22 +19,26 @@ import (
 )
 
 // AttachVolume attached volume to instances with givne volume attachment details
-func (vs *VolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
+func (vs *IKSVolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
 	defer util.TimeTracker("AttachVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:   "AttachVolume",
 		Method: "POST",
 	}
-
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
+	operation.PathPattern = vs.pathPrefix + "createAttachment"
 
 	var volumeAttachment models.VolumeAttachment
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect("PathParameters", volumeAttachmentTemplate.InstanceID))
-	_, err := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate).JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
+
+	request = request.AddQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
+	request = request.AddQueryValue(IksWorkerQuery, *volumeAttachmentTemplate.InstanceID)
+	vol := *volumeAttachmentTemplate.Volume
+	request = request.AddQueryValue(IksVolumeQuery, vol.ID)
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQuery, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksWorkerQuery, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeQuery, vol.ID))
+	_, err := request.JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}
