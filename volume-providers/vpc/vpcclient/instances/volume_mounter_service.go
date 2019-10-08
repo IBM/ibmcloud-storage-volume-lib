@@ -35,9 +35,15 @@ type VolumeAttachService struct {
 	client                       client.SessionClient
 	pathPrefix                   string
 	receiverError                error
-	isIKSENabled                 bool
 	populatePathPrefixParameters func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request
-	populateQueryParameters      func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request
+}
+
+// IKSVolumeAttachService ...
+type IKSVolumeAttachService struct {
+	client                  client.SessionClient
+	pathPrefix              string
+	receiverError           error
+	populateQueryParameters func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request
 }
 
 var _ VolumeAttachManager = &VolumeAttachService{}
@@ -49,17 +55,11 @@ func New(clientIn client.SessionClient) VolumeAttachManager {
 		client:        clientIn,
 		pathPrefix:    VpcPathPrefix,
 		receiverError: &err,
-		isIKSENabled:  false,
 		populatePathPrefixParameters: func(request *client.Request, volumeAttachmentTemplate *models.VolumeAttachment) *client.Request {
 			request.PathParameter(instanceIDParam, *volumeAttachmentTemplate.InstanceID)
 			return request
 		},
 	}
-}
-
-// IKSVolumeAttachService ...
-type IKSVolumeAttachService struct {
-	VolumeAttachService
 }
 
 var _ VolumeAttachManager = &IKSVolumeAttachService{}
@@ -68,11 +68,8 @@ var _ VolumeAttachManager = &IKSVolumeAttachService{}
 func NewIKSVolumeAttachmentManager(clientIn client.SessionClient) VolumeAttachManager {
 	err := models.IksError{}
 	return &IKSVolumeAttachService{
-		VolumeAttachService{
-			client:        clientIn,
-			pathPrefix:    IksPathPrefix,
-			receiverError: &err,
-			isIKSENabled:  true,
-		},
+		client:        clientIn,
+		pathPrefix:    IksPathPrefix,
+		receiverError: &err,
 	}
 }
