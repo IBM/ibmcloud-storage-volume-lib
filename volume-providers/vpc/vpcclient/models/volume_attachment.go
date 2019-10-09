@@ -23,14 +23,14 @@ type Device struct {
 
 // VolumeAttachment for riaas client
 type VolumeAttachment struct {
-	ID   string `json:"id"`
+	ID   string `json:"id,omitempty"`
 	Href string `json:"href,omitempty"`
 	Name string `json:"name,omitempty"`
 	// Status of volume attachment named - attaching , attached, detaching
 	Status string `json:"status,omitempty"`
 	Type   string `json:"type,omitempty"` //boot, data
 	// InstanceID this volume is attached to
-	InstanceID *string    `json:"instance_id,omitempty"`
+	InstanceID *string    `json:"-"`
 	ClusterID  *string    `json:"clusterID,omitempty"`
 	Device     *Device    `json:"device,omitempty"`
 	Volume     *Volume    `json:"volume,omitempty"`

@@ -62,6 +62,31 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	if conf.Bluemix == nil || conf.VPC == nil {
 		return nil, errors.New("Incomplete config for VPCBlockProvider")
 	}
+
+	//Do config validation and enable only one generationType (i.e VPC-Classic | VPC-NG)
+	gc_config_found := (conf.VPC.EndpointURL != "") && (conf.VPC.TokenExchangeURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
+	g2_config_found := (conf.VPC.G2_EndpointURL != "") && (conf.VPC.G2_TokenExchangeURL != "") && (conf.VPC.G2_APIKey != "") && (conf.VPC.G2_ResourceGroupID != "")
+	//if both config found, look for VPCTypeEnabled, otherwise default to GC
+	//Incase of NG configurations, override the base properties.
+	if (gc_config_found && g2_config_found && conf.VPC.VPCTypeEnabled == "g2") || (!gc_config_found && g2_config_found) {
+
+		conf.VPC.EndpointURL = conf.VPC.G2_EndpointURL
+		conf.VPC.TokenExchangeURL = conf.VPC.G2_TokenExchangeURL
+		conf.VPC.APIKey = conf.VPC.G2_APIKey
+		conf.VPC.ResourceGroupID = conf.VPC.G2_ResourceGroupID
+
+		//Set API Generation As 2 (if unspecified in config/ENV-VAR)
+		if conf.VPC.G2_VPCAPIGeneration <= 0 {
+			conf.VPC.G2_VPCAPIGeneration = 2
+		}
+		conf.VPC.VPCAPIGeneration = conf.VPC.G2_VPCAPIGeneration
+
+		//Set the APIVersion Date, it can be diffrent in GC and NG
+		if conf.VPC.G2_APIVersion != "" {
+			conf.VPC.APIVersion = conf.VPC.G2_APIVersion
+		}
+	}
+
 	// VPC provider use differnt APIkey and Auth Endpoint
 	authConfig := &config.BluemixConfig{
 		IamURL:          conf.VPC.TokenExchangeURL,

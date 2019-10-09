@@ -144,20 +144,34 @@ type Gen2Config struct {
 
 // VPCProviderConfig configures a specific instance of a VPC provider (e.g. GT/GC/Z)
 type VPCProviderConfig struct {
-	Enabled              bool   `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
-	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
-	EndpointURL          string `toml:"gc_riaas_endpoint_url"`
-	TokenExchangeURL     string `toml:"gc_token_exchange_endpoint_url"`
-	APIKey               string `toml:"gc_api_key" json:"-"`
-	Encryption           bool   `toml:"encryption"`
-	ResourceGroupID      string `toml:"gc_resource_group_id"`
-	VPCTimeout           string `toml:"vpc_api_timeout,omitempty" envconfig:"VPC_API_TIMEOUT"`
-	MaxRetryAttempt      int    `toml:"max_retry_attempt,omitempty" envconfig:"VPC_RETRY_ATTEMPT"`
-	MaxRetryGap          int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
-	VPCAPIGeneration     int    `toml:"vpc_api_generation" envconfig:"VPC_API_GENERATION"`
+	Enabled bool `toml:"vpc_enabled" envconfig:"VPC_ENABLED"`
 
-	APIVersion string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
-	IsIKS      bool   `toml:"is_iks,omitempty"`
+	//valid values (gc|g2), if unspecified, GC will take precedence(if both are specified)
+	//during e2e test, user can specify its own preferred type during execution
+	VPCTypeEnabled       string `toml:"vpc_type_enabled" envconfig:"VPC_TYPE_ENABLED"`
+	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
+
+	EndpointURL      string `toml:"gc_riaas_endpoint_url"`
+	TokenExchangeURL string `toml:"gc_token_exchange_endpoint_url"`
+	APIKey           string `toml:"gc_api_key" json:"-"`
+	ResourceGroupID  string `toml:"gc_resource_group_id"`
+	VPCAPIGeneration int    `toml:"vpc_api_generation" envconfig:"VPC_API_GENERATION"`
+	APIVersion       string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
+
+	//NG Properties
+	G2_EndpointURL      string `toml:"g2_riaas_endpoint_url"`
+	G2_TokenExchangeURL string `toml:"g2_token_exchange_endpoint_url"`
+	G2_APIKey           string `toml:"g2_api_key" json:"-"`
+	G2_ResourceGroupID  string `toml:"g2_resource_group_id"`
+	G2_VPCAPIGeneration int    `toml:"g2_vpc_api_generation" envconfig:"G2_VPC_API_GENERATION"`
+	G2_APIVersion       string `toml:"g2_api_version,omitempty" envconfig:"G2_VPC_API_VERSION"`
+
+	Encryption      bool   `toml:"encryption"`
+	VPCTimeout      string `toml:"vpc_api_timeout,omitempty" envconfig:"VPC_API_TIMEOUT"`
+	MaxRetryAttempt int    `toml:"max_retry_attempt,omitempty" envconfig:"VPC_RETRY_ATTEMPT"`
+	MaxRetryGap     int    `toml:"max_retry_gap,omitempty" envconfig:"VPC_RETRY_INTERVAL"`
+
+	IsIKS bool `toml:"is_iks,omitempty"`
 }
 
 //IKSConfig config

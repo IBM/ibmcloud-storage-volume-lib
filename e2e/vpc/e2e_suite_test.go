@@ -53,8 +53,9 @@ var _ = BeforeSuite(func() {
 		Expect(err).To(HaveOccurred())
 	}
 
-	// Check if debug log level enabled or not
-	if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
+	if conf.VPC != nil && conf.VPC.VPCTypeEnabled == "g2" && conf.VPC.G2_ResourceGroupID != "" {
+		resourceGroupID = conf.VPC.G2_ResourceGroupID
+	} else if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
 		resourceGroupID = conf.VPC.ResourceGroupID
 	}
 
