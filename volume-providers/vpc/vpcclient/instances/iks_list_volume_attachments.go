@@ -31,17 +31,18 @@ func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate
 
 	var volumeAttachmentList models.VolumeAttachmentList
 	apiErr := vs.receiverError
-	vs.client = vs.client.WithQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
-	vs.client = vs.client.WithQueryValue(IksWorkerQuery, *volumeAttachmentTemplate.InstanceID)
+	vs.client = vs.client.WithQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	vs.client = vs.client.WithQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
 
 	request := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQuery, *volumeAttachmentTemplate.InstanceID))
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID))
 
 	_, err := request.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attachments list", zap.Error(err))
 		return nil, err
 	}
+	ctxLogger.Info("Successfuly retrieved the volume attachments")
 	return &volumeAttachmentList, nil
 }

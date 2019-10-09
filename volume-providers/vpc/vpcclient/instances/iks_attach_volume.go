@@ -33,15 +33,17 @@ func (vs *IKSVolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.
 
 	request := vs.client.NewRequest(operation)
 
-	request = request.SetQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
-	request = request.SetQueryValue(IksWorkerQuery, *volumeAttachmentTemplate.InstanceID)
+	request = request.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	request = request.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
 	vol := *volumeAttachmentTemplate.Volume
-	request = request.SetQueryValue(IksVolumeQuery, vol.ID)
-	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQuery, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksWorkerQuery, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeQuery, vol.ID))
+	request = request.SetQueryValue(IksVolumeQueryKey, vol.ID)
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksWorkerQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeQueryKey, vol.ID))
 	_, err := request.JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}
+
+	ctxLogger.Info("Successfuly attached the volume")
 
 	return &volumeAttachment, nil
 }
