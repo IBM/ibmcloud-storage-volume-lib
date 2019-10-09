@@ -53,8 +53,8 @@ var _ = BeforeSuite(func() {
 		Expect(err).To(HaveOccurred())
 	}
 
-	if conf.VPC != nil && conf.VPC.VPCTypeEnabled == "g2" && conf.VPC.G2_ResourceGroupID != "" {
-		resourceGroupID = conf.VPC.G2_ResourceGroupID
+	if conf.VPC != nil && conf.VPC.VPCTypeEnabled == "g2" && conf.VPC.G2ResourceGroupID != "" {
+		resourceGroupID = conf.VPC.G2ResourceGroupID
 	} else if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
 		resourceGroupID = conf.VPC.ResourceGroupID
 	}

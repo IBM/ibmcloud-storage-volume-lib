@@ -159,12 +159,12 @@ type VPCProviderConfig struct {
 	APIVersion       string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
 
 	//NG Properties
-	G2_EndpointURL      string `toml:"g2_riaas_endpoint_url"`
-	G2_TokenExchangeURL string `toml:"g2_token_exchange_endpoint_url"`
-	G2_APIKey           string `toml:"g2_api_key" json:"-"`
-	G2_ResourceGroupID  string `toml:"g2_resource_group_id"`
-	G2_VPCAPIGeneration int    `toml:"g2_vpc_api_generation" envconfig:"G2_VPC_API_GENERATION"`
-	G2_APIVersion       string `toml:"g2_api_version,omitempty" envconfig:"G2_VPC_API_VERSION"`
+	G2EndpointURL      string `toml:"g2_riaas_endpoint_url"`
+	G2TokenExchangeURL string `toml:"g2_token_exchange_endpoint_url"`
+	G2APIKey           string `toml:"g2_api_key" json:"-"`
+	G2ResourceGroupID  string `toml:"g2_resource_group_id"`
+	G2VPCAPIGeneration int    `toml:"g2_vpc_api_generation" envconfig:"G2_VPC_API_GENERATION"`
+	G2APIVersion       string `toml:"g2_api_version,omitempty" envconfig:"G2_VPC_API_VERSION"`
 
 	Encryption      bool   `toml:"encryption"`
 	VPCTimeout      string `toml:"vpc_api_timeout,omitempty" envconfig:"VPC_API_TIMEOUT"`

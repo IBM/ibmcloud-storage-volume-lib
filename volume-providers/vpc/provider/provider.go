@@ -64,26 +64,26 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	}
 
 	//Do config validation and enable only one generationType (i.e VPC-Classic | VPC-NG)
-	gc_config_found := (conf.VPC.EndpointURL != "") && (conf.VPC.TokenExchangeURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
-	g2_config_found := (conf.VPC.G2_EndpointURL != "") && (conf.VPC.G2_TokenExchangeURL != "") && (conf.VPC.G2_APIKey != "") && (conf.VPC.G2_ResourceGroupID != "")
+	gcConfigFound := (conf.VPC.EndpointURL != "") && (conf.VPC.TokenExchangeURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
+	g2ConfigFound := (conf.VPC.G2EndpointURL != "") && (conf.VPC.G2TokenExchangeURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
 	//if both config found, look for VPCTypeEnabled, otherwise default to GC
 	//Incase of NG configurations, override the base properties.
-	if (gc_config_found && g2_config_found && conf.VPC.VPCTypeEnabled == "g2") || (!gc_config_found && g2_config_found) {
+	if (gcConfigFound && g2ConfigFound && conf.VPC.VPCTypeEnabled == "g2") || (!gcConfigFound && g2ConfigFound) {
 
-		conf.VPC.EndpointURL = conf.VPC.G2_EndpointURL
-		conf.VPC.TokenExchangeURL = conf.VPC.G2_TokenExchangeURL
-		conf.VPC.APIKey = conf.VPC.G2_APIKey
-		conf.VPC.ResourceGroupID = conf.VPC.G2_ResourceGroupID
+		conf.VPC.EndpointURL = conf.VPC.G2EndpointURL
+		conf.VPC.TokenExchangeURL = conf.VPC.G2TokenExchangeURL
+		conf.VPC.APIKey = conf.VPC.G2APIKey
+		conf.VPC.ResourceGroupID = conf.VPC.G2ResourceGroupID
 
 		//Set API Generation As 2 (if unspecified in config/ENV-VAR)
-		if conf.VPC.G2_VPCAPIGeneration <= 0 {
-			conf.VPC.G2_VPCAPIGeneration = 2
+		if conf.VPC.G2VPCAPIGeneration <= 0 {
+			conf.VPC.G2VPCAPIGeneration = 2
 		}
-		conf.VPC.VPCAPIGeneration = conf.VPC.G2_VPCAPIGeneration
+		conf.VPC.VPCAPIGeneration = conf.VPC.G2VPCAPIGeneration
 
 		//Set the APIVersion Date, it can be diffrent in GC and NG
-		if conf.VPC.G2_APIVersion != "" {
-			conf.VPC.APIVersion = conf.VPC.G2_APIVersion
+		if conf.VPC.G2APIVersion != "" {
+			conf.VPC.APIVersion = conf.VPC.G2APIVersion
 		}
 	}
 
