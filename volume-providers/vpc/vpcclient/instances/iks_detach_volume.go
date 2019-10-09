@@ -33,10 +33,10 @@ func (vs *IKSVolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQuery, *volumeAttachmentTemplate.ClusterID), zap.Reflect(clusterIDParam, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID))
-	request = request.SetQueryValue(IksClusterQuery, *volumeAttachmentTemplate.ClusterID)
-	request = request.SetQueryValue(clusterIDParam, *volumeAttachmentTemplate.InstanceID)
-	request = request.SetQueryValue(IksVolumeAttachmentIDQuery, volumeAttachmentTemplate.ID)
+	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
+	request = request.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	request = request.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
+	request = request.SetQueryValue(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID)
 
 	resp, err := request.JSONError(apiErr).Invoke()
 	if err != nil {
