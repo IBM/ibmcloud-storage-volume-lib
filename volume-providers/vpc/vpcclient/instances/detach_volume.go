@@ -27,23 +27,22 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 		Name:   "DetachVolume",
 		Method: "DELETE",
 	}
-
 	operation.PathPattern = vs.pathPrefix + instanceIDattachmentIDPath
 
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
 	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
 	request = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+
+	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
+	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
 
 	resp, err := request.JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
-			// volume Attachment is deleted. So do not want to retry
+			// volume attachment is deleted. So do not want to retry
 			return resp, apiErr
 		}
 	}

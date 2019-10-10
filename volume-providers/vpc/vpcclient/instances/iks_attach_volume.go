@@ -37,13 +37,14 @@ func (vs *IKSVolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.
 	request = request.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
 	vol := *volumeAttachmentTemplate.Volume
 	request = request.SetQueryValue(IksVolumeQueryKey, vol.ID)
-	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksWorkerQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeQueryKey, vol.ID))
+
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksWorkerQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeQueryKey, vol.ID))
+
 	_, err := request.JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}
 
 	ctxLogger.Info("Successfuly attached the volume")
-
 	return &volumeAttachment, nil
 }

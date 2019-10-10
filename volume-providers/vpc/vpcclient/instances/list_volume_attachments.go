@@ -34,7 +34,7 @@ func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *m
 
 	request := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
+	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
 	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
 
 	_, err := request.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()

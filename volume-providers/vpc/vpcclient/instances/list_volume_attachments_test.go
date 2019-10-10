@@ -82,7 +82,6 @@ func TestListVolumeAttachment(t *testing.T) {
 			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
 
 			volumeAttachService := instances.New(client)
-
 			volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachments(template, logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {

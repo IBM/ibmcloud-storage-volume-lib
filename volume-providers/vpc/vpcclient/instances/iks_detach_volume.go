@@ -27,22 +27,22 @@ func (vs *IKSVolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.
 		Name:   "DetachVolume",
 		Method: "DELETE",
 	}
-
 	operation.PathPattern = vs.pathPrefix + "deleteAttachment"
 
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command  details and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
 	request = request.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
 	request = request.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
 	request = request.SetQueryValue(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID)
+
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
 
 	resp, err := request.JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
-			// volume Attachment is deleted. So do not want to retry
+			// volume attachment is deleted, no need to retry
 			return resp, apiErr
 		}
 	}

@@ -25,12 +25,16 @@ const (
 
 	// IksPathPrefix  IKS URL path prefix
 	IksPathPrefix = "v2/storage/"
+
 	// IksClusterQueryKey ...
 	IksClusterQueryKey = "cluster"
+
 	// IksWorkerQueryKey ...
 	IksWorkerQueryKey = "worker"
+
 	// IksVolumeQueryKey ...
 	IksVolumeQueryKey = "volumeID"
+
 	// IksVolumeAttachmentIDQueryKey ...
 	IksVolumeAttachmentIDQueryKey = "volumeAttachmentID"
 )
