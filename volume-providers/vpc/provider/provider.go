@@ -46,7 +46,7 @@ type VPCBlockProvider struct {
 	serverConfig   *config.ServerConfig
 	config         *config.VPCProviderConfig
 	tokenGenerator *tokenGenerator
-	contextCF      local.ContextCredentialsFactory
+	ContextCF      local.ContextCredentialsFactory
 
 	ClientProvider riaas.RegionalAPIClientProvider
 	httpClient     *http.Client
@@ -85,6 +85,18 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		if conf.VPC.G2APIVersion != "" {
 			conf.VPC.APIVersion = conf.VPC.G2APIVersion
 		}
+
+		//set provider-type (this usually comes from the secret)
+		if conf.VPC.VPCBlockProviderType != "g2" {
+			conf.VPC.VPCBlockProviderType = "g2"
+		}
+
+		//Mark this as enabled/active
+		if conf.VPC.VPCTypeEnabled != "g2" {
+			conf.VPC.VPCTypeEnabled = "g2"
+		}
+	} else { //This is GC, no-override required
+		conf.VPC.VPCBlockProviderType = "gc" //incase of gc, i dont see its being set in slclient.toml, but NG cluster has this
 	}
 
 	// VPC provider use differnt APIkey and Auth Endpoint
@@ -121,7 +133,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		serverConfig:   conf.Server,
 		config:         conf.VPC,
 		tokenGenerator: &tokenGenerator{config: conf.VPC},
-		contextCF:      contextCF,
+		ContextCF:      contextCF,
 		httpClient:     httpClient,
 		APIConfig: riaas.Config{
 			BaseURL:       conf.VPC.EndpointURL,
@@ -142,7 +154,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 // ContextCredentialsFactory ...
 func (vpcp *VPCBlockProvider) ContextCredentialsFactory(zone *string) (local.ContextCredentialsFactory, error) {
 	//  Datacenter hint not required by VPC provider implementation
-	return vpcp.contextCF, nil
+	return vpcp.ContextCF, nil
 }
 
 // OpenSession opens a session on the provider

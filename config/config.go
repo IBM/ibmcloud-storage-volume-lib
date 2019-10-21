@@ -150,6 +150,7 @@ type VPCProviderConfig struct {
 	//during e2e test, user can specify its own preferred type during execution
 	VPCTypeEnabled       string `toml:"vpc_type_enabled" envconfig:"VPC_TYPE_ENABLED"`
 	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
+	VPCBlockProviderType string `toml:"provider_type"`
 
 	EndpointURL      string `toml:"gc_riaas_endpoint_url"`
 	TokenExchangeURL string `toml:"gc_token_exchange_endpoint_url"`

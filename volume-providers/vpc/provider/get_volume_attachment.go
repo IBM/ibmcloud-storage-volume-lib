@@ -67,7 +67,8 @@ func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.V
 		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
 		return nil, userErr
 	}
-	volumeAttachmentResponse := volumeAttachmentResult.ToVolumeAttachmentResponse()
+
+	volumeAttachmentResponse := volumeAttachmentResult.ToVolumeAttachmentResponse(vpcs.Config.VPCBlockProviderType)
 	vpcs.Logger.Info("Successfuly retrived volume attachment", zap.Reflect("volumeAttachmentResponse", volumeAttachmentResponse))
 	return volumeAttachmentResponse, err
 }
@@ -97,7 +98,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 		// Check if volume ID is matching with requested volume ID
 		if volumeAttachmentItem.Volume.ID == volumeAttachmentRequest.Volume.ID {
 			vpcs.Logger.Info("Successfully found volume attachment", zap.Reflect("volumeAttachment", volumeAttachmentItem))
-			volumeResponse := volumeAttachmentItem.ToVolumeAttachmentResponse()
+			volumeResponse := volumeAttachmentItem.ToVolumeAttachmentResponse(vpcs.Config.VPCBlockProviderType)
 			vpcs.Logger.Info("Successfully fetched volume attachment from VPC provider", zap.Reflect("volumeResponse", volumeResponse))
 			return volumeResponse, nil
 		}

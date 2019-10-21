@@ -12,7 +12,7 @@ package models
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"strings"
+	//"strings"
 	"time"
 )
 
@@ -66,7 +66,7 @@ func NewVolumeAttachment(volumeAttachmentRequest provider.VolumeAttachmentReques
 }
 
 //ToVolumeAttachmentResponse converts VolumeAttachment VolumeAttachmentResponse
-func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachmentResponse {
+func (va *VolumeAttachment) ToVolumeAttachmentResponse(providerType string) *provider.VolumeAttachmentResponse {
 	varp := &provider.VolumeAttachmentResponse{
 		VolumeAttachmentRequest: provider.VolumeAttachmentRequest{
 			VolumeID: va.Volume.ID,
@@ -86,23 +86,15 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 	}
 
 	//Set DevicePath
-	if va.Device != nil && va.Device.ID != "" {
-		devicepath := va.Device.ID
-		generation := GTypeClassic //default
-		if va.Volume != nil && va.Volume.Generation != "" {
-			generation = va.Volume.Generation.String()
-		}
-
-		//prepend "/dev/" for generation=1 (gc)
-		if generation == GTypeClassic && !strings.HasPrefix(devicepath, GTypeClassicDevicePrefix) {
-			devicepath = GTypeClassicDevicePrefix + va.Device.ID
-		}
-		varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = devicepath
-
-		// TODO: This needs change, after device id for NG gets implemented
-	} else if va.Volume != nil && va.Volume.Generation == GTypeG2 {
-		if va.ID != "" && len(va.ID) >= 20 {
-			devicepath := GTypeG2DevicePrefix + va.ID[:20]
+	if va.Status == "attached" {
+		if providerType == GTypeG2 {
+			if va.ID != "" && len(va.ID) >= 20 {
+				devicepath := GTypeG2DevicePrefix + va.ID[:20] // TODO: This might change after riaas side fixes
+				varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = devicepath
+			}
+		} else // GC
+		if va.Device != nil && va.Device.ID != "" {
+			devicepath := GTypeClassicDevicePrefix + va.Device.ID
 			varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = devicepath
 		}
 	}
