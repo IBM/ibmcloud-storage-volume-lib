@@ -31,7 +31,7 @@ func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.Vol
 	var volumeAttachmentResponse *provider.VolumeAttachmentResponse
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
 	if len(volumeAttachment.ID) > 0 {
-		//Get volume attachmet by ID if its specified
+		//Get volume attachmet by ID if it is specified
 		volumeAttachmentResponse, err = vpcs.getVolumeAttachmentByID(volumeAttachment)
 	} else {
 		// Get volume attachment by Volume ID. This is inefficient operation which requires iteration over volume attachment list
@@ -80,7 +80,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 	var volumeAttachmentList *models.VolumeAttachmentList
 	var err error
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
-		volumeAttachmentList, err = vpcs.APIClientVolAttachMgr.ListVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
+		volumeAttachmentList, err = vpcs.APIClientVolAttachMgr.ListVolumeAttachments(&volumeAttachmentRequest, vpcs.Logger)
 		// Keep retry, until we get the proper volumeAttachmentRequest object
 		if err != nil {
 			return err, skipRetryForAttach(err, vpcs.Config.IsIKS)
