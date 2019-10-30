@@ -64,7 +64,6 @@ func TestGetVolumeAttachment(t *testing.T) {
 					ResourceGroup: &models.ResourceGroup{
 						ID: "rg1",
 					},
-					Generation: models.GenerationType("gc"),
 					Zone:       &models.Zone{Name: "test-1"},
 				},
 			}
