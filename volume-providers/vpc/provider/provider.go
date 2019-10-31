@@ -38,6 +38,10 @@ const (
 	vpcExceptionPrefix = "IBM Cloud infrastructure exception"
 	// timeoutDefault ...
 	timeoutDefault = "120s"
+	// VPCClassic ...
+	VPCClassic = "gc"
+	// VPCNextGen ...
+	VPCNextGen = "g2"
 )
 
 // VPCBlockProvider implements provider.Provider
@@ -68,7 +72,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	g2ConfigFound := (conf.VPC.G2EndpointURL != "") && (conf.VPC.G2TokenExchangeURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
 	//if both config found, look for VPCTypeEnabled, otherwise default to GC
 	//Incase of NG configurations, override the base properties.
-	if (gcConfigFound && g2ConfigFound && conf.VPC.VPCTypeEnabled == "g2") || (!gcConfigFound && g2ConfigFound) {
+	if (gcConfigFound && g2ConfigFound && conf.VPC.VPCTypeEnabled == VPCNextGen) || (!gcConfigFound && g2ConfigFound) {
 
 		conf.VPC.EndpointURL = conf.VPC.G2EndpointURL
 		conf.VPC.TokenExchangeURL = conf.VPC.G2TokenExchangeURL
@@ -87,16 +91,16 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		}
 
 		//set provider-type (this usually comes from the secret)
-		if conf.VPC.VPCBlockProviderType != "g2" {
-			conf.VPC.VPCBlockProviderType = "g2"
+		if conf.VPC.VPCBlockProviderType != VPCNextGen {
+			conf.VPC.VPCBlockProviderType = VPCNextGen
 		}
 
 		//Mark this as enabled/active
-		if conf.VPC.VPCTypeEnabled != "g2" {
-			conf.VPC.VPCTypeEnabled = "g2"
+		if conf.VPC.VPCTypeEnabled != VPCNextGen {
+			conf.VPC.VPCTypeEnabled = VPCNextGen
 		}
 	} else { //This is GC, no-override required
-		conf.VPC.VPCBlockProviderType = "gc" //incase of gc, i dont see its being set in slclient.toml, but NG cluster has this
+		conf.VPC.VPCBlockProviderType = VPCClassic //incase of gc, i dont see its being set in slclient.toml, but NG cluster has this
 	}
 
 	// VPC provider use differnt APIkey and Auth Endpoint

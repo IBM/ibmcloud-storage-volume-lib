@@ -31,4 +31,7 @@ const (
 
 	// GTypeG2DevicePrefix ...
 	GTypeG2DevicePrefix = "/dev/disk/by-id/virtio-"
+
+	// VolumeAttached ...
+	VolumeAttached = "attached"
 )
