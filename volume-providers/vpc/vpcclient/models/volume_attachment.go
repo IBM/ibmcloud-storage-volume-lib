@@ -88,8 +88,8 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse(providerType string) *pro
 	//Set DevicePath
 	if va.Status == VolumeAttached && va.Device != nil && va.Device.ID != "" {
 		if providerType == GTypeG2 {
-			if len(va.Device.ID) >= 20 {
-				varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = GTypeG2DevicePrefix + va.Device.ID[:20]
+			if len(va.Device.ID) >= GTypeG2DeviceIDLength {
+				varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = GTypeG2DevicePrefix + va.Device.ID[:GTypeG2DeviceIDLength]
 			}
 		} else { //GC
 			varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = GTypeClassicDevicePrefix + va.Device.ID
