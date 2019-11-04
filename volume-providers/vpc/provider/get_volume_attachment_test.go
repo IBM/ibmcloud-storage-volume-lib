@@ -72,9 +72,9 @@ func TestGetVolumeAttachment(t *testing.T) {
 			uc.VolumeAttachServiceReturns(volumeAttachService)
 
 			if testcase.expectedErr != "" {
-				volumeAttachService.ListVolumeAttachmentsReturns(testcase.baseVolumeAttachmentsListResponse, errors.New(testcase.expectedReasonCode))
+				volumeAttachService.ListVolumeAttachmentReturns(testcase.baseVolumeAttachmentsListResponse, errors.New(testcase.expectedReasonCode))
 			} else {
-				volumeAttachService.ListVolumeAttachmentsReturns(testcase.baseVolumeAttachmentsListResponse, nil)
+				volumeAttachService.ListVolumeAttachmentReturns(testcase.baseVolumeAttachmentsListResponse, nil)
 			}
 			volumeAttachment, err := vpcs.GetVolumeAttachment(testcase.providerVolumeAttachmentRequest)
 			logger.Info("Volume attachment details", zap.Reflect("VolumeAttachmentResponse", volumeAttachment))

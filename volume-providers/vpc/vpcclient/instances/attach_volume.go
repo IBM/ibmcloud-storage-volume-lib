@@ -23,22 +23,20 @@ func (vs *VolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.Vol
 	defer util.TimeTracker("AttachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:   "AttachVolume",
-		Method: "POST",
+		Name:        "AttachVolume",
+		Method:      "POST",
+		PathPattern: vs.pathPrefix + instanceIDvolumeAttachmentPath,
 	}
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
 
 	var volumeAttachment models.VolumeAttachment
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
-
 	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect("PathParameters", volumeAttachmentTemplate.InstanceID))
 	_, err := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate).JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}
 
-	ctxLogger.Info("Successfuly attached the volume")
 	return &volumeAttachment, nil
 }

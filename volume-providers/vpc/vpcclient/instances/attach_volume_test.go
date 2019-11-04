@@ -97,7 +97,6 @@ func TestAttachVolume(t *testing.T) {
 				assert.NoError(t, err)
 				assert.NotNil(t, volumeAttachment)
 			}
-
 		})
 	}
 }

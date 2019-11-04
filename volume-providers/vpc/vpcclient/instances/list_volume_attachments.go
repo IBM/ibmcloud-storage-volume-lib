@@ -18,30 +18,27 @@ import (
 	"time"
 )
 
-// ListVolumeAttachments retrives the list volume attachments with givne volume attachment details
-func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
-	defer util.TimeTracker("ListVolumeAttachments", time.Now())
+// ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
+func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
+	defer util.TimeTracker("GetAttachStatus", time.Now())
 
 	operation := &client.Operation{
-		Name:   "ListVolumeAttachment",
-		Method: "GET",
+		Name:        "ListVolumeAttachment",
+		Method:      "GET",
+		PathPattern: vs.pathPrefix + instanceIDvolumeAttachmentPath,
 	}
-
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
 
 	var volumeAttachmentList models.VolumeAttachmentList
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
+	ctxLogger.Info("Equivalent curl command  details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
+	req := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
 
-	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
-
-	_, err := request.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
+	_, err := req.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {
-		ctxLogger.Error("Error occured while getting volume attachments list", zap.Error(err))
+		ctxLogger.Error("Error occured while getting volume attachment", zap.Error(err))
 		return nil, err
 	}
-	ctxLogger.Info("Successfuly retrieved the volume attachments")
 	return &volumeAttachmentList, nil
 }
