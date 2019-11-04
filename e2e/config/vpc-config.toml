@@ -31,16 +31,27 @@
 
 [vpc]
   vpc_enabled = true
+  vpc_type_enabled = "gc"
   vpc_block_provider_name = "vpc-classic"
+
   gc_token_exchange_endpoint_url = "https://iam.bluemix.net"
   gc_riaas_endpoint_url = "https://RIAAS_ENDPOINT_URL:443"
   gc_resource_group_id = "RESOURCE_GROUP"
   gc_api_key = "IAM_API_KEY"
+  vpc_api_generation = 1
+  api_version = "2019-07-02"
+
+  g2_token_exchange_endpoint_url = "https://iam.bluemix.net"
+  g2_riaas_endpoint_url = "https://G2_RIAAS_ENDPOINT_URL:443"
+  g2_resource_group_id = "G2_RESOURCE_GROUP"
+  g2_api_key = "G2_IAM_API_KEY"
+  g2_vpc_api_generation = 2
+  g2_api_version = "2019-07-02"
+
   encryption = false
   vpc_timeout = "120s"
   max_retry_attempt  = 120
   max_retry_gap =  60
-  api_version = "2019-07-02"
 
 [IKS]
   iks_enabled = true

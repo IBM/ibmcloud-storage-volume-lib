@@ -22,7 +22,6 @@ type Volume struct {
 	VolumeEncryptionKey *VolumeEncryptionKey `json:"encryption_key,omitempty"`
 	ResourceGroup       *ResourceGroup       `json:"resource_group,omitempty"`
 	Tags                []string             `json:"tags,omitempty"`
-	Generation          GenerationType       `json:"generation,omitempty"`
 	Profile             *Profile             `json:"profile,omitempty"`
 	Snapshot            *Snapshot            `json:"snapshot,omitempty"`
 	CreatedAt           *time.Time           `json:"created_at,omitempty"`

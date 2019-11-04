@@ -35,7 +35,6 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume = &provider.Volume{}
 
 		volume.VolumeType = volumeType
-		volume.VPCVolume.Generation = generation
 		volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 		volume.VPCVolume.Profile = &provider.Profile{Name: "custom"}
 		volume.Name = &volName
