@@ -91,7 +91,6 @@ func CreateTestVolumes(numberOfVolumesRequired int) ([]*provider.Volume, error) 
 		volume = &provider.Volume{}
 
 		volume.VolumeType = volumeType
-		volume.VPCVolume.Generation = generation
 		volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 		volume.VPCVolume.Profile = &provider.Profile{Name: "5iops-tier"}
 		volume.Name = &volName

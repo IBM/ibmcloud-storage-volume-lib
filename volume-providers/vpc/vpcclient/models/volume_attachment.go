@@ -12,7 +12,6 @@ package models
 
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	"strings"
 	"time"
 )
 
@@ -23,14 +22,14 @@ type Device struct {
 
 // VolumeAttachment for riaas client
 type VolumeAttachment struct {
-	ID   string `json:"id"`
+	ID   string `json:"id,omitempty"`
 	Href string `json:"href,omitempty"`
 	Name string `json:"name,omitempty"`
 	// Status of volume attachment named - attaching , attached, detaching
 	Status string `json:"status,omitempty"`
 	Type   string `json:"type,omitempty"` //boot, data
 	// InstanceID this volume is attached to
-	InstanceID *string    `json:"instance_id,omitempty"`
+	InstanceID *string    `json:"-"`
 	ClusterID  *string    `json:"clusterID,omitempty"`
 	Device     *Device    `json:"device,omitempty"`
 	Volume     *Volume    `json:"volume,omitempty"`
@@ -66,7 +65,7 @@ func NewVolumeAttachment(volumeAttachmentRequest provider.VolumeAttachmentReques
 }
 
 //ToVolumeAttachmentResponse converts VolumeAttachment VolumeAttachmentResponse
-func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachmentResponse {
+func (va *VolumeAttachment) ToVolumeAttachmentResponse(providerType string) *provider.VolumeAttachmentResponse {
 	varp := &provider.VolumeAttachmentResponse{
 		VolumeAttachmentRequest: provider.VolumeAttachmentRequest{
 			VolumeID: va.Volume.ID,
@@ -86,18 +85,14 @@ func (va *VolumeAttachment) ToVolumeAttachmentResponse() *provider.VolumeAttachm
 	}
 
 	//Set DevicePath
-	if va.Device != nil && va.Device.ID != "" {
-		devicepath := va.Device.ID
-		generation := GTypeClassic //default
-		if va.Volume != nil && va.Volume.Generation != "" {
-			generation = va.Volume.Generation.String()
+	if va.Status == VolumeAttached && va.Device != nil && va.Device.ID != "" {
+		if providerType == GTypeG2 {
+			if len(va.Device.ID) >= GTypeG2DeviceIDLength {
+				varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = GTypeG2DevicePrefix + va.Device.ID[:GTypeG2DeviceIDLength]
+			}
+		} else { //GC
+			varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = GTypeClassicDevicePrefix + va.Device.ID
 		}
-
-		//prepend "/dev/" for generation=1 (gc)
-		if generation == GTypeClassic && !strings.HasPrefix(devicepath, GTypeClassicDevicePrefix) {
-			devicepath = GTypeClassicDevicePrefix + va.Device.ID
-		}
-		varp.VolumeAttachmentRequest.VPCVolumeAttachment.DevicePath = devicepath
 	}
 	return varp
 }

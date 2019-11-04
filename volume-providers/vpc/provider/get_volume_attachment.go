@@ -31,7 +31,7 @@ func (vpcs *VPCSession) GetVolumeAttachment(volumeAttachmentRequest provider.Vol
 	var volumeAttachmentResponse *provider.VolumeAttachmentResponse
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
 	if len(volumeAttachment.ID) > 0 {
-		//Get volume attachmet by ID if its specified
+		//Get volume attachmet by ID if it is specified
 		volumeAttachmentResponse, err = vpcs.getVolumeAttachmentByID(volumeAttachment)
 	} else {
 		// Get volume attachment by Volume ID. This is inefficient operation which requires iteration over volume attachment list
@@ -67,7 +67,8 @@ func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.V
 		userErr := userError.GetUserError(string(userError.VolumeAttachFindFailed), err, volumeAttachmentRequest.Volume.ID, *volumeAttachmentRequest.InstanceID)
 		return nil, userErr
 	}
-	volumeAttachmentResponse := volumeAttachmentResult.ToVolumeAttachmentResponse()
+
+	volumeAttachmentResponse := volumeAttachmentResult.ToVolumeAttachmentResponse(vpcs.Config.VPCBlockProviderType)
 	vpcs.Logger.Info("Successfuly retrived volume attachment", zap.Reflect("volumeAttachmentResponse", volumeAttachmentResponse))
 	return volumeAttachmentResponse, err
 }
@@ -97,7 +98,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 		// Check if volume ID is matching with requested volume ID
 		if volumeAttachmentItem.Volume.ID == volumeAttachmentRequest.Volume.ID {
 			vpcs.Logger.Info("Successfully found volume attachment", zap.Reflect("volumeAttachment", volumeAttachmentItem))
-			volumeResponse := volumeAttachmentItem.ToVolumeAttachmentResponse()
+			volumeResponse := volumeAttachmentItem.ToVolumeAttachmentResponse(vpcs.Config.VPCBlockProviderType)
 			vpcs.Logger.Info("Successfully fetched volume attachment from VPC provider", zap.Reflect("volumeResponse", volumeResponse))
 			return volumeResponse, nil
 		}
