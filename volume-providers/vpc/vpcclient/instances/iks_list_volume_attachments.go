@@ -19,23 +19,24 @@ import (
 )
 
 // ListVolumeAttachments retrives the list volume attachments with givne volume attachment details
-func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
-	defer util.TimeTracker("ListVolumeAttachments", time.Now())
+func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
+	defer util.TimeTracker("IKS ListVolumeAttachments", time.Now())
 
 	operation := &client.Operation{
 		Name:   "ListVolumeAttachment",
 		Method: "GET",
 	}
-
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
+	operation.PathPattern = vs.pathPrefix + "getAttachmentsList"
 
 	var volumeAttachmentList models.VolumeAttachmentList
+
 	apiErr := vs.receiverError
+	vs.client = vs.client.WithQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	vs.client = vs.client.WithQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
 
 	request := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID))
 
 	_, err := request.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {

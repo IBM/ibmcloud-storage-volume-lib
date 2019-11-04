@@ -19,22 +19,28 @@ import (
 )
 
 // AttachVolume attached volume to instances with givne volume attachment details
-func (vs *VolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
-	defer util.TimeTracker("AttachVolume", time.Now())
+func (vs *IKSVolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachment, error) {
+	defer util.TimeTracker("IKS AttachVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:   "AttachVolume",
 		Method: "POST",
 	}
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
+	operation.PathPattern = vs.pathPrefix + "createAttachment"
 
 	var volumeAttachment models.VolumeAttachment
 	apiErr := vs.receiverError
 
 	request := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect("PathParameters", volumeAttachmentTemplate.InstanceID))
-	_, err := vs.populatePathPrefixParameters(request, volumeAttachmentTemplate).JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
+	request = request.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	request = request.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
+	vol := *volumeAttachmentTemplate.Volume
+	request = request.SetQueryValue(IksVolumeQueryKey, vol.ID)
+
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksWorkerQueryKey, volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeQueryKey, vol.ID))
+
+	_, err := request.JSONBody(volumeAttachmentTemplate).JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
 		return nil, err
 	}
