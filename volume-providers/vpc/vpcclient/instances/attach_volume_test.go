@@ -74,7 +74,8 @@ func TestAttachVolume(t *testing.T) {
 					ResourceGroup: &models.ResourceGroup{
 						ID: "rg1",
 					},
-					Zone: &models.Zone{Name: "test-1"},
+					Generation: models.GenerationType("gc"),
+					Zone:       &models.Zone{Name: "test-1"},
 				},
 			}
 
@@ -97,7 +98,6 @@ func TestAttachVolume(t *testing.T) {
 				assert.NoError(t, err)
 				assert.NotNil(t, volumeAttachment)
 			}
-
 		})
 	}
 }

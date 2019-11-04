@@ -62,7 +62,7 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 		userErr := userError.GetUserError(string(userError.VolumeAttachFailed), err, volumeAttachmentRequest.VolumeID, volumeAttachmentRequest.InstanceID)
 		return nil, userErr
 	}
-	varp := volumeAttachResult.ToVolumeAttachmentResponse(vpcs.Config.VPCBlockProviderType)
+	varp := volumeAttachResult.ToVolumeAttachmentResponse()
 	vpcs.Logger.Info("Successfully attached volume from VPC provider", zap.Reflect("volumeResponse", varp))
 	return varp, nil
 }

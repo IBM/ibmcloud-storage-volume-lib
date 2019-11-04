@@ -259,10 +259,10 @@ func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libV
 	return
 }
 
-// IsValidVolumeIDFormat validating(gc has 5 parts and NG has 6 parts)
+// IsValidVolumeIDFormat validating
 func IsValidVolumeIDFormat(volID string) bool {
 	parts := strings.Split(volID, "-")
-	if len(parts) < volumeIDPartsCount {
+	if len(parts) != volumeIDPartsCount {
 		return false
 	}
 	return true

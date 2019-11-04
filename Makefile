@@ -25,10 +25,6 @@ fmt: lint
 	gofmt -l ${GOFILES}
 	@if [ -n "$$(gofmt -l ${GOFILES})" ]; then echo 'Above Files needs gofmt fixes. Please run gofmt -l -w on your code.' && exit 1; fi
 
-.PHONY: dofmt
-dofmt:
-	go fmt ./...
-
 .PHONY: lint
 lint:
 	$(GOPATH)/bin/golint --set_exit_status ${GOLINTPACKAGES}

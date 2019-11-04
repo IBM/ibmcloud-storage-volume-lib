@@ -83,7 +83,8 @@ func TestCreateVolume(t *testing.T) {
 				ResourceGroup: &models.ResourceGroup{
 					ID: "rg1",
 				},
-				Zone: &models.Zone{Name: "test-1"},
+				Generation: models.GenerationType("gen1"),
+				Zone:       &models.Zone{Name: "test-1"},
 			}
 
 			mux, client, teardown := test.SetupServer(t)

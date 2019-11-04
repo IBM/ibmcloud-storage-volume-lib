@@ -352,6 +352,7 @@ func main() {
 			Iops := "0"
 
 			volume.Az = zone
+			volume.VPCVolume.Generation = "gt"
 
 			volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 
