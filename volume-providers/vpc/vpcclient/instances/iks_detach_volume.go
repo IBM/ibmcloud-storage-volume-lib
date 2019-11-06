@@ -31,14 +31,14 @@ func (vs *IKSVolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.
 
 	apiErr := vs.receiverError
 
-	request := vs.client.NewRequest(operation)
-	request = request.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
-	request = request.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
-	request = request.SetQueryValue(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID)
+	operationRequest := vs.client.NewRequest(operation)
+	operationRequest = operationRequest.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	operationRequest = operationRequest.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
+	operationRequest = operationRequest.SetQueryValue(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID)
 
-	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
 
-	resp, err := request.JSONError(apiErr).Invoke()
+	resp, err := operationRequest.JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {

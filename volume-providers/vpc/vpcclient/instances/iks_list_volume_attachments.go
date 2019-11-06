@@ -34,11 +34,11 @@ func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate
 	vs.client = vs.client.WithQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
 	vs.client = vs.client.WithQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
 
-	request := vs.client.NewRequest(operation)
+	operationRequest := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID))
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID))
 
-	_, err := request.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
+	_, err := operationRequest.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attachments list", zap.Error(err))
 		return nil, err

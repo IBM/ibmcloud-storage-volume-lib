@@ -31,12 +31,12 @@ func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *m
 	var volumeAttachmentList models.VolumeAttachmentList
 	apiErr := vs.receiverError
 
-	request := vs.client.NewRequest(operation)
+	operationRequest := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
+	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
+	operationRequest = vs.populatePathPrefixParameters(operationRequest, volumeAttachmentTemplate)
 
-	_, err := request.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
+	_, err := operationRequest.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attachments list", zap.Error(err))
 		return nil, err
