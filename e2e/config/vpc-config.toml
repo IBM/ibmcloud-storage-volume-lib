@@ -5,7 +5,7 @@
   iam_url = "https://iam.bluemix.net"
   iam_client_id = "bx"
   iam_client_secret = "bx"
-  iam_api_key = "iam"
+  iam_api_key = "IAM_API_KEY"
   refresh_token = ""
   containers_api_route = "https://eu-gb.containers.cloud.ibm.com"
 
