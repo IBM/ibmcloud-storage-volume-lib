@@ -23,10 +23,10 @@ func (vs *VolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.Vol
 	defer util.TimeTracker("AttachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:   "AttachVolume",
-		Method: "POST",
+		Name:        "AttachVolume",
+		Method:      "POST",
+		PathPattern: vs.pathPrefix + instanceIDvolumeAttachmentPath,
 	}
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
 
 	var volumeAttachment models.VolumeAttachment
 	apiErr := vs.receiverError

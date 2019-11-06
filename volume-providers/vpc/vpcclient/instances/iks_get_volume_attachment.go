@@ -25,10 +25,8 @@ func (vs *IKSVolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *
 	operation := &client.Operation{
 		Name:        "GetVolumeAttachment",
 		Method:      "GET",
-		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
+		PathPattern: vs.pathPrefix + "getAttachment",
 	}
-
-	operation.PathPattern = vs.pathPrefix + "getAttachment"
 
 	apiErr := vs.receiverError
 	var volumeAttachment models.VolumeAttachment
