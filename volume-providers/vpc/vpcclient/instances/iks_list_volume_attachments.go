@@ -23,10 +23,10 @@ func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate
 	defer util.TimeTracker("IKS ListVolumeAttachments", time.Now())
 
 	operation := &client.Operation{
-		Name:   "ListVolumeAttachment",
-		Method: "GET",
+		Name:        "ListVolumeAttachment",
+		Method:      "GET",
+		PathPattern: vs.pathPrefix + "getAttachmentsList",
 	}
-	operation.PathPattern = vs.pathPrefix + "getAttachmentsList"
 
 	var volumeAttachmentList models.VolumeAttachmentList
 

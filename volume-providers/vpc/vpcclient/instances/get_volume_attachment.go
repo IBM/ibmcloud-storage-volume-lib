@@ -28,8 +28,6 @@ func (vs *VolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *mod
 		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
 
-	operation.PathPattern = vs.pathPrefix + instanceIDattachmentIDPath
-
 	apiErr := vs.receiverError
 	var volumeAttachment models.VolumeAttachment
 	request := vs.client.NewRequest(operation)

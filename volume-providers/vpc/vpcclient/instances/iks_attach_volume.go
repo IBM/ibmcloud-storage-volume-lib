@@ -23,10 +23,10 @@ func (vs *IKSVolumeAttachService) AttachVolume(volumeAttachmentTemplate *models.
 	defer util.TimeTracker("IKS AttachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:   "AttachVolume",
-		Method: "POST",
+		Name:        "AttachVolume",
+		Method:      "POST",
+		PathPattern: vs.pathPrefix + "createAttachment",
 	}
-	operation.PathPattern = vs.pathPrefix + "createAttachment"
 
 	var volumeAttachment models.VolumeAttachment
 	apiErr := vs.receiverError

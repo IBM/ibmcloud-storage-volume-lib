@@ -24,10 +24,10 @@ func (vs *IKSVolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.
 	defer util.TimeTracker("IKS DetachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:   "DetachVolume",
-		Method: "DELETE",
+		Name:        "DetachVolume",
+		Method:      "DELETE",
+		PathPattern: vs.pathPrefix + "deleteAttachment",
 	}
-	operation.PathPattern = vs.pathPrefix + "deleteAttachment"
 
 	apiErr := vs.receiverError
 

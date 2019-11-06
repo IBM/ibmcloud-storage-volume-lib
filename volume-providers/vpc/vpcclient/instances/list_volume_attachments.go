@@ -23,11 +23,10 @@ func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *m
 	defer util.TimeTracker("ListVolumeAttachments", time.Now())
 
 	operation := &client.Operation{
-		Name:   "ListVolumeAttachment",
-		Method: "GET",
+		Name:        "ListVolumeAttachment",
+		Method:      "GET",
+		PathPattern: vs.pathPrefix + instanceIDvolumeAttachmentPath,
 	}
-
-	operation.PathPattern = vs.pathPrefix + instanceIDvolumeAttachmentPath
 
 	var volumeAttachmentList models.VolumeAttachmentList
 	apiErr := vs.receiverError
