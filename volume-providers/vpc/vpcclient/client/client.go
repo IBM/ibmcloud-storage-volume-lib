@@ -110,6 +110,6 @@ func (c *client) WithPathParameter(name, value string) SessionClient {
 
 // WithQueryValue adds a query parameter to the request
 func (c *client) WithQueryValue(name, value string) SessionClient {
-	c.queryValues.Add(name, value)
+	c.queryValues.Set(name, value)
 	return c
 }
