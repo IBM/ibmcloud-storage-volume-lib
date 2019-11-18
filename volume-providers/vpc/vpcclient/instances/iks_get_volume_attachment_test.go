@@ -30,7 +30,7 @@ func TestIKSGetVolumeAttachment(t *testing.T) {
 	mux, client, teardown := test.SetupServer(t)
 	content := "{\"id\":\"volumeattachmentid\", \"name\":\"volume attachment\", \"device\": {\"id\":\"xvdc\"}, \"volume\": {\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}}"
 
-	test.SetupMuxResponse(t, mux, "/v2/storage/getAttachment", http.MethodGet, nil, http.StatusOK, content, nil)
+	test.SetupMuxResponse(t, mux, "/v2/storage/vpc/getAttachment", http.MethodGet, nil, http.StatusOK, content, nil)
 	volumeAttachService := instances.NewIKSVolumeAttachmentManager(client)
 
 	template := &models.VolumeAttachment{

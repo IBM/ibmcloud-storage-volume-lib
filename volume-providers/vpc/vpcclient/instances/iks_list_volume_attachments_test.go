@@ -31,7 +31,7 @@ func TestIKSListVolumeAttachment(t *testing.T) {
 
 	content := "{\"volume_attachments\":[{\"id\":\"volumeattachmentid\",\"volume\":{\"name\":\"volume-name\",\"id\":\"volume-id\"},\"device\":{\"id\":\"xvda\"},\"name\":\"attachment-volume-id\",\"status\":\"attached\",\"type\":\"boot\"}]}"
 
-	test.SetupMuxResponse(t, mux, "/v2/storage/getAttachmentsList", http.MethodGet, nil, http.StatusOK, content, nil)
+	test.SetupMuxResponse(t, mux, "/v2/storage/vpc/getAttachmentsList", http.MethodGet, nil, http.StatusOK, content, nil)
 	volumeAttachService := instances.NewIKSVolumeAttachmentManager(client)
 
 	template := &models.VolumeAttachment{

@@ -29,7 +29,7 @@ func TestIKSDetachVolume(t *testing.T) {
 	// IKS tests
 	mux, client, teardown := test.SetupServer(t)
 
-	test.SetupMuxResponse(t, mux, "/v2/storage/deleteAttachment", http.MethodDelete, nil, http.StatusOK, "", nil)
+	test.SetupMuxResponse(t, mux, "/v2/storage/vpc/deleteAttachment", http.MethodDelete, nil, http.StatusOK, "", nil)
 	volumeAttachService := instances.NewIKSVolumeAttachmentManager(client)
 
 	template := &models.VolumeAttachment{

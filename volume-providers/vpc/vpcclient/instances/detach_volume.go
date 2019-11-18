@@ -24,21 +24,21 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 	defer util.TimeTracker("DetachVolume", time.Now())
 
 	operation := &client.Operation{
-		Name:   "DetachVolume",
-		Method: "DELETE",
+		Name:        "DetachVolume",
+		Method:      "DELETE",
+		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
 	}
-	operation.PathPattern = vs.pathPrefix + instanceIDattachmentIDPath
 
 	apiErr := vs.receiverError
 
-	request := vs.client.NewRequest(operation)
-	request = vs.populatePathPrefixParameters(request, volumeAttachmentTemplate)
-	request = request.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	operationRequest := vs.client.NewRequest(operation)
+	operationRequest = vs.populatePathPrefixParameters(operationRequest, volumeAttachmentTemplate)
+	operationRequest = operationRequest.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
 
-	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", request.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
+	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
 	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
 
-	resp, err := request.JSONError(apiErr).Invoke()
+	resp, err := operationRequest.JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {

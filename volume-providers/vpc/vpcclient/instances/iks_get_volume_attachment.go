@@ -25,22 +25,20 @@ func (vs *IKSVolumeAttachService) GetVolumeAttachment(volumeAttachmentTemplate *
 	operation := &client.Operation{
 		Name:        "GetVolumeAttachment",
 		Method:      "GET",
-		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
+		PathPattern: vs.pathPrefix + "getAttachment",
 	}
-
-	operation.PathPattern = vs.pathPrefix + "getAttachment"
 
 	apiErr := vs.receiverError
 	var volumeAttachment models.VolumeAttachment
 
-	request := vs.client.NewRequest(operation)
-	request = request.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
-	request = request.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
-	request = request.SetQueryValue(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID)
+	operationRequest := vs.client.NewRequest(operation)
+	operationRequest = operationRequest.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	operationRequest = operationRequest.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
+	operationRequest = operationRequest.SetQueryValue(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID)
 
-	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", request.URL()), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", operationRequest.URL()), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
 
-	_, err := request.JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
+	_, err := operationRequest.JSONSuccess(&volumeAttachment).JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while getting volume attachment", zap.Error(err))
 		return nil, err
