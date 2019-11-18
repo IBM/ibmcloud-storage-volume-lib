@@ -252,7 +252,13 @@ func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libV
 		Iops:         &iops,
 		VolumeType:   VolumeType,
 		CreationTime: createdDate,
+		Name:         &vpcVolume.Name,
+		VPCVolume: provider.VPCVolume{
+			CRN:  vpcVolume.CRN,
+			Href: vpcVolume.Href,
+		},
 	}
+
 	if vpcVolume.Zone != nil {
 		libVolume.Az = vpcVolume.Zone.Name
 	}

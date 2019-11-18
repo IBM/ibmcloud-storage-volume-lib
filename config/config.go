@@ -102,13 +102,15 @@ type ServerConfig struct {
 
 // BluemixConfig ...
 type BluemixConfig struct {
-	IamURL          string `toml:"iam_url"`
-	IamClientID     string `toml:"iam_client_id"`
-	IamClientSecret string `toml:"iam_client_secret" json:"-"`
-	IamAPIKey       string `toml:"iam_api_key" json:"-"`
-	RefreshToken    string `toml:"refresh_token" json:"-"`
-	APIEndpointURL  string `toml:"containers_api_route"`
-	Encryption      bool   `toml:"encryption"`
+	IamURL                        string `toml:"iam_url"`
+	IamClientID                   string `toml:"iam_client_id"`
+	IamClientSecret               string `toml:"iam_client_secret" json:"-"`
+	IamAPIKey                     string `toml:"iam_api_key" json:"-"`
+	RefreshToken                  string `toml:"refresh_token" json:"-"`
+	APIEndpointURL                string `toml:"containers_api_route"`
+	GhostTaggingEndpointURL       string `toml:"ghost_tagging_endpoint_url"`
+	GhostTaggingSearchEndpointURL string `toml:"ghost_search_endpoint_url"`
+	Encryption                    bool   `toml:"encryption"`
 }
 
 // SoftlayerConfig ...
