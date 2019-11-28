@@ -32,9 +32,9 @@ script:
 - sed -i "s/IAM_API_KEY/"$IAM_API_KEY"/g" $GOPATH/src/github.com/IBM/ibmcloud-storage-volume-lib/e2e/config/vpc-config.toml
 - make vet
 - make fmt
-- travis_wait 180 make test
+- travis_wait 200 make test
 - make coverage
-- travis_wait 180 make volume-lib-e2e-test && touch "Passing" || touch "Failed"
+- travis_wait 200 make volume-lib-e2e-test && touch "Passing" || touch "Failed"
 after_success:
 - "./scripts/calculateCoverage.sh"
 - "./scripts/publishCoverage.sh"
