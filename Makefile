@@ -12,7 +12,7 @@ GOLINTPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v
 ARCH = $(shell uname -m)
 
 .PHONY: all
-all: deps fmt vet test
+all: deps dofmt vet test
 
 .PHONY: deps
 deps:

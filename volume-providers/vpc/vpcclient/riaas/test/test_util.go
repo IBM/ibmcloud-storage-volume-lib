@@ -35,7 +35,7 @@ func SetupServer(t *testing.T) (m *http.ServeMux, c client.SessionClient, teardo
 
 	queryValues := url.Values{"version": []string{models.APIVersion}}
 
-	c = client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
+	c = client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context", "default").WithDebug(log).WithAuthToken("auth-token")
 
 	teardown = func() {
 		s.Close()

@@ -66,7 +66,7 @@ func New(config Config) (*Session, error) {
 		"generation": []string{strconv.Itoa(apiGen)},
 	}
 
-	riaasClient := client.New(ctx, config.baseURL(), queryValues, config.httpClient(), config.ContextID)
+	riaasClient := client.New(ctx, config.baseURL(), queryValues, config.httpClient(), config.ContextID, config.ResourceGroup)
 
 	if config.DebugWriter != nil {
 		riaasClient.WithDebug(config.DebugWriter)

@@ -144,6 +144,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 			HTTPClient:    httpClient,
 			APIVersion:    conf.VPC.APIVersion,
 			APIGeneration: conf.VPC.VPCAPIGeneration,
+			ResourceGroup: conf.VPC.ResourceGroupID,
 		},
 	}
 	// Update VPC config for IKS deployment
