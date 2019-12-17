@@ -15,6 +15,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"go.uber.org/zap"
+	"time"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
@@ -34,7 +35,6 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume = &provider.Volume{}
 
 		volume.VolumeType = volumeType
-		volume.VPCVolume.Generation = generation
 		volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 		volume.VPCVolume.Profile = &provider.Profile{Name: "custom"}
 		volume.Name = &volName
@@ -45,6 +45,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 
 		volume.VPCVolume.Tags = []string{"Testing VPC volume from library with custom profile"}
 		By("Test Create Volume")
+		startTime = time.Now()
 		volumeObj, err := sess.CreateVolume(*volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
@@ -54,11 +55,13 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
+		ctxLogger.Info("Test Create Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
 		fmt.Printf("\n\n")
 
 		volume = &provider.Volume{}
 		volume.VolumeID = volumeObj.VolumeID
 		By("Test Delete Volume")
+		startTime = time.Now()
 		err = sess.DeleteVolume(volume)
 		if err == nil {
 			Expect(err).NotTo(HaveOccurred())
@@ -68,6 +71,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			ctxLogger.Info("Failed to delete volume...", zap.Reflect("StorageType", volume.VolumeID), zap.Reflect("Error", err))
 			Expect(err).To(HaveOccurred())
 		}
+		ctxLogger.Info("Test Delete Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
 		fmt.Printf("\n\n")
 	})
 })

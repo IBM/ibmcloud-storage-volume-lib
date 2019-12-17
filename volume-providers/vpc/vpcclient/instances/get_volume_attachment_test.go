@@ -20,7 +20,7 @@ import (
 	"testing"
 )
 
-func TestDetachVolume(t *testing.T) {
+func TestGetVolumeAttachment(t *testing.T) {
 	// Setup new style zap logger
 	logger, _ := GetTestContextLogger()
 	defer logger.Sync()
@@ -39,16 +39,9 @@ func TestDetachVolume(t *testing.T) {
 		verify    func(*testing.T, *http.Response, error)
 	}{
 		{
-			name:   "Verify that the correct endpoint is invoked",
-			status: http.StatusNoContent,
-		}, {
-			name:      "Verify that a 404 is returned to the caller",
-			status:    http.StatusNotFound,
-			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
-			expectErr: "Trace Code:, testerr Please check ",
-		}, {
-			name:   "Verify that the volume detachment is done correctly",
-			status: http.StatusOK,
+			name:    "Verify that the get volume attachment is done correctly",
+			status:  http.StatusOK,
+			content: "{\"id\":\"volumeattachmentid\", \"name\":\"volume attachment\", \"device\": {\"id\":\"xvdc\"}, \"volume\": {\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\"}}",
 			verify: func(t *testing.T, httpResponse *http.Response, err error) {
 				if assert.Nil(t, err) {
 					assert.Nil(t, httpResponse)
@@ -76,7 +69,7 @@ func TestDetachVolume(t *testing.T) {
 			}
 
 			mux, client, teardown := test.SetupServer(t)
-			test.SetupMuxResponse(t, mux, "/v1/instances/testinstance/volume_attachments/volumeattachmentid", http.MethodDelete, nil, testcase.status, testcase.content, nil)
+			test.SetupMuxResponse(t, mux, "/v1/instances/testinstance/volume_attachments/volumeattachmentid", http.MethodGet, nil, testcase.status, testcase.content, nil)
 
 			defer teardown()
 
@@ -84,7 +77,7 @@ func TestDetachVolume(t *testing.T) {
 
 			volumeAttachService := instances.New(client)
 
-			response, err := volumeAttachService.DetachVolume(template, logger)
+			response, err := volumeAttachService.GetVolumeAttachment(template, logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())

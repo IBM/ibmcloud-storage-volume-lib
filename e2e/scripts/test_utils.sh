@@ -27,7 +27,6 @@ function send_messages_to_slack2 {
     while IFS= read LINE; do send_message_to_slack "$LINE"; done < $LOG_FILE
 }
 
-
 function ibmcloud_login {
     echo 'Logging Into IbmCloud Container Service'
     ibmcloud --version
@@ -46,12 +45,67 @@ function check_instance_state {
          echo "$instance_id is ready."
          break
       fi
-      if [[ $attempts -gt 30 ]]; then
+      if [[ $attempts -gt 60 ]]; then
          echo "$instance_id is not ready."
          ibmcloud is in $instance_id
          exit 1
       fi
-      echo "$instance_id state == $instance_status Sleeping 10 seconds"
-      sleep 10
+      echo "$instance_id state == $instance_status Sleeping 60 seconds"
+      sleep 60
+  done
+}
+
+function cleanup {
+  attempts=0
+  echo "Detaching instance attachments"
+  ibmcloud is instances |grep "e2e-common-lib" | awk -F ' ' '{print $1}' |
+  while IFS= read -r instanceID
+  do
+    ibmcloud is in-vols $instanceID | grep -v "boot" | grep "data" | grep "e2e-common-lib" | awk -F ' ' '{print $1}' |
+    while IFS= read -r attachmentID
+    do
+      echo "Detaching $attachmentID"
+      ibmcloud is instance-volume-attachment-detach $instanceID $attachmentID -f
+      while true; do
+        attempts=$((attempts+1))
+        attachmentStatus=$(ibmcloud is in-vol $instanceID $attachmentID | grep Status | awk -F ' ' '{print $2}')
+        if [ -z "$attachmentStatus" ]; then
+           echo "$attachmentStatus is detached."
+           break
+        fi
+        if [ $attempts -gt 60 ]; then
+           echo "$attachmentStatus is still in attached state."
+           ibmcloud is in-vol $instanceID $attachmentID
+           break
+        fi
+        echo "$attachmentID state == $attachmentStatus Sleeping 60 seconds"
+        sleep 30
+      done
+    done
+    ibmcloud is instance-delete $instanceID -f
+  done
+
+  attempts=0
+  echo "Deleting volumes"
+  ibmcloud is vols | grep -v "boot" | grep "e2e-" | awk -F ' ' '{print $1}' |
+  while IFS= read -r volumeID
+  do
+    echo "Deleting $volumeID"
+    ibmcloud is vold $volumeID -f
+    while true; do
+      attempts=$((attempts+1))
+      volumeStatus=$(ibmcloud is vol $volumeID | grep Status | awk -F ' ' '{print $2}')
+      if [ -z "$volumeStatus" ]; then
+         echo "$volumeStatus is deleted."
+         break
+      fi
+      if [ $attempts -gt 60 ]; then
+         echo "$volumeStatus is still available."
+         ibmcloud is vol $volumeID
+         break
+      fi
+      echo "$volumeID state == $volumeStatus Sleeping 60 seconds"
+      sleep 30
+    done
   done
 }

@@ -25,6 +25,10 @@ fmt: lint
 	gofmt -l ${GOFILES}
 	@if [ -n "$$(gofmt -l ${GOFILES})" ]; then echo 'Above Files needs gofmt fixes. Please run gofmt -l -w on your code.' && exit 1; fi
 
+.PHONY: dofmt
+dofmt:
+	go fmt ./...
+
 .PHONY: lint
 lint:
 	$(GOPATH)/bin/golint --set_exit_status ${GOLINTPACKAGES}
@@ -57,7 +61,7 @@ build:
 
 .PHONY: volume-lib-e2e-test
 volume-lib-e2e-test:
-	go test ./e2e/... -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -timeout 180m  2>&1 | tee e2e_logs.txt
+	go test ./e2e/... -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -timeout 240m  2>&1 | tee e2e_logs.txt
 
 .PHONY: clean
 clean:

@@ -15,14 +15,17 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"os"
+	"time"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
 	uid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"os"
 )
 
 var sess provider.Session
@@ -33,6 +36,7 @@ var requestID string
 var resourceGroupID string
 var vpcZone string
 var volumeEncryptionKeyCRN string
+var startTime time.Time
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -51,8 +55,9 @@ var _ = BeforeSuite(func() {
 		Expect(err).To(HaveOccurred())
 	}
 
-	// Check if debug log level enabled or not
-	if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
+	if conf.VPC != nil && conf.VPC.VPCTypeEnabled == "g2" && conf.VPC.G2ResourceGroupID != "" {
+		resourceGroupID = conf.VPC.G2ResourceGroupID
+	} else if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
 		resourceGroupID = conf.VPC.ResourceGroupID
 	}
 
@@ -77,6 +82,8 @@ var _ = BeforeSuite(func() {
 	providerName := ""
 	if conf.VPC.Enabled {
 		providerName = conf.VPC.VPCBlockProviderName
+	} else {
+		providerName = conf.IKS.IKSBlockProviderName
 	}
 
 	ctxLogger, _ = getContextLogger()
@@ -93,3 +100,43 @@ var _ = AfterSuite(func() {
 	defer sess.Close()
 	defer ctxLogger.Sync()
 })
+
+func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
+	consoleDebugging := zapcore.Lock(os.Stdout)
+	consoleErrors := zapcore.Lock(os.Stderr)
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.TimeKey = "ts"
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	traceLevel := zap.NewAtomicLevel()
+	traceLevel.SetLevel(zap.InfoLevel)
+	core := zapcore.NewTee(
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleDebugging, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return (lvl >= traceLevel.Level()) && (lvl < zapcore.ErrorLevel)
+		})),
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleErrors, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+			return lvl >= zapcore.ErrorLevel
+		})),
+	)
+	logger := zap.New(core, zap.AddCaller())
+	return logger, traceLevel
+}
+
+func updateRequestID(err error, requestID string) error {
+	if err == nil {
+		return err
+	}
+	usrError, ok := err.(userError.Message)
+	if !ok {
+		return err
+	}
+	usrError.RequestID = requestID
+	return usrError
+}
+
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value + "-"
+}

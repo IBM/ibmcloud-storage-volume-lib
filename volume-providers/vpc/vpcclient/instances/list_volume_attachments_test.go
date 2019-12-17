@@ -74,16 +74,14 @@ func TestListVolumeAttachment(t *testing.T) {
 					ResourceGroup: &models.ResourceGroup{
 						ID: "rg1",
 					},
-					Generation: models.GenerationType("gc"),
-					Zone:       &models.Zone{Name: "test-1"},
+					Zone: &models.Zone{Name: "test-1"},
 				},
 			}
 
 			logger.Info("Test case being executed", zap.Reflect("testcase", testcase.name))
 
 			volumeAttachService := instances.New(client)
-
-			volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachment(template, logger)
+			volumeAttachmentsList, err := volumeAttachService.ListVolumeAttachments(template, logger)
 
 			if testcase.expectErr != "" && assert.Error(t, err) {
 				assert.Equal(t, testcase.expectErr, err.Error())

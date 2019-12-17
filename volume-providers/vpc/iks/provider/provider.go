@@ -15,6 +15,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	vpcprovider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 	"go.uber.org/zap"
@@ -76,9 +77,17 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 	}
 	vpcSession, _ := session.(*vpcprovider.VPCSession)
 	ctxLogger.Info("Opening IKS block session")
-	ccf, _ = iksp.vpcBlockProvider.ContextCredentialsFactory(nil)
+
+	//Create ContextCredentialsFactory
+	ccf, err = iksp.ContextCredentialsFactory(nil)
+	if err != nil {
+		ctxLogger.Error("Error while creating the ContextCredentialsFactory", zap.Error(err))
+		return nil, err
+	}
+	iksp.iksBlockProvider.ContextCF = ccf
+
 	ctxLogger.Info("Its ISK dual session. Getttng IAM token for  IKS block session")
-	iksContextCredentials, err := ccf.ForIAMAccessToken(iksp.globalConfig.VPC.APIKey, ctxLogger)
+	iksContextCredentials, err := ccf.ForIAMAccessToken(iksp.globalConfig.Bluemix.IamAPIKey, ctxLogger)
 	if err != nil {
 		ctxLogger.Warn("Error occured while generating IAM token for IKS. But continue with VPC session alone. \n Volume Mount operation will fail but volume provisioning will work", zap.Error(err))
 		session = &vpcprovider.VPCSession{} // Empty session to avoid Nil references.
@@ -97,4 +106,17 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 	}
 	ctxLogger.Debug("IksVpcSession", zap.Reflect("IksVpcSession", vpcIksSession))
 	return &vpcIksSession, nil
+}
+
+// ContextCredentialsFactory ...
+func (iksp *IksVpcBlockProvider) ContextCredentialsFactory(zone *string) (local.ContextCredentialsFactory, error) {
+	//  Datacenter hint not required by IKS provider implementation
+	// VPC provider use differnt APIkey and Auth Endpoints
+	authConfig := &config.BluemixConfig{
+		IamURL:          iksp.globalConfig.Bluemix.IamURL,
+		IamAPIKey:       iksp.globalConfig.Bluemix.IamAPIKey,
+		IamClientID:     iksp.globalConfig.Bluemix.IamClientID,
+		IamClientSecret: iksp.globalConfig.Bluemix.IamClientSecret,
+	}
+	return auth.NewContextCredentialsFactory(authConfig, nil, iksp.globalConfig.VPC)
 }
