@@ -44,7 +44,6 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 		Iops:          iops,
 		Tags:          volumeRequest.VPCVolume.Tags,
 		ResourceGroup: &resourceGroup,
-		Generation:    models.GenerationType(volumeRequest.Generation),
 		Profile: &models.Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},

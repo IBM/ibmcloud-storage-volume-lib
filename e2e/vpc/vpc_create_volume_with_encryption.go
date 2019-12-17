@@ -15,12 +15,10 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"os"
+
 	"time"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
-	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
@@ -38,7 +36,6 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume = &provider.Volume{}
 
 		volume.VolumeType = volumeType
-		volume.VPCVolume.Generation = generation
 		volume.VPCVolume.ResourceGroup = &provider.ResourceGroup{}
 		profile := vpcProfile
 		volume.VPCVolume.Profile = &provider.Profile{Name: profile}
@@ -82,35 +79,3 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		fmt.Printf("\n\n")
 	})
 })
-
-func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
-	consoleDebugging := zapcore.Lock(os.Stdout)
-	consoleErrors := zapcore.Lock(os.Stderr)
-	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.TimeKey = "ts"
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	traceLevel := zap.NewAtomicLevel()
-	traceLevel.SetLevel(zap.InfoLevel)
-	core := zapcore.NewTee(
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleDebugging, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return (lvl >= traceLevel.Level()) && (lvl < zapcore.ErrorLevel)
-		})),
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), consoleErrors, zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-			return lvl >= zapcore.ErrorLevel
-		})),
-	)
-	logger := zap.New(core, zap.AddCaller())
-	return logger, traceLevel
-}
-
-func updateRequestID(err error, requestID string) error {
-	if err == nil {
-		return err
-	}
-	usrError, ok := err.(userError.Message)
-	if !ok {
-		return err
-	}
-	usrError.RequestID = requestID
-	return usrError
-}

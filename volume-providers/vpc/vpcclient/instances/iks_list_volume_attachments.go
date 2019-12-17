@@ -11,7 +11,6 @@
 package instances
 
 import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
@@ -19,26 +18,25 @@ import (
 	"time"
 )
 
-// ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
-func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
-
-	methodName := "VolumeAttachService.ListVolumeAttachment"
-	defer util.TimeTracker(methodName, time.Now())
-	defer metrics.UpdateDurationFromStart(ctxLogger, methodName, time.Now())
+// ListVolumeAttachments retrives the list volume attachments with givne volume attachment details
+func (vs *IKSVolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
+	defer util.TimeTracker("IKS ListVolumeAttachments", time.Now())
 
 	operation := &client.Operation{
 		Name:        "ListVolumeAttachment",
 		Method:      "GET",
-		PathPattern: vs.pathPrefix + instanceIDvolumeAttachmentPath,
+		PathPattern: vs.pathPrefix + "getAttachmentsList",
 	}
 
 	var volumeAttachmentList models.VolumeAttachmentList
+
 	apiErr := vs.receiverError
+	vs.client = vs.client.WithQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	vs.client = vs.client.WithQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
 
 	operationRequest := vs.client.NewRequest(operation)
 
-	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	operationRequest = vs.populatePathPrefixParameters(operationRequest, volumeAttachmentTemplate)
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID))
 
 	_, err := operationRequest.JSONSuccess(&volumeAttachmentList).JSONError(apiErr).Invoke()
 	if err != nil {

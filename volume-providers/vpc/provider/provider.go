@@ -39,6 +39,10 @@ const (
 	vpcExceptionPrefix = "IBM Cloud infrastructure exception"
 	// timeoutDefault ...
 	timeoutDefault = "120s"
+	// VPCClassic ...
+	VPCClassic = "gc"
+	// VPCNextGen ...
+	VPCNextGen = "g2"
 )
 
 // VPCBlockProvider implements provider.Provider
@@ -47,7 +51,7 @@ type VPCBlockProvider struct {
 	serverConfig   *config.ServerConfig
 	config         *config.VPCProviderConfig
 	tokenGenerator *tokenGenerator
-	contextCF      local.ContextCredentialsFactory
+	ContextCF      local.ContextCredentialsFactory
 
 	ClientProvider riaas.RegionalAPIClientProvider
 	httpClient     *http.Client
@@ -63,6 +67,43 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	if conf.Bluemix == nil || conf.VPC == nil {
 		return nil, errors.New("Incomplete config for VPCBlockProvider")
 	}
+
+	//Do config validation and enable only one generationType (i.e VPC-Classic | VPC-NG)
+	gcConfigFound := (conf.VPC.EndpointURL != "") && (conf.VPC.TokenExchangeURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
+	g2ConfigFound := (conf.VPC.G2EndpointURL != "") && (conf.VPC.G2TokenExchangeURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
+	//if both config found, look for VPCTypeEnabled, otherwise default to GC
+	//Incase of NG configurations, override the base properties.
+	if (gcConfigFound && g2ConfigFound && conf.VPC.VPCTypeEnabled == VPCNextGen) || (!gcConfigFound && g2ConfigFound) {
+
+		conf.VPC.EndpointURL = conf.VPC.G2EndpointURL
+		conf.VPC.TokenExchangeURL = conf.VPC.G2TokenExchangeURL
+		conf.VPC.APIKey = conf.VPC.G2APIKey
+		conf.VPC.ResourceGroupID = conf.VPC.G2ResourceGroupID
+
+		//Set API Generation As 2 (if unspecified in config/ENV-VAR)
+		if conf.VPC.G2VPCAPIGeneration <= 0 {
+			conf.VPC.G2VPCAPIGeneration = 2
+		}
+		conf.VPC.VPCAPIGeneration = conf.VPC.G2VPCAPIGeneration
+
+		//Set the APIVersion Date, it can be diffrent in GC and NG
+		if conf.VPC.G2APIVersion != "" {
+			conf.VPC.APIVersion = conf.VPC.G2APIVersion
+		}
+
+		//set provider-type (this usually comes from the secret)
+		if conf.VPC.VPCBlockProviderType != VPCNextGen {
+			conf.VPC.VPCBlockProviderType = VPCNextGen
+		}
+
+		//Mark this as enabled/active
+		if conf.VPC.VPCTypeEnabled != VPCNextGen {
+			conf.VPC.VPCTypeEnabled = VPCNextGen
+		}
+	} else { //This is GC, no-override required
+		conf.VPC.VPCBlockProviderType = VPCClassic //incase of gc, i dont see its being set in slclient.toml, but NG cluster has this
+	}
+
 	// VPC provider use differnt APIkey and Auth Endpoint
 	authConfig := &config.BluemixConfig{
 		IamURL:          conf.VPC.TokenExchangeURL,
@@ -97,7 +138,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		serverConfig:   conf.Server,
 		config:         conf.VPC,
 		tokenGenerator: &tokenGenerator{config: conf.VPC},
-		contextCF:      contextCF,
+		ContextCF:      contextCF,
 		httpClient:     httpClient,
 		APIConfig: riaas.Config{
 			BaseURL:       conf.VPC.EndpointURL,
@@ -118,7 +159,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 // ContextCredentialsFactory ...
 func (vpcp *VPCBlockProvider) ContextCredentialsFactory(zone *string) (local.ContextCredentialsFactory, error) {
 	//  Datacenter hint not required by VPC provider implementation
-	return vpcp.contextCF, nil
+	return vpcp.ContextCF, nil
 }
 
 // OpenSession opens a session on the provider

@@ -11,7 +11,6 @@
 package instances
 
 import (
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
@@ -21,31 +20,29 @@ import (
 )
 
 // DetachVolume retrives the volume attach status with givne volume attachment details
-func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
-	methodName := "VolumeAttachService.DetachVolume"
-	defer util.TimeTracker(methodName, time.Now())
-	defer metrics.UpdateDurationFromStart(ctxLogger, methodName, time.Now())
+func (vs *IKSVolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
+	defer util.TimeTracker("IKS DetachVolume", time.Now())
 
 	operation := &client.Operation{
 		Name:        "DetachVolume",
 		Method:      "DELETE",
-		PathPattern: vs.pathPrefix + instanceIDattachmentIDPath,
+		PathPattern: vs.pathPrefix + "deleteAttachment",
 	}
 
 	apiErr := vs.receiverError
 
 	operationRequest := vs.client.NewRequest(operation)
-	operationRequest = vs.populatePathPrefixParameters(operationRequest, volumeAttachmentTemplate)
-	operationRequest = operationRequest.PathParameter(attachmentIDParam, volumeAttachmentTemplate.ID)
+	operationRequest = operationRequest.SetQueryValue(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID)
+	operationRequest = operationRequest.SetQueryValue(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID)
+	operationRequest = operationRequest.SetQueryValue(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID)
 
-	ctxLogger.Info("Equivalent curl command details", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation))
-	ctxLogger.Info("Pathparameters", zap.Reflect(instanceIDParam, volumeAttachmentTemplate.InstanceID), zap.Reflect(attachmentIDParam, volumeAttachmentTemplate.ID))
+	ctxLogger.Info("Equivalent curl command and query parameters", zap.Reflect("URL", operationRequest.URL()), zap.Reflect("volumeAttachmentTemplate", volumeAttachmentTemplate), zap.Reflect("Operation", operation), zap.Reflect(IksClusterQueryKey, *volumeAttachmentTemplate.ClusterID), zap.Reflect(IksWorkerQueryKey, *volumeAttachmentTemplate.InstanceID), zap.Reflect(IksVolumeAttachmentIDQueryKey, volumeAttachmentTemplate.ID))
 
 	resp, err := operationRequest.JSONError(apiErr).Invoke()
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
-			// volume attachment is deleted. So do not want to retry
+			// volume attachment is deleted, no need to retry
 			return resp, apiErr
 		}
 	}
