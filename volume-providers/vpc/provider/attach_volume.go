@@ -41,23 +41,26 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 		return nil, err
 	}
 	var volumeAttachResult *models.VolumeAttachment
-	// First , check if volume is already attached or attaching to given instance
-	vpcs.Logger.Info("Checking if volume is already attached ")
-	currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentRequest)
-	if err == nil && currentVolAttachment != nil && currentVolAttachment.Status != StatusDetaching {
-		vpcs.Logger.Info("Volume is already attached", zap.Reflect("currentVolAttachment", currentVolAttachment))
-		return currentVolAttachment, nil
-	}
-	//Try attaching volume if it's not already attached or there is error in getting current volume attachment
-	vpcs.Logger.Info("Attaching volume from VPC provider...", zap.Bool("IKSEnabled?", vpcs.Config.IsIKS))
+	var varp *provider.VolumeAttachmentResponse
 	volumeAttachment := models.NewVolumeAttachment(volumeAttachmentRequest)
 
 	err = vpcs.APIRetry.FlexyRetry(vpcs.Logger, func() (error, bool) {
+		// First , check if volume is already attached or attaching to given instance
+		vpcs.Logger.Info("Checking if volume is already attached by other thread")
+		currentVolAttachment, err := vpcs.GetVolumeAttachment(volumeAttachmentRequest)
+		if err == nil && currentVolAttachment != nil && currentVolAttachment.Status != StatusDetaching {
+			vpcs.Logger.Info("Volume is already attached", zap.Reflect("currentVolAttachment", currentVolAttachment))
+			varp = currentVolAttachment
+			return nil, true // stop retry volume already attached
+		}
+		//Try attaching volume if it's not already attached or there is error in getting current volume attachment
+		vpcs.Logger.Info("Attaching volume from VPC provider...", zap.Bool("IKSEnabled?", vpcs.Config.IsIKS))
 		volumeAttachResult, err = vpcs.APIClientVolAttachMgr.AttachVolume(&volumeAttachment, vpcs.Logger)
 		// Keep retry, until we get the proper volumeAttachResult object
 		if err != nil {
 			return err, skipRetryForAttach(err, vpcs.Config.IsIKS)
 		}
+		varp = volumeAttachResult.ToVolumeAttachmentResponse(vpcs.Config.VPCBlockProviderType)
 		return err, true // stop retry as no error
 	})
 
@@ -65,7 +68,6 @@ func (vpcs *VPCSession) AttachVolume(volumeAttachmentRequest provider.VolumeAtta
 		userErr := userError.GetUserError(string(userError.VolumeAttachFailed), err, volumeAttachmentRequest.VolumeID, volumeAttachmentRequest.InstanceID)
 		return nil, userErr
 	}
-	varp := volumeAttachResult.ToVolumeAttachmentResponse(vpcs.Config.VPCBlockProviderType)
 	vpcs.Logger.Info("Successfully attached volume from VPC provider", zap.Reflect("volumeResponse", varp))
 	return varp, nil
 }

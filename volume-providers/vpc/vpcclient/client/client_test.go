@@ -241,7 +241,7 @@ func TestDebugMode(t *testing.T) {
 
 			log = &bytes.Buffer{}
 
-			riaas = client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token")
+			riaas = client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context", "default").WithDebug(log).WithAuthToken("auth-token")
 
 			defer s.Close()
 
@@ -320,7 +320,7 @@ func TestOperationURLProcessing(t *testing.T) {
 	for _, testcase := range testcases {
 
 		t.Run(testcase.name, func(t *testing.T) {
-			c := client.New(context.Background(), testcase.baseURL, queryValues, http.DefaultClient, "test-context")
+			c := client.New(context.Background(), testcase.baseURL, queryValues, http.DefaultClient, "test-context", "default")
 			actualURL := c.NewRequest(testcase.operation).URL()
 			assert.Equal(t, testcase.expectedURL, actualURL)
 		})
@@ -338,7 +338,7 @@ func TestWithPathParameter(t *testing.T) {
 		"generation": []string{strconv.Itoa(models.APIGeneration)},
 	}
 
-	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token").WithPathParameter("test", "test")
+	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context", "default").WithDebug(log).WithAuthToken("auth-token").WithPathParameter("test", "test")
 	assert.NotNil(t, riaas)
 	defer s.Close()
 }
@@ -354,7 +354,7 @@ func TestWithQueryValue(t *testing.T) {
 		"generation": []string{strconv.Itoa(models.APIGeneration)},
 	}
 
-	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context").WithDebug(log).WithAuthToken("auth-token").WithQueryValue("test", "test")
+	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context", "default").WithDebug(log).WithAuthToken("auth-token").WithQueryValue("test", "test")
 	assert.NotNil(t, riaas)
 	defer s.Close()
 }

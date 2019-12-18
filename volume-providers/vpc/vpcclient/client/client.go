@@ -46,7 +46,7 @@ type client struct {
 }
 
 // New creates a new instance of a SessionClient
-func New(ctx context.Context, baseURL string, queryValues url.Values, httpClient *http.Client, contextID string) SessionClient {
+func New(ctx context.Context, baseURL string, queryValues url.Values, httpClient *http.Client, contextID string, resourceGroupID string) SessionClient {
 	return &client{
 		baseURL:       baseURL,
 		httpClient:    httpClient,
@@ -55,6 +55,7 @@ func New(ctx context.Context, baseURL string, queryValues url.Values, httpClient
 		authenHandler: &authenticationHandler{},
 		contextID:     contextID,
 		context:       ctx,
+		resourceGroup: resourceGroupID,
 	}
 }
 
@@ -66,6 +67,10 @@ func (c *client) NewRequest(operation *Operation) *Request {
 	if c.contextID != "" {
 		headers.Set("X-Request-ID", c.contextID)
 		headers.Set("X-Transaction-ID", c.contextID) // To avoid IKS cloudflare overriding X-Request-ID
+	}
+
+	if c.resourceGroup != "" {
+		headers.Set("X-Auth-Resource-Group-ID", c.resourceGroup)
 	}
 
 	// Copy the query values to a new map
