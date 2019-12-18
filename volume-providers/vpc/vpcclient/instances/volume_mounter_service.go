@@ -24,7 +24,7 @@ type VolumeAttachManager interface {
 	AttachVolume(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
 	// GetVolumeAttachment retrives the single VolumeAttachment based on the instance ID and attachmentID
 	GetVolumeAttachment(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachment, error)
-	// ListVolumeAttachment retrives the VolumeAttachment list for given server
+	// ListVolumeAttachments retrives the VolumeAttachment list for given server
 	ListVolumeAttachments(*models.VolumeAttachment, *zap.Logger) (*models.VolumeAttachmentList, error)
 	// Delete the volume
 	DetachVolume(*models.VolumeAttachment, *zap.Logger) (*http.Response, error)
