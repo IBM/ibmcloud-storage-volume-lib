@@ -42,11 +42,11 @@ func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.Vol
 	if err != nil {
 		ctxLogger.Error("Error occured while deleting volume attachment", zap.Error(err))
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
-			// volume attachment is deleted. So do not want to retry
+			// volume Attachment is deleted. So do not want to retry
+			ctxLogger.Info("Exit DetachVolume", zap.Any("resp", resp.StatusCode), zap.Error(err), zap.Error(apiErr))
 			return resp, apiErr
 		}
 	}
-
-	ctxLogger.Info("Successfuly deleted the volume attachment")
+	ctxLogger.Info("Exit DetachVolume", zap.Error(err), zap.Error(apiErr))
 	return resp, err
 }
