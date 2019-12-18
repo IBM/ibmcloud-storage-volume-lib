@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-// ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
+// ListVolumeAttachments retrives the list volume attachments with givne volume attachment details
 func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
 
 	methodName := "VolumeAttachService.ListVolumeAttachments"
