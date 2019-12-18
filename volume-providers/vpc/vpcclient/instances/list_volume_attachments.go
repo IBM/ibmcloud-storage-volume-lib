@@ -20,9 +20,9 @@ import (
 )
 
 // ListVolumeAttachment retrives the list volume attachments with givne volume attachment details
-func (vs *VolumeAttachService) ListVolumeAttachment(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
+func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
 
-	methodName := "VolumeAttachService.ListVolumeAttachment"
+	methodName := "VolumeAttachService.ListVolumeAttachments"
 	defer util.TimeTracker(methodName, time.Now())
 	defer metrics.UpdateDurationFromStart(ctxLogger, methodName, time.Now())
 
