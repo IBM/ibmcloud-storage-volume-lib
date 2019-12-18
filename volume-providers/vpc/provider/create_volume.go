@@ -11,10 +11,12 @@
 package provider
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"time"
 )
 
 const (
@@ -26,6 +28,7 @@ const (
 func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeResponse *provider.Volume, err error) {
 	vpcs.Logger.Debug("Entry of CreateVolume method...")
 	defer vpcs.Logger.Debug("Exit from CreateVolume method...")
+	defer metrics.UpdateDurationFromStart(vpcs.Logger, "CreateVolume", time.Now())
 
 	vpcs.Logger.Info("Basic validation for CreateVolume request... ", zap.Reflect("RequestedVolumeDetails", volumeRequest))
 	resourceGroup, iops, err := validateVolumeRequest(volumeRequest)

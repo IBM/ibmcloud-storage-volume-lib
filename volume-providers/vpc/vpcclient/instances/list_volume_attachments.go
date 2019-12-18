@@ -11,6 +11,7 @@
 package instances
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
@@ -20,7 +21,10 @@ import (
 
 // ListVolumeAttachments retrives the list volume attachments with givne volume attachment details
 func (vs *VolumeAttachService) ListVolumeAttachments(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*models.VolumeAttachmentList, error) {
-	defer util.TimeTracker("ListVolumeAttachments", time.Now())
+
+	methodName := "VolumeAttachService.ListVolumeAttachments"
+	defer util.TimeTracker(methodName, time.Now())
+	defer metrics.UpdateDurationFromStart(ctxLogger, methodName, time.Now())
 
 	operation := &client.Operation{
 		Name:        "ListVolumeAttachment",

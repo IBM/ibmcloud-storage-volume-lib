@@ -11,6 +11,7 @@
 package instances
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/client"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
@@ -21,7 +22,9 @@ import (
 
 // DetachVolume retrives the volume attach status with givne volume attachment details
 func (vs *VolumeAttachService) DetachVolume(volumeAttachmentTemplate *models.VolumeAttachment, ctxLogger *zap.Logger) (*http.Response, error) {
-	defer util.TimeTracker("DetachVolume", time.Now())
+	methodName := "VolumeAttachService.DetachVolume"
+	defer util.TimeTracker(methodName, time.Now())
+	defer metrics.UpdateDurationFromStart(ctxLogger, methodName, time.Now())
 
 	operation := &client.Operation{
 		Name:        "DetachVolume",
