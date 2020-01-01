@@ -23,7 +23,7 @@ def send_file (FilePath):
         filename="e2e_test_job_logs.txt",
         username='IBM VPC storage common library e2e test results',
         title="VPC storage common library e2e test full logs")
-    print response["ok"]
+    print(response["ok"])
 
 def send_message (FilePath):
     with open(FilePath, 'r+') as file_content:
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     filePath = gopath + "/src/github.com/IBM/ibmcloud-storage-volume-lib/" + sys.argv[1]
     isAttachment = sys.argv[2]
     if filePath is None or isAttachment is None:
-        print "Please send the variables filePath and isAttachment"
+        print("Please send the variables filePath and isAttachment")
         sys.exit(1)
 
     if isAttachment == "True" or isAttachment == "true":
