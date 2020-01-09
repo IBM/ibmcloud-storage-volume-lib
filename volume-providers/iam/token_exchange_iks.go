@@ -139,8 +139,7 @@ func (r *tokenExchangeIKSRequest) exchangeForIMSToken() (*IMSToken, error) {
 // sendTokenExchangeRequest ...
 func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSResponse, error) {
 	// Set headers
-	byteToChar := string([]byte{53, 56, 97, 49, 48, 48, 98, 53, 45, 52, 54, 98, 48, 45, 52, 49, 100, 98, 45, 57, 97, 54, 49, 45, 97, 52, 49, 53, 55, 52, 55, 100, 55, 57, 57, 51})
-	r.request = r.request.Add("X-CSRF-TOKEN", byteToChar)
+	r.request = r.request.Add("X-CSRF-TOKEN", r.tes.bluemixConf.CSRFToken)
 	var apikey = struct {
 		APIKey string `json:"apikey"`
 	}{
@@ -148,8 +147,6 @@ func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSR
 	}
 	r.request = r.request.Body(&apikey)
 
-	//////////
-	// Make the request
 	var successV tokenExchangeIKSResponse
 	var errorV = struct {
 		ErrorCode        string `json:"code"`

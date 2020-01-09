@@ -120,6 +120,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		IamClientID:     conf.Bluemix.IamClientID,
 		IamClientSecret: conf.Bluemix.IamClientSecret,
 		PrivateAPIRoute: conf.Bluemix.PrivateAPIRoute, // Only for private cluster
+		CSRFToken:       conf.Bluemix.CSRFToken,       // required for private cluster
 	}
 
 	// Get the private endpoint for RIaaS as cluster is private
@@ -128,6 +129,8 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		conf.VPC.EndpointURL = getPrivateEndpoint(logger, conf.VPC.EndpointURL)
 		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute // Just to fix the logging
 	}
+
+	logger.Info("================> Overall configuration", zap.Reflect("Config", conf))
 
 	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
 	if err != nil {

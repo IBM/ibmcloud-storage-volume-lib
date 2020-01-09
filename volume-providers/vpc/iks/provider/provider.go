@@ -117,6 +117,8 @@ func (iksp *IksVpcBlockProvider) ContextCredentialsFactory(zone *string) (local.
 		IamAPIKey:       iksp.globalConfig.Bluemix.IamAPIKey,
 		IamClientID:     iksp.globalConfig.Bluemix.IamClientID,
 		IamClientSecret: iksp.globalConfig.Bluemix.IamClientSecret,
+		PrivateAPIRoute: iksp.globalConfig.Bluemix.PrivateAPIRoute, // Only for private cluster
+		CSRFToken:       iksp.globalConfig.Bluemix.CSRFToken,       // required for private cluster
 	}
 	return auth.NewContextCredentialsFactory(authConfig, nil, iksp.globalConfig.VPC)
 }

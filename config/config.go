@@ -110,6 +110,7 @@ type BluemixConfig struct {
 	APIEndpointURL  string `toml:"containers_api_route"`
 	PrivateAPIRoute string `toml:"containers_api_route_private"`
 	Encryption      bool   `toml:"encryption"`
+	CSRFToken       string `toml:"api_csrf_token" json:"-"`
 }
 
 // SoftlayerConfig ...
