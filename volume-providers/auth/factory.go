@@ -27,7 +27,13 @@ var _ local.ContextCredentialsFactory = &ContextCredentialsFactory{}
 
 // NewContextCredentialsFactory ...
 func NewContextCredentialsFactory(bluemixConfig *config.BluemixConfig, softlayerConfig *config.SoftlayerConfig, vpcConfig *config.VPCProviderConfig) (*ContextCredentialsFactory, error) {
-	tokenExchangeService, err := iam.NewTokenExchangeService(bluemixConfig)
+	var tokenExchangeService iam.TokenExchangeService
+	var err error
+	if bluemixConfig.PrivateAPIRoute != "" {
+		tokenExchangeService, err = iam.NewTokenExchangeIKSService(bluemixConfig)
+	} else {
+		tokenExchangeService, err = iam.NewTokenExchangeService(bluemixConfig)
+	}
 	if err != nil {
 		return nil, err
 	}

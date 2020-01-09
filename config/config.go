@@ -108,6 +108,7 @@ type BluemixConfig struct {
 	IamAPIKey       string `toml:"iam_api_key" json:"-"`
 	RefreshToken    string `toml:"refresh_token" json:"-"`
 	APIEndpointURL  string `toml:"containers_api_route"`
+	PrivateAPIRoute string `toml:"containers_api_route_private"`
 	Encryption      bool   `toml:"encryption"`
 }
 

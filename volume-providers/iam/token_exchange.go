@@ -178,6 +178,7 @@ func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeRespons
 	}{}
 
 	r.logger.Info("Sending IAM token exchange request")
+	r.logger.Info("Request is:=================", zap.Reflect("Request", r.request))
 	resp, err := r.client.Do(r.request, &successV, &errorV)
 
 	if err != nil {

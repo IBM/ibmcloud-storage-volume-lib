@@ -122,6 +122,7 @@ func OpenProviderSessionWithContext(ctx context.Context, conf *config.Config, pr
 		fatal = true
 		return
 	}
+	ctxLogger.Info("Calling provider/utils/init_provider.go GenerateContextCredentials")
 	contextCredentials, err := GenerateContextCredentials(conf, providerID, ccf, ctxLogger)
 	if err == nil {
 		session, err = prov.OpenSession(ctx, contextCredentials, ctxLogger)
@@ -150,6 +151,7 @@ func GenerateContextCredentials(conf *config.Config, providerID string, contextC
 		return contextCredentialsFactory.ForIaaSAPIKey(util.SafeStringValue(&AccountID), slUser, slAPIKey, ctxLogger)
 
 	case (conf.VPC != nil && providerID == conf.VPC.VPCBlockProviderName):
+		ctxLogger.Info("Calling provider/init_provider.go ForIAMAccessToken")
 		return contextCredentialsFactory.ForIAMAccessToken(conf.VPC.APIKey, ctxLogger)
 
 	case isSLProvider && !isEmptyStringValue(&iamAPIKey):
