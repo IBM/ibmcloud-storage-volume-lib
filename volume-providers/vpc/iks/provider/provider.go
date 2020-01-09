@@ -39,6 +39,12 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	// Setup IKS provider
 	provider, _ = vpcprovider.NewProvider(conf, logger)
 	iksBlockProvider, _ := provider.(*vpcprovider.VPCBlockProvider)
+
+	// Update the iks api route to private route if cluster is private
+	if conf.Bluemix.PrivateAPIRoute != "" {
+		conf.Bluemix.APIEndpointURL = conf.Bluemix.PrivateAPIRoute
+	}
+
 	//Overrider Base URL
 	iksBlockProvider.APIConfig.BaseURL = conf.Bluemix.APIEndpointURL
 	// Setup IKS-VPC dual provider
