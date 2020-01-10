@@ -9,6 +9,7 @@
   refresh_token = ""
   containers_api_route = "https://containers.test.cloud.ibm.com"
   containers_api_route_private = "https://containers.test.cloud.ibm.com"
+  containers_api_csrf_token = ""
 
 [softlayer]
   softlayer_block_enabled = false

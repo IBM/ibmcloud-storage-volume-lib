@@ -13,20 +13,16 @@ package iam
 import (
 	"errors"
 	"fmt"
-	"net/http"
-	"time"
-
-	"go.uber.org/zap"
-
 	"github.com/IBM-Cloud/ibm-cloud-cli-sdk/common/rest"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"go.uber.org/zap"
+	"time"
 )
 
 // tokenExchangeIKSService ...
 type tokenExchangeIKSService struct {
-	bluemixConf *config.BluemixConfig
-	httpClient  *http.Client
+	tokenExchangeService
 }
 
 // TokenExchangeService ...
@@ -39,8 +35,10 @@ func NewTokenExchangeIKSService(bluemixConf *config.BluemixConfig) (TokenExchang
 		return nil, err
 	}
 	return &tokenExchangeIKSService{
-		bluemixConf: bluemixConf,
-		httpClient:  httpClient,
+		tokenExchangeService: tokenExchangeService{
+			bluemixConf: bluemixConf,
+			httpClient:  httpClient,
+		},
 	}, nil
 }
 
@@ -56,27 +54,13 @@ type tokenExchangeIKSRequest struct {
 // tokenExchangeIKSResponse ...
 type tokenExchangeIKSResponse struct {
 	AccessToken string `json:"token"`
-	ImsToken    string `json:"ims_token"`
+	//ImsToken    string `json:"ims_token"`
 }
 
 // ExchangeRefreshTokenForAccessToken ...
 func (tes *tokenExchangeIKSService) ExchangeRefreshTokenForAccessToken(refreshToken string, logger *zap.Logger) (*AccessToken, error) {
 	r := tes.newTokenExchangeRequest(logger)
 	return r.exchangeForAccessToken()
-}
-
-// ExchangeAccessTokenForIMSToken ...
-func (tes *tokenExchangeIKSService) ExchangeAccessTokenForIMSToken(accessToken AccessToken, logger *zap.Logger) (*IMSToken, error) {
-	// Not required to implement as armada-api does not support IMS Token
-	r := tes.newTokenExchangeRequest(logger)
-	return r.exchangeForIMSToken()
-}
-
-// ExchangeIAMAPIKeyForIMSToken ...
-func (tes *tokenExchangeIKSService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, logger *zap.Logger) (*IMSToken, error) {
-	// Not required to implement as armada-api does not support IMS Token
-	r := tes.newTokenExchangeRequest(logger)
-	return r.exchangeForIMSToken()
 }
 
 // ExchangeIAMAPIKeyForAccessToken ...
@@ -90,8 +74,6 @@ func (tes *tokenExchangeIKSService) newTokenExchangeRequest(logger *zap.Logger) 
 	client := rest.NewClient()
 	client.HTTPClient = tes.httpClient
 	retyrInterval, _ := time.ParseDuration("3s")
-	logger.Info("Cluster IS PRIVATE URL is:=================", zap.Reflect("URL", tes.bluemixConf.PrivateAPIRoute))
-
 	return &tokenExchangeIKSRequest{
 		tes:          tes,
 		request:      rest.PostRequest(fmt.Sprintf("%s/v1/iam/apikey", tes.bluemixConf.PrivateAPIRoute)),
@@ -120,7 +102,7 @@ func (r *tokenExchangeIKSRequest) exchangeForAccessToken() (*AccessToken, error)
 }
 
 // exchangeForIMSToken ...
-func (r *tokenExchangeIKSRequest) exchangeForIMSToken() (*IMSToken, error) {
+/*func (r *tokenExchangeIKSRequest) exchangeForIMSToken() (*IMSToken, error) {
 	var iamResp *tokenExchangeIKSResponse
 	var err error
 	err = r.errorRetrier.ErrorRetry(func() (error, bool) {
@@ -134,12 +116,14 @@ func (r *tokenExchangeIKSRequest) exchangeForIMSToken() (*IMSToken, error) {
 	return &IMSToken{
 		Token: iamResp.ImsToken,
 	}, nil
-}
+}*/
 
 // sendTokenExchangeRequest ...
 func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSResponse, error) {
+	r.logger.Info("In tokenExchangeIKSRequest's sendTokenExchangeRequest()")
 	// Set headers
 	r.request = r.request.Add("X-CSRF-TOKEN", r.tes.bluemixConf.CSRFToken)
+	// Setting body
 	var apikey = struct {
 		APIKey string `json:"apikey"`
 	}{
@@ -155,11 +139,8 @@ func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSR
 		IncidentID       string `json:"incidentID"`
 	}{}
 
-	r.logger.Info("Sending IAM token exchange request")
+	r.logger.Info("Sending IAM token exchange request to container api server")
 	resp, err := r.client.Do(r.request, &successV, &errorV)
-
-	r.logger.Info("Request is:=================", zap.Reflect("Request", r.request))
-
 	if err != nil {
 		r.logger.Error("IAM token exchange request failed", zap.Reflect("Response", resp), zap.Error(err))
 		return nil,

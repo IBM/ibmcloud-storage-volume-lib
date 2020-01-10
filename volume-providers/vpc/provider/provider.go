@@ -130,8 +130,6 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute // Just to fix the logging
 	}
 
-	logger.Info("================> Overall configuration", zap.Reflect("Config", conf))
-
 	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
 	if err != nil {
 		return nil, err
@@ -171,9 +169,6 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	}
 	// Update VPC config for IKS deployment
 	provider.config.IsIKS = conf.IKS != nil && conf.IKS.Enabled
-
-	logger.Info("", zap.Reflect("Provider config", provider.config))
-
 	userError.MessagesEn = messages.InitMessages()
 	return provider, nil
 }
