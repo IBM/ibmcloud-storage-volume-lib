@@ -101,23 +101,6 @@ func (r *tokenExchangeIKSRequest) exchangeForAccessToken() (*AccessToken, error)
 	return &AccessToken{Token: iamResp.AccessToken}, nil
 }
 
-// exchangeForIMSToken ...
-/*func (r *tokenExchangeIKSRequest) exchangeForIMSToken() (*IMSToken, error) {
-	var iamResp *tokenExchangeIKSResponse
-	var err error
-	err = r.errorRetrier.ErrorRetry(func() (error, bool) {
-		iamResp, err = r.sendTokenExchangeRequest()
-		return err, !isConnectionError(err)
-	})
-
-	if err != nil {
-		return nil, err
-	}
-	return &IMSToken{
-		Token: iamResp.ImsToken,
-	}, nil
-}*/
-
 // sendTokenExchangeRequest ...
 func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSResponse, error) {
 	r.logger.Info("In tokenExchangeIKSRequest's sendTokenExchangeRequest()")
@@ -155,12 +138,12 @@ func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSR
 
 	if errorV.ErrorDescription != "" {
 		r.logger.Error("IAM token exchange request failed with message",
-			zap.Int("StatusCode", resp.StatusCode),
+			zap.Int("StatusCode", resp.StatusCode), zap.Reflect("API IncidentID", errorV.IncidentID),
 			zap.Reflect("Error", errorV))
 
 		err := util.NewError("ErrorFailedTokenExchange",
-			"IAM token exchange request failed: IncidentID: "+errorV.IncidentID,
-			errors.New(errorV.ErrorCode+" "+errorV.ErrorType+", Description: "+errorV.ErrorDescription))
+			"IAM token exchange request failed: "+errorV.ErrorDescription,
+			errors.New(errorV.ErrorCode+" "+errorV.ErrorType+", Description: "+errorV.ErrorDescription+", API IncidentID:"+errorV.IncidentID))
 		return nil, err
 	}
 

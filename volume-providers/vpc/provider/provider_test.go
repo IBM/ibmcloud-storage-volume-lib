@@ -42,6 +42,7 @@ const (
 	RefreshToken            = "test-refresh_token"
 	TestEndpointURL         = "http://some_endpoint"
 	TestAPIVersion          = "2019-07-02"
+	PrivateContainerAPIURL  = "private.test-iam-url"
 )
 
 var _ local.ContextCredentialsFactory = &auth.ContextCredentialsFactory{}
@@ -108,6 +109,30 @@ func TestNewProvider(t *testing.T) {
 			IamClientSecret: IamClientSecret,
 			IamAPIKey:       IamClientSecret,
 			RefreshToken:    RefreshToken,
+		},
+		VPC: &config.VPCProviderConfig{
+			Enabled:     true,
+			EndpointURL: TestEndpointURL,
+			VPCTimeout:  "",
+		},
+	}
+
+	prov, err = NewProvider(conf, logger)
+	assert.NotNil(t, prov)
+	assert.Nil(t, err)
+
+	// private endpoint related test
+	conf = &config.Config{
+		Server: &config.ServerConfig{
+			DebugTrace: true,
+		},
+		Bluemix: &config.BluemixConfig{
+			IamURL:          IamURL,
+			IamClientID:     IamClientID,
+			IamClientSecret: IamClientSecret,
+			IamAPIKey:       IamClientSecret,
+			RefreshToken:    RefreshToken,
+			PrivateAPIRoute: PrivateContainerAPIURL,
 		},
 		VPC: &config.VPCProviderConfig{
 			Enabled:     true,
@@ -300,4 +325,21 @@ func TestGetTestOpenSession(t *testing.T) {
 
 	volume, _ := vpcs.GetVolume("test volume")
 	assert.Nil(t, volume)
+}
+
+func TestGetPrivateEndpoint(t *testing.T) {
+	logger, teardown := GetTestLogger(t)
+	defer teardown()
+
+	// passing public URL
+	privateURL := getPrivateEndpoint(logger, "https://us-south.com")
+	assert.Equal(t, privateURL, "https://private-us-south.com")
+
+	// passing private URL
+	privateURL = getPrivateEndpoint(logger, "https://private-us-south.com")
+	assert.Equal(t, privateURL, "https://private-us-south.com")
+
+	//Wrong URL
+	privateURL = getPrivateEndpoint(logger, "https")
+	assert.Equal(t, privateURL, "")
 }
