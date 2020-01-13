@@ -2,12 +2,14 @@
   debug_trace = false
 
 [bluemix]
-  iam_url = "https://iam.bluemix.net"
+  iam_url = "https://iam.stage1.bluemix.net"
   iam_client_id = "bx"
   iam_client_secret = "bx"
-  iam_api_key = "XXX"
+  iam_api_key = ""
   refresh_token = ""
   containers_api_route = "https://containers.test.cloud.ibm.com"
+  containers_api_route_private = "https://containers.test.cloud.ibm.com"
+  containers_api_csrf_token = ""
 
 [softlayer]
   softlayer_block_enabled = false

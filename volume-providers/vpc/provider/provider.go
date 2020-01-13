@@ -27,6 +27,7 @@ import (
 	"go.uber.org/zap"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -43,6 +44,14 @@ const (
 	VPCClassic = "gc"
 	// VPCNextGen ...
 	VPCNextGen = "g2"
+	// PrivatePrefix ...
+	PrivatePrefix = "private-"
+	// BasePrivateURL ...
+	BasePrivateURL = "https://" + PrivatePrefix
+	// HTTPSLength ...
+	HTTPSLength = 8
+	// NEXTGenProvider ...
+	NEXTGenProvider = 2
 )
 
 // VPCBlockProvider implements provider.Provider
@@ -82,7 +91,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 
 		//Set API Generation As 2 (if unspecified in config/ENV-VAR)
 		if conf.VPC.G2VPCAPIGeneration <= 0 {
-			conf.VPC.G2VPCAPIGeneration = 2
+			conf.VPC.G2VPCAPIGeneration = NEXTGenProvider
 		}
 		conf.VPC.VPCAPIGeneration = conf.VPC.G2VPCAPIGeneration
 
@@ -110,7 +119,17 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		IamAPIKey:       conf.VPC.APIKey,
 		IamClientID:     conf.Bluemix.IamClientID,
 		IamClientSecret: conf.Bluemix.IamClientSecret,
+		PrivateAPIRoute: conf.Bluemix.PrivateAPIRoute, // Only for private cluster
+		CSRFToken:       conf.Bluemix.CSRFToken,       // required for private cluster
 	}
+
+	// Get the private endpoint for RIaaS as cluster is private
+	if conf.Bluemix.PrivateAPIRoute != "" {
+		logger.Info("Its a private cluster, Getting RIaaS private endpoint")
+		conf.VPC.EndpointURL = getPrivateEndpoint(logger, conf.VPC.EndpointURL)
+		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute // Just to fix the logging
+	}
+
 	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
 	if err != nil {
 		return nil, err
@@ -150,16 +169,13 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	}
 	// Update VPC config for IKS deployment
 	provider.config.IsIKS = conf.IKS != nil && conf.IKS.Enabled
-
-	logger.Info("", zap.Reflect("Provider config", provider.config))
-
 	userError.MessagesEn = messages.InitMessages()
 	return provider, nil
 }
 
 // ContextCredentialsFactory ...
 func (vpcp *VPCBlockProvider) ContextCredentialsFactory(zone *string) (local.ContextCredentialsFactory, error) {
-	//  Datacenter hint not required by VPC provider implementation
+	//  Datacenter name not required by VPC provider implementation
 	return vpcp.ContextCF, nil
 }
 
@@ -240,4 +256,17 @@ func getAccessToken(creds provider.ContextCredentials, logger *zap.Logger) (toke
 		err = errors.New("Unknown AuthType")
 	}
 	return
+}
+
+// getPrivateEndpoint ...
+func getPrivateEndpoint(logger *zap.Logger, publicEndPoint string) string {
+	logger.Info("In getPrivateEndpoint, RIaaS public endpoint", zap.Reflect("URL", publicEndPoint))
+	if !strings.Contains(publicEndPoint, PrivatePrefix) {
+		if len(publicEndPoint) > HTTPSLength {
+			return BasePrivateURL + publicEndPoint[HTTPSLength:]
+		}
+	} else {
+		return publicEndPoint
+	}
+	return ""
 }

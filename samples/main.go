@@ -71,6 +71,8 @@ func main() {
 		logger.Fatal("Error loading configuration")
 	}
 
+	logger.Info("Global Configuration is================", zap.Reflect("Config", conf))
+
 	// Check if debug log level enabled or not
 	if conf.Server != nil && conf.Server.DebugTrace {
 		traceLevel.SetLevel(zap.DebugLevel)
