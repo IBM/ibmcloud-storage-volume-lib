@@ -21,6 +21,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	// VPCClassic ...
+	VPCClassic = "gc"
+)
+
 //IksVpcBlockProvider  handles both IKS and  RIAAS sessions
 type IksVpcBlockProvider struct {
 	vpcprovider.VPCBlockProvider
@@ -41,7 +46,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	iksBlockProvider, _ := provider.(*vpcprovider.VPCBlockProvider)
 
 	// Update the iks api route to private route if cluster is private
-	if conf.Bluemix.PrivateAPIRoute != "" {
+	if conf.Bluemix.PrivateAPIRoute != "" && conf.VPC.VPCBlockProviderType == VPCClassic {
 		conf.Bluemix.APIEndpointURL = conf.Bluemix.PrivateAPIRoute
 	}
 
@@ -123,8 +128,13 @@ func (iksp *IksVpcBlockProvider) ContextCredentialsFactory(zone *string) (local.
 		IamAPIKey:       iksp.globalConfig.Bluemix.IamAPIKey,
 		IamClientID:     iksp.globalConfig.Bluemix.IamClientID,
 		IamClientSecret: iksp.globalConfig.Bluemix.IamClientSecret,
-		PrivateAPIRoute: iksp.globalConfig.Bluemix.PrivateAPIRoute, // Only for private cluster
-		CSRFToken:       iksp.globalConfig.Bluemix.CSRFToken,       // required for private cluster
+		//PrivateAPIRoute: iksp.globalConfig.Bluemix.PrivateAPIRoute, // Only for private cluster
+		//CSRFToken:       iksp.globalConfig.Bluemix.CSRFToken,       // required for private cluster
+	}
+	// Update configuration only for VPC-Classic cluster as we support private endpoint
+	if iksp.globalConfig.VPC.VPCBlockProviderType == VPCClassic {
+		authConfig.PrivateAPIRoute = iksp.globalConfig.Bluemix.PrivateAPIRoute // Only for private cluster
+		authConfig.CSRFToken = iksp.globalConfig.Bluemix.CSRFToken             // required for private cluster
 	}
 	return auth.NewContextCredentialsFactory(authConfig, nil, iksp.globalConfig.VPC)
 }

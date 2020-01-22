@@ -154,12 +154,13 @@ type VPCProviderConfig struct {
 	VPCBlockProviderName string `toml:"vpc_block_provider_name" envconfig:"VPC_BLOCK_PROVIDER_NAME"`
 	VPCBlockProviderType string `toml:"provider_type"`
 
-	EndpointURL      string `toml:"gc_riaas_endpoint_url"`
-	TokenExchangeURL string `toml:"gc_token_exchange_endpoint_url"`
-	APIKey           string `toml:"gc_api_key" json:"-"`
-	ResourceGroupID  string `toml:"gc_resource_group_id"`
-	VPCAPIGeneration int    `toml:"vpc_api_generation" envconfig:"VPC_API_GENERATION"`
-	APIVersion       string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
+	EndpointURL        string `toml:"gc_riaas_endpoint_url"`
+	PrivateEndpointURL string `toml:"gc_riaas_endpoint_private_url"`
+	TokenExchangeURL   string `toml:"gc_token_exchange_endpoint_url"`
+	APIKey             string `toml:"gc_api_key" json:"-"`
+	ResourceGroupID    string `toml:"gc_resource_group_id"`
+	VPCAPIGeneration   int    `toml:"vpc_api_generation" envconfig:"VPC_API_GENERATION"`
+	APIVersion         string `toml:"api_version,omitempty" envconfig:"VPC_API_VERSION"`
 
 	//NG Properties
 	G2EndpointURL      string `toml:"g2_riaas_endpoint_url"`
