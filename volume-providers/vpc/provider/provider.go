@@ -77,6 +77,8 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		return nil, errors.New("Incomplete config for VPCBlockProvider")
 	}
 
+	authConfig := &config.BluemixConfig{}
+
 	//Do config validation and enable only one generationType (i.e VPC-Classic | VPC-NG)
 	gcConfigFound := (conf.VPC.EndpointURL != "") && (conf.VPC.TokenExchangeURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
 	g2ConfigFound := (conf.VPC.G2EndpointURL != "") && (conf.VPC.G2TokenExchangeURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
@@ -111,20 +113,29 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		}
 	} else { //This is GC, no-override required
 		conf.VPC.VPCBlockProviderType = VPCClassic //incase of gc, i dont see its being set in slclient.toml, but NG cluster has this
+		conf.VPC.EndpointURL = conf.VPC.PrivateEndpointURL // always use RIaaS private endpoint for gc
+		authConfig.PrivateAPIRoute = conf.Bluemix.PrivateAPIRoute
+		authConfig.CSRFToken = conf.Bluemix.CSRFToken
+		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute // Use for token exchange in case of GC cluster
 	}
 
 	// VPC provider use differnt APIkey and Auth Endpoint
-	authConfig := &config.BluemixConfig{
+	authConfig.IamURL 					= conf.VPC.TokenExchangeURL
+	authConfig.IamAPIKey				= conf.VPC.APIKey
+	authConfig.IamClientID			= conf.Bluemix.IamClientID
+	authConfig.IamClientSecret	= conf.Bluemix.IamClientSecret
+
+	/*authConfig := &config.BluemixConfig{
 		IamURL:          conf.VPC.TokenExchangeURL,
 		IamAPIKey:       conf.VPC.APIKey,
 		IamClientID:     conf.Bluemix.IamClientID,
 		IamClientSecret: conf.Bluemix.IamClientSecret,
 		//PrivateAPIRoute: conf.Bluemix.PrivateAPIRoute, // Only for private cluster
 		//CSRFToken:       conf.Bluemix.CSRFToken,       // required for private cluster
-	}
+	}*/
 
 	// Uppdate the configuration to get for VPC-Classic cluster to use the RIaaS private endpoint
-	if conf.Bluemix.PrivateAPIRoute != "" && conf.VPC.VPCBlockProviderType == VPCClassic {
+	/*if conf.Bluemix.PrivateAPIRoute != "" && conf.VPC.VPCBlockProviderType == VPCClassic {
 		logger.Info("Its a VPC-Classic cluster, Getting RIaaS private endpoint")
 		if conf.VPC.PrivateEndpointURL != "" {
 			conf.VPC.EndpointURL = conf.VPC.PrivateEndpointURL
@@ -138,7 +149,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		authConfig.PrivateAPIRoute = conf.Bluemix.PrivateAPIRoute
 		authConfig.CSRFToken = conf.Bluemix.CSRFToken
 		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute // Just to fix the logging
-	}
+	}*/
 
 	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
 	if err != nil {

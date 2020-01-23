@@ -1,4 +1,4 @@
-/*******************************************************************************
+	/*******************************************************************************
  * IBM Confidential
  * OCO Source Materials
  * IBM Cloud Container Service, 5737-D43
@@ -46,7 +46,7 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	iksBlockProvider, _ := provider.(*vpcprovider.VPCBlockProvider)
 
 	// Update the iks api route to private route if cluster is private
-	if conf.Bluemix.PrivateAPIRoute != "" && conf.VPC.VPCBlockProviderType == VPCClassic {
+	if conf.VPC.VPCBlockProviderType == VPCClassic {
 		conf.Bluemix.APIEndpointURL = conf.Bluemix.PrivateAPIRoute
 	}
 
