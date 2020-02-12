@@ -57,7 +57,7 @@ vet:
 
 .PHONY: build
 build:
-	go build -gcflags '-N -l' -o libSample samples/main.go samples/attach_detach.go
+	go build -gcflags '-N -l' -o libSample samples/main.go samples/attach_detach.go samples/volume_operations.go
 
 .PHONY: volume-lib-e2e-test
 volume-lib-e2e-test:

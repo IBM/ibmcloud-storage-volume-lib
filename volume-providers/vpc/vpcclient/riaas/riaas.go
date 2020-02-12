@@ -122,3 +122,32 @@ var _ RegionalAPIClientProvider = DefaultRegionalAPIClientProvider{}
 func (d DefaultRegionalAPIClientProvider) New(config Config) (RegionalAPI, error) {
 	return New(config)
 }
+
+// IKSSession ...
+type IKSSession struct {
+	Session
+}
+
+var _ RegionalAPI = &IKSSession{}
+
+// VolumeService returns the Volume service for managing volumes
+func (s *IKSSession) VolumeService() vpcvolume.VolumeManager {
+	return vpcvolume.NewIKSVolumeService(s.client)
+}
+
+//IKSRegionalAPIClientProvider ...
+type IKSRegionalAPIClientProvider struct {
+	RegionalAPIClientProvider
+}
+
+var _ RegionalAPIClientProvider = IKSRegionalAPIClientProvider{}
+
+// New creates a new Session volume, using the supplied config
+func (d IKSRegionalAPIClientProvider) New(config Config) (RegionalAPI, error) {
+	session, err := New(config)
+
+	iksSession := &IKSSession{
+		Session: *session,
+	}
+	return iksSession, err
+}

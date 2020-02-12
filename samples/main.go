@@ -118,6 +118,8 @@ func main() {
 			continue
 		}
 		volumeAttachmentManager := NewVolumeAttachmentManager(sess, ctxLogger, requestID)
+		volumeManager := NewVolumeManager(sess, ctxLogger, requestID)
+
 		defer sess.Close()
 		defer ctxLogger.Sync()
 		if choiceN == 1 {
@@ -435,6 +437,8 @@ func main() {
 				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("VolumeName", volumeName), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
+		} else if choiceN == 18 {
+			volumeManager.UpdateVolume()
 		} else {
 			fmt.Println("No right choice")
 			return

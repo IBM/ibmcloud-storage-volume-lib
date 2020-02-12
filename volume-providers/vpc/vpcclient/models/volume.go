@@ -10,7 +10,16 @@
 
 package models
 
-import "time"
+import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"strconv"
+	"strings"
+	"time"
+)
+
+const (
+	ClusterIDTagName = "clusterid"
+)
 
 // Volume ...
 type Volume struct {
@@ -28,8 +37,11 @@ type Volume struct {
 	Status              StatusType           `json:"status,omitempty"`
 	VolumeAttachments   *[]VolumeAttachment  `json:"volume_attachments,omitempty"`
 
-	Zone *Zone  `json:"zone,omitempty"`
-	CRN  string `json:"crn,omitempty"`
+	Zone       *Zone  `json:"zone,omitempty"`
+	CRN        string `json:"crn,omitempty"`
+	Cluster    string `json:"cluster"`
+	Provider   string `json:"provider"`
+	VolumeType string `json:"volume_type,omitempty"`
 }
 
 // ListVolumeFilters ...
@@ -45,4 +57,51 @@ type VolumeList struct {
 	Volumes    []*Volume `json:"volumes,omitempty"`
 	Limit      int       `json:"limit,omitempty"`
 	TotalCount int       `json:"total_count,omitempty"`
+}
+
+//NewVolume created model volume from provider volume
+func NewVolume(volumeRequest provider.Volume) Volume {
+	// Build the template to send to backend
+
+	volume := Volume{
+		Name:     *volumeRequest.Name,
+		Capacity: int64(*volumeRequest.Capacity),
+		Tags:     volumeRequest.VPCVolume.Tags,
+		ResourceGroup: &ResourceGroup{
+			ID:   volumeRequest.VPCVolume.ResourceGroup.ID,
+			Name: volumeRequest.VPCVolume.ResourceGroup.Name,
+		},
+		Profile: &Profile{
+			Name: volumeRequest.VPCVolume.Profile.Name,
+		},
+		Zone: &Zone{
+			Name: volumeRequest.Az,
+		},
+		Provider:   string(volumeRequest.Provider),
+		VolumeType: string(volumeRequest.VolumeType),
+	}
+	if volumeRequest.Iops != nil {
+		value, err := strconv.ParseInt(*volumeRequest.Iops, 10, 64)
+		if err != nil {
+			volume.Iops = 0
+		}
+		volume.Iops = value
+	}
+	if volumeRequest.VPCVolume.VolumeEncryptionKey != nil && len(volumeRequest.VPCVolume.VolumeEncryptionKey.CRN) > 0 {
+		encryptionKeyCRN := volumeRequest.VPCVolume.VolumeEncryptionKey.CRN
+		volume.VolumeEncryptionKey = &VolumeEncryptionKey{CRN: encryptionKeyCRN}
+	}
+
+	volume.initCluster()
+	return volume
+}
+
+func (vol Volume) initCluster() {
+	for _, tag := range vol.Tags {
+		if strings.Contains(tag, ClusterIDTagName) {
+			clusterID := tag[len(ClusterIDTagName)+1:]
+			vol.Cluster = clusterID
+			break
+		}
+	}
 }

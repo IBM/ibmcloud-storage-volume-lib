@@ -25,6 +25,8 @@ type VolumeManager interface {
 	// Create the volume from snapshot with snapshot tags
 	CreateVolumeFromSnapshot(snapshot Snapshot, tags map[string]string) (*Volume, error)
 
+	// UpdateVolume the volume
+	UpdateVolume(Volume) error
 	// Delete the volume
 	DeleteVolume(*Volume) error
 

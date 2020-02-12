@@ -18,6 +18,8 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	vpcprovider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
+
 	"go.uber.org/zap"
 )
 
@@ -104,6 +106,12 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 		}
 	}
 	iksSession, _ := session.(*vpcprovider.VPCSession)
+	apiClientProvider := riaas.IKSRegionalAPIClientProvider{}
+	client, err := apiClientProvider.New(iksp.iksBlockProvider.APIConfig)
+	if err != nil {
+		ctxLogger.Error("Error occured while creating Regional client", zap.Error(err))
+	}
+	iksSession.Apiclient = client
 	iksSession.APIClientVolAttachMgr = iksSession.Apiclient.IKSVolumeAttachService()
 	// Setup Dual Session that handles for VPC and IKS connections
 	vpcIksSession := IksVpcSession{
