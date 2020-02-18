@@ -27,17 +27,16 @@ func (vs *IKSVolumeService) UpdateVolume(volumeTemplate *models.Volume, ctxLogge
 
 	operation := &client.Operation{
 		Name:        "UpdateVolume",
-		Method:      "POST",
+		Method:      "PUT",
 		PathPattern: vs.pathPrefix + updateVolume,
 	}
 	apiErr := vs.receiverError
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation))
+	ctxLogger.Info("Equivalent curl command", zap.Reflect("URL", request.URL()), zap.Reflect("Operation", operation), zap.Reflect("volumeTemplate", volumeTemplate))
 
 	_, err := request.JSONBody(volumeTemplate).JSONError(apiErr).Invoke()
 	if err != nil {
-		return err
+		ctxLogger.Error("Update volume failed with error", zap.Error(err), zap.Error(apiErr))
 	}
-
-	return nil
+	return err
 }

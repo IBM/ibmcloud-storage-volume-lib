@@ -43,12 +43,12 @@ func (vpcIks *IksVpcSession) UpdateVolume(volumeRequest provider.Volume) (err er
 	vpcIks.Logger.Info("Calling  provider for volume update...")
 	err = vpcIks.APIRetry.FlexyRetry(vpcIks.Logger, func() (error, bool) {
 		err = vpcIks.IksSession.Apiclient.VolumeService().UpdateVolume(&volumeTemplate, vpcIks.Logger)
-		return err, false
+		return err, err == nil
 	})
 
 	if err != nil {
-		vpcIks.Logger.Debug("Failed to create volume from VPC provider", zap.Reflect("BackendError", err))
-		return userError.GetUserError("FailedToPlaceOrder", err)
+		vpcIks.Logger.Debug("Failed to update volume", zap.Reflect("BackendError", err))
+		return userError.GetUserError("UpdateFailed", err)
 	}
 
 	return err

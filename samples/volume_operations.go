@@ -11,9 +11,16 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"go.uber.org/zap"
+)
+
+var (
+	volumeID  = flag.String("volume_id", "", "Volume ID")
+	volumeCRN = flag.String("volume_crn", "", "Volume CRN")
+	clusterID = flag.String("cluster", "", "Cluster ID")
 )
 
 var volumeReq provider.Volume
@@ -40,27 +47,31 @@ func (vam *VolumeManager) UpdateVolume() {
 	err := vam.Session.UpdateVolume(volumeReq)
 	if err != nil {
 		updateRequestID(err, vam.RequestID)
-		vam.Logger.Error("Failed to attach the volume", zap.Error(err))
+		vam.Logger.Error("Failed to update the volume", zap.Error(err))
 		return
 	}
 	fmt.Println("Volume update", err)
 }
 
 func (vam *VolumeManager) setupVolumeRequest() {
-	fmt.Printf("Enter the volume id: ")
-	_, _ = fmt.Scanf("%s", &volumeID)
-	fmt.Printf("Enter the provider: ")
-	_, _ = fmt.Scanf("%s", &instanceID)
-	fmt.Printf("Enter the cluster id: ")
-	_, _ = fmt.Scanf("%s", &clusterID)
+	/*	fmt.Printf("Enter the volume id: ")
+		_, _ = fmt.Scanf("%s", &volumeID)
+		fmt.Printf("Enter the provider: ")
+		_, _ = fmt.Scanf("%s", &instanceID)
+		fmt.Printf("Enter the cluster id: ")
+		_, _ = fmt.Scanf("%s", &clusterID)*/
 	capacity := 30
-	iops := "10"
+	//iops := "10"
 	volumeReq = provider.Volume{
-		VolumeID: volumeID,
+		VolumeID: *volumeID,
 		Capacity: &capacity,
-		Iops:     &iops,
-		Provider: "ibm.io.vpc.block",
+		//Iops:     &iops,
+		Provider:   "vpc-classic",
+		VolumeType: "block",
 	}
-	volumeReq.Tags = []string{"clusterid:" + clusterID, "reclaimpolicy:Delete"}
+	volumeReq.Attributes = map[string]string{"clusterid": *clusterID, "reclaimpolicy": "Delete"}
+	volumeReq.Tags = []string{"clusterid:" + *clusterID, "reclaimpolicy:Delete"}
+	volumeReq.VPCVolume.Profile = &provider.Profile{Name: "general-purpose"}
+	volumeReq.CRN = *volumeCRN
 
 }

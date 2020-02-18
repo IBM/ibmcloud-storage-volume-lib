@@ -44,6 +44,13 @@ var messagesEn = map[string]util.Message{
 		RC:          500,
 		Action:      "Verify that the volume ID exists. Run 'ibmcloud is volumes' to list available volumes in your account. If the ID is correct, try to delete the volume with the 'ibmcloud is volume-delete' command. ",
 	},
+	"FailedToUpdateVolume": util.Message{
+		Code:        "FailedToDeleteVolume",
+		Description: "The volume ID '%d' could not be deleted",
+		Type:        util.DeletionFailed,
+		RC:          500,
+		Action:      "Verify that the volume ID exists. Run 'ibmcloud is volumes' to list available volumes in your account.",
+	},
 	"FailedToDeleteSnapshot": util.Message{
 		Code:        "FailedToDeleteSnapshot",
 		Description: "Failed to delete '%d' snapshot ID",

@@ -93,6 +93,7 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 		return nil, err
 	}
 	iksp.iksBlockProvider.ContextCF = ccf
+	iksp.iksBlockProvider.ClientProvider = riaas.IKSRegionalAPIClientProvider{}
 
 	ctxLogger.Info("Its ISK dual session. Getttng IAM token for  IKS block session")
 	iksContextCredentials, err := ccf.ForIAMAccessToken(iksp.globalConfig.Bluemix.IamAPIKey, ctxLogger)
@@ -106,12 +107,6 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 		}
 	}
 	iksSession, _ := session.(*vpcprovider.VPCSession)
-	apiClientProvider := riaas.IKSRegionalAPIClientProvider{}
-	client, err := apiClientProvider.New(iksp.iksBlockProvider.APIConfig)
-	if err != nil {
-		ctxLogger.Error("Error occured while creating Regional client", zap.Error(err))
-	}
-	iksSession.Apiclient = client
 	iksSession.APIClientVolAttachMgr = iksSession.Apiclient.IKSVolumeAttachService()
 	// Setup Dual Session that handles for VPC and IKS connections
 	vpcIksSession := IksVpcSession{

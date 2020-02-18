@@ -18,7 +18,10 @@ import (
 )
 
 const (
+	//ClusterIDTagName ...
 	ClusterIDTagName = "clusterid"
+	//VolumeStatus ...
+	VolumeStatus = "status"
 )
 
 // Volume ...
@@ -39,8 +42,8 @@ type Volume struct {
 
 	Zone       *Zone  `json:"zone,omitempty"`
 	CRN        string `json:"crn,omitempty"`
-	Cluster    string `json:"cluster"`
-	Provider   string `json:"provider"`
+	Cluster    string `json:"cluster,omitempty"`
+	Provider   string `json:"provider,omitempty"`
 	VolumeType string `json:"volume_type,omitempty"`
 }
 
@@ -64,13 +67,10 @@ func NewVolume(volumeRequest provider.Volume) Volume {
 	// Build the template to send to backend
 
 	volume := Volume{
-		Name:     *volumeRequest.Name,
+		ID:       volumeRequest.VolumeID,
+		CRN:      volumeRequest.CRN,
 		Capacity: int64(*volumeRequest.Capacity),
 		Tags:     volumeRequest.VPCVolume.Tags,
-		ResourceGroup: &ResourceGroup{
-			ID:   volumeRequest.VPCVolume.ResourceGroup.ID,
-			Name: volumeRequest.VPCVolume.ResourceGroup.Name,
-		},
 		Profile: &Profile{
 			Name: volumeRequest.VPCVolume.Profile.Name,
 		},
@@ -80,6 +80,16 @@ func NewVolume(volumeRequest provider.Volume) Volume {
 		Provider:   string(volumeRequest.Provider),
 		VolumeType: string(volumeRequest.VolumeType),
 	}
+	if volumeRequest.Name != nil {
+		volume.Name = *volumeRequest.Name
+	}
+	if volumeRequest.VPCVolume.ResourceGroup != nil {
+		volume.ResourceGroup = &ResourceGroup{
+			ID:   volumeRequest.VPCVolume.ResourceGroup.ID,
+			Name: volumeRequest.VPCVolume.ResourceGroup.Name,
+		}
+	}
+
 	if volumeRequest.Iops != nil {
 		value, err := strconv.ParseInt(*volumeRequest.Iops, 10, 64)
 		if err != nil {
@@ -92,7 +102,9 @@ func NewVolume(volumeRequest provider.Volume) Volume {
 		volume.VolumeEncryptionKey = &VolumeEncryptionKey{CRN: encryptionKeyCRN}
 	}
 
-	volume.initCluster()
+	//volume.initCluster()
+	volume.Cluster = volumeRequest.Attributes[ClusterIDTagName]
+	volume.Status = StatusType(volumeRequest.Attributes[VolumeStatus])
 	return volume
 }
 

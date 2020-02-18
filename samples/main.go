@@ -11,6 +11,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -25,6 +26,10 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
 	uid "github.com/satori/go.uuid"
+)
+
+var (
+	defaultChoice = flag.Int("choice", 0, "Choice")
 )
 
 func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
@@ -60,6 +65,7 @@ func updateRequestID(err error, requestID string) error {
 }
 
 func main() {
+	flag.Parse()
 	// Setup new style zap logger
 	logger, traceLevel := getContextLogger()
 	defer logger.Sync()
@@ -102,7 +108,12 @@ func main() {
 		var choiceN int
 		var volumeID string
 		var snapshotID string
-		_, er11 := fmt.Scanf("%d", &choiceN)
+		var er11 error
+		if *defaultChoice == 0 {
+			_, er11 = fmt.Scanf("%d", &choiceN)
+		} else {
+			choiceN = *defaultChoice
+		}
 		if er11 != nil {
 			fmt.Printf("Wrong input, please provide option in int: ")
 			fmt.Printf("\n\n")
@@ -439,6 +450,7 @@ func main() {
 			fmt.Printf("\n\n")
 		} else if choiceN == 18 {
 			volumeManager.UpdateVolume()
+			os.Exit(0)
 		} else {
 			fmt.Println("No right choice")
 			return
