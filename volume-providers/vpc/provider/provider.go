@@ -78,14 +78,13 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 	}
 
 	//Do config validation and enable only one generationType (i.e VPC-Classic | VPC-NG)
-	gcConfigFound := (conf.VPC.EndpointURL != "") && (conf.VPC.TokenExchangeURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
-	g2ConfigFound := (conf.VPC.G2EndpointURL != "") && (conf.VPC.G2TokenExchangeURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
+	gcConfigFound := (conf.VPC.EndpointURL != "" || conf.VPC.PrivateEndpointURL != "") && (conf.VPC.TokenExchangeURL != "" || conf.VPC.IKSTokenExchangePrivateURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
+	g2ConfigFound := (conf.VPC.G2EndpointPrivateURL != "") && (conf.VPC.IKSTokenExchangePrivateURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
 	//if both config found, look for VPCTypeEnabled, otherwise default to GC
 	//Incase of NG configurations, override the base properties.
 	if (gcConfigFound && g2ConfigFound && conf.VPC.VPCTypeEnabled == VPCNextGen) || (!gcConfigFound && g2ConfigFound) {
 
-		conf.VPC.EndpointURL = conf.VPC.G2EndpointURL
-		conf.VPC.TokenExchangeURL = conf.VPC.G2TokenExchangeURL
+		conf.VPC.EndpointURL = conf.VPC.G2EndpointPrivateURL
 		conf.VPC.APIKey = conf.VPC.G2APIKey
 		conf.VPC.ResourceGroupID = conf.VPC.G2ResourceGroupID
 
@@ -111,6 +110,19 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		}
 	} else { //This is GC, no-override required
 		conf.VPC.VPCBlockProviderType = VPCClassic //incase of gc, i dont see its being set in slclient.toml, but NG cluster has this
+		// For backward compatibility as some of the cluster storage secret may not have private gc endpoint url
+		if conf.VPC.PrivateEndpointURL != "" {
+			conf.VPC.EndpointURL = conf.VPC.PrivateEndpointURL
+		} else {
+			conf.VPC.EndpointURL = getPrivateEndpoint(logger, conf.VPC.EndpointURL)
+		}
+	}
+
+	// Setting token exchange URL, considering backward compatibility specially for gc clusters
+	if conf.VPC.IKSTokenExchangePrivateURL != "" {
+		conf.VPC.TokenExchangeURL = conf.VPC.IKSTokenExchangePrivateURL
+	} else {
+		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute
 	}
 
 	// VPC provider use differnt APIkey and Auth Endpoint
@@ -121,13 +133,6 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		IamClientSecret: conf.Bluemix.IamClientSecret,
 		PrivateAPIRoute: conf.Bluemix.PrivateAPIRoute, // Only for private cluster
 		CSRFToken:       conf.Bluemix.CSRFToken,       // required for private cluster
-	}
-
-	// Get the private endpoint for RIaaS as cluster is private
-	if conf.Bluemix.PrivateAPIRoute != "" {
-		logger.Info("Its a private cluster, Getting RIaaS private endpoint")
-		conf.VPC.EndpointURL = getPrivateEndpoint(logger, conf.VPC.EndpointURL)
-		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute // Just to fix the logging
 	}
 
 	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)

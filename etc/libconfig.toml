@@ -36,14 +36,17 @@
   vpc_block_provider_name = "vpc-classic"
   gc_token_exchange_endpoint_url = "https://iam.stage1.bluemix.net"
   gc_riaas_endpoint_url = "https://us-east-stage02.iaasdev.cloud.ibm.com:443"
+  gc_riaas_endpoint_private_url = "https://us-east-stage02.iaasdev.cloud.ibm.com:443"
   gc_resource_group_id = ""
   gc_api_key = ""
+
   encryption = false
-  vpc_api_timeout = "120s"
+  iks_token_exchange_endpoint_private_url = "https://containers.test.cloud.ibm.com"
   max_retry_attempt  = 10 # 10 times with exponential re-try with max gap max_retry_gap
   max_retry_gap =  120 # 2 minutes
   api_version = "2019-07-02"
   vpc_api_generation = 1
+  vpc_api_timeout = "120s"
 
 [IKS]
   iks_enabled = true
