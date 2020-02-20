@@ -256,6 +256,7 @@ func FromProviderToLibVolume(vpcVolume *models.Volume, logger *zap.Logger) (libV
 	if vpcVolume.Zone != nil {
 		libVolume.Az = vpcVolume.Zone.Name
 	}
+	libVolume.CRN = vpcVolume.CRN
 	return
 }
 

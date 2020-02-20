@@ -67,13 +67,9 @@ func NewVolume(volumeRequest provider.Volume) Volume {
 	// Build the template to send to backend
 
 	volume := Volume{
-		ID:       volumeRequest.VolumeID,
-		CRN:      volumeRequest.CRN,
-		Capacity: int64(*volumeRequest.Capacity),
-		Tags:     volumeRequest.VPCVolume.Tags,
-		Profile: &Profile{
-			Name: volumeRequest.VPCVolume.Profile.Name,
-		},
+		ID:   volumeRequest.VolumeID,
+		CRN:  volumeRequest.CRN,
+		Tags: volumeRequest.VPCVolume.Tags,
 		Zone: &Zone{
 			Name: volumeRequest.Az,
 		},
@@ -82,6 +78,14 @@ func NewVolume(volumeRequest provider.Volume) Volume {
 	}
 	if volumeRequest.Name != nil {
 		volume.Name = *volumeRequest.Name
+	}
+	if volumeRequest.Capacity != nil {
+		volume.Capacity = int64(*volumeRequest.Capacity)
+	}
+	if volumeRequest.VPCVolume.Profile != nil {
+		volume.Profile = &Profile{
+			Name: volumeRequest.VPCVolume.Profile.Name,
+		}
 	}
 	if volumeRequest.VPCVolume.ResourceGroup != nil {
 		volume.ResourceGroup = &ResourceGroup{
