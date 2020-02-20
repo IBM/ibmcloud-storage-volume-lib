@@ -131,8 +131,8 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		IamAPIKey:       conf.VPC.APIKey,
 		IamClientID:     conf.Bluemix.IamClientID,
 		IamClientSecret: conf.Bluemix.IamClientSecret,
-		PrivateAPIRoute: conf.Bluemix.PrivateAPIRoute, // Only for private cluster
-		CSRFToken:       conf.Bluemix.CSRFToken,       // required for private cluster
+		PrivateAPIRoute: conf.VPC.TokenExchangeURL,
+		CSRFToken:       conf.Bluemix.CSRFToken, // required for private cluster
 	}
 
 	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
