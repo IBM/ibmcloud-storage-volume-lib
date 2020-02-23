@@ -14,6 +14,7 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+	vpc_provider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
 	"time"
@@ -43,7 +44,7 @@ func (vpcIks *IksVpcSession) UpdateVolume(volumeRequest provider.Volume) (err er
 	vpcIks.Logger.Info("Calling  provider for volume update...")
 	err = vpcIks.APIRetry.FlexyRetry(vpcIks.Logger, func() (error, bool) {
 		err = vpcIks.IksSession.Apiclient.VolumeService().UpdateVolume(&volumeTemplate, vpcIks.Logger)
-		return err, err == nil
+		return err, err == nil || vpc_provider.SkipRetryForIKS(err)
 	})
 
 	if err != nil {

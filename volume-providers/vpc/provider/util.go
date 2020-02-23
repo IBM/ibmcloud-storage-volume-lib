@@ -50,6 +50,9 @@ var skipErrorCodes = map[string]bool{
 	// IKS ms error code for skip re-try
 	"ST0008": true, //resources not found
 	"ST0005": true, //worker node could not be found
+	"ST0014": true, // Required parameter missing or invalid
+	"ST0015": true, // Required parameter missing
+	"ST0016": true, // Tagging failed .. Do not repeat
 }
 
 // retry ...
@@ -97,11 +100,14 @@ func skipRetry(err *models.Error) bool {
 	return false
 }
 
-// skipRetryForIKS skip retry as per listed error codes
-func skipRetryForIKS(err *models.IksError) bool {
-	skipStatus, ok := skipErrorCodes[string(err.Code)]
-	if ok {
-		return skipStatus
+// SkipRetryForIKS skip retry as per listed error codes
+func SkipRetryForIKS(err error) bool {
+	iksError, iksok := err.(*models.IksError)
+	if iksok {
+		skipStatus, ok := skipErrorCodes[string(iksError.Code)]
+		if ok {
+			return skipStatus
+		}
 	}
 	return false
 }
@@ -110,11 +116,7 @@ func skipRetryForIKS(err *models.IksError) bool {
 func skipRetryForAttach(err error, isIKS bool) bool {
 	// Only for storage-api ms related calls error
 	if isIKS {
-		iksError, ok := err.(*models.IksError)
-		if ok {
-			return skipRetryForIKS(iksError)
-		}
-		return false
+		return SkipRetryForIKS(err)
 	}
 
 	// Only for RIaaS attachment related calls error
