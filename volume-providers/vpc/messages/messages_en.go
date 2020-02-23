@@ -45,9 +45,9 @@ var messagesEn = map[string]util.Message{
 		Action:      "Verify that the volume ID exists. Run 'ibmcloud is volumes' to list available volumes in your account. If the ID is correct, try to delete the volume with the 'ibmcloud is volume-delete' command. ",
 	},
 	"FailedToUpdateVolume": util.Message{
-		Code:        "FailedToDeleteVolume",
-		Description: "The volume ID '%d' could not be deleted",
-		Type:        util.DeletionFailed,
+		Code:        "FailedToUpdateVolume",
+		Description: "The volume ID '%d' could not be updated",
+		Type:        util.UpdateFailed,
 		RC:          500,
 		Action:      "Verify that the volume ID exists. Run 'ibmcloud is volumes' to list available volumes in your account.",
 	},

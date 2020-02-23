@@ -13,7 +13,6 @@ package models
 import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -106,18 +105,7 @@ func NewVolume(volumeRequest provider.Volume) Volume {
 		volume.VolumeEncryptionKey = &VolumeEncryptionKey{CRN: encryptionKeyCRN}
 	}
 
-	//volume.initCluster()
 	volume.Cluster = volumeRequest.Attributes[ClusterIDTagName]
 	volume.Status = StatusType(volumeRequest.Attributes[VolumeStatus])
 	return volume
-}
-
-func (vol Volume) initCluster() {
-	for _, tag := range vol.Tags {
-		if strings.Contains(tag, ClusterIDTagName) {
-			clusterID := tag[len(ClusterIDTagName)+1:]
-			vol.Cluster = clusterID
-			break
-		}
-	}
 }

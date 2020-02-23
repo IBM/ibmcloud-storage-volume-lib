@@ -20,7 +20,7 @@ import (
 type VolumeManager interface {
 	// Create the volume with authorisation by passing required information in the volume object
 	CreateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error)
-	// UpdateVolume updated the volume with authorisation by passing required information in the volume object
+	// UpdateVolume updates the volume with authorisation by passing required information in the volume object
 	UpdateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) error
 
 	// Delete the volume

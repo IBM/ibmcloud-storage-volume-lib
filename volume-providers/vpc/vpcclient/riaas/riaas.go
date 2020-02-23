@@ -142,7 +142,7 @@ type IKSRegionalAPIClientProvider struct {
 
 var _ RegionalAPIClientProvider = IKSRegionalAPIClientProvider{}
 
-// New creates a new Session volume, using the supplied config
+// New creates a new Session , using the supplied config
 func (d IKSRegionalAPIClientProvider) New(config Config) (RegionalAPI, error) {
 	session, err := New(config)
 

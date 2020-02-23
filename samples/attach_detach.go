@@ -33,9 +33,6 @@ func NewVolumeAttachmentManager(session provider.Session, logger *zap.Logger, re
 }
 
 var instanceID string
-
-//var volumeID string
-//var clusterID string
 var volumeAttachmentReq provider.VolumeAttachmentRequest
 
 //AttachVolume ...

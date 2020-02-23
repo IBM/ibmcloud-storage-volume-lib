@@ -27,7 +27,7 @@ func (vs *IKSVolumeService) UpdateVolume(volumeTemplate *models.Volume, ctxLogge
 
 	operation := &client.Operation{
 		Name:        "UpdateVolume",
-		Method:      "PUT",
+		Method:      "POST",
 		PathPattern: vs.pathPrefix + updateVolume,
 	}
 	apiErr := vs.receiverError
