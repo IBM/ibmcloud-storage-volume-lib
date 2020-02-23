@@ -79,12 +79,21 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 
 	//Do config validation and enable only one generationType (i.e VPC-Classic | VPC-NG)
 	gcConfigFound := (conf.VPC.EndpointURL != "" || conf.VPC.PrivateEndpointURL != "") && (conf.VPC.TokenExchangeURL != "" || conf.VPC.IKSTokenExchangePrivateURL != "") && (conf.VPC.APIKey != "") && (conf.VPC.ResourceGroupID != "")
-	g2ConfigFound := (conf.VPC.G2EndpointPrivateURL != "") && (conf.VPC.IKSTokenExchangePrivateURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
+	g2ConfigFound := (conf.VPC.G2EndpointPrivateURL != "" || conf.VPC.G2EndpointURL != "") && (conf.VPC.IKSTokenExchangePrivateURL != "" || conf.VPC.G2TokenExchangeURL != "") && (conf.VPC.G2APIKey != "") && (conf.VPC.G2ResourceGroupID != "")
 	//if both config found, look for VPCTypeEnabled, otherwise default to GC
 	//Incase of NG configurations, override the base properties.
 	if (gcConfigFound && g2ConfigFound && conf.VPC.VPCTypeEnabled == VPCNextGen) || (!gcConfigFound && g2ConfigFound) {
 
-		conf.VPC.EndpointURL = conf.VPC.G2EndpointPrivateURL
+		// overwrite the common variable in case of g2 i.e gen2, first preferences would be private endpoint
+		if conf.VPC.G2EndpointPrivateURL != "" {
+			conf.VPC.EndpointURL = conf.VPC.G2EndpointPrivateURL
+		} else {
+			conf.VPC.EndpointURL = conf.VPC.G2EndpointURL
+		}
+
+		// update iam based public toke exchange endpoint
+		conf.VPC.TokenExchangeURL = conf.VPC.G2TokenExchangeURL
+
 		conf.VPC.APIKey = conf.VPC.G2APIKey
 		conf.VPC.ResourceGroupID = conf.VPC.G2ResourceGroupID
 
@@ -113,26 +122,35 @@ func NewProvider(conf *config.Config, logger *zap.Logger) (local.Provider, error
 		// For backward compatibility as some of the cluster storage secret may not have private gc endpoint url
 		if conf.VPC.PrivateEndpointURL != "" {
 			conf.VPC.EndpointURL = conf.VPC.PrivateEndpointURL
-		} else {
-			conf.VPC.EndpointURL = getPrivateEndpoint(logger, conf.VPC.EndpointURL)
 		}
 	}
 
+	isIKSTokenURL := true
 	// Setting token exchange URL, considering backward compatibility specially for gc clusters
-	if conf.VPC.IKSTokenExchangePrivateURL != "" {
+	// also considered user's configuration whatever provided but preferences would be private endpoint first
+	if conf.VPC.IKSTokenExchangePrivateURL != "" { // IKS private endpoint
 		conf.VPC.TokenExchangeURL = conf.VPC.IKSTokenExchangePrivateURL
-	} else {
+	} else if conf.VPC.TokenExchangeURL != "" { // public IAM URL, which is set at the time of configuration reading
+		isIKSTokenURL = false
+	} else if conf.Bluemix.PrivateAPIRoute != "" { // needed for private cluster in case of IKSTokenExchangePrivateURL is not set
 		conf.VPC.TokenExchangeURL = conf.Bluemix.PrivateAPIRoute
+	} else {
+		conf.VPC.TokenExchangeURL = conf.Bluemix.IamURL // public endpoint IAM api endpoint
+		isIKSTokenURL = false
 	}
 
-	// VPC provider use differnt APIkey and Auth Endpoint
+	// VPC provider use different APIkey and Auth Endpoint
 	authConfig := &config.BluemixConfig{
 		IamURL:          conf.VPC.TokenExchangeURL,
 		IamAPIKey:       conf.VPC.APIKey,
 		IamClientID:     conf.Bluemix.IamClientID,
 		IamClientSecret: conf.Bluemix.IamClientSecret,
-		PrivateAPIRoute: conf.VPC.TokenExchangeURL,
-		CSRFToken:       conf.Bluemix.CSRFToken, // required for private cluster
+	}
+
+	// Set the property to call the IKS endpoint
+	if isIKSTokenURL {
+		authConfig.PrivateAPIRoute = conf.VPC.TokenExchangeURL
+		authConfig.CSRFToken = conf.Bluemix.CSRFToken // required for IKS endpoint to get IAM token
 	}
 
 	contextCF, err := auth.NewContextCredentialsFactory(authConfig, nil, conf.VPC)
