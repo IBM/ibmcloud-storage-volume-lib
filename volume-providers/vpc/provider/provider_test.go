@@ -89,8 +89,7 @@ func TestNewProvider(t *testing.T) {
 
 	// gc public endpoint test
 	conf := &config.Config{
-		Bluemix: &config.BluemixConfig{
-		},
+		Bluemix: &config.BluemixConfig{},
 		VPC: &config.VPCProviderConfig{
 			Enabled:          true,
 			EndpointURL:      TestEndpointURL,
@@ -143,8 +142,7 @@ func TestNewProvider(t *testing.T) {
 
 	// gen2 public endpoint related test
 	conf = &config.Config{
-		Bluemix: &config.BluemixConfig{
-		},
+		Bluemix: &config.BluemixConfig{},
 		VPC: &config.VPCProviderConfig{
 			Enabled:            true,
 			G2EndpointURL:      TestEndpointURL,
