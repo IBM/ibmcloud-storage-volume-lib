@@ -43,6 +43,8 @@ const (
 	TestEndpointURL         = "http://some_endpoint"
 	TestAPIVersion          = "2019-07-02"
 	PrivateContainerAPIURL  = "private.test-iam-url"
+	PrivateRIaaSEndpoint    = "private.test-riaas-url"
+	CsrfToken               = "csrf-token"
 )
 
 var _ local.ContextCredentialsFactory = &auth.ContextCredentialsFactory{}
@@ -82,38 +84,37 @@ func GetTestLogger(t *testing.T) (logger *zap.Logger, teardown func()) {
 
 func TestNewProvider(t *testing.T) {
 	var err error
-	conf := &config.Config{
-		Server: &config.ServerConfig{
-			DebugTrace: true,
-		},
-		VPC: &config.VPCProviderConfig{
-			Enabled:     true,
-			EndpointURL: TestEndpointURL,
-			VPCTimeout:  "30s",
-		},
-	}
 	logger, teardown := GetTestLogger(t)
 	defer teardown()
 
-	prov, err := NewProvider(conf, logger)
-	assert.Nil(t, prov)
-	assert.NotNil(t, err)
-
-	conf = &config.Config{
-		Server: &config.ServerConfig{
-			DebugTrace: true,
-		},
+	// gc public endpoint test
+	conf := &config.Config{
 		Bluemix: &config.BluemixConfig{
-			IamURL:          IamURL,
-			IamClientID:     IamClientID,
-			IamClientSecret: IamClientSecret,
-			IamAPIKey:       IamClientSecret,
-			RefreshToken:    RefreshToken,
 		},
 		VPC: &config.VPCProviderConfig{
-			Enabled:     true,
-			EndpointURL: TestEndpointURL,
-			VPCTimeout:  "",
+			Enabled:          true,
+			EndpointURL:      TestEndpointURL,
+			TokenExchangeURL: IamURL,
+			APIKey:           IamClientSecret,
+		},
+	}
+
+	prov, err := NewProvider(conf, logger)
+	assert.NotNil(t, prov)
+	assert.Nil(t, err)
+
+	// GC private endpoint related test
+	conf = &config.Config{
+		Bluemix: &config.BluemixConfig{
+			IamClientID:     IamClientID,
+			IamClientSecret: IamClientSecret,
+			CSRFToken:       CsrfToken,
+		},
+		VPC: &config.VPCProviderConfig{
+			Enabled:                    true,
+			PrivateEndpointURL:         PrivateRIaaSEndpoint,
+			IKSTokenExchangePrivateURL: PrivateContainerAPIURL,
+			APIKey:                     IamClientSecret,
 		},
 	}
 
@@ -121,23 +122,72 @@ func TestNewProvider(t *testing.T) {
 	assert.NotNil(t, prov)
 	assert.Nil(t, err)
 
-	// private endpoint related test
+	// gc mix test
 	conf = &config.Config{
-		Server: &config.ServerConfig{
-			DebugTrace: true,
-		},
 		Bluemix: &config.BluemixConfig{
-			IamURL:          IamURL,
+			PrivateAPIRoute: IamURL,
 			IamClientID:     IamClientID,
 			IamClientSecret: IamClientSecret,
-			IamAPIKey:       IamClientSecret,
-			RefreshToken:    RefreshToken,
-			PrivateAPIRoute: PrivateContainerAPIURL,
+			CSRFToken:       CsrfToken,
 		},
 		VPC: &config.VPCProviderConfig{
-			Enabled:     true,
-			EndpointURL: TestEndpointURL,
-			VPCTimeout:  "",
+			Enabled:            true,
+			PrivateEndpointURL: PrivateRIaaSEndpoint,
+			APIKey:             IamClientSecret,
+		},
+	}
+
+	prov, err = NewProvider(conf, logger)
+	assert.NotNil(t, prov)
+	assert.Nil(t, err)
+
+	// gen2 public endpoint related test
+	conf = &config.Config{
+		Bluemix: &config.BluemixConfig{
+		},
+		VPC: &config.VPCProviderConfig{
+			Enabled:            true,
+			G2EndpointURL:      TestEndpointURL,
+			G2TokenExchangeURL: IamURL,
+			G2APIKey:           IamClientSecret,
+		},
+	}
+
+	prov, err = NewProvider(conf, logger)
+	assert.NotNil(t, prov)
+	assert.Nil(t, err)
+
+	// gen2 private endpoint related test
+	conf = &config.Config{
+		Bluemix: &config.BluemixConfig{
+			IamClientID:     IamClientID,
+			IamClientSecret: IamClientSecret,
+			CSRFToken:       CsrfToken,
+		},
+		VPC: &config.VPCProviderConfig{
+			Enabled:                    true,
+			G2EndpointPrivateURL:       PrivateRIaaSEndpoint,
+			IKSTokenExchangePrivateURL: PrivateContainerAPIURL,
+			G2APIKey:                   IamClientSecret,
+		},
+	}
+
+	prov, err = NewProvider(conf, logger)
+	assert.NotNil(t, prov)
+	assert.Nil(t, err)
+
+	// gen2 mix test
+	conf = &config.Config{
+		Bluemix: &config.BluemixConfig{
+			PrivateAPIRoute: IamURL,
+			IamClientID:     IamClientID,
+			IamClientSecret: IamClientSecret,
+			CSRFToken:       CsrfToken,
+		},
+		VPC: &config.VPCProviderConfig{
+			Enabled:              true,
+			G2EndpointPrivateURL: PrivateRIaaSEndpoint,
+			G2APIKey:             IamClientSecret,
 		},
 	}
 

@@ -42,7 +42,7 @@
   gc_api_key = ""
 
   encryption = false
-  iks_token_exchange_endpoint_private_url = "https://containers.test.cloud.ibm.com" # "https://private.containers.test.cloud.ibm.com"
+  iks_token_exchange_endpoint_private_url = "https://containers.test.cloud.ibm.com"
   max_retry_attempt  = 10 # 10 times with exponential re-try with max gap max_retry_gap
   max_retry_gap =  120 # 2 minutes
   api_version = "2019-07-02"
