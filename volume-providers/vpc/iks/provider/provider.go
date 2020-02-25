@@ -106,8 +106,11 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 			ctxLogger.Error("Error occured while opening IKSSession", zap.Error(err))
 		}
 	}
-	iksSession, _ := session.(*vpcprovider.VPCSession)
-	iksSession.APIClientVolAttachMgr = iksSession.Apiclient.IKSVolumeAttachService()
+
+	iksSession, ok := session.(*vpcprovider.VPCSession)
+	if ok && iksSession.Apiclient != nil {
+		iksSession.APIClientVolAttachMgr = iksSession.Apiclient.IKSVolumeAttachService()
+	}
 	// Setup Dual Session that handles for VPC and IKS connections
 	vpcIksSession := IksVpcSession{
 		VPCSession: *vpcSession,
