@@ -35,7 +35,7 @@ func (vpcIks *IksVpcSession) UpdateVolume(volumeRequest provider.Volume) (err er
 
 	// Build the template to send to backend
 	volumeTemplate := models.NewVolume(volumeRequest)
-	err = validateVolumeRequest(volumeTemplate)
+	err = validateVolumeRequest(volumeRequest)
 	if err != nil {
 		return err
 	}
@@ -56,15 +56,19 @@ func (vpcIks *IksVpcSession) UpdateVolume(volumeRequest provider.Volume) (err er
 }
 
 // validateVolumeRequest validating volume request
-func validateVolumeRequest(volumeRequest models.Volume) error {
+func validateVolumeRequest(volumeRequest provider.Volume) error {
 
 	// Volume name should not be empty
-	if len(volumeRequest.ID) == 0 {
-		return userError.GetUserError("InvalidVolumeID", nil, volumeRequest.ID)
+	if len(volumeRequest.VolumeID) == 0 {
+		return userError.GetUserError("ErrorRequiredFieldMissing", nil, "VolumeID")
 	}
 	// Provider name should not be empty
 	if len(volumeRequest.Provider) == 0 {
-		return userError.GetUserError("InvalidProvider", nil, volumeRequest.Provider)
+		return userError.GetUserError("ErrorRequiredFieldMissing", nil, "Provider")
+	}
+	// VolumeType  should not be empty
+	if len(volumeRequest.VolumeType) == 0 {
+		return userError.GetUserError("ErrorRequiredFieldMissing", nil, "VolumeType")
 	}
 
 	return nil
