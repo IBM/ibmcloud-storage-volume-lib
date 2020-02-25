@@ -2,10 +2,10 @@
 package fake
 
 import (
-	"net/http"
-	"sync"
+	http "net/http"
+	sync "sync"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	provider "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
 
 type FakeSession struct {
@@ -270,6 +270,17 @@ type FakeSession struct {
 	}
 	typeReturnsOnCall map[int]struct {
 		result1 provider.VolumeType
+	}
+	UpdateVolumeStub        func(provider.Volume) error
+	updateVolumeMutex       sync.RWMutex
+	updateVolumeArgsForCall []struct {
+		arg1 provider.Volume
+	}
+	updateVolumeReturns struct {
+		result1 error
+	}
+	updateVolumeReturnsOnCall map[int]struct {
+		result1 error
 	}
 	WaitForAttachVolumeStub        func(provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error)
 	waitForAttachVolumeMutex       sync.RWMutex
@@ -1595,6 +1606,66 @@ func (fake *FakeSession) TypeReturnsOnCall(i int, result1 provider.VolumeType) {
 	}{result1}
 }
 
+func (fake *FakeSession) UpdateVolume(arg1 provider.Volume) error {
+	fake.updateVolumeMutex.Lock()
+	ret, specificReturn := fake.updateVolumeReturnsOnCall[len(fake.updateVolumeArgsForCall)]
+	fake.updateVolumeArgsForCall = append(fake.updateVolumeArgsForCall, struct {
+		arg1 provider.Volume
+	}{arg1})
+	fake.recordInvocation("UpdateVolume", []interface{}{arg1})
+	fake.updateVolumeMutex.Unlock()
+	if fake.UpdateVolumeStub != nil {
+		return fake.UpdateVolumeStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.updateVolumeReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeSession) UpdateVolumeCallCount() int {
+	fake.updateVolumeMutex.RLock()
+	defer fake.updateVolumeMutex.RUnlock()
+	return len(fake.updateVolumeArgsForCall)
+}
+
+func (fake *FakeSession) UpdateVolumeCalls(stub func(provider.Volume) error) {
+	fake.updateVolumeMutex.Lock()
+	defer fake.updateVolumeMutex.Unlock()
+	fake.UpdateVolumeStub = stub
+}
+
+func (fake *FakeSession) UpdateVolumeArgsForCall(i int) provider.Volume {
+	fake.updateVolumeMutex.RLock()
+	defer fake.updateVolumeMutex.RUnlock()
+	argsForCall := fake.updateVolumeArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeSession) UpdateVolumeReturns(result1 error) {
+	fake.updateVolumeMutex.Lock()
+	defer fake.updateVolumeMutex.Unlock()
+	fake.UpdateVolumeStub = nil
+	fake.updateVolumeReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeSession) UpdateVolumeReturnsOnCall(i int, result1 error) {
+	fake.updateVolumeMutex.Lock()
+	defer fake.updateVolumeMutex.Unlock()
+	fake.UpdateVolumeStub = nil
+	if fake.updateVolumeReturnsOnCall == nil {
+		fake.updateVolumeReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.updateVolumeReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeSession) WaitForAttachVolume(arg1 provider.VolumeAttachmentRequest) (*provider.VolumeAttachmentResponse, error) {
 	fake.waitForAttachVolumeMutex.Lock()
 	ret, specificReturn := fake.waitForAttachVolumeReturnsOnCall[len(fake.waitForAttachVolumeArgsForCall)]
@@ -1765,6 +1836,8 @@ func (fake *FakeSession) Invocations() map[string][][]interface{} {
 	defer fake.providerNameMutex.RUnlock()
 	fake.typeMutex.RLock()
 	defer fake.typeMutex.RUnlock()
+	fake.updateVolumeMutex.RLock()
+	defer fake.updateVolumeMutex.RUnlock()
 	fake.waitForAttachVolumeMutex.RLock()
 	defer fake.waitForAttachVolumeMutex.RUnlock()
 	fake.waitForDetachVolumeMutex.RLock()

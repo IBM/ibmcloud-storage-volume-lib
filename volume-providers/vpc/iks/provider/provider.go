@@ -18,6 +18,8 @@ import (
 	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/auth"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
 	vpcprovider "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/riaas"
+
 	"go.uber.org/zap"
 )
 
@@ -91,6 +93,7 @@ func (iksp *IksVpcBlockProvider) OpenSession(ctx context.Context, contextCredent
 		return nil, err
 	}
 	iksp.iksBlockProvider.ContextCF = ccf
+	iksp.iksBlockProvider.ClientProvider = riaas.IKSRegionalAPIClientProvider{}
 
 	ctxLogger.Info("Its ISK dual session. Getttng IAM token for  IKS block session")
 	iksContextCredentials, err := ccf.ForIAMAccessToken(iksp.globalConfig.Bluemix.IamAPIKey, ctxLogger)

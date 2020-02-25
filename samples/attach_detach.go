@@ -33,8 +33,6 @@ func NewVolumeAttachmentManager(session provider.Session, logger *zap.Logger, re
 }
 
 var instanceID string
-var volumeID string
-var clusterID string
 var volumeAttachmentReq provider.VolumeAttachmentRequest
 
 //AttachVolume ...
@@ -82,13 +80,13 @@ func (vam *VolumeAttachmentManager) setupVolumeAttachmentRequest() {
 	fmt.Printf("Enter the cluster id: ")
 	_, _ = fmt.Scanf("%s", &clusterID)
 	volumeAttachmentReq = provider.VolumeAttachmentRequest{
-		VolumeID:   volumeID,
+		VolumeID:   *volumeID,
 		InstanceID: instanceID,
 		VPCVolumeAttachment: &provider.VolumeAttachment{
 			DeleteVolumeOnInstanceDelete: false,
 		},
 		IKSVolumeAttachment: &provider.IKSVolumeAttachment{
-			ClusterID: &clusterID,
+			ClusterID: clusterID,
 		},
 	}
 

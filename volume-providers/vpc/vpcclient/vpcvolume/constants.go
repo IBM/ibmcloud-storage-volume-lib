@@ -28,4 +28,5 @@ const (
 	snapshotTagsPath    = snapshotIDPath + "/" + "tags"
 	snapshotTagParam    = "tag-name"
 	snapshotTagNamePath = snapshotTagsPath + "/{" + snapshotTagParam + "}"
+	updateVolume        = "updateVolume"
 )

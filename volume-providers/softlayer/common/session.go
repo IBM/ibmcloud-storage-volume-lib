@@ -414,6 +414,11 @@ func (sls *SLSession) WaitForDetachVolume(volumeAttachmentTemplate provider.Volu
 	return errors.New("Unsupported")
 }
 
+//UpdateVolume ...
+func (sls *SLSession) UpdateVolume(volumeTemplate provider.Volume) error {
+	return errors.New("Unsupported")
+}
+
 //GetVolumeByName ...
 func (sls *SLSession) GetVolumeByName(name string) (*provider.Volume, error) {
 	sls.Logger.Info("Entry GetVolumeByName method not supported", zap.Reflect("VolumeName", name))

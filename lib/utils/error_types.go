@@ -19,6 +19,9 @@ const (
 	// DeletionFailed ...
 	DeletionFailed = "DeletionFailed"
 
+	// UpdateFailed ...
+	UpdateFailed = "UpdateFailed"
+
 	// RetrivalFailed ...
 	RetrivalFailed = "RetrivalFailed"
 
