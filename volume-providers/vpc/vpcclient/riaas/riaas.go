@@ -145,7 +145,9 @@ var _ RegionalAPIClientProvider = IKSRegionalAPIClientProvider{}
 // New creates a new Session , using the supplied config
 func (d IKSRegionalAPIClientProvider) New(config Config) (RegionalAPI, error) {
 	session, err := New(config)
-
+	if err != nil || session == nil {
+		return nil, err
+	}
 	iksSession := &IKSSession{
 		Session: *session,
 	}
