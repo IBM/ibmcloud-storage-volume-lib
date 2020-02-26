@@ -83,6 +83,10 @@ func (vpcs *VPCSession) CreateVolume(volumeRequest provider.Volume) (volumeRespo
 	volumeResponse = FromProviderToLibVolume(volume, vpcs.Logger)
 	// VPC does have region yet . So use requested region in response
 	volumeResponse.Region = volumeRequest.Region
+	// Return reuested tag as is if not tags returned by backend
+	if len(volumeResponse.Tags) == 0 && len(volumeRequest.Tags) > 0 {
+		volumeResponse.Tags = volumeRequest.Tags
+	}
 	vpcs.Logger.Info("VolumeResponse", zap.Reflect("volumeResponse", volumeResponse))
 	return volumeResponse, err
 }
