@@ -34,6 +34,7 @@ func TestListVolumes(t *testing.T) {
 		content string
 
 		limit   int
+		start   string
 		filters *models.ListVolumeFilters
 
 		// Expected return
@@ -51,10 +52,19 @@ func TestListVolumes(t *testing.T) {
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:   "Verify that limit is added to the query",
-			limit:  21,
+			limit:  12,
 			status: http.StatusNoContent,
 			muxVerify: func(t *testing.T, r *http.Request) {
-				expectedValues := url.Values{"limit": []string{"21"}, "version": []string{models.APIVersion}}
+				expectedValues := url.Values{"limit": []string{"12"}, "version": []string{models.APIVersion}}
+				actualValues := r.URL.Query()
+				assert.Equal(t, expectedValues, actualValues)
+			},
+		}, {
+			name:   "Verify that start is added to the query",
+			start:  "x-y-z",
+			status: http.StatusNoContent,
+			muxVerify: func(t *testing.T, r *http.Request) {
+				expectedValues := url.Values{"start": []string{"x-y-z"}, "version": []string{models.APIVersion}}
 				actualValues := r.URL.Query()
 				assert.Equal(t, expectedValues, actualValues)
 			},
@@ -116,7 +126,7 @@ func TestListVolumes(t *testing.T) {
 
 			volumeService := vpcvolume.New(client)
 
-			volumes, err := volumeService.ListVolumes(testcase.limit, testcase.filters, logger)
+			volumes, err := volumeService.ListVolumes(testcase.limit, testcase.start, testcase.filters, logger)
 			logger.Info("Volumes", zap.Reflect("volumes", volumes))
 
 			if testcase.expectErr != "" && assert.Error(t, err) {

@@ -184,6 +184,13 @@ var messagesEn = map[string]util.Message{
 		RC:          500,
 		Action:      "Wait for volume deletion",
 	},
+	"ListVolumesFailed": util.Message{
+		Code:        "ListVolumesFailed",
+		Description: "Unable to fetch list of volumes.",
+		Type:        util.RetrivalFailed,
+		RC:          404,
+		Action:      "",
+	},
 }
 
 // InitMessages ...

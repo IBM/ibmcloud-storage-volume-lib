@@ -123,3 +123,9 @@ type VolumeAuthorization struct {
 	// List of HostIPs to authorize
 	HostIPs []string `json:"hostIPs,omitempty"`
 }
+
+// VolumeList ...
+type VolumeList struct {
+	Next    string    `json:"next,omitempty"`
+	Volumes []*Volume `json:"volumes"`
+}

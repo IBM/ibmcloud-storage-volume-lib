@@ -34,7 +34,7 @@ type VolumeManager interface {
 
 	// Others
 	// Get volume lists by using snapshot tags
-	ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error)
+	ListVolumes(limit int, start string, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error)
 
 	// Set tag for a volume
 	SetVolumeTag(volumeID string, tagName string, ctxLogger *zap.Logger) error

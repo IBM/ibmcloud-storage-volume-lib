@@ -11,15 +11,58 @@
 package provider
 
 import (
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
 	"go.uber.org/zap"
+	"strings"
+	"time"
 )
 
 // ListVolumes list all volumes
-func (vpcs *VPCSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) {
-	vpcs.Logger.Info("Entry ListVolumes", zap.Reflect("Tags", tags))
-	defer vpcs.Logger.Info("Exit ListVolumes", zap.Reflect("Tags", tags))
+func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]string) (*provider.VolumeList, error) {
+	vpcs.Logger.Info("Entry ListVolumes", zap.Reflect("start", start), zap.Reflect("filters", tags))
+	defer vpcs.Logger.Info("Exit ListVolumes", zap.Reflect("start", start), zap.Reflect("filters", tags))
+	defer metrics.UpdateDurationFromStart(vpcs.Logger, "ListVolumes", time.Now())
 
-	//! TODO: we may implement
-	return nil, nil
+	filters := &models.ListVolumeFilters{
+		ResourceGroupID: tags["resource_group.id"],
+		Tag:             tags["tag"],
+		ZoneName:        tags["zone.name"],
+		VolumeName:      tags["name"],
+	}
+
+	vpcs.Logger.Info("Getting volumes list from VPC provider...", zap.Reflect("start", start), zap.Reflect("filters", filters))
+
+	var volumes *models.VolumeList
+	var err error
+	err = retry(vpcs.Logger, func() error {
+		volumes, err = vpcs.Apiclient.VolumeService().ListVolumes(limit, start, filters, vpcs.Logger)
+		return err
+	})
+
+	if err != nil {
+		return nil, userError.GetUserError("ListVolumesFailed", err)
+	}
+
+	vpcs.Logger.Info("Successfully retrieved volumes list from VPC backend", zap.Reflect("VolumesList", volumes))
+
+	var respVolumesList = &provider.VolumeList{}
+	if volumes != nil {
+		if volumes.Next != nil {
+			// "Next":{"href":"https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=3e898aa7-ac71-4323-952d-a8d741c65a68\u0026limit=1\u0026zone.name=eu-gb-1"}
+			next := strings.Split(strings.Split(volumes.Next.Href, "start=")[1], "\u0026")[0]
+			respVolumesList.Next = next
+		}
+
+		volumeslist := volumes.Volumes
+		if volumeslist != nil && len(volumeslist) > 0 {
+			for _, volItem := range volumeslist {
+				volumeResponse := FromProviderToLibVolume(volItem, vpcs.Logger)
+				respVolumesList.Volumes = append(respVolumesList.Volumes, volumeResponse)
+			}
+		}
+	}
+	return respVolumesList, err
 }

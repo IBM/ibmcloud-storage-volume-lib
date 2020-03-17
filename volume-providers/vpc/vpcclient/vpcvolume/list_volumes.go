@@ -20,7 +20,7 @@ import (
 )
 
 // ListVolumes GETs /volumes
-func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error) {
+func (vs *VolumeService) ListVolumes(limit int, start string, filters *models.ListVolumeFilters, ctxLogger *zap.Logger) (*models.VolumeList, error) {
 	ctxLogger.Debug("Entry Backend ListVolumes")
 	defer ctxLogger.Debug("Exit Backend ListVolumes")
 
@@ -42,6 +42,10 @@ func (vs *VolumeService) ListVolumes(limit int, filters *models.ListVolumeFilter
 
 	if limit > 0 {
 		req.AddQueryValue("limit", strconv.Itoa(limit))
+	}
+
+	if start != "" {
+		req.AddQueryValue("start", start)
 	}
 
 	if filters != nil {
