@@ -114,11 +114,11 @@ func TestListVolumes(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			testCaseName: "Filter by zone: no volume found",    // Filter by zone where no volume is present
+			testCaseName: "Filter by zone: no volume found", // Filter by zone where no volume is present
 			volumeList: &models.VolumeList{
-				First: nil,
-				Next:  nil,
-				Limit: 50,
+				First:   nil,
+				Next:    nil,
+				Limit:   50,
 				Volumes: []*models.Volume{},
 			},
 			tags: map[string]string{
