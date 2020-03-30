@@ -199,7 +199,9 @@ func TestListVolumes(t *testing.T) {
 				if testcase.volumeList != nil {
 					if testcase.volumeList.Next != nil {
 						// "Next":{"href":"https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=3e898aa7-ac71-4323-952d-a8d741c65a68\u0026limit=1\u0026zone.name=eu-gb-1"}
-						next = strings.Split(strings.Split(testcase.volumeList.Next.Href, "start=")[1], "\u0026")[0]
+						if strings.Contains(testcase.volumeList.Next.Href, "start=") {
+							next = strings.Split(strings.Split(testcase.volumeList.Next.Href, "start=")[1], "\u0026")[0]
+						}
 					}
 				}
 				testcase.verify(t, next, volumes, err)
