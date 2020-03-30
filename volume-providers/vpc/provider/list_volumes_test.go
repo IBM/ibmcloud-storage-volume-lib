@@ -116,7 +116,7 @@ func TestListVolumes(t *testing.T) {
 		}, {
 			testCaseName: "Filter by zone: no volume found", // Filter by zone where no volume is present
 			volumeList: &models.VolumeList{
-				First:   nil,
+				First:   &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?limit=50\u0026zone.name=test-zone"},
 				Next:    nil,
 				Limit:   50,
 				Volumes: []*models.Volume{},
