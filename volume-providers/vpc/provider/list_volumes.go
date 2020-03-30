@@ -51,8 +51,11 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	var respVolumesList = &provider.VolumeList{}
 	if volumes != nil {
 		if volumes.Next != nil {
+			var next string
 			// "Next":{"href":"https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=3e898aa7-ac71-4323-952d-a8d741c65a68\u0026limit=1\u0026zone.name=eu-gb-1"}
-			next := strings.Split(strings.Split(volumes.Next.Href, "start=")[1], "\u0026")[0]
+			if strings.Contains(volumes.Next.Href, "start=") {
+				next = strings.Split(strings.Split(volumes.Next.Href, "start=")[1], "\u0026")[0]
+			}
 			respVolumesList.Next = next
 		}
 
