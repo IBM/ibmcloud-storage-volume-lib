@@ -468,12 +468,20 @@ func main() {
 			var limit int
 			fmt.Printf("Please enter max number of volume entries per page to be returned(Optional): ")
 			_, er11 = fmt.Scanf("%d", &limit)
-			volumeobj1, er11 := sess.ListVolumes(limit, start, tags)
-			if er11 == nil {
-				ctxLogger.Info("Successfully got volumes list================>", zap.Reflect("VolumesList", *volumeobj1))
-			} else {
-				er11 = updateRequestID(er11, requestID)
-				ctxLogger.Info("failed to list volumes================>", zap.Reflect("Error", er11))
+			for true {
+				volumeobj1, er11 := sess.ListVolumes(limit, start, tags)
+				if er11 == nil {
+					ctxLogger.Info("Successfully got volumes list================>", zap.Reflect("VolumesList", *volumeobj1))
+					if volumeobj1.Next != "" {
+						fmt.Printf("\n\nFetching next set of volumes starting from %v...\n\n", volumeobj1.Next)
+						start = volumeobj1.Next
+						continue
+					}
+				} else {
+					er11 = updateRequestID(er11, requestID)
+					ctxLogger.Info("failed to list volumes================>", zap.Reflect("Error", er11))
+				}
+				break
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 19 {

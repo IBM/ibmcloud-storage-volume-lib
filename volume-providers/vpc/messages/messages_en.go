@@ -189,7 +189,7 @@ var messagesEn = map[string]util.Message{
 		Description: "Unable to fetch list of volumes.",
 		Type:        util.RetrivalFailed,
 		RC:          404,
-		Action:      "",
+		Action:      "Run 'ibmcloud is volumes' to list available volumes in your account.",
 	},
 }
 

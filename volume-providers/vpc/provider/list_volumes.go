@@ -27,10 +27,10 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	defer metrics.UpdateDurationFromStart(vpcs.Logger, "ListVolumes", time.Now())
 
 	filters := &models.ListVolumeFilters{
-		ResourceGroupID: tags["resource_group.id"],
-		Tag:             tags["tag"],
-		ZoneName:        tags["zone.name"],
-		VolumeName:      tags["name"],
+		// ResourceGroupID: tags["resource_group.id"],
+		// Tag:             tags["tag"],
+		ZoneName:   tags["zone.name"],
+		VolumeName: tags["name"],
 	}
 
 	vpcs.Logger.Info("Getting volumes list from VPC provider...", zap.Reflect("start", start), zap.Reflect("filters", filters))
