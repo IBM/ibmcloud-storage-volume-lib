@@ -46,7 +46,10 @@ const (
 	// AttachFailed ...
 	AttachFailed = "AttachFailed"
 
-	// DetachFailed ///
+	// InstanceNotFound ...
+	NodeNotFound = "NodeNotFound"
+
+	// DetachFailed ...
 	DetachFailed = "DetachFailed"
 )
 
