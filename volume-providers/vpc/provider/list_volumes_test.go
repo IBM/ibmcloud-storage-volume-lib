@@ -19,6 +19,7 @@ import (
 	volumeServiceFakes "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume/fakes"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -155,7 +156,7 @@ func TestListVolumes(t *testing.T) {
 				assert.Nil(t, err)
 			},
 		}, {
-			testCaseName: "volume not found",
+			testCaseName: "Filter by name: volume not found",
 			tags: map[string]string{
 				"name": "test-volume-name1",
 			},
@@ -164,6 +165,113 @@ func TestListVolumes(t *testing.T) {
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)
 				assert.NotNil(t, err)
+			},
+		}, {
+			testCaseName: "Filter by resource group ID",
+			volumeList: &models.VolumeList{
+				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
+				Next:  nil,
+				Limit: 50,
+				Volumes: []*models.Volume{
+					{
+						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+						Name:     "test-volume-name1",
+						Status:   models.StatusType("OK"),
+						Capacity: int64(10),
+						Iops:     int64(1000),
+						Zone:     &models.Zone{Name: "test-zone-1"},
+					}, {
+						ID:       "23b154fr-test-4bff-816f-f213s1y34gj8",
+						Name:     "test-volume-name2",
+						Status:   models.StatusType("OK"),
+						Capacity: int64(10),
+						Iops:     int64(1000),
+						Zone:     &models.Zone{Name: "test-zone-2"},
+					},
+				},
+			},
+			tags: map[string]string{
+				"resource_group.id": "12345xy4567z89776",
+			},
+			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
+				assert.NotNil(t, volumes.Volumes)
+				assert.Equal(t, next_token, volumes.Next)
+				assert.Nil(t, err)
+			},
+		}, {
+			testCaseName: "Filter by resource group ID: no volume found",
+			volumeList: &models.VolumeList{
+				First:   &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?limit=50"},
+				Next:    nil,
+				Limit:   50,
+				Volumes: []*models.Volume{},
+			},
+			tags: map[string]string{
+				"resource_group.id": "12345xy4567z89776",
+			},
+			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
+				assert.Nil(t, volumes.Volumes)
+				assert.Equal(t, next_token, volumes.Next)
+				assert.Nil(t, err)
+			},
+		}, {
+			testCaseName: "List all volumes",
+			volumeList: &models.VolumeList{
+				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
+				Next:  nil,
+				Limit: 50,
+				Volumes: []*models.Volume{
+					{
+						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+						Name:     "test-volume-name1",
+						Status:   models.StatusType("OK"),
+						Capacity: int64(10),
+						Iops:     int64(1000),
+						Zone:     &models.Zone{Name: "test-zone-1"},
+					}, {
+						ID:       "23b154fr-test-4bff-816f-f213s1y34gj8",
+						Name:     "test-volume-name2",
+						Status:   models.StatusType("OK"),
+						Capacity: int64(10),
+						Iops:     int64(1000),
+						Zone:     &models.Zone{Name: "test-zone-2"},
+					},
+				},
+			},
+			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
+				assert.NotNil(t, volumes.Volumes)
+				assert.Equal(t, next_token, volumes.Next)
+				assert.Nil(t, err)
+			},
+		}, {
+			testCaseName: "Unexpected format of 'Next' parameter in ListVolumes response",
+			volumeList: &models.VolumeList{
+				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
+				Next:  &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?invalid=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
+				Limit: 1,
+				Volumes: []*models.Volume{
+					{
+						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
+						Name:     "test-volume-name1",
+						Status:   models.StatusType("OK"),
+						Capacity: int64(10),
+						Iops:     int64(1000),
+						Zone:     &models.Zone{Name: "test-zone-1"},
+					}, {
+						ID:       "23b154fr-test-4bff-816f-f213s1y34gj8",
+						Name:     "test-volume-name2",
+						Status:   models.StatusType("OK"),
+						Capacity: int64(10),
+						Iops:     int64(1000),
+						Zone:     &models.Zone{Name: "test-zone-2"},
+					},
+				},
+			},
+			limit: 1,
+			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
+				assert.NotNil(t, volumes.Volumes)
+				assert.Equal(t, next_token, volumes.Next)
+				assert.Nil(t, err)
 			},
 		},
 	}
@@ -205,6 +313,16 @@ func TestListVolumes(t *testing.T) {
 					}
 				}
 				testcase.verify(t, next, volumes, err)
+				if volumes != nil && volumes.Volumes != nil {
+					for index, vol := range volumes.Volumes {
+						assert.Equal(t, testcase.volumeList.Volumes[index].ID, vol.VolumeID)
+						assert.Equal(t, testcase.volumeList.Volumes[index].Capacity, int64(*vol.Capacity))
+
+						iops, _ := strconv.ParseInt(*vol.Iops, 10, 64)
+						assert.Equal(t, testcase.volumeList.Volumes[index].Iops, iops)
+						assert.Equal(t, testcase.volumeList.Volumes[index].Zone, &models.Zone{Name: vol.Az})
+					}
+				}
 			}
 
 		})

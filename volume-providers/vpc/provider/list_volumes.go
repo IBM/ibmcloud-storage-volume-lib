@@ -27,10 +27,10 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	defer metrics.UpdateDurationFromStart(vpcs.Logger, "ListVolumes", time.Now())
 
 	filters := &models.ListVolumeFilters{
-		// ResourceGroupID: tags["resource_group.id"],
-		// Tag:             tags["tag"],
-		ZoneName:   tags["zone.name"],
-		VolumeName: tags["name"],
+		// Tag:          tags["tag"],
+		ResourceGroupID: tags["resource_group.id"],
+		ZoneName:        tags["zone.name"],
+		VolumeName:      tags["name"],
 	}
 
 	vpcs.Logger.Info("Getting volumes list from VPC provider...", zap.Reflect("start", start), zap.Reflect("filters", filters))
@@ -55,6 +55,8 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 			// "Next":{"href":"https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=3e898aa7-ac71-4323-952d-a8d741c65a68\u0026limit=1\u0026zone.name=eu-gb-1"}
 			if strings.Contains(volumes.Next.Href, "start=") {
 				next = strings.Split(strings.Split(volumes.Next.Href, "start=")[1], "\u0026")[0]
+			} else {
+				vpcs.Logger.Warn("Volumes.Next URL is not in expected format", zap.Reflect("volumes.Next URL", volumes.Next.Href))
 			}
 			respVolumesList.Next = next
 		}

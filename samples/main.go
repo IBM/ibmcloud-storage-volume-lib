@@ -453,6 +453,7 @@ func main() {
 			tags := map[string]string{}
 			volName := ""
 			zoneName := ""
+			resourceGroupID := ""
 			fmt.Printf("Please enter ZONE Name to filter volumes(Optional): ")
 			_, er11 = fmt.Scanf("%s", &zoneName)
 			if zoneName != "" {
@@ -462,6 +463,12 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &volName)
 			if volName != "" {
 				tags["name"] = volName
+			}
+
+			fmt.Printf("\nPlease enter resource group ID to filter volumes(Optional): ")
+			_, er11 = fmt.Scanf("%s", &resourceGroupID)
+			if resourceGroupID != "" {
+				tags["resource_group.id"] = resourceGroupID
 			}
 
 			start := ""
