@@ -56,7 +56,7 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 			if strings.Contains(volumes.Next.Href, "start=") {
 				next = strings.Split(strings.Split(volumes.Next.Href, "start=")[1], "\u0026")[0]
 			} else {
-				vpcs.Logger.Warn("Volumes.Next.href is not in expected format", zap.Reflect("volumes.Next.href", volumes.Next.Href))
+				vpcs.Logger.Warn("Volumes.Next.Href is not in expected format", zap.Reflect("volumes.Next.Href", volumes.Next.Href))
 			}
 			respVolumesList.Next = next
 		}
