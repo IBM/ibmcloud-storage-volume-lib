@@ -104,12 +104,13 @@ type VolumeService struct {
 		result1 *[]string
 		result2 error
 	}
-	ListVolumesStub        func(int, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)
+	ListVolumesStub        func(int, string, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)
 	listVolumesMutex       sync.RWMutex
 	listVolumesArgsForCall []struct {
 		arg1 int
-		arg2 *models.ListVolumeFilters
-		arg3 *zap.Logger
+		arg2 string
+		arg3 *models.ListVolumeFilters
+		arg4 *zap.Logger
 	}
 	listVolumesReturns struct {
 		result1 *models.VolumeList
@@ -589,18 +590,19 @@ func (fake *VolumeService) ListVolumeTagsReturnsOnCall(i int, result1 *[]string,
 	}{result1, result2}
 }
 
-func (fake *VolumeService) ListVolumes(arg1 int, arg2 *models.ListVolumeFilters, arg3 *zap.Logger) (*models.VolumeList, error) {
+func (fake *VolumeService) ListVolumes(arg1 int, arg2 string, arg3 *models.ListVolumeFilters, arg4 *zap.Logger) (*models.VolumeList, error) {
 	fake.listVolumesMutex.Lock()
 	ret, specificReturn := fake.listVolumesReturnsOnCall[len(fake.listVolumesArgsForCall)]
 	fake.listVolumesArgsForCall = append(fake.listVolumesArgsForCall, struct {
 		arg1 int
-		arg2 *models.ListVolumeFilters
-		arg3 *zap.Logger
-	}{arg1, arg2, arg3})
-	fake.recordInvocation("ListVolumes", []interface{}{arg1, arg2, arg3})
+		arg2 string
+		arg3 *models.ListVolumeFilters
+		arg4 *zap.Logger
+	}{arg1, arg2, arg3, arg4})
+	fake.recordInvocation("ListVolumes", []interface{}{arg1, arg2, arg3, arg4})
 	fake.listVolumesMutex.Unlock()
 	if fake.ListVolumesStub != nil {
-		return fake.ListVolumesStub(arg1, arg2, arg3)
+		return fake.ListVolumesStub(arg1, arg2, arg3, arg4)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -615,17 +617,17 @@ func (fake *VolumeService) ListVolumesCallCount() int {
 	return len(fake.listVolumesArgsForCall)
 }
 
-func (fake *VolumeService) ListVolumesCalls(stub func(int, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)) {
+func (fake *VolumeService) ListVolumesCalls(stub func(int, string, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)) {
 	fake.listVolumesMutex.Lock()
 	defer fake.listVolumesMutex.Unlock()
 	fake.ListVolumesStub = stub
 }
 
-func (fake *VolumeService) ListVolumesArgsForCall(i int) (int, *models.ListVolumeFilters, *zap.Logger) {
+func (fake *VolumeService) ListVolumesArgsForCall(i int) (int, string, *models.ListVolumeFilters, *zap.Logger) {
 	fake.listVolumesMutex.RLock()
 	defer fake.listVolumesMutex.RUnlock()
 	argsForCall := fake.listVolumesArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
 }
 
 func (fake *VolumeService) ListVolumesReturns(result1 *models.VolumeList, result2 error) {

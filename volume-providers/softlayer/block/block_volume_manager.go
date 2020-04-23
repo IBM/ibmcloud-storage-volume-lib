@@ -368,7 +368,7 @@ func (sls *SLBlockSession) GetVolume(id string) (*provider.Volume, error) {
 }
 
 // Get volume lists by using snapshot tags
-func (sls *SLBlockSession) ListVolumes(tags map[string]string) ([]*provider.Volume, error) {
+func (sls *SLBlockSession) ListVolumes(limit int, start string, tags map[string]string) (*provider.VolumeList, error) {
 	//! TODO: we may implement
 	return nil, nil
 }

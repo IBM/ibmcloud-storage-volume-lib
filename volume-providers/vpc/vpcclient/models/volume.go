@@ -48,17 +48,24 @@ type Volume struct {
 
 // ListVolumeFilters ...
 type ListVolumeFilters struct {
-	ResourceGroupID string
-	Tag             string
-	ZoneName        string
-	VolumeName      string
+	ResourceGroupID string `json:"resource_group.id,omitempty"`
+	Tag             string `json:"tag,omitempty"`
+	ZoneName        string `json:"zone.name,omitempty"`
+	VolumeName      string `json:"name,omitempty"`
 }
 
 // VolumeList ...
 type VolumeList struct {
-	Volumes    []*Volume `json:"volumes,omitempty"`
-	Limit      int       `json:"limit,omitempty"`
-	TotalCount int       `json:"total_count,omitempty"`
+	First      *HReference `json:"first,omitempty"`
+	Next       *HReference `json:"next,omitempty"`
+	Volumes    []*Volume   `json:"volumes"`
+	Limit      int         `json:"limit,omitempty"`
+	TotalCount int         `json:"total_count,omitempty"`
+}
+
+// HReference ...
+type HReference struct {
+	Href string `json:"href,omitempty"`
 }
 
 //NewVolume created model volume from provider volume

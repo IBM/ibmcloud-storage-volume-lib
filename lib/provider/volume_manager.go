@@ -38,9 +38,8 @@ type VolumeManager interface {
 	// details by usig user provided volume name
 	GetVolumeByName(name string) (*Volume, error)
 
-	// Others
-	// Get volume lists by using snapshot tags
-	ListVolumes(tags map[string]string) ([]*Volume, error)
+	// Get volume lists by using filters
+	ListVolumes(limit int, start string, tags map[string]string) (*VolumeList, error)
 
 	// GetVolumeByRequestID fetch the volume by request ID.
 	// Request Id is the one that is returned when volume is provsioning request is
