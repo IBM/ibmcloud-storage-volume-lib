@@ -285,7 +285,7 @@ func TestListVolumes(t *testing.T) {
 		}, {
 			testCaseName:       "Invalid start volume ID",
 			start:              "invalid-start-vol-id",
-			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: The volume with the ID specified as the page start parameter is not found.",
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: The volume with the ID specified as the page start parameter is not valid.",
 			expectedReasonCode: "ErrorUnclassified",
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)

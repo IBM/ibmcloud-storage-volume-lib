@@ -54,7 +54,7 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	})
 
 	if err != nil {
-		if strings.Contains(err.Error(), "start parameter is not found") {
+		if strings.Contains(err.Error(), "start parameter is not valid") {
 			return nil, userError.GetUserError("StartVolumeIDNotFound", err, start)
 		}
 		return nil, userError.GetUserError("ListVolumesFailed", err)
