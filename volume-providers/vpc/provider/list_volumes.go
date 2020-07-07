@@ -21,6 +21,11 @@ import (
 	"time"
 )
 
+const (
+	maxLimit                 = 100
+	StartVolumeIDNotFoundMsg = "start parameter is not valid"
+)
+
 // ListVolumes list all volumes
 func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]string) (*provider.VolumeList, error) {
 	vpcs.Logger.Info("Entry ListVolumes", zap.Reflect("start", start), zap.Reflect("filters", tags))
@@ -28,13 +33,12 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	defer metrics.UpdateDurationFromStart(vpcs.Logger, "ListVolumes", time.Now())
 
 	if limit < 0 {
-		return nil, userError.GetUserError("InvalidListVolumesLimit", fmt.Errorf(
-			"listVolumes got invalid entries request %v, supports values between 0-100", limit))
+		return nil, userError.GetUserError("InvalidListVolumesLimit", nil, limit)
 	}
 
-	if limit > 100 {
-		vpcs.Logger.Warn(fmt.Sprintf("listVolumes requested max entries of %v, supports values <=100 so defaulting value back to 100", limit))
-		limit = 100
+	if limit > maxLimit {
+		vpcs.Logger.Warn(fmt.Sprintf("listVolumes requested max entries of %v, supports values <= %v so defaulting value back to %v", limit, maxLimit, maxLimit))
+		limit = maxLimit
 	}
 
 	filters := &models.ListVolumeFilters{
@@ -54,7 +58,7 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	})
 
 	if err != nil {
-		if strings.Contains(err.Error(), "start parameter is not valid") {
+		if strings.Contains(err.Error(), StartVolumeIDNotFoundMsg) {
 			return nil, userError.GetUserError("StartVolumeIDNotFound", err, start)
 		}
 		return nil, userError.GetUserError("ListVolumesFailed", err)
