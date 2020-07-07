@@ -278,16 +278,20 @@ func TestListVolumes(t *testing.T) {
 			limit:        -1,
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)
-				assert.NotNil(t, err)
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), "listVolumes got invalid entries request")
+				}
 			},
 		}, {
 			testCaseName:       "Invalid start volume ID",
-			start:              "invalid--start-vol-id",
-			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: start parameter is not found.",
+			start:              "invalid-start-vol-id",
+			expectedErr:        "{Code:ErrorUnclassified, Type:InvalidRequest, Description: The volume with the ID specified as the page start parameter is not found.",
 			expectedReasonCode: "ErrorUnclassified",
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)
-				assert.NotNil(t, err)
+				if assert.Error(t, err) {
+					assert.Contains(t, err.Error(), "The volume ID specified in the start parameter of the list volume call 'invalid-start-vol-id' could not be found")
+				}
 			},
 		},
 	}
@@ -305,7 +309,7 @@ func TestListVolumes(t *testing.T) {
 			uc.VolumeServiceReturns(volumeService)
 
 			if testcase.expectedErr != "" {
-				volumeService.ListVolumesReturns(testcase.volumeList, errors.New(testcase.expectedReasonCode))
+				volumeService.ListVolumesReturns(testcase.volumeList, errors.New(testcase.expectedErr))
 			} else {
 				volumeService.ListVolumesReturns(testcase.volumeList, nil)
 			}
