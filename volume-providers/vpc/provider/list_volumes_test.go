@@ -279,7 +279,7 @@ func TestListVolumes(t *testing.T) {
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)
 				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), "listVolumes got invalid entries request")
+					assert.Contains(t, err.Error(), "The value specified in the limit parameter of the list volume call '-1' is not valid")
 				}
 			},
 		}, {
