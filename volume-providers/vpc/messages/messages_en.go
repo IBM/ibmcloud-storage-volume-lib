@@ -191,6 +191,20 @@ var messagesEn = map[string]util.Message{
 		RC:          404,
 		Action:      "Run 'ibmcloud is volumes' to list available volumes in your account.",
 	},
+	"InvalidListVolumesLimit": util.Message{
+		Code:        "InvalidListVolumesLimit",
+		Description: "The value specified in the limit parameter of the list volume call is not valid.",
+		Type:        util.InvalidRequest,
+		RC:          400,
+		Action:      "Verify the limit parameter's value. The limit must be a positive number.",
+	},
+	"StartVolumeIDNotFound": util.Message{
+		Code:        "StartVolumeIDNotFound",
+		Description: "The volume ID specified in the start parameter of the list volume call '%s' could not be found.",
+		Type:        util.InvalidRequest,
+		RC:          400,
+		Action:      "Please Verify that the start volume ID is correct and whether you have access to the volume ID.",
+	},
 }
 
 // InitMessages ...

@@ -11,6 +11,7 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/metrics"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/messages"
@@ -25,6 +26,16 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	vpcs.Logger.Info("Entry ListVolumes", zap.Reflect("start", start), zap.Reflect("filters", tags))
 	defer vpcs.Logger.Info("Exit ListVolumes", zap.Reflect("start", start), zap.Reflect("filters", tags))
 	defer metrics.UpdateDurationFromStart(vpcs.Logger, "ListVolumes", time.Now())
+
+	if limit < 0 {
+		return nil, userError.GetUserError("InvalidListVolumesLimit", fmt.Errorf(
+			"listVolumes got invalid entries request %v, supports values between 0-100", limit))
+	}
+
+	if limit > 100 {
+		vpcs.Logger.Warn(fmt.Sprintf("listVolumes requested max entries of %v, supports values <=100 so defaulting value back to 100", limit))
+		limit = 100
+	}
 
 	filters := &models.ListVolumeFilters{
 		// Tag:          tags["tag"],
@@ -43,6 +54,9 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	})
 
 	if err != nil {
+		if strings.Contains(err.Error(), "start parameter is not found")  {
+			return nil, userError.GetUserError("StartVolumeIDNotFound", err, start)
+		}
 		return nil, userError.GetUserError("ListVolumesFailed", err)
 	}
 

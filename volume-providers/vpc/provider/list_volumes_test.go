@@ -273,6 +273,22 @@ func TestListVolumes(t *testing.T) {
 				assert.Equal(t, next_token, volumes.Next)
 				assert.Nil(t, err)
 			},
+		}, {
+			testCaseName: "Invalid limit value",
+			Limit: -1,
+			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
+				assert.Nil(t, volumes)
+				assert.NotNil(t, err)
+			},
+		}, {
+			testCaseName: "Invalid start volume ID",
+			Start: "invalid--start-vol-id",
+			expectedErr: "{Code:ErrorUnclassified, Type:InvalidRequest, Description: start parameter is not found.",
+			expectedReasonCode: "ErrorUnclassified",
+			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
+				assert.Nil(t, volumes)
+				assert.NotNil(t, err)
+			},
 		},
 	}
 
