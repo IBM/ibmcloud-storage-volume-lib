@@ -58,7 +58,7 @@ func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]str
 	})
 
 	if err != nil {
-		if strings.Contains(err.Error(), StartVolumeIDNotFoundMsg) {
+		if strings.Contains(err.Error(), startVolumeIDNotFoundMsg) {
 			return nil, userError.GetUserError("StartVolumeIDNotFound", err, start)
 		}
 		return nil, userError.GetUserError("ListVolumesFailed", err)
