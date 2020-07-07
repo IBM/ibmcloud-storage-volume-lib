@@ -23,7 +23,7 @@ import (
 
 const (
 	maxLimit                 = 100
-	StartVolumeIDNotFoundMsg = "start parameter is not valid"
+	startVolumeIDNotFoundMsg = "start parameter is not valid"
 )
 
 // ListVolumes list all volumes
