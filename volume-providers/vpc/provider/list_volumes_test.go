@@ -279,7 +279,7 @@ func TestListVolumes(t *testing.T) {
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)
 				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), "The value specified in the limit parameter of the list volume call '-1' is not valid")
+					assert.Contains(t, err.Error(), "The value '-1' specified in the limit parameter of the list volume call is not valid")
 				}
 			},
 		}, {
@@ -290,7 +290,7 @@ func TestListVolumes(t *testing.T) {
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)
 				if assert.Error(t, err) {
-					assert.Contains(t, err.Error(), "The volume ID specified in the start parameter of the list volume call 'invalid-start-vol-id' could not be found")
+					assert.Contains(t, err.Error(), "The volume ID 'invalid-start-vol-id' specified in the start parameter of the list volume call could not be found")
 				}
 			},
 		},
