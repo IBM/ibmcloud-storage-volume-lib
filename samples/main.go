@@ -472,7 +472,7 @@ func main() {
 			}
 
 			start := ""
-			var limit int
+			var limit int64
 			fmt.Printf("Please enter max number of volume entries per page to be returned(Optional): ")
 			_, er11 = fmt.Scanf("%d", &limit)
 			for true {

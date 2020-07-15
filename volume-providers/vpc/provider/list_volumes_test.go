@@ -37,7 +37,7 @@ func TestListVolumes(t *testing.T) {
 		testCaseName string
 		volumeList   *models.VolumeList
 
-		limit int
+		limit int64
 		start string
 		tags  map[string]string
 
@@ -54,7 +54,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50\u0026zone.name=test-zone-1"},
 				Next:  nil,
-				Limit: 50,
+				Limit: int64(50),
 				Volumes: []*models.Volume{
 					{
 						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -86,7 +86,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=1\u0026zone.name=test-zone-1"},
 				Next:  &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=23b154fr-test-4bff-816f-f213s1y34gj8\u0026limit=1\u0026zone.name=test-zone-1"},
-				Limit: 1,
+				Limit: int64(1),
 				Volumes: []*models.Volume{
 					{
 						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -108,7 +108,7 @@ func TestListVolumes(t *testing.T) {
 			tags: map[string]string{
 				"zone.name": "test-zone-1",
 			},
-			limit: 1,
+			limit: int64(1),
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.NotNil(t, volumes.Volumes)
 				assert.Equal(t, next_token, volumes.Next)
@@ -119,7 +119,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First:   &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?limit=50\u0026zone.name=test-zone"},
 				Next:    nil,
-				Limit:   50,
+				Limit:   int64(50),
 				Volumes: []*models.Volume{},
 			},
 			tags: map[string]string{
@@ -135,7 +135,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
 				Next:  nil,
-				Limit: 50,
+				Limit: int64(50),
 				Volumes: []*models.Volume{
 					{
 						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -171,7 +171,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
 				Next:  nil,
-				Limit: 50,
+				Limit: int64(50),
 				Volumes: []*models.Volume{
 					{
 						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -203,7 +203,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First:   &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?limit=50"},
 				Next:    nil,
-				Limit:   50,
+				Limit:   int64(50),
 				Volumes: []*models.Volume{},
 			},
 			tags: map[string]string{
@@ -219,7 +219,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
 				Next:  nil,
-				Limit: 50,
+				Limit: int64(50),
 				Volumes: []*models.Volume{
 					{
 						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -248,7 +248,7 @@ func TestListVolumes(t *testing.T) {
 			volumeList: &models.VolumeList{
 				First: &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?start=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
 				Next:  &models.HReference{Href: "https://eu-gb.iaas.cloud.ibm.com/v1/volumes?invalid=16f293bf-test-4bff-816f-e199c0c65db5\u0026limit=50"},
-				Limit: 1,
+				Limit: int64(1),
 				Volumes: []*models.Volume{
 					{
 						ID:       "16f293bf-test-4bff-816f-e199c0c65db5",
@@ -267,7 +267,7 @@ func TestListVolumes(t *testing.T) {
 					},
 				},
 			},
-			limit: 1,
+			limit: int64(1),
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.NotNil(t, volumes.Volumes)
 				assert.Equal(t, next_token, volumes.Next)
@@ -275,7 +275,7 @@ func TestListVolumes(t *testing.T) {
 			},
 		}, {
 			testCaseName: "Invalid limit value",
-			limit:        -1,
+			limit:        int64(-1),
 			verify: func(t *testing.T, next_token string, volumes *provider.VolumeList, err error) {
 				assert.Nil(t, volumes)
 				if assert.Error(t, err) {

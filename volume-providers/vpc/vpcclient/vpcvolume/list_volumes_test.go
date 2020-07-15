@@ -33,7 +33,7 @@ func TestListVolumes(t *testing.T) {
 		status  int
 		content string
 
-		limit   int
+		limit   int64
 		start   string
 		filters *models.ListVolumeFilters
 
@@ -52,7 +52,7 @@ func TestListVolumes(t *testing.T) {
 			expectErr: "Trace Code:, testerr Please check ",
 		}, {
 			name:   "Verify that limit is added to the query",
-			limit:  12,
+			limit:  int64(12),
 			status: http.StatusNoContent,
 			muxVerify: func(t *testing.T, r *http.Request) {
 				expectedValues := url.Values{"limit": []string{"12"}, "version": []string{models.APIVersion}}

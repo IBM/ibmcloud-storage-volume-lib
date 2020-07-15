@@ -227,10 +227,10 @@ type FakeSession struct {
 		result1 []*provider.Snapshot
 		result2 error
 	}
-	ListVolumesStub        func(int, string, map[string]string) (*provider.VolumeList, error)
+	ListVolumesStub        func(int64, string, map[string]string) (*provider.VolumeList, error)
 	listVolumesMutex       sync.RWMutex
 	listVolumesArgsForCall []struct {
-		arg1 int
+		arg1 int64
 		arg2 string
 		arg3 map[string]string
 	}
@@ -1381,11 +1381,11 @@ func (fake *FakeSession) ListSnapshotsReturnsOnCall(i int, result1 []*provider.S
 	}{result1, result2}
 }
 
-func (fake *FakeSession) ListVolumes(arg1 int, arg2 string, arg3 map[string]string) (*provider.VolumeList, error) {
+func (fake *FakeSession) ListVolumes(arg1 int64, arg2 string, arg3 map[string]string) (*provider.VolumeList, error) {
 	fake.listVolumesMutex.Lock()
 	ret, specificReturn := fake.listVolumesReturnsOnCall[len(fake.listVolumesArgsForCall)]
 	fake.listVolumesArgsForCall = append(fake.listVolumesArgsForCall, struct {
-		arg1 int
+		arg1 int64
 		arg2 string
 		arg3 map[string]string
 	}{arg1, arg2, arg3})
@@ -1407,13 +1407,13 @@ func (fake *FakeSession) ListVolumesCallCount() int {
 	return len(fake.listVolumesArgsForCall)
 }
 
-func (fake *FakeSession) ListVolumesCalls(stub func(int, string, map[string]string) (*provider.VolumeList, error)) {
+func (fake *FakeSession) ListVolumesCalls(stub func(int64, string, map[string]string) (*provider.VolumeList, error)) {
 	fake.listVolumesMutex.Lock()
 	defer fake.listVolumesMutex.Unlock()
 	fake.ListVolumesStub = stub
 }
 
-func (fake *FakeSession) ListVolumesArgsForCall(i int) (int, string, map[string]string) {
+func (fake *FakeSession) ListVolumesArgsForCall(i int) (int64, string, map[string]string) {
 	fake.listVolumesMutex.RLock()
 	defer fake.listVolumesMutex.RUnlock()
 	argsForCall := fake.listVolumesArgsForCall[i]

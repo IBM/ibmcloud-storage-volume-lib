@@ -22,17 +22,17 @@ import (
 )
 
 const (
-	maxLimit                 = 100
+	maxLimit                 = int64(100)
 	startVolumeIDNotFoundMsg = "start parameter is not valid"
 )
 
 // ListVolumes list all volumes
-func (vpcs *VPCSession) ListVolumes(limit int, start string, tags map[string]string) (*provider.VolumeList, error) {
+func (vpcs *VPCSession) ListVolumes(limit int64, start string, tags map[string]string) (*provider.VolumeList, error) {
 	vpcs.Logger.Info("Entry ListVolumes", zap.Reflect("start", start), zap.Reflect("filters", tags))
 	defer vpcs.Logger.Info("Exit ListVolumes", zap.Reflect("start", start), zap.Reflect("filters", tags))
 	defer metrics.UpdateDurationFromStart(vpcs.Logger, "ListVolumes", time.Now())
 
-	if limit < 0 {
+	if limit < int64(0) {
 		return nil, userError.GetUserError("InvalidListVolumesLimit", nil, limit)
 	}
 

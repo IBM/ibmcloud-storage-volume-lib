@@ -59,7 +59,7 @@ type VolumeList struct {
 	First      *HReference `json:"first,omitempty"`
 	Next       *HReference `json:"next,omitempty"`
 	Volumes    []*Volume   `json:"volumes"`
-	Limit      int         `json:"limit,omitempty"`
+	Limit      int64       `json:"limit,omitempty"`
 	TotalCount int         `json:"total_count,omitempty"`
 }
 

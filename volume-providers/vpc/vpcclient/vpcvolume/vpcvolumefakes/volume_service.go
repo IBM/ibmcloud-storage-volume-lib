@@ -104,10 +104,10 @@ type VolumeService struct {
 		result1 *[]string
 		result2 error
 	}
-	ListVolumesStub        func(int, string, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)
+	ListVolumesStub        func(int64, string, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)
 	listVolumesMutex       sync.RWMutex
 	listVolumesArgsForCall []struct {
-		arg1 int
+		arg1 int64
 		arg2 string
 		arg3 *models.ListVolumeFilters
 		arg4 *zap.Logger
@@ -590,11 +590,11 @@ func (fake *VolumeService) ListVolumeTagsReturnsOnCall(i int, result1 *[]string,
 	}{result1, result2}
 }
 
-func (fake *VolumeService) ListVolumes(arg1 int, arg2 string, arg3 *models.ListVolumeFilters, arg4 *zap.Logger) (*models.VolumeList, error) {
+func (fake *VolumeService) ListVolumes(arg1 int64, arg2 string, arg3 *models.ListVolumeFilters, arg4 *zap.Logger) (*models.VolumeList, error) {
 	fake.listVolumesMutex.Lock()
 	ret, specificReturn := fake.listVolumesReturnsOnCall[len(fake.listVolumesArgsForCall)]
 	fake.listVolumesArgsForCall = append(fake.listVolumesArgsForCall, struct {
-		arg1 int
+		arg1 int64
 		arg2 string
 		arg3 *models.ListVolumeFilters
 		arg4 *zap.Logger
@@ -617,13 +617,13 @@ func (fake *VolumeService) ListVolumesCallCount() int {
 	return len(fake.listVolumesArgsForCall)
 }
 
-func (fake *VolumeService) ListVolumesCalls(stub func(int, string, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)) {
+func (fake *VolumeService) ListVolumesCalls(stub func(int64, string, *models.ListVolumeFilters, *zap.Logger) (*models.VolumeList, error)) {
 	fake.listVolumesMutex.Lock()
 	defer fake.listVolumesMutex.Unlock()
 	fake.ListVolumesStub = stub
 }
 
-func (fake *VolumeService) ListVolumesArgsForCall(i int) (int, string, *models.ListVolumeFilters, *zap.Logger) {
+func (fake *VolumeService) ListVolumesArgsForCall(i int) (int64, string, *models.ListVolumeFilters, *zap.Logger) {
 	fake.listVolumesMutex.RLock()
 	defer fake.listVolumesMutex.RUnlock()
 	argsForCall := fake.listVolumesArgsForCall[i]

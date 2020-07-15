@@ -39,7 +39,7 @@ type VolumeManager interface {
 	GetVolumeByName(name string) (*Volume, error)
 
 	// Get volume lists by using filters
-	ListVolumes(limit int, start string, tags map[string]string) (*VolumeList, error)
+	ListVolumes(limit int64, start string, tags map[string]string) (*VolumeList, error)
 
 	// GetVolumeByRequestID fetch the volume by request ID.
 	// Request Id is the one that is returned when volume is provsioning request is
