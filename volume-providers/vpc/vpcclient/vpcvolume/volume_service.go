@@ -22,7 +22,7 @@ type VolumeManager interface {
 	CreateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error)
 
 	// ExpandVolume ...
-	ExpandVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error)
+	ExpandVolume(volumeID string, volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error)
 
 	// UpdateVolume updates the volume with authorisation by passing required information in the volume object
 	UpdateVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) error

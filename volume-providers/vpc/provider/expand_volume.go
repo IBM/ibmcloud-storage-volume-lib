@@ -40,7 +40,7 @@ func (vpcs *VPCSession) ExpandVolume(expandVolumeRequest provider.ExpandVolumeRe
 	vpcs.Logger.Info("Calling VPC provider for volume expand...")
 	var volume *models.Volume
 	err = retry(vpcs.Logger, func() error {
-		volume, err = vpcs.Apiclient.VolumeService().ExpandVolume(volumeTemplate, vpcs.Logger)
+		volume, err = vpcs.Apiclient.VolumeService().ExpandVolume(expandVolumeRequest.VolumeID, volumeTemplate, vpcs.Logger)
 		return err
 	})
 
@@ -49,13 +49,16 @@ func (vpcs *VPCSession) ExpandVolume(expandVolumeRequest provider.ExpandVolumeRe
 		return nil, userError.GetUserError("FailedToPlaceOrder", err)
 	}
 
-	vpcs.Logger.Info("Successfully expanded volume from VPC provider...", zap.Reflect("VolumeDetails", volume))
+	vpcs.Logger.Info("Successfully expanded volume from VPC provider")
 
-	vpcs.Logger.Info("Waiting for volume to be in valid (available) state", zap.Reflect("VolumeDetails", volume))
+	vpcs.Logger.Info("Waiting for volume to be in valid (available) state...")
 	err = WaitForValidVolumeState(vpcs, volume.ID)
 	if err != nil {
 		return nil, userError.GetUserError("VolumeNotInValidState", err, volume.ID)
 	}
+	// Updating volume capacity as ExpandVolume does not return updated capacity immediately
+	volume.Capacity = int64(*expandVolumeRequest.Capacity)
+
 	vpcs.Logger.Info("Volume got valid (available) state", zap.Reflect("VolumeDetails", volume))
 
 	// Converting volume to lib volume type
@@ -66,13 +69,6 @@ func (vpcs *VPCSession) ExpandVolume(expandVolumeRequest provider.ExpandVolumeRe
 
 // validateExpandVolumeRequest validating volume request
 func validateExpandVolumeRequest(volumeRequest provider.ExpandVolumeRequest) (bool, error) {
-	// Volume name should not be empty
-	if volumeRequest.Name == nil {
-		return false, userError.GetUserError("InvalidVolumeName", nil, nil)
-	} else if len(*volumeRequest.Name) == 0 {
-		return false, userError.GetUserError("InvalidVolumeName", nil, *volumeRequest.Name)
-	}
-
 	// Capacity should not be empty
 	if volumeRequest.Capacity == nil {
 		return false, userError.GetUserError("VolumeCapacityInvalid", nil, nil)

@@ -19,7 +19,7 @@ import (
 )
 
 // ExpandVolume POSTs to /volumes
-func (vs *VolumeService) ExpandVolume(volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error) {
+func (vs *VolumeService) ExpandVolume(volumeID string, volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error) {
 	ctxLogger.Debug("Entry Backend ExpandVolume")
 	defer ctxLogger.Debug("Exit Backend ExpandVolume")
 
@@ -28,17 +28,15 @@ func (vs *VolumeService) ExpandVolume(volumeTemplate *models.Volume, ctxLogger *
 	operation := &client.Operation{
 		Name:        "ExpandVolume",
 		Method:      "PATCH",
-		PathPattern: volumesPath,
+		PathPattern: volumeIDPath,
 	}
 
 	var volume models.Volume
 	var apiErr models.Error
 
 	request := vs.client.NewRequest(operation)
-	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", request.URL()), zap.Reflect("Payload", volumeTemplate), zap.Reflect("Operation", operation))
-
-	req := request.PathParameter(volumeIDParam, volumeTemplate.ID)
-
+	req := request.PathParameter(volumeIDParam, volumeID)
+	ctxLogger.Info("Equivalent curl command and payload details", zap.Reflect("URL", req.URL()), zap.Reflect("Payload", volumeTemplate), zap.Reflect("Operation", operation))
 	_, err := req.JSONBody(volumeTemplate).JSONSuccess(&volume).JSONError(&apiErr).Invoke()
 	if err != nil {
 		return nil, err
