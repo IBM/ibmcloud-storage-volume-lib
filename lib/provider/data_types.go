@@ -129,3 +129,15 @@ type VolumeList struct {
 	Next    string    `json:"next,omitempty"`
 	Volumes []*Volume `json:"volumes"`
 }
+
+// ExpandVolumeRequest ...
+type ExpandVolumeRequest struct {
+	// VolumeID id for the volume
+	VolumeID string `json:"volumeID"`
+
+	// Name of a device
+	Name *string `json:"name,omitempty"`
+
+	// The Capacity of the volume, in GiB
+	Capacity *int `json:"capacity"`
+}
