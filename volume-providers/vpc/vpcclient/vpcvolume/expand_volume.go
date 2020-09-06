@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-// ExpandVolume POSTs to /volumes
+// ExpandVolume PATCH to /volumes
 func (vs *VolumeService) ExpandVolume(volumeID string, volumeTemplate *models.Volume, ctxLogger *zap.Logger) (*models.Volume, error) {
 	ctxLogger.Debug("Entry Backend ExpandVolume")
 	defer ctxLogger.Debug("Exit Backend ExpandVolume")
