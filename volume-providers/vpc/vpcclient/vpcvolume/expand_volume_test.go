@@ -35,14 +35,30 @@ func TestExpandVolume(t *testing.T) {
 		verify    func(*testing.T, *models.Volume, error)
 	}{
 		{
-			name:    "Verify that the volume is parsed correctly",
+			name:   "Verify that the correct endpoint is invoked",
+			status: http.StatusNoContent,
+		},
+		{
+			name:    "Verify that the volume expended correctly",
 			status:  http.StatusOK,
-			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":200,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}",
+			content: "{\"id\":\"volume-id\",\"name\":\"volume-name\",\"capacity\":300,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:vol1\"}",
 			verify: func(t *testing.T, volume *models.Volume, err error) {
 				if assert.NotNil(t, volume) {
 					assert.Equal(t, "volume-id", volume.ID)
+					assert.Equal(t, int64(300), volume.Capacity)
 				}
 			},
+		},
+		{
+			name:      "Verify that a 404 is returned to the caller",
+			status:    http.StatusNotFound,
+			content:   "{\"errors\":[{\"message\":\"testerr\"}]}",
+			expectErr: "Trace Code:, testerr Please check ",
+		},
+		{
+			name:    "False positive: What if the volume ID is not matched",
+			status:  http.StatusOK,
+			content: "{\"id\":\"wrong-vol\",\"name\":\"wrong-vol\",\"capacity\":10,\"iops\":3000,\"status\":\"pending\",\"zone\":{\"name\":\"test-1\",\"href\":\"https://us-south.iaas.cloud.ibm.com/v1/regions/us-south/zones/test-1\"},\"crn\":\"crn:v1:bluemix:public:is:test-1:a/rg1::volume:wrong-vol\", \"tags\":[\"Wrong Tag\"]}",
 		},
 	}
 
@@ -50,7 +66,7 @@ func TestExpandVolume(t *testing.T) {
 		t.Run(testcase.name, func(t *testing.T) {
 
 			template := &models.Volume{
-				Capacity: 200,
+				Capacity: 300,
 			}
 
 			mux, client, teardown := test.SetupServer(t)
