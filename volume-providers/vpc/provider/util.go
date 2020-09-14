@@ -115,8 +115,8 @@ func SkipRetryForIKS(err error) bool {
 	return false
 }
 
-// skipRetryForObiviousErrors skip retry as per listed error codes
-func skipRetryForObiviousErrors(err error, isIKS bool) bool {
+// skipRetryForObviousErrors skip retry as per listed error codes
+func skipRetryForObviousErrors(err error, isIKS bool) bool {
 	// Only for storage-api ms related calls error
 	if isIKS {
 		return SkipRetryForIKS(err)

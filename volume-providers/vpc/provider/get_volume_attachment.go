@@ -57,7 +57,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByID(volumeAttachmentRequest models.V
 		volumeAttachmentResult, err = vpcs.APIClientVolAttachMgr.GetVolumeAttachment(&volumeAttachmentRequest, vpcs.Logger)
 		// Keep retry, until we get the proper volumeAttachmentRequest object
 		if err != nil {
-			return err, skipRetryForObiviousErrors(err, vpcs.Config.IsIKS)
+			return err, skipRetryForObviousErrors(err, vpcs.Config.IsIKS)
 		}
 		return err, true // stop retry as no error
 	})
@@ -83,7 +83,7 @@ func (vpcs *VPCSession) getVolumeAttachmentByVolumeID(volumeAttachmentRequest mo
 		volumeAttachmentList, err = vpcs.APIClientVolAttachMgr.ListVolumeAttachments(&volumeAttachmentRequest, vpcs.Logger)
 		// Keep retry, until we get the proper volumeAttachmentRequest object
 		if err != nil {
-			return err, skipRetryForObiviousErrors(err, vpcs.Config.IsIKS)
+			return err, skipRetryForObviousErrors(err, vpcs.Config.IsIKS)
 		}
 		return err, true // stop retry as no error
 	})
