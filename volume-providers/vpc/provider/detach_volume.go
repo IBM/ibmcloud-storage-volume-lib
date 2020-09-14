@@ -47,7 +47,7 @@ func (vpcs *VPCSession) DetachVolume(volumeAttachmentTemplate provider.VolumeAtt
 			volumeAttachment.ID = currentVolAttachment.VPCVolumeAttachment.ID
 			vpcs.Logger.Info("Detaching volume from VPC provider...")
 			response, err = vpcs.APIClientVolAttachMgr.DetachVolume(&volumeAttachment, vpcs.Logger)
-			return err, skipRetryForAttach(err, vpcs.Config.IsIKS)
+			return err, skipRetryForObiviousErrors(err, vpcs.Config.IsIKS)
 		}
 		vpcs.Logger.Info("No volume attachment found for", zap.Reflect("currentVolAttachment", currentVolAttachment), zap.Error(err))
 		// consider volume detach success if its  already  in Detaching or VolumeAttachment is not found
