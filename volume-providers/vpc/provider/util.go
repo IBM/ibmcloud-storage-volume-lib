@@ -53,6 +53,9 @@ var skipErrorCodes = map[string]bool{
 	"ST0014": true, // Required parameter missing or invalid
 	"ST0015": true, // Required parameter missing
 	"ST0016": true, // Tagging failed .. Do not repeat
+	"P4106":  true, // Instnace not found
+	"P4107":  true, // Volume not found
+	"P4109":  true, // Volume attachment not found
 }
 
 // retry ...
@@ -112,8 +115,8 @@ func SkipRetryForIKS(err error) bool {
 	return false
 }
 
-// skipRetryForAttach skip retry as per listed error codes
-func skipRetryForAttach(err error, isIKS bool) bool {
+// skipRetryForObviousErrors skip retry as per listed error codes
+func skipRetryForObviousErrors(err error, isIKS bool) bool {
 	// Only for storage-api ms related calls error
 	if isIKS {
 		return SkipRetryForIKS(err)
