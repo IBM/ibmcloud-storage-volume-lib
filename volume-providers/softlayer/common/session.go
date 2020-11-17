@@ -426,6 +426,6 @@ func (sls *SLSession) GetVolumeByName(name string) (*provider.Volume, error) {
 	return nil, nil
 }
 
-func (sls *SLSession) ExpandVolume(expandVolumeRequest provider.ExpandVolumeRequest) (volumeResponse *provider.Volume, err error) {
-	return nil, errors.New("Unsupported")
+func (sls *SLSession) ExpandVolume(expandVolumeRequest provider.ExpandVolumeRequest) (size int64, err error) {
+	return -1, errors.New("Unsupported")
 }

@@ -113,17 +113,17 @@ type FakeSession struct {
 		result1 *http.Response
 		result2 error
 	}
-	ExpandVolumeStub        func(provider.ExpandVolumeRequest) (*provider.Volume, error)
+	ExpandVolumeStub        func(provider.ExpandVolumeRequest) (int64, error)
 	expandVolumeMutex       sync.RWMutex
 	expandVolumeArgsForCall []struct {
 		arg1 provider.ExpandVolumeRequest
 	}
 	expandVolumeReturns struct {
-		result1 *provider.Volume
+		result1 int64
 		result2 error
 	}
 	expandVolumeReturnsOnCall map[int]struct {
-		result1 *provider.Volume
+		result1 int64
 		result2 error
 	}
 	GetProviderDisplayNameStub        func() provider.VolumeProvider
@@ -845,7 +845,7 @@ func (fake *FakeSession) DetachVolumeReturnsOnCall(i int, result1 *http.Response
 	}{result1, result2}
 }
 
-func (fake *FakeSession) ExpandVolume(arg1 provider.ExpandVolumeRequest) (*provider.Volume, error) {
+func (fake *FakeSession) ExpandVolume(arg1 provider.ExpandVolumeRequest) (int64, error) {
 	fake.expandVolumeMutex.Lock()
 	ret, specificReturn := fake.expandVolumeReturnsOnCall[len(fake.expandVolumeArgsForCall)]
 	fake.expandVolumeArgsForCall = append(fake.expandVolumeArgsForCall, struct {
@@ -869,7 +869,7 @@ func (fake *FakeSession) ExpandVolumeCallCount() int {
 	return len(fake.expandVolumeArgsForCall)
 }
 
-func (fake *FakeSession) ExpandVolumeCalls(stub func(provider.ExpandVolumeRequest) (*provider.Volume, error)) {
+func (fake *FakeSession) ExpandVolumeCalls(stub func(provider.ExpandVolumeRequest) (int64, error)) {
 	fake.expandVolumeMutex.Lock()
 	defer fake.expandVolumeMutex.Unlock()
 	fake.ExpandVolumeStub = stub
@@ -882,28 +882,28 @@ func (fake *FakeSession) ExpandVolumeArgsForCall(i int) provider.ExpandVolumeReq
 	return argsForCall.arg1
 }
 
-func (fake *FakeSession) ExpandVolumeReturns(result1 *provider.Volume, result2 error) {
+func (fake *FakeSession) ExpandVolumeReturns(result1 int64, result2 error) {
 	fake.expandVolumeMutex.Lock()
 	defer fake.expandVolumeMutex.Unlock()
 	fake.ExpandVolumeStub = nil
 	fake.expandVolumeReturns = struct {
-		result1 *provider.Volume
+		result1 int64
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeSession) ExpandVolumeReturnsOnCall(i int, result1 *provider.Volume, result2 error) {
+func (fake *FakeSession) ExpandVolumeReturnsOnCall(i int, result1 int64, result2 error) {
 	fake.expandVolumeMutex.Lock()
 	defer fake.expandVolumeMutex.Unlock()
 	fake.ExpandVolumeStub = nil
 	if fake.expandVolumeReturnsOnCall == nil {
 		fake.expandVolumeReturnsOnCall = make(map[int]struct {
-			result1 *provider.Volume
+			result1 int64
 			result2 error
 		})
 	}
 	fake.expandVolumeReturnsOnCall[i] = struct {
-		result1 *provider.Volume
+		result1 int64
 		result2 error
 	}{result1, result2}
 }

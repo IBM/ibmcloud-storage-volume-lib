@@ -135,9 +135,10 @@ type ExpandVolumeRequest struct {
 	// VolumeID id for the volume
 	VolumeID string `json:"volumeID"`
 
-	// Name of a device
+	// changed Volume name
 	Name *string `json:"name,omitempty"`
 
-	// The Capacity of the volume, in GiB
-	Capacity *int `json:"capacity"`
+	// The new Capacity of the volume, in GiB
+	//Capacity *int `json:"capacity"`
+	Capacity int64 `json:"capacity"`
 }
