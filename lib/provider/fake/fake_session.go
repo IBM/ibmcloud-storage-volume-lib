@@ -2,10 +2,10 @@
 package fake
 
 import (
-	http "net/http"
-	sync "sync"
+	"net/http"
+	"sync"
 
-	provider "github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
 )
 
 type FakeSession struct {
@@ -111,6 +111,19 @@ type FakeSession struct {
 	}
 	detachVolumeReturnsOnCall map[int]struct {
 		result1 *http.Response
+		result2 error
+	}
+	ExpandVolumeStub        func(provider.ExpandVolumeRequest) (int64, error)
+	expandVolumeMutex       sync.RWMutex
+	expandVolumeArgsForCall []struct {
+		arg1 provider.ExpandVolumeRequest
+	}
+	expandVolumeReturns struct {
+		result1 int64
+		result2 error
+	}
+	expandVolumeReturnsOnCall map[int]struct {
+		result1 int64
 		result2 error
 	}
 	GetProviderDisplayNameStub        func() provider.VolumeProvider
@@ -828,6 +841,69 @@ func (fake *FakeSession) DetachVolumeReturnsOnCall(i int, result1 *http.Response
 	}
 	fake.detachVolumeReturnsOnCall[i] = struct {
 		result1 *http.Response
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeSession) ExpandVolume(arg1 provider.ExpandVolumeRequest) (int64, error) {
+	fake.expandVolumeMutex.Lock()
+	ret, specificReturn := fake.expandVolumeReturnsOnCall[len(fake.expandVolumeArgsForCall)]
+	fake.expandVolumeArgsForCall = append(fake.expandVolumeArgsForCall, struct {
+		arg1 provider.ExpandVolumeRequest
+	}{arg1})
+	fake.recordInvocation("ExpandVolume", []interface{}{arg1})
+	fake.expandVolumeMutex.Unlock()
+	if fake.ExpandVolumeStub != nil {
+		return fake.ExpandVolumeStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.expandVolumeReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeSession) ExpandVolumeCallCount() int {
+	fake.expandVolumeMutex.RLock()
+	defer fake.expandVolumeMutex.RUnlock()
+	return len(fake.expandVolumeArgsForCall)
+}
+
+func (fake *FakeSession) ExpandVolumeCalls(stub func(provider.ExpandVolumeRequest) (int64, error)) {
+	fake.expandVolumeMutex.Lock()
+	defer fake.expandVolumeMutex.Unlock()
+	fake.ExpandVolumeStub = stub
+}
+
+func (fake *FakeSession) ExpandVolumeArgsForCall(i int) provider.ExpandVolumeRequest {
+	fake.expandVolumeMutex.RLock()
+	defer fake.expandVolumeMutex.RUnlock()
+	argsForCall := fake.expandVolumeArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeSession) ExpandVolumeReturns(result1 int64, result2 error) {
+	fake.expandVolumeMutex.Lock()
+	defer fake.expandVolumeMutex.Unlock()
+	fake.ExpandVolumeStub = nil
+	fake.expandVolumeReturns = struct {
+		result1 int64
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeSession) ExpandVolumeReturnsOnCall(i int, result1 int64, result2 error) {
+	fake.expandVolumeMutex.Lock()
+	defer fake.expandVolumeMutex.Unlock()
+	fake.ExpandVolumeStub = nil
+	if fake.expandVolumeReturnsOnCall == nil {
+		fake.expandVolumeReturnsOnCall = make(map[int]struct {
+			result1 int64
+			result2 error
+		})
+	}
+	fake.expandVolumeReturnsOnCall[i] = struct {
+		result1 int64
 		result2 error
 	}{result1, result2}
 }
@@ -1814,6 +1890,8 @@ func (fake *FakeSession) Invocations() map[string][][]interface{} {
 	defer fake.deleteVolumeMutex.RUnlock()
 	fake.detachVolumeMutex.RLock()
 	defer fake.detachVolumeMutex.RUnlock()
+	fake.expandVolumeMutex.RLock()
+	defer fake.expandVolumeMutex.RUnlock()
 	fake.getProviderDisplayNameMutex.RLock()
 	defer fake.getProviderDisplayNameMutex.RUnlock()
 	fake.getSnapshotMutex.RLock()

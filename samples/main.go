@@ -103,7 +103,7 @@ func main() {
 	valid := true
 	for valid {
 
-		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n 14- Create VPC Snapshot \n 15- Attach VPC volume \n 16- Detach VPC volume \n 17- Get volume by name \n 18- List volumes \n 19- Get volume Attachment \nYour choice?:")
+		fmt.Println("\n\nSelect your choice\n 1- Get volume details \n 2- Create snapshot \n 3- list snapshot \n 4- Create volume \n 5- Snapshot details \n 6- Snapshot Order \n 7- Create volume from snapshot\n 8- Delete volume \n 9- Delete Snapshot \n 10- List all Snapshot \n 12- Authorize volume \n 13- Create VPC Volume \n 14- Create VPC Snapshot \n 15- Attach VPC volume \n 16- Detach VPC volume \n 17- Get volume by name \n 18- List volumes \n 19- Expand volume \n 20- Get volume Attachment \n Your choice?:")
 
 		var choiceN int
 		var volumeID string
@@ -492,8 +492,26 @@ func main() {
 			}
 			fmt.Printf("\n\n")
 		} else if choiceN == 19 {
-			volumeAttachmentManager.VolumeAttachment()
+			var capacity int64
+			fmt.Println("You selected choice to expand volume")
+			volume := &provider.ExpandVolumeRequest{}
+			fmt.Printf("Please enter volume ID to exand: ")
+			_, er11 = fmt.Scanf("%s", &volumeID)
+			fmt.Printf("Please enter new capacity: ")
+			_, er11 = fmt.Scanf("%d", &capacity)
+			volume.VolumeID = volumeID
+			volume.Capacity = capacity
+			expandedVolumeSize, er11 := sess.ExpandVolume(*volume)
+			if er11 == nil {
+				ctxLogger.Info("Successfully expanded volume ================>", zap.Reflect("Volume ID", expandedVolumeSize))
+			} else {
+				er11 = updateRequestID(er11, requestID)
+				ctxLogger.Info("failed to expand================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
+			}
+			fmt.Printf("\n\n")
 		} else if choiceN == 20 {
+			volumeAttachmentManager.VolumeAttachment()
+		} else if choiceN == 21 {
 			volumeManager.UpdateVolume()
 			os.Exit(0)
 		} else {
