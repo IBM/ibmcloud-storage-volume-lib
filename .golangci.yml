@@ -1,0 +1,36 @@
+# all available settings of specific linters
+linters-settings:
+  govet:
+    # settings per analyzer
+    settings:
+      printf: # analyzer name, run `go tool vet help` to see all analyzers
+        funcs: # run `go tool vet help printf` to see available settings for `printf` analyzer
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  gosec:
+    settings:
+      exclude: "G401"
+  golint:
+    min-confidence: 0
+    report-comments: true
+  gocyclo:
+    min-complexity: 10
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+issues:
+  include: [EXC01, EXC02]
+  exclude-use-default: false
+linters:
+    # enable or disable analyzers by name
+    enable:
+      - gofmt
+      - gosec
+    enable-all: false
+    disable-all: true

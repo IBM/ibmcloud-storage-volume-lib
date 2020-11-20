@@ -11,31 +11,33 @@ GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
 GOLINTPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /e2e | grep -v /volume-providers/softlayer/ )
 ARCH = $(shell uname -m)
 
+export LINT_VERSION="1.27.0"
+
+COLOR_YELLOW=\033[0;33m
+COLOR_RESET=\033[0m
+
 .PHONY: all
-all: deps dofmt vet test
+all: deps fmt vet test
 
 .PHONY: deps
 deps:
 	glide install
 	go get github.com/pierrre/gotestcover
-	go get golang.org/x/lint/golint
+	@if ! which golangci-lint >/dev/null || [[ "$$(golangci-lint --version)" != *${LINT_VERSION}* ]]; then \
+		curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v${LINT_VERSION}; \
+	fi
 
 .PHONY: fmt
 fmt: lint
-	gofmt -l ${GOFILES}
-	@if [ -n "$$(gofmt -l ${GOFILES})" ]; then echo 'Above Files needs gofmt fixes. Please run gofmt -l -w on your code.' && exit 1; fi
+	golangci-lint run --disable-all --enable=gofmt --timeout 600s --skip-dirs=e2e
 
 .PHONY: dofmt
 dofmt:
-	go fmt ./...
+	golangci-lint run --disable-all --enable=gofmt --fix --skip-dirs=e2e
 
 .PHONY: lint
 lint:
-	$(GOPATH)/bin/golint --set_exit_status ${GOLINTPACKAGES}
-
-.PHONY: makefmt
-makefmt:
-	gofmt -l -w ${GOFILES}
+        golangci-lint run --skip-dirs=e2e
 
 .PHONY: test
 test:

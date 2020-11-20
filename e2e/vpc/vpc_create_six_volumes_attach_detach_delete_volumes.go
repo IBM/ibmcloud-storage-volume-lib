@@ -57,7 +57,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 			Expect(err).NotTo(HaveOccurred())
 		}
 		for i := 0; i < len(attachmentResponses); i++ {
-			sess.WaitForDetachVolume(*attachmentRequests[i])
+			_ = sess.WaitForDetachVolume(*attachmentRequests[i])
 		}
 		ctxLogger.Info("Successfully detached the volumes.")
 		ctxLogger.Info("Test parallel detach Volumes", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))

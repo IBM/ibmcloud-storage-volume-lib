@@ -45,7 +45,7 @@ func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	return logger, traceLevel
 }
 
-func updateRequestID(err error, requestID string) error {
+func updateRequestID1(err error, requestID string) error {
 	if err == nil {
 		return err
 	}

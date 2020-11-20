@@ -40,7 +40,7 @@ func (vam *VolumeAttachmentManager) AttachVolume() {
 	vam.setupVolumeAttachmentRequest()
 	response, err := vam.Session.AttachVolume(volumeAttachmentReq)
 	if err != nil {
-		updateRequestID(err, vam.RequestID)
+		_ = updateRequestID(err, vam.RequestID)
 		vam.Logger.Error("Failed to attach the volume", zap.Error(err))
 		return
 	}
@@ -49,7 +49,7 @@ func (vam *VolumeAttachmentManager) AttachVolume() {
 	}
 	response, err = vam.Session.WaitForAttachVolume(volumeAttachmentReq)
 	if err != nil {
-		updateRequestID(err, vam.RequestID)
+		_ = updateRequestID(err, vam.RequestID)
 		vam.Logger.Error("Failed to complete volume attach", zap.Error(err))
 	}
 	fmt.Println("Volume attachment", response, err)
@@ -60,13 +60,13 @@ func (vam *VolumeAttachmentManager) DetachVolume() {
 	vam.setupVolumeAttachmentRequest()
 	response, err := vam.Session.DetachVolume(volumeAttachmentReq)
 	if err != nil {
-		updateRequestID(err, vam.RequestID)
+		_ = updateRequestID(err, vam.RequestID)
 		vam.Logger.Error("Failed to detach the volume", zap.Error(err))
 		return
 	}
 	err = vam.Session.WaitForDetachVolume(volumeAttachmentReq)
 	if err != nil {
-		updateRequestID(err, vam.RequestID)
+		_ = updateRequestID(err, vam.RequestID)
 		vam.Logger.Error("Failed to complete volume detach", zap.Error(err))
 	}
 	fmt.Println("Volume attachment", response, err)
@@ -78,7 +78,7 @@ func (vam *VolumeAttachmentManager) VolumeAttachment() {
 	vam.setupVolumeAttachmentRequest()
 	response, err := vam.Session.GetVolumeAttachment(volumeAttachmentReq)
 	if err != nil {
-		updateRequestID(err, vam.RequestID)
+		_ = updateRequestID(err, vam.RequestID)
 		vam.Logger.Error("Failed to get volume attachment", zap.Error(err))
 		return
 	}
