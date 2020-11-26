@@ -48,4 +48,8 @@ type VolumeManager interface {
 
 	//AuthorizeVolume allows aceess to volume  based on given authorization
 	AuthorizeVolume(volumeAuthorization VolumeAuthorization) error
+
+	// Volume operations
+	// Expand the volume with authorization by passing required information in the volume object
+	ExpandVolume(expandVolumeRequest ExpandVolumeRequest) (int64, error)
 }

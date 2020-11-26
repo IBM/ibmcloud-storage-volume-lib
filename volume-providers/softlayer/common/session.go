@@ -425,3 +425,7 @@ func (sls *SLSession) GetVolumeByName(name string) (*provider.Volume, error) {
 	sls.Logger.Info("Exit GetVolumeByName method not supported", zap.Reflect("VolumeName", name))
 	return nil, nil
 }
+
+func (sls *SLSession) ExpandVolume(expandVolumeRequest provider.ExpandVolumeRequest) (size int64, err error) {
+	return -1, errors.New("Unsupported")
+}

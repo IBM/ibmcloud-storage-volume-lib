@@ -2,11 +2,11 @@
 package fakes
 
 import (
-	sync "sync"
+	"sync"
 
-	models "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
-	vpcvolume "github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
-	zap "go.uber.org/zap"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/models"
+	"github.com/IBM/ibmcloud-storage-volume-lib/volume-providers/vpc/vpcclient/vpcvolume"
+	"go.uber.org/zap"
 )
 
 type VolumeService struct {
@@ -61,6 +61,21 @@ type VolumeService struct {
 	}
 	deleteVolumeTagReturnsOnCall map[int]struct {
 		result1 error
+	}
+	ExpandVolumeStub        func(string, *models.Volume, *zap.Logger) (*models.Volume, error)
+	expandVolumeMutex       sync.RWMutex
+	expandVolumeArgsForCall []struct {
+		arg1 string
+		arg2 *models.Volume
+		arg3 *zap.Logger
+	}
+	expandVolumeReturns struct {
+		result1 *models.Volume
+		result2 error
+	}
+	expandVolumeReturnsOnCall map[int]struct {
+		result1 *models.Volume
+		result2 error
 	}
 	GetVolumeStub        func(string, *zap.Logger) (*models.Volume, error)
 	getVolumeMutex       sync.RWMutex
@@ -396,6 +411,71 @@ func (fake *VolumeService) DeleteVolumeTagReturnsOnCall(i int, result1 error) {
 	fake.deleteVolumeTagReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
+}
+
+func (fake *VolumeService) ExpandVolume(arg1 string, arg2 *models.Volume, arg3 *zap.Logger) (*models.Volume, error) {
+	fake.expandVolumeMutex.Lock()
+	ret, specificReturn := fake.expandVolumeReturnsOnCall[len(fake.expandVolumeArgsForCall)]
+	fake.expandVolumeArgsForCall = append(fake.expandVolumeArgsForCall, struct {
+		arg1 string
+		arg2 *models.Volume
+		arg3 *zap.Logger
+	}{arg1, arg2, arg3})
+	fake.recordInvocation("ExpandVolume", []interface{}{arg1, arg2, arg3})
+	fake.expandVolumeMutex.Unlock()
+	if fake.ExpandVolumeStub != nil {
+		return fake.ExpandVolumeStub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.expandVolumeReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *VolumeService) ExpandVolumeCallCount() int {
+	fake.expandVolumeMutex.RLock()
+	defer fake.expandVolumeMutex.RUnlock()
+	return len(fake.expandVolumeArgsForCall)
+}
+
+func (fake *VolumeService) ExpandVolumeCalls(stub func(string, *models.Volume, *zap.Logger) (*models.Volume, error)) {
+	fake.expandVolumeMutex.Lock()
+	defer fake.expandVolumeMutex.Unlock()
+	fake.ExpandVolumeStub = stub
+}
+
+func (fake *VolumeService) ExpandVolumeArgsForCall(i int) (string, *models.Volume, *zap.Logger) {
+	fake.expandVolumeMutex.RLock()
+	defer fake.expandVolumeMutex.RUnlock()
+	argsForCall := fake.expandVolumeArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *VolumeService) ExpandVolumeReturns(result1 *models.Volume, result2 error) {
+	fake.expandVolumeMutex.Lock()
+	defer fake.expandVolumeMutex.Unlock()
+	fake.ExpandVolumeStub = nil
+	fake.expandVolumeReturns = struct {
+		result1 *models.Volume
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *VolumeService) ExpandVolumeReturnsOnCall(i int, result1 *models.Volume, result2 error) {
+	fake.expandVolumeMutex.Lock()
+	defer fake.expandVolumeMutex.Unlock()
+	fake.ExpandVolumeStub = nil
+	if fake.expandVolumeReturnsOnCall == nil {
+		fake.expandVolumeReturnsOnCall = make(map[int]struct {
+			result1 *models.Volume
+			result2 error
+		})
+	}
+	fake.expandVolumeReturnsOnCall[i] = struct {
+		result1 *models.Volume
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *VolumeService) GetVolume(arg1 string, arg2 *zap.Logger) (*models.Volume, error) {
@@ -790,6 +870,8 @@ func (fake *VolumeService) Invocations() map[string][][]interface{} {
 	defer fake.deleteVolumeMutex.RUnlock()
 	fake.deleteVolumeTagMutex.RLock()
 	defer fake.deleteVolumeTagMutex.RUnlock()
+	fake.expandVolumeMutex.RLock()
+	defer fake.expandVolumeMutex.RUnlock()
 	fake.getVolumeMutex.RLock()
 	defer fake.getVolumeMutex.RUnlock()
 	fake.getVolumeByNameMutex.RLock()
