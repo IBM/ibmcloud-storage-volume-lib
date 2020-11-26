@@ -37,7 +37,7 @@ dofmt:
 
 .PHONY: lint
 lint:
-        golangci-lint run --skip-dirs=e2e
+	 golangci-lint run --skip-dirs=e2e
 
 .PHONY: test
 test:
