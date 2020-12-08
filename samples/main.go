@@ -64,10 +64,10 @@ func updateRequestID(err error, requestID string) error {
 	return usrError
 }
 
-func main1() {
+func main() {
 	flag.Parse()
 	// Setup new style zap logger
-	logger, traceLevel := getContextLogger()
+	logger, traceLevel := getContextLogger1()
 	defer logger.Sync()
 
 	// Load config file
@@ -119,7 +119,7 @@ func main1() {
 			fmt.Printf("\n\n")
 			continue
 		}
-		ctxLogger, _ := getContextLogger()
+		ctxLogger, _ := getContextLogger1()
 		requestID := uid.NewV4().String()
 		ctxLogger = ctxLogger.With(zap.String("RequestID", requestID))
 		ctx := context.WithValue(nil, provider.RequestID, requestID)

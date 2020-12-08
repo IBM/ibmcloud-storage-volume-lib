@@ -57,7 +57,7 @@ func updateRequestID1(err error, requestID string) error {
 	return usrError
 }
 
-func main() {
+func main_test() {
 	// Setup new style zap logger
 	logger, traceLevel := getContextLogger()
 	defer logger.Sync()
