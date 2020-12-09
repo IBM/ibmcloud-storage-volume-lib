@@ -85,7 +85,7 @@ func TestParseConfig(t *testing.T) {
 	var testParseConf testConfig
 
 	configPath := "test.toml"
-	ParseConfig(configPath, &testParseConf, testLogger)
+	_ = ParseConfig(configPath, &testParseConf, testLogger)
 
 	expected := testConf
 	assert.Exactly(t, expected, testParseConf)
@@ -96,7 +96,7 @@ func TestParseConfigNoMatch(t *testing.T) {
 	var testParseConf testConfig
 
 	configPath := "test.toml"
-	ParseConfig(configPath, &testParseConf, testLogger)
+	_ = ParseConfig(configPath, &testParseConf, testLogger)
 
 	expected := testConfig{
 		Header: sectionTestConfig{
@@ -116,7 +116,7 @@ func TestParseConfigNoMatchTwo(t *testing.T) {
 	var testParseConf testConfig
 
 	configPath := "test1.toml"
-	ParseConfig(configPath, &testParseConf, testLogger)
+	_ = ParseConfig(configPath, &testParseConf, testLogger)
 
 	expected := testConfig{
 		Header: sectionTestConfig{
@@ -134,7 +134,7 @@ func TestParseConfigNoMatchTwo(t *testing.T) {
 func TestGetGoPath(t *testing.T) {
 	t.Log("Testing getting GOPATH")
 	goPath := "/tmp"
-	os.Setenv("GOPATH", goPath)
+	_ = os.Setenv("GOPATH", goPath)
 
 	path := GetGoPath()
 
@@ -144,7 +144,7 @@ func TestGetGoPath(t *testing.T) {
 func TestGetEnv(t *testing.T) {
 	t.Log("Testing getting ENV")
 	goPath := "/tmp"
-	os.Setenv("ENVTEST", goPath)
+	_ = os.Setenv("ENVTEST", goPath)
 
 	path := getEnv("ENVTEST")
 
@@ -154,7 +154,7 @@ func TestGetEnv(t *testing.T) {
 func TestGetGoPathNullPath(t *testing.T) {
 	t.Log("Testing getting GOPATH NULL Path")
 	goPath := ""
-	os.Setenv("GOPATH", goPath)
+	_ = os.Setenv("GOPATH", goPath)
 
 	path := GetGoPath()
 
@@ -181,7 +181,7 @@ func TestGetConfPath(t *testing.T) {
 
 func TestGetConfPathWithEnv(t *testing.T) {
 	t.Log("Testing GetEtcPath")
-	os.Setenv("SECRET_CONFIG_PATH", "src/github.com/IBM/ibmcloud-storage-volume-lib/etc")
+	_ = os.Setenv("SECRET_CONFIG_PATH", "src/github.com/IBM/ibmcloud-storage-volume-lib/etc")
 	expectedEtcPath := "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml"
 
 	defaultEtcPath := GetConfPath()
@@ -200,13 +200,13 @@ func TestGetDefaultConfPath(t *testing.T) {
 
 func TestGetConfPathDir(t *testing.T) {
 	t.Log("Testing GetConfPathDir")
-	os.Setenv("SECRET_CONFIG_PATH", "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml")
+	_ = os.Setenv("SECRET_CONFIG_PATH", "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml")
 	expectedEtcPath := "src/github.com/IBM/ibmcloud-storage-volume-lib/etc/libconfig.toml"
 	confPath := GetConfPathDir()
 	assert.Equal(t, confPath, expectedEtcPath)
 
-	os.Unsetenv("SECRET_CONFIG_PATH")
-	os.Unsetenv("GOPATH")
+	_ = os.Unsetenv("SECRET_CONFIG_PATH")
+	_ = os.Unsetenv("GOPATH")
 	confPath = GetConfPathDir()
 	expectedEtcPath = "src/github.com/IBM/ibmcloud-storage-volume-lib/etc"
 	assert.Equal(t, confPath, expectedEtcPath)

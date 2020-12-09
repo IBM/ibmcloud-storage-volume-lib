@@ -104,7 +104,7 @@ func (sls *SLSession) UpdateStorage(volume *provider.Volume) error {
 	notesByte, _ := json.Marshal(volume.VolumeNotes)
 	notesStr := string(notesByte)
 	storage.Notes = &notesStr
-	networkService.EditObject(&storage)
+	_, err = networkService.EditObject(&storage)
 	return err
 
 }

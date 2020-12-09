@@ -32,7 +32,7 @@ var (
 	defaultChoice = flag.Int("choice", 0, "Choice")
 )
 
-func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
+func getContextLogger1() (*zap.Logger, zap.AtomicLevel) {
 	consoleDebugging := zapcore.Lock(os.Stdout)
 	consoleErrors := zapcore.Lock(os.Stderr)
 	encoderConfig := zap.NewProductionEncoderConfig()
@@ -67,7 +67,7 @@ func updateRequestID(err error, requestID string) error {
 func main() {
 	flag.Parse()
 	// Setup new style zap logger
-	logger, traceLevel := getContextLogger()
+	logger, traceLevel := getContextLogger1()
 	defer logger.Sync()
 
 	// Load config file
@@ -119,7 +119,7 @@ func main() {
 			fmt.Printf("\n\n")
 			continue
 		}
-		ctxLogger, _ := getContextLogger()
+		ctxLogger, _ := getContextLogger1()
 		requestID := uid.NewV4().String()
 		ctxLogger = ctxLogger.With(zap.String("RequestID", requestID))
 		ctx := context.WithValue(nil, provider.RequestID, requestID)

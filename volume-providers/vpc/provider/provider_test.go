@@ -71,7 +71,7 @@ func GetTestLogger(t *testing.T) (logger *zap.Logger, teardown func()) {
 
 	teardown = func() {
 
-		logger.Sync()
+		_ = logger.Sync()
 
 		if t.Failed() {
 			t.Log(buf)

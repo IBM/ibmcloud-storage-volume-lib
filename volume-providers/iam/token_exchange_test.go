@@ -24,7 +24,7 @@ import (
 	"go.uber.org/zap/zapcore"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils/reasoncode"
 )
 
@@ -183,7 +183,7 @@ func Test_ExchangeRefreshTokenForAccessToken_FailedNoIamUrl(t *testing.T) {
 	if assert.NotNil(t, err) {
 		assert.Equal(t, "IAM token exchange request failed", err.Error())
 		assert.Equal(t, reasoncode.ReasonCode("ErrorUnclassified"), util.ErrorReasonCode(err))
-		assert.Equal(t, []string{"Post /oidc/token: unsupported protocol scheme \"\""},
+		assert.Equal(t, []string{"Post \"/oidc/token\": unsupported protocol scheme \"\""},
 			util.ErrorDeepUnwrapString(err))
 	}
 }

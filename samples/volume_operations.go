@@ -46,7 +46,7 @@ func (vam *VolumeManager) UpdateVolume() {
 	vam.setupVolumeRequest()
 	err := vam.Session.UpdateVolume(volumeReq)
 	if err != nil {
-		updateRequestID(err, vam.RequestID)
+		_ = updateRequestID(err, vam.RequestID)
 		vam.Logger.Error("Failed to update the volume", zap.Error(err))
 		return
 	}

@@ -229,7 +229,7 @@ func TestDebugMode(t *testing.T) {
 	}
 
 	queryValues := map[string][]string{
-		"version": []string{"2019-01-01"},
+		"version": {"2019-01-01"},
 	}
 
 	for _, testcase := range testcases {
@@ -313,8 +313,8 @@ func TestOperationURLProcessing(t *testing.T) {
 	}
 
 	queryValues := map[string][]string{
-		"generation": []string{strconv.Itoa(models.APIGeneration)},
-		"version":    []string{models.APIVersion},
+		"generation": {strconv.Itoa(models.APIGeneration)},
+		"version":    {models.APIVersion},
 	}
 
 	for _, testcase := range testcases {
@@ -334,8 +334,8 @@ func TestWithPathParameter(t *testing.T) {
 	log := &bytes.Buffer{}
 
 	queryValues := map[string][]string{
-		"version":    []string{models.APIVersion},
-		"generation": []string{strconv.Itoa(models.APIGeneration)},
+		"version":    {models.APIVersion},
+		"generation": {strconv.Itoa(models.APIGeneration)},
 	}
 
 	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context", "default").WithDebug(log).WithAuthToken("auth-token").WithPathParameter("test", "test")
@@ -350,8 +350,8 @@ func TestWithQueryValue(t *testing.T) {
 	log := &bytes.Buffer{}
 
 	queryValues := map[string][]string{
-		"version":    []string{models.APIVersion},
-		"generation": []string{strconv.Itoa(models.APIGeneration)},
+		"version":    {models.APIVersion},
+		"generation": {strconv.Itoa(models.APIGeneration)},
 	}
 
 	riaas := client.New(context.Background(), s.URL, queryValues, http.DefaultClient, "test-context", "default").WithDebug(log).WithAuthToken("auth-token").WithQueryValue("test", "test")

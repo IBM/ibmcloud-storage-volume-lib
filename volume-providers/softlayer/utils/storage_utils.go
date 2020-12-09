@@ -577,7 +577,7 @@ func GetSubnetIPAddressListFromIPs(logger *zap.Logger, session backend.Session, 
 	mask := `id,ipAddress,hardware,virtualGuest`
 	subnetIpaddressList := []datatypes.Network_Subnet_IpAddress{}
 	for _, ipAddress := range ipAddressList {
-		subnetIpaddress, err := session.GetNetworkSubnetIpAddressService().Mask(mask).GetByIPAddress(&ipAddress)
+		subnetIpaddress, err := session.GetNetworkSubnetIpAddressService().Mask(mask).GetByIPAddress(&ipAddress) // #nosec G601: Implicit memory aliasing in for loop
 		if err != nil {
 			logger.Error("Unable to get SubnetIpAddress form IP", zap.Error(err))
 			return nil, err
