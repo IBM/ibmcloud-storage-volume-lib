@@ -17,7 +17,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"

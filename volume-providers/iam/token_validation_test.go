@@ -13,7 +13,7 @@ package iam
 import (
 	"testing"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/stretchr/testify/assert"
