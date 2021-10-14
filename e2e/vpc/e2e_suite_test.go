@@ -11,21 +11,25 @@
 package vpc
 
 import (
+	"context"
+	"fmt"
 	"testing"
+
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"time"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"os"
+
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
-	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
-	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
-	uid "github.com/satori/go.uuid"
+	"github.com/IBM/ibmcloud-volume-interface/config"
+	"github.com/IBM/ibmcloud-volume-interface/lib/provider"
+	"github.com/IBM/ibmcloud-volume-interface/provider/local"
+	provider_util "github.com/IBM/ibmcloud-volume-vpc/block/utils"
+	vpcconfig "github.com/IBM/ibmcloud-volume-vpc/block/vpcconfig"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 var sess provider.Session
@@ -55,12 +59,6 @@ var _ = BeforeSuite(func() {
 		Expect(err).To(HaveOccurred())
 	}
 
-	if conf.VPC != nil && conf.VPC.VPCTypeEnabled == "g2" && conf.VPC.G2ResourceGroupID != "" {
-		resourceGroupID = conf.VPC.G2ResourceGroupID
-	} else if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
-		resourceGroupID = conf.VPC.ResourceGroupID
-	}
-
 	// Check if debug log level enabled or not
 	if conf.Server != nil && conf.Server.DebugTrace {
 		traceLevel.SetLevel(zap.DebugLevel)
@@ -72,27 +70,58 @@ var _ = BeforeSuite(func() {
 	// Load EncryptionKeyCRN info
 	volumeEncryptionKeyCRN = os.Getenv("ENCRYPTION_KEY_CRN")
 
+	// Get only VPC_API_VERSION, in "2019-07-02T00:00:00.000Z" case vpc need only 2019-07-02"
+	dateTime, err := time.Parse(time.RFC3339, conf.VPC.APIVersion)
+	if err == nil {
+		conf.VPC.APIVersion = fmt.Sprintf("%d-%02d-%02d", dateTime.Year(), dateTime.Month(), dateTime.Day())
+	} else {
+		logger.Warn("Failed to parse VPC_API_VERSION, setting default value")
+		conf.VPC.APIVersion = "2020-07-02" // setting default values
+	}
+
+	// Update the CSRF  Token
+	if conf.Bluemix.PrivateAPIRoute != "" {
+		conf.Bluemix.CSRFToken = string([]byte{}) // TODO~ Need to remove it
+	}
+
+	if conf.API == nil {
+		conf.API = &config.APIConfig{
+			PassthroughSecret: string([]byte{}), // // TODO~ Need to remove it
+		}
+	}
+	vpcBlockConfig := &vpcconfig.VPCBlockConfig{
+		VPCConfig:    conf.VPC,
+		IKSConfig:    conf.IKS,
+		APIConfig:    conf.API,
+		ServerConfig: conf.Server,
+	}
 	// Prepare provider registry
-	providerRegistry, err := provider_util.InitProviders(conf, logger)
+	registry, err := provider_util.InitProviders(vpcBlockConfig, logger)
 	if err != nil {
 		logger.Fatal("Error configuring providers", local.ZapError(err))
 		Expect(err).To(HaveOccurred())
 	}
 
-	providerName := ""
-	if conf.VPC.Enabled {
-		providerName = conf.VPC.VPCBlockProviderName
-	} else {
+	var providerName string
+	if conf.IKS.Enabled {
 		providerName = conf.IKS.IKSBlockProviderName
+	} else if conf.VPC.Enabled {
+		providerName = conf.VPC.VPCBlockProviderName
 	}
 
-	ctxLogger, _ = getContextLogger()
-	requestID = uid.NewV4().String()
-	ctxLogger = logger.With(zap.String("RequestID", requestID))
-	sess, _, err = provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
-	if err != nil {
+	if conf.API == nil {
+		conf.API = &config.APIConfig{
+			PassthroughSecret: string([]byte{}), // // TODO~ Need to remove it
+		}
+	}
+
+	sess, isFatal, err := provider_util.OpenProviderSessionWithContext(context.Background(), vpcBlockConfig, registry, providerName, logger)
+	if err != nil || isFatal {
+		logger.Error("Failed to get provider session", zap.Reflect("Error", err))
 		Expect(err).To(HaveOccurred())
 	}
+
+	fmt.Println(sess)
 
 })
 
