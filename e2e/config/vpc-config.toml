@@ -5,7 +5,7 @@
   iam_url = "https://iam.bluemix.net"
   iam_client_id = "bx"
   iam_client_secret = "bx"
-  iam_api_key = "I-0vHyK5rvBEnlFmVBIewxV3VLGtIIvJbRnpXbjOiWb4"
+  iam_api_key = ""
   refresh_token = ""
   containers_api_route = "https://us-south.containers.cloud.ibm.com"
 
@@ -36,15 +36,15 @@
 
   gc_token_exchange_endpoint_url = "https://iam.bluemix.net"
   gc_riaas_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443"
-  gc_resource_group_id = "832b3da0130e4a78a2d5a6c62e79a745"
-  gc_api_key = "I-0vHyK5rvBEnlFmVBIewxV3VLGtIIvJbRnpXbjOiWb4"
+  gc_resource_group_id = ""
+  gc_api_key = ""
   vpc_api_generation = 1
   api_version = "2019-07-02"
 
   g2_token_exchange_endpoint_url = "https://iam.bluemix.net"
   g2_riaas_endpoint_url = "https://us-south.iaas.cloud.ibm.com:443"
-  g2_resource_group_id = "832b3da0130e4a78a2d5a6c62e79a745"
-  g2_api_key = "I-0vHyK5rvBEnlFmVBIewxV3VLGtIIvJbRnpXbjOiWb4"
+  g2_resource_group_id = ""
+  g2_api_key = ""
   g2_vpc_api_generation = 2
   g2_api_version = "2019-07-02"
 
