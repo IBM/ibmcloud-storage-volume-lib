@@ -2,9 +2,9 @@
 
 import os
 import sys
-from slackclient import SlackClient
+import slack
 
-slack_client = SlackClient(token=os.environ['SLACK_API_TOKEN'])
+slack_client = slack(token=os.environ['SLACK_API_TOKEN'])
 channelName = "ibm-vpc-block-csi-e2e"
 def channel_info(channel_id):
     channels_info = slack_client.api_call("channels.info", channel=channel_id)
