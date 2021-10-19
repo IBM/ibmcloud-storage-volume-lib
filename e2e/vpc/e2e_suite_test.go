@@ -11,7 +11,6 @@
 package vpc
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -23,16 +22,20 @@ import (
 	"os"
 
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	"github.com/IBM/ibmcloud-volume-interface/config"
 	"github.com/IBM/ibmcloud-volume-interface/lib/provider"
-	"github.com/IBM/ibmcloud-volume-interface/provider/local"
 	provider_util "github.com/IBM/ibmcloud-volume-vpc/block/utils"
 	vpcconfig "github.com/IBM/ibmcloud-volume-vpc/block/vpcconfig"
+	"github.com/IBM/ibmcloud-volume-vpc/common/registry"
+	uid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 var sess provider.Session
+var vpcBlockConfig *vpcconfig.VPCBlockConfig
+var providerRegistryBlock registry.Providers
 var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
@@ -41,6 +44,7 @@ var resourceGroupID string
 var vpcZone string
 var volumeEncryptionKeyCRN string
 var startTime time.Time
+var providerName string
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -59,6 +63,11 @@ var _ = BeforeSuite(func() {
 		Expect(err).To(HaveOccurred())
 	}
 
+	if conf.VPC != nil && conf.VPC.VPCTypeEnabled == "g2" && conf.VPC.G2ResourceGroupID != "" {
+		resourceGroupID = conf.VPC.G2ResourceGroupID
+	} else if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
+		resourceGroupID = conf.VPC.ResourceGroupID
+	}
 	// Check if debug log level enabled or not
 	if conf.Server != nil && conf.Server.DebugTrace {
 		traceLevel.SetLevel(zap.DebugLevel)
@@ -89,20 +98,24 @@ var _ = BeforeSuite(func() {
 			PassthroughSecret: string([]byte{}), // // TODO~ Need to remove it
 		}
 	}
-	vpcBlockConfig := &vpcconfig.VPCBlockConfig{
+	vpcBlockConfig = &vpcconfig.VPCBlockConfig{
 		VPCConfig:    conf.VPC,
 		IKSConfig:    conf.IKS,
 		APIConfig:    conf.API,
 		ServerConfig: conf.Server,
 	}
+
+	ctxLogger, _ = getContextLogger()
+	requestID = uid.NewV4().String()
+	ctxLogger = logger.With(zap.String("RequestID", requestID))
+
 	// Prepare provider registry
-	registry, err := provider_util.InitProviders(vpcBlockConfig, logger)
+	providerRegistryBlock, err = provider_util.InitProviders(vpcBlockConfig, ctxLogger)
 	if err != nil {
 		logger.Fatal("Error configuring providers", local.ZapError(err))
 		Expect(err).To(HaveOccurred())
 	}
 
-	var providerName string
 	if conf.IKS.Enabled {
 		providerName = conf.IKS.IKSBlockProviderName
 	} else if conf.VPC.Enabled {
@@ -115,13 +128,11 @@ var _ = BeforeSuite(func() {
 		}
 	}
 
-	sess, isFatal, err := provider_util.OpenProviderSessionWithContext(context.Background(), vpcBlockConfig, registry, providerName, logger)
-	if err != nil || isFatal {
+	sess, _, err = provider_util.OpenProviderSession(vpcBlockConfig, providerRegistryBlock, providerName, logger)
+	if err != nil {
 		logger.Error("Failed to get provider session", zap.Reflect("Error", err))
 		Expect(err).To(HaveOccurred())
 	}
-
-	fmt.Println(sess)
 
 })
 
