@@ -26,8 +26,13 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
 		volume *provider.Volume
 	)
+	BeforeEach(func() {
+		RefreshSession()
+	})
+
 	AfterEach(func() {
 		sess.DeleteVolume(volume)
+		CloseSession()
 	})
 	It("VPC: Create volume, attach volume, detach volume, and delete volume", func() {
 		volName := volumeName + "-attach-detach-" + getenv("BUILD_NUMBER", "")

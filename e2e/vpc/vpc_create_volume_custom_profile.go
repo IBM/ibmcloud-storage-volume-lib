@@ -25,8 +25,13 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
 		volume *provider.Volume
 	)
+	BeforeEach(func() {
+		RefreshSession()
+	})
+
 	AfterEach(func() {
 		sess.DeleteVolume(volume)
+		CloseSession()
 	})
 	It("VPC: Create and delete VPC volume[profile: custom]", func() {
 		volName := volumeName + "-custom-vol"

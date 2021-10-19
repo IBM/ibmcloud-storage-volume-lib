@@ -128,18 +128,32 @@ var _ = BeforeSuite(func() {
 		}
 	}
 
-	sess, _, err = provider_util.OpenProviderSession(vpcBlockConfig, providerRegistryBlock, providerName, logger)
-	if err != nil {
-		logger.Error("Failed to get provider session", zap.Reflect("Error", err))
-		Expect(err).To(HaveOccurred())
-	}
-
 })
 
 var _ = AfterSuite(func() {
 	defer sess.Close()
 	defer ctxLogger.Sync()
 })
+
+func RefreshSession() {
+	var err error
+
+	if sess != nil {
+		sess.Close()
+	}
+
+	sess, _, err = provider_util.OpenProviderSession(vpcBlockConfig, providerRegistryBlock, providerName, logger)
+	if err != nil {
+		logger.Error("Failed to get provider session", zap.Reflect("Error", err))
+		Expect(err).To(HaveOccurred())
+	}
+}
+
+func CloseSession() {
+	if sess != nil {
+		sess.Close()
+	}
+}
 
 func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	consoleDebugging := zapcore.Lock(os.Stdout)

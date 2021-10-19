@@ -28,6 +28,15 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume                  *provider.Volume
 		numberOfVolumesRequired = 6
 	)
+
+	BeforeEach(func() {
+		RefreshSession()
+	})
+
+	BeforeEach(func() {
+		CloseSession()
+	})
+
 	It("VPC: Parallel volume attachments, detachments [six volume attachments in parallel]", func() {
 		By("Creating test volumes")
 		startTime = time.Now()
