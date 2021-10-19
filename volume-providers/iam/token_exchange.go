@@ -99,9 +99,6 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForIMSToken(iamAPIKey string, 
 	r.request.Field("response_type", "ims_portal")
 	r.request.Field("apikey", iamAPIKey)
 
-	r.logger.Info("Request is:=================", zap.Reflect("Request", fmt.Sprintf("%s/oidc/token", tes.bluemixConf.IamURL)))
-	r.logger.Info("apikey is:=================", zap.Reflect("apikey", iamAPIKey))
-
 	return r.exchangeForIMSToken()
 }
 
@@ -111,9 +108,6 @@ func (tes *tokenExchangeService) ExchangeIAMAPIKeyForAccessToken(iamAPIKey strin
 
 	r.request.Field("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
 	r.request.Field("apikey", iamAPIKey)
-
-	r.logger.Info("Request is:=================", zap.Reflect("Request", fmt.Sprintf("%s/oidc/token", tes.bluemixConf.IamURL)))
-	r.logger.Info("apikey is:=================", zap.Reflect("apikey", iamAPIKey))
 
 	return r.exchangeForAccessToken()
 }
