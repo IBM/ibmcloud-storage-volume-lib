@@ -32,8 +32,10 @@
   genesis_url = ""
 
 [vpc]
+  iam_client_id = "bx"
+  iam_client_secret = "bx"
   vpc_enabled = true
-  vpc_type_enabled = "gc"
+  vpc_type_enabled = "g2"
   vpc_block_provider_name = "vpc-classic"
 
   gc_token_exchange_endpoint_url = "https://iam.bluemix.net"
