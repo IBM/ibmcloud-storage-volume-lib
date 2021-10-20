@@ -88,16 +88,6 @@ var _ = BeforeSuite(func() {
 		conf.VPC.APIVersion = "2020-07-02" // setting default values
 	}
 
-	// Update the CSRF  Token
-	if conf.Bluemix.PrivateAPIRoute != "" {
-		conf.Bluemix.CSRFToken = string([]byte{}) // TODO~ Need to remove it
-	}
-
-	if conf.API == nil {
-		conf.API = &config.APIConfig{
-			PassthroughSecret: string([]byte{}), // // TODO~ Need to remove it
-		}
-	}
 	vpcBlockConfig = &vpcconfig.VPCBlockConfig{
 		VPCConfig:    conf.VPC,
 		IKSConfig:    conf.IKS,
@@ -120,12 +110,6 @@ var _ = BeforeSuite(func() {
 		providerName = conf.IKS.IKSBlockProviderName
 	} else if conf.VPC.Enabled {
 		providerName = conf.VPC.VPCBlockProviderName
-	}
-
-	if conf.API == nil {
-		conf.API = &config.APIConfig{
-			PassthroughSecret: string([]byte{}), // // TODO~ Need to remove it
-		}
 	}
 
 })
