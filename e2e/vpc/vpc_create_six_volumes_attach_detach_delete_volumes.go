@@ -12,14 +12,15 @@ package vpc
 
 import (
 	"fmt"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"go.uber.org/zap"
 	"os"
 	"strconv"
 	"time"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"go.uber.org/zap"
+
+	"github.com/IBM/ibmcloud-volume-interface/lib/provider"
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
@@ -27,6 +28,15 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		volume                  *provider.Volume
 		numberOfVolumesRequired = 6
 	)
+
+	BeforeEach(func() {
+		RefreshSession()
+	})
+
+	BeforeEach(func() {
+		CloseSession()
+	})
+
 	It("VPC: Parallel volume attachments, detachments [six volume attachments in parallel]", func() {
 		By("Creating test volumes")
 		startTime = time.Now()

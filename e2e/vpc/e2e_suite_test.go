@@ -11,24 +11,31 @@
 package vpc
 
 import (
+	"fmt"
 	"testing"
+
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"time"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	"os"
+
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
-	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
+	"github.com/IBM/ibmcloud-volume-interface/config"
+	"github.com/IBM/ibmcloud-volume-interface/lib/provider"
+	provider_util "github.com/IBM/ibmcloud-volume-vpc/block/utils"
+	vpcconfig "github.com/IBM/ibmcloud-volume-vpc/block/vpcconfig"
+	"github.com/IBM/ibmcloud-volume-vpc/common/registry"
 	uid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 var sess provider.Session
+var vpcBlockConfig *vpcconfig.VPCBlockConfig
+var providerRegistryBlock registry.Providers
 var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
@@ -37,6 +44,7 @@ var resourceGroupID string
 var vpcZone string
 var volumeEncryptionKeyCRN string
 var startTime time.Time
+var providerName string
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -60,7 +68,6 @@ var _ = BeforeSuite(func() {
 	} else if conf.VPC != nil && conf.VPC.ResourceGroupID != "" {
 		resourceGroupID = conf.VPC.ResourceGroupID
 	}
-
 	// Check if debug log level enabled or not
 	if conf.Server != nil && conf.Server.DebugTrace {
 		traceLevel.SetLevel(zap.DebugLevel)
@@ -72,26 +79,37 @@ var _ = BeforeSuite(func() {
 	// Load EncryptionKeyCRN info
 	volumeEncryptionKeyCRN = os.Getenv("ENCRYPTION_KEY_CRN")
 
-	// Prepare provider registry
-	providerRegistry, err := provider_util.InitProviders(conf, logger)
-	if err != nil {
-		logger.Fatal("Error configuring providers", local.ZapError(err))
-		Expect(err).To(HaveOccurred())
+	// Get only VPC_API_VERSION, in "2019-07-02T00:00:00.000Z" case vpc need only 2019-07-02"
+	dateTime, err := time.Parse(time.RFC3339, conf.VPC.APIVersion)
+	if err == nil {
+		conf.VPC.APIVersion = fmt.Sprintf("%d-%02d-%02d", dateTime.Year(), dateTime.Month(), dateTime.Day())
+	} else {
+		logger.Warn("Failed to parse VPC_API_VERSION, setting default value")
+		conf.VPC.APIVersion = "2020-07-02" // setting default values
 	}
 
-	providerName := ""
-	if conf.VPC.Enabled {
-		providerName = conf.VPC.VPCBlockProviderName
-	} else {
-		providerName = conf.IKS.IKSBlockProviderName
+	vpcBlockConfig = &vpcconfig.VPCBlockConfig{
+		VPCConfig:    conf.VPC,
+		IKSConfig:    conf.IKS,
+		APIConfig:    conf.API,
+		ServerConfig: conf.Server,
 	}
 
 	ctxLogger, _ = getContextLogger()
 	requestID = uid.NewV4().String()
 	ctxLogger = logger.With(zap.String("RequestID", requestID))
-	sess, _, err = provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
+
+	// Prepare provider registry
+	providerRegistryBlock, err = provider_util.InitProviders(vpcBlockConfig, ctxLogger)
 	if err != nil {
+		logger.Fatal("Error configuring providers", local.ZapError(err))
 		Expect(err).To(HaveOccurred())
+	}
+
+	if conf.IKS.Enabled {
+		providerName = conf.IKS.IKSBlockProviderName
+	} else {
+		providerName = conf.VPC.VPCBlockProviderName
 	}
 
 })
@@ -100,6 +118,26 @@ var _ = AfterSuite(func() {
 	defer sess.Close()
 	defer ctxLogger.Sync()
 })
+
+func RefreshSession() {
+	var err error
+
+	if sess != nil {
+		sess.Close()
+	}
+
+	sess, _, err = provider_util.OpenProviderSession(vpcBlockConfig, providerRegistryBlock, providerName, logger)
+	if err != nil {
+		logger.Error("Failed to get provider session", zap.Reflect("Error", err))
+		Expect(err).To(HaveOccurred())
+	}
+}
+
+func CloseSession() {
+	if sess != nil {
+		sess.Close()
+	}
+}
 
 func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
 	consoleDebugging := zapcore.Lock(os.Stdout)

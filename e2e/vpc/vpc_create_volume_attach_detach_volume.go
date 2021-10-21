@@ -12,21 +12,27 @@ package vpc
 
 import (
 	"fmt"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"go.uber.org/zap"
 	"os"
 	"time"
 
-	"github.com/IBM/ibmcloud-storage-volume-lib/lib/provider"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"go.uber.org/zap"
+
+	"github.com/IBM/ibmcloud-volume-interface/lib/provider"
 )
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
 		volume *provider.Volume
 	)
+	BeforeEach(func() {
+		RefreshSession()
+	})
+
 	AfterEach(func() {
 		sess.DeleteVolume(volume)
+		CloseSession()
 	})
 	It("VPC: Create volume, attach volume, detach volume, and delete volume", func() {
 		volName := volumeName + "-attach-detach-" + getenv("BUILD_NUMBER", "")
