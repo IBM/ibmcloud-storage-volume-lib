@@ -22,7 +22,7 @@ import (
 
 	"github.com/IBM-Cloud/ibm-cloud-cli-sdk/common/rest"
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
-	util "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
+	"github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 )
 
 // tokenExchangeService ...
