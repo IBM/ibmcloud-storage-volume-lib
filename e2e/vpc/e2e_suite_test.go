@@ -108,7 +108,7 @@ var _ = BeforeSuite(func() {
 
 	if conf.IKS.Enabled {
 		providerName = conf.IKS.IKSBlockProviderName
-	} else if conf.VPC.Enabled {
+	} else {
 		providerName = conf.VPC.VPCBlockProviderName
 	}
 
