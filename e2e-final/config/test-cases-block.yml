@@ -1,0 +1,74 @@
+- testCase: "Create and delete VPC volume [profile: 5iops-tier]"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with 5iops-tier profile"
+  success: true
+- testCase: "Create and delete VPC volume [profile: 10iops-tier]"
+  input:
+    volume:
+      name: e2e-storage-volume-10iops
+      capacity: 50
+      profile: 10iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with 10iops-tier profile"
+  success: true
+- testCase: "Create and delete VPC volume [profile: custom]"
+  input:
+    volume:
+      name: e2e-storage-volume-custom
+      capacity: 10
+      profile: custom
+      iops: 1000
+      tags: "Testing VPC volume from library with custom profile"
+  success: true
+- testCase: "Create and delete VPC volume with encryption"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-encryption
+      capacity: 100
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with with encryption"
+    encryptionKey: "crn:v1:bluemix:public:kms:eu-gb:a/b661e758bf044d2d928fef7900d5130b:0ce5fa89-18ee-4176-add8-4a340c538076:key:9957a976-bda3-47ca-b773-54ec73316b1d"
+  success: true
+- testCase: "Create and delete VPC volume with invalid profile"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-invalid
+      capacity: 10
+      profile: 20iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with invalid profile"
+  success: false
+- testCase: "Create and delete VPC volume invalid volume name"
+  input:
+    volume:
+      name: "!#$#$#$sdwd"
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with invalid volume name"
+  success: false
+- testCase: "Create and delete VPC volume with invalid custom iops"
+  input:
+    volume:
+      name: e2e-storage-volume-custom-invalid
+      capacity: 10
+      profile: custom
+      iops: 2000
+      tags: "Testing VPC volume from library with invalid custom iops"
+  success: false
+- testCase: "Create and delete VPC volume with invalid encryption key"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-invalid-encryption
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with with invalid encryption"
+    encryptionKey: "ssasadad"
+  success: false
