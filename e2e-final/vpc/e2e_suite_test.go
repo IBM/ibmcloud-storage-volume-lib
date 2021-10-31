@@ -66,12 +66,12 @@ type TestCaseData struct {
 }
 
 type InputDef struct {
-	Volume              VolumeDef `yaml:"volume,flow"`
-	VolumeEncryptionKey string    `yaml:"encryptionKey,omitempty"`
-	InstanceID          []string  `yaml:"instanceID,omitempty"`
-	VPCID               []string  `yaml:"vpcID,omitempty"`
-	SubnetID            []string  `yaml:"subnetID,omitempty"`
-	ClusterID           []string  `yaml:"clusterID,omitempty"`
+	Volume            VolumeDef `yaml:"volume,flow"`
+	EncryptionEnabled bool      `yaml:"encryptionEnabled,omitempty"`
+	InstanceID        []string  `yaml:"instanceID,omitempty"`
+	VPCID             []string  `yaml:"vpcID,omitempty"`
+	SubnetID          []string  `yaml:"subnetID,omitempty"`
+	ClusterID         []string  `yaml:"clusterID,omitempty"`
 }
 
 type VolumeDef struct {

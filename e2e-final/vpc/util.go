@@ -118,9 +118,9 @@ func getVolume(testCase TestCaseData) *provider.Volume {
 	volume.VPCVolume.ResourceGroup.ID = resourceGroupID
 	volume.Az = vpcZone
 	volume.VPCVolume.Tags = []string{testCase.Input.Volume.Tags}
-	if testCase.Input.VolumeEncryptionKey != "" {
+	if volumeEncryptionKeyCRN != "" && testCase.Input.EncryptionEnabled {
 		volume.VPCVolume.VolumeEncryptionKey = &provider.VolumeEncryptionKey{}
-		volume.VPCVolume.VolumeEncryptionKey.CRN = testCase.Input.VolumeEncryptionKey
+		volume.VPCVolume.VolumeEncryptionKey.CRN = volumeEncryptionKeyCRN
 	}
 
 	//Case for testing gid/uid for File VPC storage
@@ -132,4 +132,60 @@ func getVolume(testCase TestCaseData) *provider.Volume {
 	}
 
 	return volume
+}
+
+func attachVolume(testCase TestCaseData, volumeID string) (volumeAttachmentResponse *provider.VolumeAttachmentResponse, err error) {
+	startTime = time.Now()
+
+	volumeAttachRequest := getVolumeAttachmentRequest(testCase, volumeID)
+	attachResponse, err := sess.AttachVolume(*volumeAttachRequest)
+
+	if attachResponse != nil && err == nil {
+		sess.WaitForAttachVolume(*volumeAttachRequest)
+	} else {
+		ctxLogger.Error("Error in attaching the volume.", zap.Reflect("err", err))
+		return nil, err
+	}
+
+	ctxLogger.Info("Successfully attached the volume.", zap.Reflect("attachResponse", attachResponse))
+	ctxLogger.Info("Test Attach Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
+
+	fmt.Printf("\n\n")
+
+	return attachResponse, err
+}
+
+func detachVolume(testCase TestCaseData, volumeID string) error {
+	startTime = time.Now()
+
+	volumeAttachRequest := getVolumeAttachmentRequest(testCase, volumeID)
+	httpResponse, err := sess.DetachVolume(*volumeAttachRequest)
+
+	if httpResponse != nil && err == nil {
+		sess.WaitForDetachVolume(*volumeAttachRequest)
+	} else {
+		ctxLogger.Error("Error in detaching the volume.", zap.Reflect("err", err))
+		return err
+	}
+
+	ctxLogger.Info("Successfully detached the volume.", zap.Reflect("httpResponse", httpResponse))
+	ctxLogger.Info("Test Detach Volume", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
+
+	fmt.Printf("\n\n")
+
+	return err
+}
+
+func getVolumeAttachmentRequest(testCase TestCaseData, volumeID string) *provider.VolumeAttachmentRequest {
+	volumeAttachRequest := &provider.VolumeAttachmentRequest{}
+	volumeAttachRequest.VolumeID = volumeID
+	volumeAttachRequest.InstanceID = testCase.Input.InstanceID[0]
+	volumeAttachRequest.IKSVolumeAttachment = &provider.IKSVolumeAttachment{}
+
+	//This would be populate only for Block IKS based e2e
+	if len(testCase.Input.ClusterID) > 0 && testCase.Input.ClusterID[0] != "" {
+		volumeAttachRequest.IKSVolumeAttachment.ClusterID = &testCase.Input.ClusterID[0]
+	}
+
+	return volumeAttachRequest
 }

@@ -21,6 +21,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
 		volumeCreated            *provider.Volume
 		volumeAccessPointCreated *provider.VolumeAccessPointResponse
+		volumeAttachmentResponse *provider.VolumeAttachmentResponse
 		err                      error
 	)
 	initializeTestCaseData()
@@ -44,25 +45,46 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 					Skip("Test was skipped, skip flag is true")
 				}
 
+				//Skip the IKS based Block storage attach/detach cases if iksEnabled is false
+				if !conf.IKS.Enabled && len(testCase.Input.ClusterID) > 0 {
+					Skip("Test was skipped, IKS is disable skipping IKS test cases")
+				}
+
+				//Skip the non-IKS based Block storage attach/detach cases if iksEnabled is true
+				if conf.IKS.Enabled && len(testCase.Input.ClusterID) == 0 && len(testCase.Input.InstanceID) > 0  {
+					Skip("Test was skipped, IKS is enabled skipping non-IKS test cases")
+				}
+
 				By("Test Create Volume")
 				fmt.Println(testCase)
 				volumeCreated, err = createVolume(testCase)
 
 				if volumeCreated != nil {
 
-					//This case would enhance for creating file access points per VPC, as of now we will do it for one VPC
-					if testCase.Input.VPCID != nil && testCase.Input.VPCID[0] != "" {
-
+					//This case is for creating file access points per VPC, as of now we will do it for one VPC
+					if len(testCase.Input.VPCID) > 0 && testCase.Input.VPCID[0] != "" {
+						//File Storage e2e specific handling
 						//This case for VPC File library to test create/delete access point
 						By("Test Create Volume Access Point")
-
 						volumeAccessPointCreated, err = createVolumeAccessPoint(testCase, volumeCreated.VolumeID)
 
 						if volumeAccessPointCreated != nil {
-
 							By("Test Delete Volume Access Point")
 							err = deleteVolumeAccessPoint(testCase, volumeAccessPointCreated)
 
+						}
+
+					}
+
+					//This case is for creating volume attachment, as of now we will do it for one VPC
+					if len(testCase.Input.InstanceID) > 0 && testCase.Input.InstanceID[0] != "" {
+
+						By("Test Attach Volume")
+						volumeAttachmentResponse, err = attachVolume(testCase, volumeCreated.VolumeID)
+
+						if volumeAttachmentResponse != nil {
+							By("Test Detach Volume")
+							err = detachVolume(testCase, volumeCreated.VolumeID)
 						}
 
 					}

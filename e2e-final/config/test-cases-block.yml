@@ -33,8 +33,70 @@
       profile: 5iops-tier
       iops: 0
       tags: "Testing VPC volume from library with with encryption"
-    encryptionKey: "crn:v1:bluemix:public:kms:eu-gb:a/b661e758bf044d2d928fef7900d5130b:0ce5fa89-18ee-4176-add8-4a340c538076:key:9957a976-bda3-47ca-b773-54ec73316b1d"
+    encryptionEnabled: true
   success: true
+- testCase: "Create and delete volume along with attach detach to instance without IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    instanceID:
+    - 0797_21e234ff-bd5b-4655-8388-8ac0f8d11ea9
+  success: true
+- testCase: "Create and delete volume along with attach detach to instance"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    instanceID:
+    - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4
+    clusterID:
+    - c5jqvqcl04e8doe2bnig
+  success: true
+- testCase: "Create and delete volume along with attach detach to instance for invalid instance ID with IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    instanceID:
+    - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4ss
+    clusterID:
+    - c5jqvqcl04e8doe2bnig
+  success: false
+- testCase: "Create and delete volume along with attach detach to instance for invalid cluster ID with IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    instanceID:
+    - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4
+    clusterID:
+    - c5jqvqcl04e8doe2bnigss
+  isIKS: true
+  success: false
+- testCase: "Create and delete volume along with attach detach to instance for invalid instance ID without IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    instanceID:
+    - 0797_1d384370-b08d-4a70-8d2b-158fe04adf2a
+  success: false
 - testCase: "Create and delete VPC volume with invalid profile"
   input:
     volume:
@@ -61,14 +123,4 @@
       profile: custom
       iops: 2000
       tags: "Testing VPC volume from library with invalid custom iops"
-  success: false
-- testCase: "Create and delete VPC volume with invalid encryption key"
-  input:
-    volume:
-      name: e2e-storage-volume-5iops-invalid-encryption
-      capacity: 10
-      profile: 5iops-tier
-      iops: 0
-      tags: "Testing VPC volume from library with with invalid encryption"
-    encryptionKey: "ssasadad"
   success: false

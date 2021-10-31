@@ -43,7 +43,7 @@
       profile: tier-5iops
       iops: 0
       tags: "Testing VPC volume from library with with encryption"
-    encryptionKey: "crn:v1:bluemix:public:kms:eu-gb:a/b661e758bf044d2d928fef7900d5130b:0ce5fa89-18ee-4176-add8-4a340c538076:key:9957a976-bda3-47ca-b773-54ec73316b1d"
+    encryptionEnabled: true
   success: true
   skip : true
 - testCase: "Create and delete VPC volume access point"
@@ -107,16 +107,5 @@
       profile: custom
       iops: 2000
       tags: "Testing VPC volume from library with invalid custom iops"
-  success: false
-  skip : true
-- testCase: "Create and delete VPC volume with invalid encryption key"
-  input:
-    volume:
-      name: e2e-storage-volume-5iops-invalid-encryption
-      capacity: 10
-      profile: tier-5iops
-      iops: 0
-      tags: "Testing VPC volume from library with with invalid encryption"
-    encryptionKey: "ssasadad"
   success: false
   skip : true
