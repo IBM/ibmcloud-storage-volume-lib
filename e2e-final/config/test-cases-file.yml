@@ -68,19 +68,6 @@
     vpcID:
     - r018-915c1b93-604e-48e3-b285-1c3f993142424
   success: false
-- testCase: "Create and delete VPC volume access point"
-  input:
-    volume:
-      name: e2e-storage-volume-5iops
-      capacity: 10
-      profile: tier-5iops
-      iops: 0
-      initialOwner: true
-      tags: "Testing VPC volume from library with tier-5iops profile"
-    vpcID:
-    - r018-915c1b93-604e-48e3-b285-1c3f99314349
-  success: true
-  skip: true
 - testCase: "Create and delete VPC volume with invalid profile"
   input:
     volume:
