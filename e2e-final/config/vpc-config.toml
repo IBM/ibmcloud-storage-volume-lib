@@ -35,7 +35,7 @@
   vpc_enabled = true
   vpc_type_enabled = "g2"
   vpc_block_provider_name = "vpc-classic"
-  vpc_volume_type="vpc-share"
+  vpc_volume_type="VOLUME_TYPE"
 
   g2_token_exchange_endpoint_url = "https://iam.bluemix.net"
   g2_riaas_endpoint_url = "https://G2_RIAAS_ENDPOINT_URL:443"

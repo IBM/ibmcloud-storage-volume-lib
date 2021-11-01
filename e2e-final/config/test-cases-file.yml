@@ -6,6 +6,7 @@
       profile: tier-3iops
       iops: 0
       tags: "Testing VPC volume from library with tier-3iops profile"
+    vpcZone: eu-gb-2
   success: true
 - testCase: "Create and delete VPC volume [profile: tier-5iops]"
   input:
@@ -15,6 +16,7 @@
       profile: tier-5iops
       iops: 0
       tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
   success: true
 - testCase: "Create and delete VPC volume [profile: tier-10iops]"
   input:
@@ -24,6 +26,7 @@
       profile: tier-10iops
       iops: 0
       tags: "Testing VPC volume from library with tier-10iops profile"
+    vpcZone: eu-gb-2
   success: true
 - testCase: "Create and delete VPC volume [profile: custom]"
   input:
@@ -33,6 +36,7 @@
       profile: custom
       iops: 1000
       tags: "Testing VPC volume from library with custom profile"
+    vpcZone: eu-gb-2
   success: true
   skip : true
 - testCase: "Create and delete VPC volume with encryption"
@@ -43,6 +47,7 @@
       profile: tier-5iops
       iops: 0
       tags: "Testing VPC volume from library with with encryption"
+    vpcZone: eu-gb-2
     encryptionEnabled: true
   success: true
   skip : true
@@ -54,6 +59,7 @@
       profile: tier-5iops
       iops: 0
       tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
     vpcID:
     - r018-915c1b93-604e-48e3-b285-1c3f99314349
   success: true
@@ -65,6 +71,7 @@
       profile: tier-5iops
       iops: 0
       tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
     vpcID:
     - r018-915c1b93-604e-48e3-b285-1c3f993142424
   success: false
@@ -76,6 +83,7 @@
       profile: 20iops-tier
       iops: 0
       tags: "Testing VPC volume from library with invalid profile"
+    vpcZone: eu-gb-2
   success: false
 - testCase: "Create and delete VPC volume invalid volume name"
   input:
@@ -85,6 +93,7 @@
       profile: tier-5iops
       iops: 0
       tags: "Testing VPC volume from library with invalid volume name"
+    vpcZone: eu-gb-2
   success: false
 - testCase: "Create and delete VPC volume with invalid custom iops"
   input:
@@ -94,5 +103,6 @@
       profile: custom
       iops: 2000
       tags: "Testing VPC volume from library with invalid custom iops"
+    vpcZone: eu-gb-2
   success: false
   skip : true

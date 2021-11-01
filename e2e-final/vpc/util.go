@@ -116,7 +116,7 @@ func getVolume(testCase TestCaseData) *provider.Volume {
 	volume.Capacity = &testCase.Input.Volume.Capacity
 	volume.Iops = &testCase.Input.Volume.Iops
 	volume.VPCVolume.ResourceGroup.ID = resourceGroupID
-	volume.Az = vpcZone
+	volume.Az = testCase.Input.VPCZone
 	volume.VPCVolume.Tags = []string{testCase.Input.Volume.Tags}
 	if volumeEncryptionKeyCRN != "" && testCase.Input.EncryptionEnabled {
 		volume.VPCVolume.VolumeEncryptionKey = &provider.VolumeEncryptionKey{}

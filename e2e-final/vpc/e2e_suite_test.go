@@ -68,6 +68,7 @@ type TestCaseData struct {
 type InputDef struct {
 	Volume            VolumeDef `yaml:"volume,flow"`
 	EncryptionEnabled bool      `yaml:"encryptionEnabled,omitempty"`
+	VPCZone           string    `yaml:"vpcZone,omitempty"`
 	InstanceID        []string  `yaml:"instanceID,omitempty"`
 	VPCID             []string  `yaml:"vpcID,omitempty"`
 	SubnetID          []string  `yaml:"subnetID,omitempty"`
@@ -124,9 +125,6 @@ func loadConfig() {
 	if conf.Server != nil && conf.Server.DebugTrace {
 		traceLevel.SetLevel(zap.DebugLevel)
 	}
-
-	// Load zone info
-	vpcZone = os.Getenv("VPC_ZONE")
 
 	// Load EncryptionKeyCRN info
 	volumeEncryptionKeyCRN = os.Getenv("ENCRYPTION_KEY_CRN")
@@ -291,12 +289,4 @@ func updateRequestID(err error, requestID string) error {
 	}
 	usrError.RequestID = requestID
 	return usrError
-}
-
-func getenv(key, fallback string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return fallback
-	}
-	return value + "-"
 }
