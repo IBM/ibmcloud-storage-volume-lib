@@ -51,7 +51,7 @@
     instanceID:
     - 0797_21e234ff-bd5b-4655-8388-8ac0f8d11ea9
   success: true
-- testCase: "Create and delete volume along with attach detach to instance"
+- testCase: "Create and delete volume along with attach detach to instance with IKS"
   input:
     volume:
       name: e2e-storage-volume-5iops-attach-detach

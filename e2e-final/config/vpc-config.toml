@@ -46,7 +46,7 @@
   iks_token_exchange_endpoint_private_url = "https://eu-gb.containers.cloud.ibm.com"
   encryption = false
   vpc_timeout = "120s"
-  max_retry_attempt  = 120
+  max_retry_attempt  = 10
   max_retry_gap =  60
 
 [IKS]
