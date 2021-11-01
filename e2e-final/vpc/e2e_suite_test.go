@@ -47,7 +47,6 @@ var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
 var requestID string
 var resourceGroupID string
-var vpcZone string
 var volumeEncryptionKeyCRN string
 var startTime time.Time
 var providerName string
