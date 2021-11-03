@@ -1,4 +1,4 @@
-- testCase: "Create and delete VPC volume [profile: 5iops-tier]"
+- testCase: "VPC: Create and delete VPC volume [profile: 5iops-tier]"
   input:
     volume:
       name: e2e-storage-volume-5iops
@@ -8,7 +8,7 @@
       tags: "Testing VPC volume from library with 5iops-tier profile"
     vpcZone: eu-gb-2
   success: true
-- testCase: "Create and delete VPC volume [profile: 10iops-tier]"
+- testCase: "VPC: Create and delete VPC volume [profile: 10iops-tier]"
   input:
     volume:
       name: e2e-storage-volume-10iops
@@ -18,7 +18,7 @@
       tags: "Testing VPC volume from library with 10iops-tier profile"
     vpcZone: eu-gb-2
   success: true
-- testCase: "Create and delete VPC volume [profile: custom]"
+- testCase: "VPC: Create and delete VPC volume [profile: custom]"
   input:
     volume:
       name: e2e-storage-volume-custom
@@ -28,7 +28,7 @@
       tags: "Testing VPC volume from library with custom profile"
     vpcZone: eu-gb-2
   success: true
-- testCase: "Create and delete VPC volume with encryption"
+- testCase: "VPC: Create and delete VPC volume with encryption"
   input:
     volume:
       name: e2e-storage-volume-5iops-encryption
@@ -39,7 +39,7 @@
     vpcZone: eu-gb-2
     encryptionEnabled: true
   success: true
-- testCase: "Create and delete volume along with attach detach to instance without IKS"
+- testCase: "VPC: Create and delete volume along with attach detach to instance without IKS"
   input:
     volume:
       name: e2e-storage-volume-5iops-attach-detach
@@ -51,7 +51,7 @@
     instanceID:
     - 0797_21e234ff-bd5b-4655-8388-8ac0f8d11ea9
   success: true
-- testCase: "Create and delete 6 volumes along with attach detach to instance without IKS"
+- testCase: "VPC: Create and delete 6 volumes along with attach detach to instance without IKS"
   input:
     numOfVolsRequired: 6
     volume:
@@ -64,7 +64,7 @@
     instanceID:
     - 0797_21e234ff-bd5b-4655-8388-8ac0f8d11ea9
   success: true
-- testCase: "Create and delete volume along with attach detach to instance with IKS"
+- testCase: "VPC: Create and delete volume along with attach detach to instance with IKS"
   input:
     volume:
       name: e2e-storage-volume-5iops-attach-detach
@@ -78,7 +78,7 @@
     clusterID:
     - c5jqvqcl04e8doe2bnig
   success: true
-- testCase: "Create and delete 6 volume along with attach detach to instance with IKS"
+- testCase: "VPC: Create and delete 6 volume along with attach detach to instance with IKS"
   input:
     numOfVolsRequired: 6
     volume:
@@ -93,7 +93,7 @@
     clusterID:
     - c5jqvqcl04e8doe2bnig
   success: true
-- testCase: "Create and delete volume along with attach detach to instance for invalid instance ID with IKS"
+- testCase: "VPC: Create and delete volume along with attach detach to instance for invalid instance ID with IKS"
   input:
     volume:
       name: e2e-storage-volume-5iops-attach-detach
@@ -107,7 +107,7 @@
     clusterID:
     - c5jqvqcl04e8doe2bnig
   success: false
-- testCase: "Create and delete volume along with attach detach to instance for invalid cluster ID with IKS"
+- testCase: "VPC: Create and delete volume along with attach detach to instance for invalid cluster ID with IKS"
   input:
     volume:
       name: e2e-storage-volume-5iops-attach-detach
@@ -122,7 +122,7 @@
     - c5jqvqcl04e8doe2bnigss
   isIKS: true
   success: false
-- testCase: "Create and delete volume along with attach detach to instance for invalid instance ID without IKS"
+- testCase: "VPC: Create and delete volume along with attach detach to instance for invalid instance ID without IKS"
   input:
     volume:
       name: e2e-storage-volume-5iops-attach-detach
@@ -134,7 +134,7 @@
     instanceID:
     - 0797_1d384370-b08d-4a70-8d2b-158fe04adf2a
   success: false
-- testCase: "Create and delete VPC volume with invalid profile"
+- testCase: "VPC: Create and delete VPC volume with invalid profile"
   input:
     volume:
       name: e2e-storage-volume-5iops-invalid
@@ -144,7 +144,7 @@
       tags: "Testing VPC volume from library with invalid profile"
     vpcZone: eu-gb-2
   success: false
-- testCase: "Create and delete VPC volume invalid volume name"
+- testCase: "VPC: Create and delete VPC volume invalid volume name"
   input:
     volume:
       name: "!#$#$#$sdwd"
@@ -154,7 +154,7 @@
       tags: "Testing VPC volume from library with invalid volume name"
     vpcZone: eu-gb-2
   success: false
-- testCase: "Create and delete VPC volume with invalid custom iops"
+- testCase: "VPC: Create and delete VPC volume with invalid custom iops"
   input:
     volume:
       name: e2e-storage-volume-custom-invalid
