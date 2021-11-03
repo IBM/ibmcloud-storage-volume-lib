@@ -63,8 +63,34 @@
     vpcID:
     - r018-915c1b93-604e-48e3-b285-1c3f99314349
   success: true
+- testCase: "Create and delete 6 volumes with volume access point"
+  input:
+    numOfVolsRequired: 6
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    vpcID:
+    - r018-915c1b93-604e-48e3-b285-1c3f99314349
+  success: true
 - testCase: "Create and delete VPC volume access point for invalid VPC ID"
   input:
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    vpcID:
+    - r018-915c1b93-604e-48e3-b285-1c3f993142424
+  success: false
+- testCase: "Create and delete 6 volumes with volume access point for invalid VPC ID"
+  input:
+    numOfVolsRequired: 6
     volume:
       name: e2e-storage-volume-5iops
       capacity: 10

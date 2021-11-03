@@ -12,6 +12,7 @@ package vpc
 
 import (
 	"fmt"
+
 	"github.com/IBM/ibmcloud-volume-interface/lib/provider"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -19,10 +20,11 @@ import (
 
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
-		volumeCreated            *provider.Volume
-		volumeAccessPointCreated *provider.VolumeAccessPointResponse
-		volumeAttachmentResponse *provider.VolumeAttachmentResponse
-		err                      error
+		volumesCreated            []*provider.Volume
+		volumeAccessPointsRequest []provider.VolumeAccessPointRequest
+		volumeAttachmentsResponse []*provider.VolumeAttachmentResponse
+		volumeAttachmentsRequest  []*provider.VolumeAttachmentRequest
+		err                       error
 	)
 	initializeTestCaseData()
 
@@ -31,7 +33,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	})
 
 	AfterEach(func() {
-		sess.DeleteVolume(volumeCreated)
+		deleteVolumes(volumesCreated)
 		CloseSession()
 	})
 
@@ -39,6 +41,12 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 		for _, testCase := range testCaseList {
 			testCase := testCase //necessary to ensure the correct value is passed to the closure
 			It(testCase.TestCase, func() {
+
+				//Set default value of NumOfVolsRequired to 1 if not set
+				//Could not find a way to override this value in yaml struct
+				if testCase.Input.NumOfVolsRequired == 0 {
+					testCase.Input.NumOfVolsRequired = 1
+				}
 
 				//Skip the test
 				if testCase.Skip {
@@ -51,40 +59,43 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 				}
 
 				//Skip the non-IKS based Block storage attach/detach cases if iksEnabled is true
-				if conf.IKS.Enabled && len(testCase.Input.ClusterID) == 0 && len(testCase.Input.InstanceID) > 0  {
+				if conf.IKS.Enabled && len(testCase.Input.ClusterID) == 0 && len(testCase.Input.InstanceID) > 0 {
 					Skip("Test was skipped, IKS is enabled skipping non-IKS test cases")
 				}
 
 				By("Test Create Volume")
 				fmt.Println(testCase)
-				volumeCreated, err = createVolume(testCase)
+				volumesCreated, err = createVolumes(testCase)
 
-				if volumeCreated != nil {
+				if len(volumesCreated) > 0 {
 
 					//This case is for creating file access points per VPC, as of now we will do it for one VPC
 					if len(testCase.Input.VPCID) > 0 && testCase.Input.VPCID[0] != "" {
-						//File Storage e2e specific handling
-						//This case for VPC File library to test create/delete access point
-						By("Test Create Volume Access Point")
-						volumeAccessPointCreated, err = createVolumeAccessPoint(testCase, volumeCreated.VolumeID)
 
-						if volumeAccessPointCreated != nil {
+						/*File Storage e2e specific handling
+							  This case for VPC File library to test create/delete access point
+						      TBD if we have input for more than one volumes then it would just use the same VPC-ID for
+							  creating the access point accross the volumes*/
+
+						By("Test Create Volume Access Point")
+						volumeAccessPointsRequest, _, err = createVolumeAccessPoints(testCase, volumesCreated)
+
+						if len(volumeAccessPointsRequest) > 0 {
 							By("Test Delete Volume Access Point")
-							err = deleteVolumeAccessPoint(testCase, volumeAccessPointCreated)
+							err = deleteVolumeAccessPoints(volumeAccessPointsRequest)
 
 						}
-
 					}
 
 					//This case is for creating volume attachment, as of now we will do it for one VPC
 					if len(testCase.Input.InstanceID) > 0 && testCase.Input.InstanceID[0] != "" {
 
 						By("Test Attach Volume")
-						volumeAttachmentResponse, err = attachVolume(testCase, volumeCreated.VolumeID)
+						volumeAttachmentsRequest, volumeAttachmentsResponse, err = attachVolumes(testCase, volumesCreated)
 
-						if volumeAttachmentResponse != nil {
+						if len(volumeAttachmentsResponse) > 0 {
 							By("Test Detach Volume")
-							err = detachVolume(testCase, volumeCreated.VolumeID)
+							err = detachVolumes(volumeAttachmentsRequest)
 						}
 
 					}
@@ -96,7 +107,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 					}
 
 					By("Test Delete Volume")
-					err = deleteVolume(testCase, volumeCreated)
+					err = deleteVolumes(volumesCreated)
 				}
 			})
 		}

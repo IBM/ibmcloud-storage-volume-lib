@@ -65,6 +65,7 @@ type TestCaseData struct {
 }
 
 type InputDef struct {
+	NumOfVolsRequired int       `yaml:"numOfVolsRequired",omitempty`
 	Volume            VolumeDef `yaml:"volume,flow"`
 	EncryptionEnabled bool      `yaml:"encryptionEnabled,omitempty"`
 	VPCZone           string    `yaml:"vpcZone,omitempty"`
