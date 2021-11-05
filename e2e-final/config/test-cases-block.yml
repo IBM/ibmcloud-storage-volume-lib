@@ -49,7 +49,7 @@
       tags: "Testing VPC volume from library with tier-5iops profile"
     vpcZone: eu-gb-2
     instanceID:
-    - 0797_21e234ff-bd5b-4655-8388-8ac0f8d11ea9
+    - 0797_e11380ad-6489-41d1-a29d-c0af9b1f5bc9
   success: true
 - testCase: "VPC: Create and delete 6 volumes along with attach detach to instance without IKS"
   input:
@@ -62,7 +62,7 @@
       tags: "Testing VPC volume from library with tier-5iops profile"
     vpcZone: eu-gb-2
     instanceID:
-    - 0797_21e234ff-bd5b-4655-8388-8ac0f8d11ea9
+    - 0797_e11380ad-6489-41d1-a29d-c0af9b1f5bc9
   success: true
 - testCase: "VPC: Create and delete volume along with attach detach to instance with IKS"
   input:
@@ -74,9 +74,9 @@
       tags: "Testing VPC volume from library with tier-5iops profile"
     vpcZone: eu-gb-2
     instanceID:
-    - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4
+    - kube-c5oes0dl0es7et6mjqmg-eugbvpce2e-default-0000017d
     clusterID:
-    - c5jqvqcl04e8doe2bnig
+    - c5oes0dl0es7et6mjqmg
   success: true
 - testCase: "VPC: Create and delete 6 volume along with attach detach to instance with IKS"
   input:
@@ -89,9 +89,9 @@
       tags: "Testing VPC volume from library with tier-5iops profile"
     vpcZone: eu-gb-2
     instanceID:
-    - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4
+    - kube-c5oes0dl0es7et6mjqmg-eugbvpce2e-default-0000017d
     clusterID:
-    - c5jqvqcl04e8doe2bnig
+    - c5oes0dl0es7et6mjqmg
   success: true
 - testCase: "VPC: Create and delete volume along with attach detach to instance for invalid instance ID with IKS"
   input:
@@ -105,7 +105,7 @@
     instanceID:
     - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4ss
     clusterID:
-    - c5jqvqcl04e8doe2bnig
+    - c5oes0dl0es7et6mjqmg
   success: false
 - testCase: "VPC: Create and delete volume along with attach detach to instance for invalid cluster ID with IKS"
   input:
@@ -117,7 +117,7 @@
       tags: "Testing VPC volume from library with tier-5iops profile"
     vpcZone: eu-gb-2
     instanceID:
-    - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4
+    - kube-c5oes0dl0es7et6mjqmg-eugbvpce2e-default-0000017d
     clusterID:
     - c5jqvqcl04e8doe2bnigss
   isIKS: true

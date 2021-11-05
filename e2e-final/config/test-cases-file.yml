@@ -61,7 +61,7 @@
       tags: "Testing VPC volume from library with tier-5iops profile"
     vpcZone: eu-gb-2
     vpcID:
-    - r018-915c1b93-604e-48e3-b285-1c3f99314349
+    - r018-56bed25c-e701-4dc4-bb5a-d47989a6b602
   success: true
 - testCase: "VPC: Create and delete 6 volumes with volume access point"
   input:
@@ -74,7 +74,7 @@
       tags: "Testing VPC volume from library with tier-5iops profile"
     vpcZone: eu-gb-2
     vpcID:
-    - r018-915c1b93-604e-48e3-b285-1c3f99314349
+    - r018-56bed25c-e701-4dc4-bb5a-d47989a6b602
   success: true
 - testCase: "VPC: Create and delete VPC volume access point for invalid VPC ID"
   input:
