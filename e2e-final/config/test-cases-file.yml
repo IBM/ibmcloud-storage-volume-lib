@@ -1,0 +1,134 @@
+- testCase: "VPC: Create and delete VPC volume [profile: tier-3iops]"
+  input:
+    volume:
+      name: e2e-storage-volume-3iops
+      capacity: 10
+      profile: tier-3iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-3iops profile"
+    vpcZone: eu-gb-2
+  success: true
+- testCase: "VPC: Create and delete VPC volume [profile: tier-5iops]"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+  success: true
+- testCase: "VPC: Create and delete VPC volume [profile: tier-10iops]"
+  input:
+    volume:
+      name: e2e-storage-volume-10iops
+      capacity: 50
+      profile: tier-10iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-10iops profile"
+    vpcZone: eu-gb-2
+  success: true
+- testCase: "VPC: Create and delete VPC volume [profile: custom]"
+  input:
+    volume:
+      name: e2e-storage-volume-custom
+      capacity: 10
+      profile: custom
+      iops: 1000
+      tags: "Testing VPC volume from library with custom profile"
+    vpcZone: eu-gb-2
+  success: true
+  skip : true
+- testCase: "VPC: Create and delete VPC volume with encryption"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-encryption
+      capacity: 100
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with with encryption"
+    vpcZone: eu-gb-2
+    encryptionEnabled: true
+  success: true
+  skip : true
+- testCase: "VPC: Create and delete VPC volume access point"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    vpcID:
+    - r018-56bed25c-e701-4dc4-bb5a-d47989a6b602
+  success: true
+- testCase: "VPC: Create and delete 6 volumes with volume access point"
+  input:
+    numOfVolsRequired: 6
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    vpcID:
+    - r018-56bed25c-e701-4dc4-bb5a-d47989a6b602
+  success: true
+- testCase: "VPC: Create and delete VPC volume access point for invalid VPC ID"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    vpcID:
+    - r018-915c1b93-604e-48e3-b285-1c3f993142424
+  success: false
+- testCase: "VPC: Create and delete 6 volumes with volume access point for invalid VPC ID"
+  input:
+    numOfVolsRequired: 6
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    vpcID:
+    - r018-915c1b93-604e-48e3-b285-1c3f993142424
+  success: false
+- testCase: "VPC: Create and delete VPC volume with invalid profile"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-invalid
+      capacity: 10
+      profile: 20iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with invalid profile"
+    vpcZone: eu-gb-2
+  success: false
+- testCase: "VPC: Create and delete VPC volume invalid volume name"
+  input:
+    volume:
+      name: "!#$#$#$sdwd"
+      capacity: 10
+      profile: tier-5iops
+      iops: 0
+      tags: "Testing VPC volume from library with invalid volume name"
+    vpcZone: eu-gb-2
+  success: false
+- testCase: "VPC: Create and delete VPC volume with invalid custom iops"
+  input:
+    volume:
+      name: e2e-storage-volume-custom-invalid
+      capacity: 10
+      profile: custom
+      iops: 2000
+      tags: "Testing VPC volume from library with invalid custom iops"
+    vpcZone: eu-gb-2
+  success: false
+  skip : true

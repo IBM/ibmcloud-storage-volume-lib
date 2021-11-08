@@ -1,0 +1,54 @@
+[server]
+  debug_trace = false
+
+[bluemix]
+  iam_url = "https://iam.bluemix.net"
+  iam_client_id = "bx"
+  iam_client_secret = "bx"
+  iam_api_key = "BX_IAM_API_KEY"
+  refresh_token = ""
+  containers_api_route = "https://eu-gb.containers.cloud.ibm.com"
+
+[softlayer]
+  softlayer_block_enabled = false
+  softlayer_block_provider_name = "SOFTLAYER-BLOCK"
+  softlayer_file_enabled = false
+  softlayer_file_provider_name = "SOFTLAYER-FILE"
+  softlayer_username = ""
+  softlayer_api_key = ""
+  softlayer_endpoint_url = "https://api.softlayer.com/rest/v3"
+  softlayer_iam_endpoint_url = "https://api.softlayer.com/mobile/v3"
+  softlayer_datacenter = "mex01"
+  softlayer_api_timeout = "30s"
+  softlayer_vol_provision_timeout = "30m"
+  softlayer_api_retry_interval = "5s"
+
+[genesis]
+  genesis_provider_enabled = false
+  genesis_user_name = ""
+  genesis_api_key = ""
+  genesis_url = ""
+
+[vpc]
+  iam_client_id = "bx"
+  iam_client_secret = "bx"
+  vpc_enabled = true
+  vpc_type_enabled = "g2"
+  vpc_block_provider_name = "vpc-classic"
+  vpc_volume_type="VOLUME_TYPE"
+
+  g2_token_exchange_endpoint_url = "https://iam.bluemix.net"
+  g2_riaas_endpoint_url = "https://G2_RIAAS_ENDPOINT_URL:443"
+  g2_resource_group_id = "G2_RESOURCE_GROUP"
+  g2_api_key = "G2_IAM_API_KEY"
+  g2_vpc_api_generation = 2
+  g2_api_version = "2019-07-02"
+  iks_token_exchange_endpoint_private_url = "https://eu-gb.containers.cloud.ibm.com"
+  encryption = false
+  vpc_timeout = "120s"
+  max_retry_attempt  = 10
+  max_retry_gap =  60
+
+[IKS]
+  iks_enabled = false
+  iks_block_provider_name = "iks-vpc-classic"

@@ -63,7 +63,7 @@ build:
 
 .PHONY: volume-lib-e2e-test
 volume-lib-e2e-test:
-	go test ./e2e/... -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -timeout 240m  2>&1 | tee e2e_logs.txt
+	go test ./e2e-final/... -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -timeout 240m  2>&1 | tee e2e_logs.txt
 
 .PHONY: clean
 clean:

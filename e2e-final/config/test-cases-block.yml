@@ -1,0 +1,166 @@
+- testCase: "VPC: Create and delete VPC volume [profile: 5iops-tier]"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with 5iops-tier profile"
+    vpcZone: eu-gb-2
+  success: true
+- testCase: "VPC: Create and delete VPC volume [profile: 10iops-tier]"
+  input:
+    volume:
+      name: e2e-storage-volume-10iops
+      capacity: 50
+      profile: 10iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with 10iops-tier profile"
+    vpcZone: eu-gb-2
+  success: true
+- testCase: "VPC: Create and delete VPC volume [profile: custom]"
+  input:
+    volume:
+      name: e2e-storage-volume-custom
+      capacity: 10
+      profile: custom
+      iops: 1000
+      tags: "Testing VPC volume from library with custom profile"
+    vpcZone: eu-gb-2
+  success: true
+- testCase: "VPC: Create and delete VPC volume with encryption"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-encryption
+      capacity: 100
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with with encryption"
+    vpcZone: eu-gb-2
+    encryptionEnabled: true
+  success: true
+- testCase: "VPC: Create and delete volume along with attach detach to instance without IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    instanceID:
+    - 0797_e11380ad-6489-41d1-a29d-c0af9b1f5bc9
+  success: true
+- testCase: "VPC: Create and delete 6 volumes along with attach detach to instance without IKS"
+  input:
+    numOfVolsRequired: 6
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    instanceID:
+    - 0797_e11380ad-6489-41d1-a29d-c0af9b1f5bc9
+  success: true
+- testCase: "VPC: Create and delete volume along with attach detach to instance with IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    instanceID:
+    - kube-c5oes0dl0es7et6mjqmg-eugbvpce2e-default-0000017d
+    clusterID:
+    - c5oes0dl0es7et6mjqmg
+  success: true
+- testCase: "VPC: Create and delete 6 volume along with attach detach to instance with IKS"
+  input:
+    numOfVolsRequired: 6
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    instanceID:
+    - kube-c5oes0dl0es7et6mjqmg-eugbvpce2e-default-0000017d
+    clusterID:
+    - c5oes0dl0es7et6mjqmg
+  success: true
+- testCase: "VPC: Create and delete volume along with attach detach to instance for invalid instance ID with IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    instanceID:
+    - kube-c5jqvqcl04e8doe2bnig-myclustervp-default-000001c4ss
+    clusterID:
+    - c5oes0dl0es7et6mjqmg
+  success: false
+- testCase: "VPC: Create and delete volume along with attach detach to instance for invalid cluster ID with IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    instanceID:
+    - kube-c5oes0dl0es7et6mjqmg-eugbvpce2e-default-0000017d
+    clusterID:
+    - c5jqvqcl04e8doe2bnigss
+  isIKS: true
+  success: false
+- testCase: "VPC: Create and delete volume along with attach detach to instance for invalid instance ID without IKS"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-attach-detach
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with tier-5iops profile"
+    vpcZone: eu-gb-2
+    instanceID:
+    - 0797_1d384370-b08d-4a70-8d2b-158fe04adf2a
+  success: false
+- testCase: "VPC: Create and delete VPC volume with invalid profile"
+  input:
+    volume:
+      name: e2e-storage-volume-5iops-invalid
+      capacity: 10
+      profile: 20iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with invalid profile"
+    vpcZone: eu-gb-2
+  success: false
+- testCase: "VPC: Create and delete VPC volume invalid volume name"
+  input:
+    volume:
+      name: "!#$#$#$sdwd"
+      capacity: 10
+      profile: 5iops-tier
+      iops: 0
+      tags: "Testing VPC volume from library with invalid volume name"
+    vpcZone: eu-gb-2
+  success: false
+- testCase: "VPC: Create and delete VPC volume with invalid custom iops"
+  input:
+    volume:
+      name: e2e-storage-volume-custom-invalid
+      capacity: 10
+      profile: custom
+      iops: 2000
+      tags: "Testing VPC volume from library with invalid custom iops"
+    vpcZone: eu-gb-2
+  success: false
