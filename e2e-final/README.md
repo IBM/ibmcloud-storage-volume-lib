@@ -25,6 +25,7 @@ For building the driver `GO` should be installed on the system
   1. Edit e2e-final/config/vpc-config.toml and provide the respective vpc_volume_type, g2_riaas_endpoint_url, g2_resource_group_id and g2_api_key.
   2. Edit e2e-final/config/test-cases-block.yml and e2e-final/config/test-cases-file.yml and provide required zone,instanceID,clusterID, vpcID etc
   3. Set ENCRYPTION_KEY_CRN environment variable for running e2e based on encryptions else it will assume as provider managed encryption
+  4. Add any new cases to the yaml and it will be picked up by the framework.
 
    ```
    $ make volume-lib-e2e-test
