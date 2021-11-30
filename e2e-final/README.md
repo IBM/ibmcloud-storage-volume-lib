@@ -5,7 +5,7 @@ This is an implementation of code which is yaml based e2e execution for file and
 
 # Build the library
 
-For building the driver `GO` should be installed on the system
+For building the e2e `GO` should be installed on the system
 
 1. On your local machine, install [`Go`](https://golang.org/doc/install).
 2. GO version should be >=1.16
