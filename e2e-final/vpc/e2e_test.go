@@ -21,6 +21,8 @@ import (
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
 		volumesCreated            []*provider.Volume
+		snapshotCreated           []*provider.Snapshot
+		volumeRestoreCreated      []*provider.Volume
 		volumeAccessPointsRequest []provider.VolumeAccessPointRequest
 		volumeAttachmentsResponse []*provider.VolumeAttachmentResponse
 		volumeAttachmentsRequest  []*provider.VolumeAttachmentRequest
@@ -96,6 +98,25 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 						if len(volumeAttachmentsResponse) > 0 {
 							By("Test Detach Volume")
 							err = detachVolumes(volumeAttachmentsRequest)
+						}
+
+					}
+
+					if len(testCase.Input.Volume.SnapshotName) > 0 {
+						By("Test snapshot Create")
+						snapshotCreated, err = createSnapshot(testCase, volumesCreated)
+
+						By("Test Restore Snapshot")
+						testCase.Input.Volume.Name = testCase.Input.Volume.Name + "restore"
+						testCase.Input.Volume.SnapshotID = snapshotCreated[0].SnapshotID
+						volumeRestoreCreated, err = createVolumes(testCase)
+
+						By("Test Delete Restored Volume")
+						err = deleteVolumes(volumeRestoreCreated)
+
+						if len(snapshotCreated) > 0 {
+							By("Test Delete Snapshot")
+							err = deleteSnapshot(snapshotCreated)
 						}
 
 					}
