@@ -164,15 +164,19 @@
       tags: "Testing VPC volume from library with invalid custom iops"
     vpcZone: eu-gb-2
   success: false
-- testCase: "VPC: Create, restore and delete snapshot for a volume"
+- testCase: "VPC: Create, restore, validate data and delete snapshot for a volume"
   input:
     volume:
       snapshotName: e2e-storage-volume-snapshot
       snapshotID: ""
-      name: e2e-storage-volume-snapshot-5iops
+      name: e2e-storage-volume-snapshot-test-5iops
       capacity: 10
       profile: 5iops-tier
       iops: 0
       tags: "Testing VPC volume snapshot from library with 5iops-tier profile"
-    vpcZone: eu-gb-2
+    vpcZone: us-south-3
+    instanceIP:
+    - ""
+    instanceID:
+    - ""
   success: true

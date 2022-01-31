@@ -70,6 +70,7 @@ type InputDef struct {
 	EncryptionEnabled bool      `yaml:"encryptionEnabled,omitempty"`
 	VPCZone           string    `yaml:"vpcZone,omitempty"`
 	InstanceID        []string  `yaml:"instanceID,omitempty"`
+	InstanceIP        []string  `yaml:"instanceIP,omitempty"`
 	VPCID             []string  `yaml:"vpcID,omitempty"`
 	SubnetID          []string  `yaml:"subnetID,omitempty"`
 	ClusterID         []string  `yaml:"clusterID,omitempty"`
