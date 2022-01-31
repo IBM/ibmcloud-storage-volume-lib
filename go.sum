@@ -46,11 +46,11 @@ github.com/IBM/ibm-csi-common v1.0.0-beta12/go.mod h1:t1KQ24caG5Hhot550dOU/bcVHE
 github.com/IBM/ibmcloud-volume-file-vpc v1.0.0-beta2 h1:kBBOzCpGYK/HA17YiPyQXTNz0VezybOcq/hdFIWDNeU=
 github.com/IBM/ibmcloud-volume-file-vpc v1.0.0-beta2/go.mod h1:YKLeotb8l1EEgej3Cq9TaWTSOIDkvTkOyxIwe0n1ryA=
 github.com/IBM/ibmcloud-volume-interface v1.0.0-beta9/go.mod h1:9uP4Q8Y5S2439Elw7BwEsjas2Rhl1ca2hJ9QcH5eUI8=
-github.com/IBM/ibmcloud-volume-interface v1.0.1-0.20211228064126-fa2d0bcfcd01 h1:YlscDP0jDtjuRnCgeF2MZP9L4hfefzsD0nzNJClvlSw=
-github.com/IBM/ibmcloud-volume-interface v1.0.1-0.20211228064126-fa2d0bcfcd01/go.mod h1:LxnaUnGDW0iC+3Hc8/I8aQRICxOYL8tb5HzGdkSyMoM=
+github.com/IBM/ibmcloud-volume-interface v1.0.1-0.20220113052014-20728b8e9cb7 h1:eP1ShUt2mvsreie3VD/H9rO/XwdnVJT+wJRB+MCgej8=
+github.com/IBM/ibmcloud-volume-interface v1.0.1-0.20220113052014-20728b8e9cb7/go.mod h1:9uP4Q8Y5S2439Elw7BwEsjas2Rhl1ca2hJ9QcH5eUI8=
 github.com/IBM/ibmcloud-volume-vpc v1.0.0-beta13/go.mod h1:mYFepXXfNGH6joYmR6sxDATsdY4yX28fjjuRt7shaQo=
-github.com/IBM/ibmcloud-volume-vpc v1.0.0-beta9.0.20211228064731-8ef8fa21abea h1:9w6+bMZSo9urP/Np4c6BqfvNCGq4ommbIX1A52yLwWc=
-github.com/IBM/ibmcloud-volume-vpc v1.0.0-beta9.0.20211228064731-8ef8fa21abea/go.mod h1:04/pRRCI0oFDn4Sfvie3YZ8k+yTo6fCw7jix9JL/tnU=
+github.com/IBM/ibmcloud-volume-vpc v1.0.0-beta9.0.20220113052421-5a9c40a18b1b h1:0tAJT4ROkc6V8fxvzlXCwsRso7YflSn3zZFllVX+T6w=
+github.com/IBM/ibmcloud-volume-vpc v1.0.0-beta9.0.20220113052421-5a9c40a18b1b/go.mod h1:3MTxORTqfqGsnPyzxdJ9GDT7IAzCDdbnQwp6TcGohXY=
 github.com/JeffAshton/win_pdh v0.0.0-20161109143554-76bb4ee9f0ab/go.mod h1:3VYc5hodBMJ5+l/7J4xAyMeuM2PNuepvHlGs8yilUCA=
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/MakeNowJust/heredoc v0.0.0-20170808103936-bb23615498cd/go.mod h1:64YHyfSL2R96J44Nlwm39UHepQbyR5q10x7iYa1ks2E=
