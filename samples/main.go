@@ -25,7 +25,7 @@ import (
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
-	uid "github.com/satori/go.uuid"
+	uid "github.com/gofrs/uuid"
 )
 
 var (
@@ -120,16 +120,16 @@ func main() {
 			continue
 		}
 		ctxLogger, _ := getContextLogger1()
-		requestID := uid.NewV4().String()
-		ctxLogger = ctxLogger.With(zap.String("RequestID", requestID))
-		ctx := context.WithValue(nil, provider.RequestID, requestID)
+		requestID, _ := uid.NewV4()
+		ctxLogger = ctxLogger.With(zap.String("RequestID", string(requestID.Bytes())))
+		ctx := context.WithValue(nil, provider.RequestID, requestID.Bytes())
 		sess, _, err := provider_util.OpenProviderSessionWithContext(ctx, conf, providerRegistry, providerName, ctxLogger)
 		if err != nil {
 			ctxLogger.Error("Failed to get session", zap.Reflect("Error", err))
 			continue
 		}
-		volumeAttachmentManager := NewVolumeAttachmentManager(sess, ctxLogger, requestID)
-		volumeManager := NewVolumeManager(sess, ctxLogger, requestID)
+		volumeAttachmentManager := NewVolumeAttachmentManager(sess, ctxLogger, string(requestID.Bytes()))
+		volumeManager := NewVolumeManager(sess, ctxLogger, string(requestID.Bytes()))
 
 		defer sess.Close()
 		defer ctxLogger.Sync()
@@ -142,7 +142,7 @@ func main() {
 				ctxLogger.Info("SUCCESSFULLY get volume details ================>", zap.Reflect("VolumeDetails", volume))
 			} else {
 				ctxLogger.Info("Provider error is ================>", zap.Reflect("ErrorType", userError.GetErrorType(errr)))
-				errr = updateRequestID(errr, requestID)
+				errr = updateRequestID(errr, string(requestID.Bytes()))
 				ctxLogger.Info("FAILED to get volume details ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -160,7 +160,7 @@ func main() {
 				ctxLogger.Info("Successfully created snapshot on ================>", zap.Reflect("VolumeID", volumeID))
 				ctxLogger.Info("Snapshot details: ", zap.Reflect("Snapshot", snapshot))
 			} else {
-				errr = updateRequestID(errr, requestID)
+				errr = updateRequestID(errr, string(requestID.Bytes()))
 				ctxLogger.Info("Failed to create snapshot on ================>", zap.Reflect("VolumeID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -174,7 +174,7 @@ func main() {
 				ctxLogger.Info("Successfully get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID))
 				ctxLogger.Info("List of snapshots ", zap.Reflect("Snapshots are->", snapshots))
 			} else {
-				errr = updateRequestID(errr, requestID)
+				errr = updateRequestID(errr, string(requestID.Bytes()))
 				ctxLogger.Info("Failed to get snapshot details ================>", zap.Reflect("Snapshot ID", volumeID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -226,7 +226,7 @@ func main() {
 			if errr == nil {
 				ctxLogger.Info("Successfully ordered volume ================>", zap.Reflect("volumeObj", volumeObj))
 			} else {
-				errr = updateRequestID(errr, requestID)
+				errr = updateRequestID(errr, string(requestID.Bytes()))
 				ctxLogger.Info("Failed to order volume ================>", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -257,7 +257,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
-				er11 = updateRequestID(er11, requestID)
+				er11 = updateRequestID(er11, string(requestID.Bytes()))
 				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
@@ -276,7 +276,7 @@ func main() {
 				ctxLogger.Info("Successfully Created volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID))
 				ctxLogger.Info("New volume from snapshot================>", zap.Reflect("New Volume->", vol))
 			} else {
-				errr = updateRequestID(errr, requestID)
+				errr = updateRequestID(errr, string(requestID.Bytes()))
 				ctxLogger.Info("Failed to create volume from snapshot ================>", zap.Reflect("OriginalVolumeID", volumeID), zap.Reflect("SnapshotID", snapshotID), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -290,7 +290,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("SUCCESSFULLY deleted volume ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
-				er11 = updateRequestID(er11, requestID)
+				er11 = updateRequestID(er11, string(requestID.Bytes()))
 				ctxLogger.Info("FAILED volume deletion================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
@@ -304,7 +304,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully deleted snapshot ================>", zap.Reflect("Snapshot ID", snapshotID))
 			} else {
-				er11 = updateRequestID(er11, requestID)
+				er11 = updateRequestID(er11, string(requestID.Bytes()))
 				ctxLogger.Info("failed snapshot deletion================>", zap.Reflect("Snapshot ID", snapshotID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
@@ -314,7 +314,7 @@ func main() {
 			if errr == nil {
 				ctxLogger.Info("SUCCESSFULLY got all snapshots ================>", zap.Reflect("Snapshots", list))
 			} else {
-				errr = updateRequestID(errr, requestID)
+				errr = updateRequestID(errr, string(requestID.Bytes()))
 				ctxLogger.Info("FAILED All snapshots ================>", zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -324,7 +324,7 @@ func main() {
 			_, er11 = fmt.Scanf("%s", &volumeID)
 			_, error1 := sess.ListAllSnapshots(volumeID)
 			if error1 != nil {
-				error1 = updateRequestID(error1, requestID)
+				error1 = updateRequestID(error1, string(requestID.Bytes()))
 				ctxLogger.Info("Failed to get volumeID", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 12 {
@@ -351,7 +351,7 @@ func main() {
 			}
 			error1 := sess.AuthorizeVolume(authRequest)
 			if error1 != nil {
-				error1 = updateRequestID(error1, requestID)
+				error1 = updateRequestID(error1, string(requestID.Bytes()))
 				ctxLogger.Info("Failed to authorize", zap.Reflect("Error", error1))
 			}
 		} else if choiceN == 13 {
@@ -412,7 +412,7 @@ func main() {
 			if errr == nil {
 				ctxLogger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 			} else {
-				errr = updateRequestID(errr, requestID)
+				errr = updateRequestID(errr, string(requestID.Bytes()))
 				ctxLogger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", errr))
 			}
 			fmt.Printf("\n\n")
@@ -427,7 +427,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully ordered snapshot space ================>", zap.Reflect("Volume ID", volumeID))
 			} else {
-				er11 = updateRequestID(er11, requestID)
+				er11 = updateRequestID(er11, string(requestID.Bytes()))
 				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
@@ -444,7 +444,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully got VPC volume details ================>", zap.Reflect("VolumeDetail", volumeobj1))
 			} else {
-				er11 = updateRequestID(er11, requestID)
+				er11 = updateRequestID(er11, string(requestID.Bytes()))
 				ctxLogger.Info("failed to order snapshot space================>", zap.Reflect("VolumeName", volumeName), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")
@@ -485,7 +485,7 @@ func main() {
 						continue
 					}
 				} else {
-					er11 = updateRequestID(er11, requestID)
+					er11 = updateRequestID(er11, string(requestID.Bytes()))
 					ctxLogger.Info("failed to list volumes================>", zap.Reflect("Error", er11))
 				}
 				break
@@ -505,7 +505,7 @@ func main() {
 			if er11 == nil {
 				ctxLogger.Info("Successfully expanded volume ================>", zap.Reflect("Volume ID", expandedVolumeSize))
 			} else {
-				er11 = updateRequestID(er11, requestID)
+				er11 = updateRequestID(er11, string(requestID.Bytes()))
 				ctxLogger.Info("failed to expand================>", zap.Reflect("Volume ID", volumeID), zap.Reflect("Error", er11))
 			}
 			fmt.Printf("\n\n")

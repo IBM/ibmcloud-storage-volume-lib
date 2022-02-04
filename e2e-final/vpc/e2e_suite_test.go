@@ -29,7 +29,7 @@ import (
 	provider_util "github.com/IBM/ibmcloud-volume-vpc/block/utils"
 	vpcconfig "github.com/IBM/ibmcloud-volume-vpc/block/vpcconfig"
 	"github.com/IBM/ibmcloud-volume-vpc/common/registry"
-	uid "github.com/satori/go.uuid"
+	gouid "github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -139,8 +139,8 @@ func loadConfig() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID = uid.NewV4().String()
-	ctxLogger = logger.With(zap.String("RequestID", requestID))
+	requestID, _ = gouid.NewV4()
+	ctxLogger = logger.With(zap.String("RequestID", requestID.Bytes()))
 
 	initializeProvider()
 }
@@ -182,8 +182,8 @@ func initVPCBlockProvider() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID = uid.NewV4().String()
-	ctxLogger = logger.With(zap.String("RequestID", requestID))
+	requestID, _ = gouid.NewV4()
+	ctxLogger = logger.With(zap.String("RequestID", requestID.Bytes()))
 
 	// Prepare provider registry
 	providerRegistry, err = provider_util.InitProviders(vpcBlockConfig, ctxLogger)

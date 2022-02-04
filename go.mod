@@ -10,6 +10,7 @@ require (
 	github.com/IBM/ibmcloud-volume-vpc v1.0.0-beta12
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/structs v1.1.0
+	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/jarcoal/httpmock v1.0.8 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo v1.10.3
@@ -17,7 +18,6 @@ require (
 	github.com/pierrre/gotestcover v0.0.0-20160517101806-924dca7d15f0 // indirect
 	github.com/prometheus/client_golang v1.8.0
 	github.com/renier/xmlrpc v0.0.0-20170708154548-ce4a1a486c03 // indirect
-	github.com/satori/go.uuid v1.2.0
 	github.com/softlayer/softlayer-go v0.0.0-20181027013155-82a74c5bf7ff
 	github.com/stretchr/testify v1.6.1
 	go.uber.org/zap v1.15.0
@@ -25,4 +25,5 @@ require (
 	gopkg.in/yaml.v2 v2.3.0
 )
 
+replace github.com/satori/go.uuid => github.com/gofrs/uuid/v4 v4.2.0 
 replace k8s.io/apiserver => k8s.io/apiserver v0.0.0-20190313205120-8b27c41bdbb1

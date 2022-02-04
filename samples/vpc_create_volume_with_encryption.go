@@ -22,7 +22,7 @@ import (
 	userError "github.com/IBM/ibmcloud-storage-volume-lib/lib/utils"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
 	provider_util "github.com/IBM/ibmcloud-storage-volume-lib/provider/utils"
-	uid "github.com/satori/go.uuid"
+	uid "github.com/gofrs/uuid"
 )
 
 func getContextLogger() (*zap.Logger, zap.AtomicLevel) {
@@ -86,8 +86,8 @@ func main_test() {
 	}
 
 	ctxLogger, _ := getContextLogger()
-	requestID := uid.NewV4().String()
-	ctxLogger = ctxLogger.With(zap.String("RequestID", requestID))
+	requestID, _ := uid.NewV4()
+	ctxLogger = ctxLogger.With(zap.String("RequestID", string(requestID.Bytes())))
 	sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
 	if err != nil {
 		ctxLogger.Error("Failed to get session", zap.Reflect("Error", err))
@@ -156,7 +156,7 @@ func main_test() {
 	if err == nil {
 		ctxLogger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 	} else {
-		err = updateRequestID(err, requestID)
+		err = updateRequestID(err, string(requestID.Bytes()))
 		ctxLogger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 	}
 	fmt.Printf("\n\n")

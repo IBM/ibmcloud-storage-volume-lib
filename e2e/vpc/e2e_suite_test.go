@@ -28,7 +28,7 @@ import (
 	provider_util "github.com/IBM/ibmcloud-volume-vpc/block/utils"
 	vpcconfig "github.com/IBM/ibmcloud-volume-vpc/block/vpcconfig"
 	"github.com/IBM/ibmcloud-volume-vpc/common/registry"
-	uid "github.com/satori/go.uuid"
+	gouid "github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -96,7 +96,7 @@ var _ = BeforeSuite(func() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID = uid.NewV4().String()
+	requestID, _ = gouid.NewV4()
 	ctxLogger = logger.With(zap.String("RequestID", requestID))
 
 	// Prepare provider registry
