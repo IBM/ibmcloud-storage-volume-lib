@@ -39,12 +39,12 @@ var providerRegistryBlock registry.Providers
 var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
-var requestID string
 var resourceGroupID string
 var vpcZone string
 var volumeEncryptionKeyCRN string
 var startTime time.Time
 var providerName string
+var requestID string
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -96,8 +96,9 @@ var _ = BeforeSuite(func() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID, _ = gouid.NewV4()
-	ctxLogger = logger.With(zap.String("RequestID", requestID))
+	gouuidObj, _ := gouid.NewV4()
+	requestID = string(gouuidObj.Bytes())
+	ctxLogger = logger.With(zap.String("RequestID", string(requestID)))
 
 	// Prepare provider registry
 	providerRegistryBlock, err = provider_util.InitProviders(vpcBlockConfig, ctxLogger)

@@ -25,5 +25,4 @@ require (
 	gopkg.in/yaml.v2 v2.3.0
 )
 
-replace github.com/satori/go.uuid => github.com/gofrs/uuid/v4 v4.2.0 
 replace k8s.io/apiserver => k8s.io/apiserver v0.0.0-20190313205120-8b27c41bdbb1

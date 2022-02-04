@@ -45,13 +45,13 @@ var providerRegistry registry.Providers
 var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
-var requestID string
 var resourceGroupID string
 var volumeEncryptionKeyCRN string
 var startTime time.Time
 var providerName string
 var conf *config.Config
 var err error
+var requestID string
 
 var testCaseList []TestCaseData
 var goPath string
@@ -139,8 +139,9 @@ func loadConfig() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID, _ = gouid.NewV4()
-	ctxLogger = logger.With(zap.String("RequestID", requestID.Bytes()))
+	gouuidObj, _ := gouid.NewV4()
+	requestID = string(gouuidObj.Bytes())
+	ctxLogger = logger.With(zap.String("RequestID", string(requestID)))
 
 	initializeProvider()
 }
@@ -182,8 +183,9 @@ func initVPCBlockProvider() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID, _ = gouid.NewV4()
-	ctxLogger = logger.With(zap.String("RequestID", requestID.Bytes()))
+	gouuidObj, _ := gouid.NewV4()
+	requestID = string(gouuidObj.Bytes())
+	ctxLogger = logger.With(zap.String("RequestID", string(requestID)))
 
 	// Prepare provider registry
 	providerRegistry, err = provider_util.InitProviders(vpcBlockConfig, ctxLogger)
