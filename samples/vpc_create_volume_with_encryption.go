@@ -87,7 +87,7 @@ func main_test() {
 
 	ctxLogger, _ := getContextLogger()
 	requestID, _ := uid.NewV4()
-	ctxLogger = ctxLogger.With(zap.String("RequestID", string(requestID.Bytes())))
+	ctxLogger = ctxLogger.With(zap.String("RequestID", requestID.String()))
 	sess, _, err := provider_util.OpenProviderSession(conf, providerRegistry, providerName, ctxLogger)
 	if err != nil {
 		ctxLogger.Error("Failed to get session", zap.Reflect("Error", err))
@@ -156,7 +156,7 @@ func main_test() {
 	if err == nil {
 		ctxLogger.Info("SUCCESSFULLY created volume...", zap.Reflect("volumeObj", volumeObj))
 	} else {
-		err = updateRequestID(err, string(requestID.Bytes()))
+		err = updateRequestID(err, requestID.String())
 		ctxLogger.Info("FAILED to create volume...", zap.Reflect("StorageType", volume.ProviderType), zap.Reflect("Error", err))
 	}
 	fmt.Printf("\n\n")

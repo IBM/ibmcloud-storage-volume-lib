@@ -140,8 +140,8 @@ func loadConfig() {
 
 	ctxLogger, _ = getContextLogger()
 	gouuidObj, _ := gouid.NewV4()
-	requestID = string(gouuidObj.Bytes())
-	ctxLogger = logger.With(zap.String("RequestID", string(requestID)))
+	requestID =  gouuidObj.String()
+	ctxLogger = logger.With(zap.String("RequestID", requestID))
 
 	initializeProvider()
 }
@@ -184,8 +184,8 @@ func initVPCBlockProvider() {
 
 	ctxLogger, _ = getContextLogger()
 	gouuidObj, _ := gouid.NewV4()
-	requestID = string(gouuidObj.Bytes())
-	ctxLogger = logger.With(zap.String("RequestID", string(requestID)))
+	requestID = gouuidObj.String()
+	ctxLogger = logger.With(zap.String("RequestID", requestID))
 
 	// Prepare provider registry
 	providerRegistry, err = provider_util.InitProviders(vpcBlockConfig, ctxLogger)
