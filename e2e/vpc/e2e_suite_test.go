@@ -28,7 +28,7 @@ import (
 	provider_util "github.com/IBM/ibmcloud-volume-vpc/block/utils"
 	vpcconfig "github.com/IBM/ibmcloud-volume-vpc/block/vpcconfig"
 	"github.com/IBM/ibmcloud-volume-vpc/common/registry"
-	uid "github.com/satori/go.uuid"
+	gouid "github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -39,12 +39,12 @@ var providerRegistryBlock registry.Providers
 var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
-var requestID string
 var resourceGroupID string
 var vpcZone string
 var volumeEncryptionKeyCRN string
 var startTime time.Time
 var providerName string
+var requestID string
 
 func TestVPCE2e(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -96,7 +96,8 @@ var _ = BeforeSuite(func() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID = uid.NewV4().String()
+	gouuidObj, _ := gouid.NewV4()
+	requestID = gouuidObj.String()
 	ctxLogger = logger.With(zap.String("RequestID", requestID))
 
 	// Prepare provider registry

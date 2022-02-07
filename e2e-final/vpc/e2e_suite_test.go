@@ -29,7 +29,7 @@ import (
 	provider_util "github.com/IBM/ibmcloud-volume-vpc/block/utils"
 	vpcconfig "github.com/IBM/ibmcloud-volume-vpc/block/vpcconfig"
 	"github.com/IBM/ibmcloud-volume-vpc/common/registry"
-	uid "github.com/satori/go.uuid"
+	gouid "github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -45,13 +45,13 @@ var providerRegistry registry.Providers
 var logger *zap.Logger
 var ctxLogger *zap.Logger
 var traceLevel zap.AtomicLevel
-var requestID string
 var resourceGroupID string
 var volumeEncryptionKeyCRN string
 var startTime time.Time
 var providerName string
 var conf *config.Config
 var err error
+var requestID string
 
 var testCaseList []TestCaseData
 var goPath string
@@ -139,7 +139,8 @@ func loadConfig() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID = uid.NewV4().String()
+	gouuidObj, _ := gouid.NewV4()
+	requestID =  gouuidObj.String()
 	ctxLogger = logger.With(zap.String("RequestID", requestID))
 
 	initializeProvider()
@@ -182,7 +183,8 @@ func initVPCBlockProvider() {
 	}
 
 	ctxLogger, _ = getContextLogger()
-	requestID = uid.NewV4().String()
+	gouuidObj, _ := gouid.NewV4()
+	requestID = gouuidObj.String()
 	ctxLogger = logger.With(zap.String("RequestID", requestID))
 
 	// Prepare provider registry
