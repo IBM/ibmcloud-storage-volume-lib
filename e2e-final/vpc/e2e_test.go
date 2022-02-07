@@ -119,7 +119,8 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 						fmt.Println(res1)
 						Instance_id := strings.Split(res1[0], "=")[1]
 						Instance_ip := strings.Split(res1[1], "=")[1]
-						//	key_id := strings.Split(res1[2], "=")[1]
+						key_id := strings.Split(res1[2], "=")[1]
+						ip_address_id := strings.Split(res1[3], "=")[1]
 						testCase.Input.InstanceIP[0] = Instance_ip
 						testCase.Input.InstanceID[0] = Instance_id
 						By("Test Attach Volume")
@@ -169,6 +170,14 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 
 						By("Test Detach Volume")
 						_ = detachVolumes(volumeAttachmentsRequests)
+						arg := []string{Instance_id, key_id, ip_address_id}
+						delete_res_cmd := exec.Command("./../scripts/delete_vpc_resources.sh", arg...)
+						var cmdout, cmderr bytes.Buffer
+						delete_res_cmd.Stdout = &cmdout
+						delete_res_cmd.Stderr = &cmderr
+						_ = delete_res_cmd.Run()
+						time.Sleep(15 * time.Second)
+						fmt.Println("out:", cmdout.String(), "err:", cmderr.String())
 
 					}
 
