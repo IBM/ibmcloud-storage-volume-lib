@@ -67,9 +67,10 @@ ip=$(curl -s -X POST "$vpc_api_endpoint/v1/floating_ips?version=$api_version&gen
 ')
 if [[ $ip == *"errors"* ]]; then >&2 echo "Creating ip failed!!! Error: $ip"; exit 1; fi
 ip_address=$(echo $ip | jq -r '.address')
+floating_ip_id=$(echo $ip | jq -r '.id')
 if [[ $ip_address == "" ]]; then >&2 echo "Error: Getting floating ip failed!!!"; exit 1; fi
 echo "created ip $ip_address"
-echo "output : Instance_id=$instance_id, Instance_ip=$ip_address, key_id=$key_id"
+echo "output : Instance_id=$instance_id, Instance_ip=$ip_address, key_id=$key_id, floating_ip_id=$floating_ip_id"
 
 
 
