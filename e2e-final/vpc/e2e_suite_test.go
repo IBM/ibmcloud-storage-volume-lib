@@ -140,7 +140,7 @@ func loadConfig() {
 
 	ctxLogger, _ = getContextLogger()
 	gouuidObj, _ := gouid.NewV4()
-	requestID =  gouuidObj.String()
+	requestID = gouuidObj.String()
 	ctxLogger = logger.With(zap.String("RequestID", requestID))
 
 	initializeProvider()

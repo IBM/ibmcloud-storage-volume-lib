@@ -13,7 +13,7 @@ package provider
 import (
 	"crypto/rsa"
 	"errors"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"path/filepath"

@@ -13,9 +13,8 @@ package iam
 import (
 	"testing"
 
-	"github.com/dgrijalva/jwt-go"
-
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 )

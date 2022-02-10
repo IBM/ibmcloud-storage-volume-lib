@@ -13,12 +13,11 @@ package softlayer_block
 import (
 	"crypto/rsa"
 	"errors"
+	"github.com/golang-jwt/jwt/v4"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"path/filepath"
 	"time"
-
-	"github.com/dgrijalva/jwt-go"
-	"go.uber.org/zap"
 
 	"github.com/IBM/ibmcloud-storage-volume-lib/config"
 	"github.com/IBM/ibmcloud-storage-volume-lib/provider/local"
