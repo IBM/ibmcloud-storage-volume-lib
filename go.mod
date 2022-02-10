@@ -8,14 +8,13 @@ require (
 	github.com/IBM/ibmcloud-volume-file-vpc v1.0.0-beta1
 	github.com/IBM/ibmcloud-volume-interface v1.0.0-beta8
 	github.com/IBM/ibmcloud-volume-vpc v1.0.0-beta12
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fatih/structs v1.1.0
 	github.com/gofrs/uuid v4.2.0+incompatible
+	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/jarcoal/httpmock v1.0.8 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/onsi/ginkgo v1.10.3
 	github.com/onsi/gomega v1.7.1
-	github.com/pierrre/gotestcover v0.0.0-20160517101806-924dca7d15f0 // indirect
 	github.com/prometheus/client_golang v1.8.0
 	github.com/renier/xmlrpc v0.0.0-20170708154548-ce4a1a486c03 // indirect
 	github.com/softlayer/softlayer-go v0.0.0-20181027013155-82a74c5bf7ff
