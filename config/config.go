@@ -116,7 +116,7 @@ type BluemixConfig struct {
 
 //API ...
 type API struct {
-	Passthrough string `toml:"PassthroughSecret"`
+	Passthrough string `toml:"PassthroughSecret" json:"-"`
 }
 
 // SoftlayerConfig ...
