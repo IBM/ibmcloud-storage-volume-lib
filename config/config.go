@@ -39,6 +39,7 @@ type Config struct {
 	Gen2      *Gen2Config
 	VPC       *VPCProviderConfig
 	IKS       *IKSConfig
+	API       *API
 }
 
 //ReadConfig loads the config from file
@@ -111,6 +112,11 @@ type BluemixConfig struct {
 	PrivateAPIRoute string `toml:"containers_api_route_private"`
 	Encryption      bool   `toml:"encryption"`
 	CSRFToken       string `toml:"containers_api_csrf_token" json:"-"`
+}
+
+//API ...
+type API struct {
+	Passthrough string `toml:"PassthroughSecret"`
 }
 
 // SoftlayerConfig ...
