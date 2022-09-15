@@ -7,7 +7,7 @@ require (
 	github.com/IBM-Cloud/ibm-cloud-cli-sdk v0.6.7
 	github.com/IBM/ibmcloud-volume-file-vpc v1.0.0-beta1
 	github.com/IBM/ibmcloud-volume-interface v1.0.1-beta6
-	github.com/IBM/ibmcloud-volume-vpc v1.0.1-beta7.0.20220915071757-293907659e3c
+	github.com/IBM/ibmcloud-volume-vpc v1.0.1-beta8
 	github.com/fatih/structs v1.1.0
 	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/golang-jwt/jwt/v4 v4.2.0
