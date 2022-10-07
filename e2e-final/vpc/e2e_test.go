@@ -108,7 +108,7 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 
 					if len(testCase.Input.Volume.SnapshotName) > 0 && len(testCase.Input.InstanceIP) > 0 {
 						By("Test Create VPC Instance ")
-						cmd := exec.Command("./../scripts/create_ins-bak.sh")
+						cmd := exec.Command("./../scripts/create_inst.sh")
 						var outb, errb bytes.Buffer
 						cmd.Stdout = &outb
 						cmd.Stderr = &errb
