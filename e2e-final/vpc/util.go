@@ -143,6 +143,9 @@ func getVolume(testCase TestCaseData, index int) *provider.Volume {
 	volume.Capacity = &testCase.Input.Volume.Capacity
 	volume.Iops = &testCase.Input.Volume.Iops
 	volume.VPCVolume.ResourceGroup.ID = resourceGroupID
+	if testCase.Input.Volume.SnapshotID != "" {
+		volume.SnapshotID = testCase.Input.Volume.SnapshotID
+	}
 	volume.Az = testCase.Input.VPCZone
 	volume.VPCVolume.Tags = []string{testCase.Input.Volume.Tags}
 	if volumeEncryptionKeyCRN != "" && testCase.Input.EncryptionEnabled {
@@ -218,6 +221,47 @@ func detachVolumes(volumeAttachRequests []*provider.VolumeAttachmentRequest) err
 	return err
 }
 
+func createSnapshot(testCase TestCaseData, volumes []*provider.Volume) ([]*provider.Snapshot, error) {
+	startTime = time.Now()
+	var snapshots = make([]*provider.Snapshot, 0)
+	snapshotRequests := getSnapshotRequest(testCase, volumes)
+
+	for i := 0; i < len(snapshotRequests); i++ {
+
+		snapshotResponse, err := sess.CreateSnapshot(*snapshotRequests[i])
+
+		if snapshotResponse != nil && err == nil {
+			snapshots = append(snapshots, snapshotResponse)
+		} else {
+			err = updateRequestID(err, requestID)
+			ctxLogger.Error("Error in creaing the snapshot.", zap.Reflect("err", err))
+			return snapshots, err
+		}
+	}
+
+	ctxLogger.Info("Test Create Snapshot", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
+	fmt.Printf("\n\n")
+	return snapshots, err
+}
+
+func deleteSnapshot(snapshots []*provider.Snapshot) error {
+	startTime = time.Now()
+	for i := 0; i < len(snapshots); i++ {
+		err = sess.DeleteSnapshot(snapshots[i])
+		if err == nil {
+			ctxLogger.Info("Successfully deleted snapshot...", zap.Reflect("snapshotObj", snapshots[i]))
+		} else {
+			err = updateRequestID(err, requestID)
+			ctxLogger.Info("Failed to delete snapshot...", zap.Reflect("Error", err))
+		}
+
+	}
+	ctxLogger.Info("Test Delete Snapshot", zap.Reflect("Elapsed time:", fmt.Sprintf("%s", time.Since(startTime))))
+	fmt.Printf("\n\n")
+
+	return err
+}
+
 func getVolumeAttachmentsRequest(testCase TestCaseData, volumes []*provider.Volume) []*provider.VolumeAttachmentRequest {
 	var volumeAttachRequests = make([]*provider.VolumeAttachmentRequest, 0)
 
@@ -234,4 +278,18 @@ func getVolumeAttachmentsRequest(testCase TestCaseData, volumes []*provider.Volu
 		volumeAttachRequests = append(volumeAttachRequests, volumeAttachRequest)
 	}
 	return volumeAttachRequests
+}
+
+func getSnapshotRequest(testCase TestCaseData, volumes []*provider.Volume) []*provider.SnapshotRequest {
+	var snapshotRequests = make([]*provider.SnapshotRequest, 0)
+
+	for i := 0; i < len(volumes); i++ {
+		snapshotRequest := &provider.SnapshotRequest{}
+		snapshotRequest.SourceVolumeID = volumes[i].VolumeID
+		snapshotName := testCase.Input.Volume.SnapshotName + "-" + strconv.Itoa(i+1)
+		snapshotRequest.Name = &snapshotName
+
+		snapshotRequests = append(snapshotRequests, snapshotRequest)
+	}
+	return snapshotRequests
 }

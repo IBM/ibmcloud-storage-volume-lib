@@ -11,7 +11,11 @@
 package vpc
 
 import (
+	"bytes"
 	"fmt"
+	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/IBM/ibmcloud-volume-interface/lib/provider"
 	. "github.com/onsi/ginkgo"
@@ -21,6 +25,8 @@ import (
 var _ = Describe("ibmcloud-storage-volume-lib", func() {
 	var (
 		volumesCreated            []*provider.Volume
+		snapshotCreated           []*provider.Snapshot
+		volumeRestoreCreated      []*provider.Volume
 		volumeAccessPointsRequest []provider.VolumeAccessPointRequest
 		volumeAttachmentsResponse []*provider.VolumeAttachmentResponse
 		volumeAttachmentsRequest  []*provider.VolumeAttachmentRequest
@@ -97,6 +103,81 @@ var _ = Describe("ibmcloud-storage-volume-lib", func() {
 							By("Test Detach Volume")
 							err = detachVolumes(volumeAttachmentsRequest)
 						}
+
+					}
+
+					if len(testCase.Input.Volume.SnapshotName) > 0 && len(testCase.Input.InstanceIP) > 0 {
+						By("Test Create VPC Instance ")
+						cmd := exec.Command("./../scripts/create_inst.sh")
+						var outb, errb bytes.Buffer
+						cmd.Stdout = &outb
+						cmd.Stderr = &errb
+						_ = cmd.Run()
+						fmt.Println("out:", outb.String(), "err:", errb.String())
+						res := strings.Split(string(outb.String()), "output :")[1]
+						res1 := strings.Split(res, ",")
+						fmt.Println(res1)
+						Instance_id := strings.Split(res1[0], "=")[1]
+						Instance_ip := strings.Split(res1[1], "=")[1]
+						key_id := strings.Split(res1[2], "=")[1]
+						ip_address_id := strings.Split(res1[3], "=")[1]
+						testCase.Input.InstanceIP[0] = Instance_ip
+						testCase.Input.InstanceID[0] = Instance_id
+						By("Test Attach Volume")
+						volumeAttachmentsRequests, volumeAttachmentsResponses, _ := attachVolumes(testCase, volumesCreated)
+						By("Format and Mount Volume")
+						args := []string{Instance_ip, volumeAttachmentsResponses[0].VPCVolumeAttachment.ID, "ext4"}
+						fmt.Println(args)
+						fmt_mount_cmd := exec.Command("./../scripts/run_fmt_mount.sh", args...)
+						var cmd_out, cmd_err bytes.Buffer
+						fmt_mount_cmd.Stdout = &cmd_out
+						fmt_mount_cmd.Stderr = &cmd_err
+						_ = fmt_mount_cmd.Run()
+						time.Sleep(15 * time.Second)
+						fmt.Println("out:", cmd_out.String(), "err:", cmd_err.String())
+						By("Test Create Snapshot")
+						snapshotCreated, err = createSnapshot(testCase, volumesCreated)
+						time.Sleep(240 * time.Second)
+
+						By("Test Create Volume From Snapshot")
+						testCase.Input.Volume.Name = testCase.Input.Volume.Name + "restore"
+						testCase.Input.Volume.SnapshotID = snapshotCreated[0].SnapshotID
+						volumeRestoreCreated, err = createVolumes(testCase)
+						if len(volumeRestoreCreated) > 0 {
+							By("Test Attach restored Volume")
+							volumeAttachmentsRequest, volumeAttachmentsResponse, err = attachVolumes(testCase, volumeRestoreCreated)
+							arg := []string{testCase.Input.InstanceIP[0], volumeAttachmentsResponse[0].VPCVolumeAttachment.ID, "ext4"}
+							By("Mount Volume and Validate Data")
+							validate_vol_size := exec.Command("./../scripts/run_validate_volume_size.sh", arg...)
+							var out, err bytes.Buffer
+							validate_vol_size.Stdout = &out
+							validate_vol_size.Stderr = &err
+							_ = validate_vol_size.Run()
+							time.Sleep(15 * time.Second)
+							fmt.Println("out:", out.String(), "err:", err.String())
+
+							By("Test Detach Restored Volume")
+							_ = detachVolumes(volumeAttachmentsRequest)
+
+							By("Test Delete Restored Volume")
+							_ = deleteVolumes(volumeRestoreCreated)
+						}
+
+						if len(snapshotCreated) > 0 {
+							By("Test Delete Snapshot")
+							err = deleteSnapshot(snapshotCreated)
+						}
+
+						By("Test Detach Volume")
+						_ = detachVolumes(volumeAttachmentsRequests)
+						arg := []string{Instance_id, key_id, ip_address_id}
+						delete_res_cmd := exec.Command("./../scripts/delete_vpc_resources.sh", arg...)
+						var cmdout, cmderr bytes.Buffer
+						delete_res_cmd.Stdout = &cmdout
+						delete_res_cmd.Stderr = &cmderr
+						_ = delete_res_cmd.Run()
+						time.Sleep(15 * time.Second)
+						fmt.Println("out:", cmdout.String(), "err:", cmderr.String())
 
 					}
 

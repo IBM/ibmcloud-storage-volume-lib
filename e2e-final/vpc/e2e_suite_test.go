@@ -70,6 +70,7 @@ type InputDef struct {
 	EncryptionEnabled bool      `yaml:"encryptionEnabled,omitempty"`
 	VPCZone           string    `yaml:"vpcZone,omitempty"`
 	InstanceID        []string  `yaml:"instanceID,omitempty"`
+	InstanceIP        []string  `yaml:"instanceIP,omitempty"`
 	VPCID             []string  `yaml:"vpcID,omitempty"`
 	SubnetID          []string  `yaml:"subnetID,omitempty"`
 	ClusterID         []string  `yaml:"clusterID,omitempty"`
@@ -82,6 +83,8 @@ type VolumeDef struct {
 	Iops         string `yaml:"iops,omitempty"`
 	Tags         string `yaml:"tags,omitempty"`
 	InitialOwner bool   `yaml:"initialOwner,omitempty"`
+	SnapshotName string `yaml:"snapshotName,omitempty"`
+	SnapshotID   string `yaml:"snapshotID,omitempty"`
 }
 
 func TestVPCE2e(t *testing.T) {
@@ -240,7 +243,12 @@ func RefreshSession() {
 }
 
 func openVPCFileSession() {
-	sess, _, err = file_provider_util.OpenProviderSession(vpcFileConfig, providerRegistry, providerName, logger)
+	prov, err := providerRegistry.Get(providerName)
+	if err != nil {
+		logger.Error("Not able to get the said provider, might be its not registered", local.ZapError(err))
+		Expect(err).To(HaveOccurred())
+	}
+	sess, _, err = file_provider_util.OpenProviderSession(prov, vpcFileConfig, providerRegistry, providerName, logger)
 	if err != nil {
 		logger.Error("Failed to get provider session", zap.Reflect("Error", err))
 		Expect(err).To(HaveOccurred())
@@ -248,7 +256,12 @@ func openVPCFileSession() {
 }
 
 func openVPCBlockSession() {
-	sess, _, err = provider_util.OpenProviderSession(vpcBlockConfig, providerRegistry, providerName, logger)
+	prov, err := providerRegistry.Get(providerName)
+	if err != nil {
+		logger.Error("Not able to get the said provider, might be its not registered", local.ZapError(err))
+		Expect(err).To(HaveOccurred())
+	}
+	sess, _, err = provider_util.OpenProviderSession(prov, vpcBlockConfig, providerRegistry, providerName, logger)
 	if err != nil {
 		logger.Error("Failed to get provider session", zap.Reflect("Error", err))
 		Expect(err).To(HaveOccurred())
