@@ -125,7 +125,7 @@ func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSR
 	r.logger.Info("Sending IAM token exchange request to container api server")
 	resp, err := r.client.Do(r.request, &successV, &errorV)
 	if err != nil {
-		r.logger.Error("IAM token exchange request failed", zap.Reflect("Response", resp), zap.Error(err))
+		r.logger.Error("IAM token exchange request failed", zap.Error(err))
 		return nil,
 			util.NewError("ErrorUnclassified",
 				"IAM token exchange request failed", err)
@@ -148,7 +148,7 @@ func (r *tokenExchangeIKSRequest) sendTokenExchangeRequest() (*tokenExchangeIKSR
 	}
 
 	r.logger.Error("Unexpected IAM token exchange response",
-		zap.Int("StatusCode", resp.StatusCode), zap.Reflect("Response", resp))
+		zap.Int("StatusCode", resp.StatusCode))
 
 	return nil,
 		util.NewError("ErrorUnclassified",
