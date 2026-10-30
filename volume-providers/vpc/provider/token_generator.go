@@ -70,7 +70,7 @@ func (tg *tokenGenerator) readConfig(logger zap.Logger) (err error) {
 func (tg *tokenGenerator) buildToken(contextCredentials provider.ContextCredentials, ts time.Time, logger zap.Logger) (token *jwt.Token, err error) {
 	logger.Info("Entering getJWTToken", zap.Reflect("contextCredentials", contextCredentials))
 	defer func() {
-		logger.Info("Exiting getJWTToken", local.ZapError(err))
+		logger.Info("Exiting getJWTToken", zap.Reflect("token", token), local.ZapError(err))
 	}()
 
 	err = tg.readConfig(logger)

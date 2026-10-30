@@ -239,6 +239,7 @@ func (vpcp *VPCBlockProvider) OpenSession(ctx context.Context, contextCredential
 	if err != nil {
 		return nil, err
 	}
+	ctxLogger.Debug("", zap.Reflect("Token", token.Token))
 
 	err = client.Login(token.Token)
 	if err != nil {

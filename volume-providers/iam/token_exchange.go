@@ -178,10 +178,11 @@ func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeRespons
 	}{}
 
 	r.logger.Info("Sending IAM token exchange request")
+	r.logger.Info("Request is:=================", zap.Reflect("Request", r.request))
 	resp, err := r.client.Do(r.request, &successV, &errorV)
 
 	if err != nil {
-		r.logger.Error("IAM token exchange request failed", zap.Error(err))
+		r.logger.Error("IAM token exchange request failed", zap.Reflect("Response", resp), zap.Error(err))
 
 		// TODO Handle timeout here?
 
@@ -217,7 +218,7 @@ func (r *tokenExchangeRequest) sendTokenExchangeRequest() (*tokenExchangeRespons
 	}
 
 	r.logger.Error("Unexpected IAM token exchange response",
-		zap.Int("StatusCode", resp.StatusCode))
+		zap.Int("StatusCode", resp.StatusCode), zap.Reflect("Response", resp))
 
 	return nil,
 		util.NewError("ErrorUnclassified",
